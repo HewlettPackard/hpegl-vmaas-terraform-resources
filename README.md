@@ -1,4 +1,4 @@
-- [poc-caas-terraform-resources](#poc-caas-terraform-resources)
+- [vmaas-terraform-resources](#vmaas-terraform-resources)
     * [Introduction](#introduction)
     * [Terraform versions](#terraform-versions)
     * [Terraform provider & v2.0 SDK](#terraform-provider--v20-sdk)
