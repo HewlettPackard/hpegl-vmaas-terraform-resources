@@ -1,0 +1,10 @@
+*.gitignore
+*.yaml
+*.yml
+*.md
+*.json
+*.toml
+*.crt
+go.mod
+go.sum
+Dockerfile.circleci
