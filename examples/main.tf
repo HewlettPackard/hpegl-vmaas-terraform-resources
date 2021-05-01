@@ -1,4 +1,4 @@
-# Copyright 2020 Hewlett Packard Enterprise Development LP
+# (C) Copyright 2021 Hewlett Packard Enterprise Development LP
 
 # Set-up for terraform >= v0.13
 terraform {

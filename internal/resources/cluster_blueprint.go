@@ -1,4 +1,4 @@
-// (C) Copyright 2020 Hewlett Packard Enterprise Development LP
+// (C) Copyright 2021 Hewlett Packard Enterprise Development LP
 
 package resources
 
@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
-	"github.com/hpe-hcss/poc-caas-terraform-resources/pkg/client"
+	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/client"
 )
 
 func ClusterBlueprint() *schema.Resource {

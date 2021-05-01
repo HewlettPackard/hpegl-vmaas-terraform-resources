@@ -1,4 +1,4 @@
-// (C) Copyright 2020 Hewlett Packard Enterprise Development LP
+// (C) Copyright 2021 Hewlett Packard Enterprise Development LP
 
 package resources
 
@@ -11,7 +11,7 @@ import (
 
 	"github.com/hpe-hcss/hpecli-generated-caas-client/pkg/mcaasapi"
 
-	"github.com/hpe-hcss/poc-caas-terraform-resources/pkg/client"
+	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/client"
 )
 
 const (

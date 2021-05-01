@@ -7,7 +7,7 @@ import (
 
 	"github.com/hpe-hcss/hpegl-provider-lib/pkg/registration"
 
-	"github.com/hpe-hcss/poc-caas-terraform-resources/internal/resources"
+	"github.com/hpe-hcss/vmaas-terraform-resources/internal/resources"
 )
 
 // Assert that Registration implements the ServiceRegistration interface
@@ -16,7 +16,7 @@ var _ registration.ServiceRegistration = (*Registration)(nil)
 type Registration struct{}
 
 func (r Registration) Name() string {
-	return "CAAS Service"
+	return "VMAAS Service"
 }
 
 func (r Registration) SupportedDataSources() map[string]*schema.Resource {
@@ -25,7 +25,7 @@ func (r Registration) SupportedDataSources() map[string]*schema.Resource {
 
 func (r Registration) SupportedResources() map[string]*schema.Resource {
 	return map[string]*schema.Resource{
-		"hpegl_caas_cluster_blueprint": resources.ClusterBlueprint(),
-		"hpegl_caas_cluster":           resources.Cluster(),
+		"hpegl_vmaas_cluster_blueprint": resources.ClusterBlueprint(),
+		"hpegl_vmaas_cluster":           resources.Cluster(),
 	}
 }

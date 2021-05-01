@@ -1,4 +1,4 @@
-module github.com/hpe-hcss/poc-caas-terraform-resources
+module github.com/hpe-hcss/vmaas-terraform-resources
 
 go 1.14
 

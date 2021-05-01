@@ -1,5 +1,5 @@
 #! /usr/bin/make
-#(C) Copyright 2019-2020 Hewlett Packard Enterprise Development LP
+#(C) Copyright 2021 Hewlett Packard Enterprise Development LP
 # Inspiration from https://github.com/rightscale/go-boilerplate/blob/master/Makefile
 
 NAME=$(shell find cmd -name "main.go" -exec dirname {} \; | sort -u | sed -e 's|cmd/||')

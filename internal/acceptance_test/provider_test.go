@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2020 Hewlett Packard Enterprise Development LP.
+// (C) Copyright 2021 Hewlett Packard Enterprise Development LP
 
 package acceptancetest
 

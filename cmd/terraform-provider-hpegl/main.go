@@ -5,7 +5,7 @@ package main
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/plugin"
 
-	testutils "github.com/hpe-hcss/poc-caas-terraform-resources/internal/test-utils"
+	testutils "github.com/hpe-hcss/vmaas-terraform-resources/internal/test-utils"
 )
 
 func main() {

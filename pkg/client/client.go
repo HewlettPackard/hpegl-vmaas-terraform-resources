@@ -1,4 +1,4 @@
-// (C) Copyright 2020 Hewlett Packard Enterprise Development LP
+// (C) Copyright 2021 Hewlett Packard Enterprise Development LP
 
 package client
 
@@ -13,7 +13,7 @@ import (
 
 // keyForGLClientMap is the key in the map[string]interface{} that is passed down by hpegl used to store *Client
 // This must be unique, hpegl will error-out if it isn't
-const keyForGLClientMap = "caasClient"
+const keyForGLClientMap = "vmaasClient"
 
 // Assert that InitialiseClient satisfies the client.Initialisation interface
 var _ client.Initialisation = (*InitialiseClient)(nil)

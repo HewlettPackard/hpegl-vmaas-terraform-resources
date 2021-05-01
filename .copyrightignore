@@ -1,6 +1,4 @@
 *.gitignore
-*.yaml
-*.yml
 *.md
 *.json
 *.toml

@@ -11,8 +11,8 @@ import (
 
 	"github.com/hpe-hcss/hpegl-provider-lib/pkg/provider"
 
-	"github.com/hpe-hcss/poc-caas-terraform-resources/pkg/client"
-	"github.com/hpe-hcss/poc-caas-terraform-resources/pkg/resources"
+	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/client"
+	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/resources"
 )
 
 func ProviderFunc() plugin.ProviderFunc {
