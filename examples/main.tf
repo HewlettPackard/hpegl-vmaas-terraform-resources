@@ -4,23 +4,31 @@
 terraform {
   required_providers {
     hpegl = {
-      # We are specifying a location that is specific to the service under development
-      # In this example it is poc-caas (see "source" below).  The service-specific replacement
-      # to poc-caas must be specified in "source" below and also in the Makefile as the
-      # value of DUMMY_PROVIDER.
-      source  = "terraform.example.com/poc-caas/hpegl"
+      source  = "terraform.example.com/vmaas/hpegl"
       version = ">= 0.0.1"
     }
   }
 }
 
 provider hpegl {
-  caas_api_url = "https://client.greenlake.hpe-gl-intg.com/api/caas/mcaas/v1"
+  vmaas_api_url = "https://client.greenlake.hpe-gl-intg.com/api/v1/vmaas/"
+  iam_tokem = "iam-token"
+
 }
 
-resource hpegl_caas_cluster test {
-  name         = "tf-test-clus-22"
-  blueprint_id = "2b2bb40c-813c-4762-9b49-faaebe1a4e61"
-  appliance_id = "3ad9c737-5bb6-430c-9772-3a6f5a7e4015"
-  space_id     = "6edb9418-dcda-4517-bf0c-a5d7de9cc60a"
+resource hpegl_vmaas_vm test {
+  name         = "Terrform-VM-1"
+  zone_id      = "10"
+  cloud_name   = "HPE GreenLake VMaaS Cloud"
+  site_id      = "4"
+  type         = "centos"
+  instance_type_code = "centos"
+  layout_id = "2"
+  resourcepool_id = "1"
+  agent_install = "yes"
+  plan_id = "10"
+  volume_size = "20"
+  datastore_id = "1"
+  network_id = "5"
+
 }
