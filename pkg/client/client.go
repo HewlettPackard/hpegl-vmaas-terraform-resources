@@ -32,15 +32,13 @@ func (i InitialiseClient) NewClient(config provider.ConfigData) (interface{}, er
 
 	client := new(Client)
 	client.IAMToken = config.IAMToken
-	client.VMaaSAPIUrl = config.VMaaSAPIUrl // To be replaced with VMaaSAPIUrl
+	client.VMaaSAPIUrl = config.VMaaSAPIUrl
 
-	// Agena API Call
-	//
-
-
-	// Call agena-api pass the IAM Token to get the VMaaSAPIToken
+	// Call agena-api to get the VMaaSAPIToken
 	// client.VMaaSToken = getVMaaSToken(config.IAMToken)
 	client.VMaaSToken = ""
+
+	// With VMaaS Swagger we will create new vmaasClient
 
 	return client, nil
 }
