@@ -7,7 +7,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
-	testutils "github.com/hpe-hcss/poc-caas-terraform-resources/internal/test-utils"
+	testutils "github.com/hpe-hcss/vmaas-terraform-resources/internal/test-utils"
 )
 
 var (

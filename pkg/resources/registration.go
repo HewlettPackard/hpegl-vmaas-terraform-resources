@@ -25,7 +25,6 @@ func (r Registration) SupportedDataSources() map[string]*schema.Resource {
 
 func (r Registration) SupportedResources() map[string]*schema.Resource {
 	return map[string]*schema.Resource{
-		"hpegl_vmaas_cluster_blueprint": resources.ClusterBlueprint(),
-		"hpegl_vmaas_cluster":           resources.Cluster(),
+		"hpegl_vmaas_vm":           resources.VirtualMachine(),
 	}
 }

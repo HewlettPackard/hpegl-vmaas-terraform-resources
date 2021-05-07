@@ -3,10 +3,6 @@
 package client
 
 import (
-	"fmt"
-
-	"github.com/hpe-hcss/hpecli-generated-caas-client/pkg/mcaasapi"
-
 	"github.com/hpe-hcss/hpegl-provider-lib/pkg/client"
 	"github.com/hpe-hcss/hpegl-provider-lib/pkg/provider"
 )
@@ -20,8 +16,9 @@ var _ client.Initialisation = (*InitialiseClient)(nil)
 
 // Client is the client struct that is used by the provider code
 type Client struct {
-	CaasClient *mcaasapi.APIClient
 	IAMToken   string
+	VMaaSAPIUrl   string
+	VMaaSToken string
 }
 
 // InitialiseClient is imported by hpegl from each service repo
@@ -32,23 +29,16 @@ type InitialiseClient struct{}
 // The hpegl provider will put *Client at the value of keyForGLClientMap (returned by ServiceName) in
 // the map of clients that it creates and passes down to provider code.  hpegl executes NewClient for each service.
 func (i InitialiseClient) NewClient(config provider.ConfigData) (interface{}, error) {
-	caasCfg := mcaasapi.Configuration{
-		BasePath:      config.CaaSAPIUrl,
-		DefaultHeader: make(map[string]string),
-		UserAgent:     "hpegl-terraform",
-	}
 
 	client := new(Client)
-	client.CaasClient = mcaasapi.NewAPIClient(&caasCfg)
-
-	if config.IAMToken == "" {
-		gltoken, err := getGLConfig()
-		if err != nil {
-			return nil, fmt.Errorf("Error reading GL token file:  %w", err)
-		}
-		config.IAMToken = gltoken.Token
-	}
 	client.IAMToken = config.IAMToken
+	client.VMaaSAPIUrl = config.VMaaSAPIUrl
+
+	// Call agena-api to get the VMaaSAPIToken
+	// client.VMaaSToken = getVMaaSToken(config.IAMToken)
+	client.VMaaSToken = ""
+
+	// With VMaaS Swagger we will create new vmaasClient
 
 	return client, nil
 }

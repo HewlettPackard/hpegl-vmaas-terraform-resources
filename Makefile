@@ -6,7 +6,7 @@ NAME=$(shell find cmd -name "main.go" -exec dirname {} \; | sort -u | sed -e 's|
 VERSION=0.0.1
 # Change DUMMY_PROVIDER below to reflect the name of the service under development.  The
 # value of this variable is used in LOCAL_LOCATION, and is also used in the
-DUMMY_PROVIDER=poc-caas
+DUMMY_PROVIDER=vmaas
 LOCAL_LOCATION=~/.local/share/terraform/plugins/terraform.example.com/$(DUMMY_PROVIDER)/hpegl/$(VERSION)/linux_amd64/
 
 # Stuff that needs to be installed globally (not in vendor)
