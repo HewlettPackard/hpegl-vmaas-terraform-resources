@@ -8,7 +8,10 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+
 	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/client"
+	cmp_client "github.com/hpe-hcss/vmaas-terraform-resources/internal/cmp_client"
+	models "github.com/hpe-hcss/vmaas-terraform-resources/internal/models"
 )
 
 const (
@@ -119,10 +122,8 @@ func vmCreateContext(ctx context.Context, d *schema.ResourceData, meta interface
 	if c.IAMToken == "" {
 		diags = append(diags, diag.Errorf("Empty token")...)
 	}
-
-	//spaceID := d.Get("space_id").(string)
-	//print(" spaceID : " + spaceID)
-
+	//instanceCreateOpts := models.CreateInstanceBodyInstance{}
+	//cmp_client.APIClient{}.InstancesApi.CreateAnInstance(ctx, sid, instanceCreateOpts)
 	d.SetId(string(1))
 
 	return vmReadContext(ctx, d, meta)
