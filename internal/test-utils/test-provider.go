@@ -21,7 +21,7 @@ func ProviderFunc() plugin.ProviderFunc {
 
 func providerConfigure(p *schema.Provider) schema.ConfigureContextFunc { // nolint staticcheck
 	return func(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
-		cli, err := client.InitialiseClient{}.NewClient(provider.GetConfigData(d))
+		cli, err := client.InitialiseClient{}.NewClient(d)
 		if err != nil {
 			return nil, diag.Errorf("error in creating client: %s", err)
 		}

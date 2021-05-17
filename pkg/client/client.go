@@ -3,8 +3,12 @@
 package client
 
 import (
+	"fmt"
 	"github.com/hpe-hcss/hpegl-provider-lib/pkg/client"
-	"github.com/hpe-hcss/hpegl-provider-lib/pkg/provider"
+
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/constants"
 )
 
 // keyForGLClientMap is the key in the map[string]interface{} that is passed down by hpegl used to store *Client
@@ -18,6 +22,7 @@ var _ client.Initialisation = (*InitialiseClient)(nil)
 type Client struct {
 	IAMToken   string
 	VMaaSAPIUrl   string
+	location string
 	VMaaSToken string
 }
 
@@ -28,15 +33,27 @@ type InitialiseClient struct{}
 // If there is no error interface{} will contain *Client.
 // The hpegl provider will put *Client at the value of keyForGLClientMap (returned by ServiceName) in
 // the map of clients that it creates and passes down to provider code.  hpegl executes NewClient for each service.
-func (i InitialiseClient) NewClient(config provider.ConfigData) (interface{}, error) {
+func (i InitialiseClient) NewClient(r *schema.ResourceData) (interface{}, error) {
+
+	//token := r.Get("iam_token").(string)
+
+	vmaasProviderSettings, err := client.GetServiceSettingsMap(constants.ServiceName, r)
+
+	if err != nil {
+		return nil, nil
+	}
+	apiURL := vmaasProviderSettings[constants.APIURL].(string)
+	location := vmaasProviderSettings[constants.LOCATION].(string)
 
 	client := new(Client)
-	client.IAMToken = config.IAMToken
-	client.VMaaSAPIUrl = config.VMaaSAPIUrl
+	// Token to read from environment
+	client.IAMToken = "DUMMY_IAM_TOKEN"
+	client.VMaaSAPIUrl = apiURL
+	client.location = location
 
 	// Call agena-api to get the VMaaSAPIToken
 	// client.VMaaSToken = getVMaaSToken(config.IAMToken)
-	client.VMaaSToken = ""
+	client.VMaaSToken = "DUMMY_CMP_TOKEN"
 
 	// With VMaaS Swagger we will create new vmaasClient
 
@@ -50,6 +67,11 @@ func (i InitialiseClient) ServiceName() string {
 
 // GetClientFromMetaMap is a convenience function used by provider code to extract *Client from the
 // meta argument passed-in by terraform
-func GetClientFromMetaMap(meta interface{}) *Client {
-	return meta.(map[string]interface{})[keyForGLClientMap].(*Client)
+func GetClientFromMetaMap(meta interface{}) (*Client, error) {
+	cli := meta.(map[string]interface{})[keyForGLClientMap]
+	if cli == nil {
+		return nil, fmt.Errorf("client is not initialised, make sure that vmaas block is defined in hpegl stanza")
+	}
+
+	return cli.(*Client), nil
 }
