@@ -108,7 +108,10 @@ func VirtualMachine() *schema.Resource {
 }
 
 func vmCreateContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := client.GetClientFromMetaMap(meta)
+	c, err := client.GetClientFromMetaMap(meta)
+	if err != nil {
+		return diag.FromErr(err)
+	}
 	token := c.IAMToken
 	url := c.VMaaSAPIUrl
 
@@ -129,7 +132,10 @@ func vmCreateContext(ctx context.Context, d *schema.ResourceData, meta interface
 }
 
 func vmReadContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := client.GetClientFromMetaMap(meta)
+	c, err := client.GetClientFromMetaMap(meta)
+	if err != nil {
+		return diag.FromErr(err)
+	}
 	token := c.IAMToken
 
 	println(" Read Context IAM Token : " + token)
@@ -146,7 +152,10 @@ func vmReadContext(ctx context.Context, d *schema.ResourceData, meta interface{}
 }
 
 func vmDeleteContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c := client.GetClientFromMetaMap(meta)
+	c, err := client.GetClientFromMetaMap(meta)
+	if err != nil {
+		return diag.FromErr(err)
+	}
 	token := c.IAMToken
 	print(" Delete IAM Token : " + token)
 	var diags diag.Diagnostics
