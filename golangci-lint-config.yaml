@@ -6,6 +6,7 @@ run:
   skip-dirs:
     - vendor
     - internal/cmp_client
+    - internal/models
   build-tags: acceptance
 
 linters-settings:

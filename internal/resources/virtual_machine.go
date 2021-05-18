@@ -15,7 +15,6 @@ import (
 const (
 	vmAvailableTimeout = 60 * time.Minute
 	vmDeleteTimeout    = 60 * time.Minute
-
 )
 
 func VirtualMachine() *schema.Resource {
@@ -123,8 +122,8 @@ func vmCreateContext(ctx context.Context, d *schema.ResourceData, meta interface
 	if c.IAMToken == "" {
 		diags = append(diags, diag.Errorf("Empty token")...)
 	}
-	//instanceCreateOpts := models.CreateInstanceBodyInstance{}
-	//cmp_client.APIClient{}.InstancesApi.CreateAnInstance(ctx, sid, instanceCreateOpts)
+	// instanceCreateOpts := models.CreateInstanceBodyInstance{}
+	// cmp_client.APIClient{}.InstancesApi.CreateAnInstance(ctx, sid, instanceCreateOpts)
 	d.SetId(string(1))
 
 	return vmReadContext(ctx, d, meta)
@@ -160,13 +159,10 @@ func vmDeleteContext(ctx context.Context, d *schema.ResourceData, meta interface
 	var diags diag.Diagnostics
 	id := d.Id()
 
-
 	if id == "" {
 		diags = append(diags, diag.Errorf("Empty ID")...)
 	}
 	d.SetId("")
 
-		return diags
+	return diags
 }
-
-

@@ -3,7 +3,7 @@ package models
 
 // ErrBadRequest
 type ErrBadRequest struct {
-	Success bool `json:"success"`
+	Success bool   `json:"success"`
 	Message string `json:"message"`
 }
 
@@ -21,6 +21,6 @@ type ErrNotFound struct {
 
 // ErrUnauthorized
 type ErrUnauthorized struct {
-	Error_ string `json:"error"`
+	Error_  string `json:"error"`
 	Message string `json:"message"`
 }
