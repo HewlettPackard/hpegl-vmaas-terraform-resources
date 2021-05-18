@@ -32,17 +32,17 @@ func (r Registration) SupportedResources() map[string]*schema.Resource {
 func (r Registration) ProviderSchemaEntry() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
-			constants.APIURL: {
-				Type:        schema.TypeString,
-				Required:    true,
-				DefaultFunc: schema.EnvDefaultFunc("HPEGL_VMAAS_API_URL", ""),
-				Description: "The URL to use for the VMaaS API, can also be set with the HPEGL_VMAAS_API_URL env var",
-			},
 			constants.LOCATION: {
 				Type:        schema.TypeString,
 				Required:    true,
 				DefaultFunc: schema.EnvDefaultFunc("HPEGL_VMAAS_LOCATION", ""),
 				Description: "Location of GL VMaaS Service, can also be set with the HPEGL_VMAAS_LOCATION env var",
+			},
+			constants.SPACENAME: {
+				Type:        schema.TypeString,
+				Required:    true,
+				DefaultFunc: schema.EnvDefaultFunc("HPEGL_VMAAS_SPACE_NAME", ""),
+				Description: "IAM Space name of the GL VMaaS Service, can also be set with the HPEGL_VMAAS_SPACE_NAME env var",
 			},
 		},
 	}

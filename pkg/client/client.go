@@ -4,6 +4,7 @@ package client
 
 import (
 	"fmt"
+	"github.com/hpe-hcss/hpegl-provider-lib/pkg/gltform"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
@@ -22,8 +23,8 @@ var _ client.Initialisation = (*InitialiseClient)(nil)
 type Client struct {
 	IAMToken    string
 	VMaaSAPIUrl string
-	location    string
-	VMaaSToken  string
+	Location    string
+	SpaceName   string
 }
 
 // InitialiseClient is imported by hpegl from each service repo
@@ -35,25 +36,37 @@ type InitialiseClient struct{}
 // the map of clients that it creates and passes down to provider code.  hpegl executes NewClient for each service.
 func (i InitialiseClient) NewClient(r *schema.ResourceData) (interface{}, error) {
 	// token := r.Get("iam_token").(string)
-
+	token := r.Get("iam_token").(string)
 	vmaasProviderSettings, err := client.GetServiceSettingsMap(constants.ServiceName, r)
+
 	if err != nil {
 		return nil, nil
 	}
-	apiURL := vmaasProviderSettings[constants.APIURL].(string)
+
+	// Read the value supplied in the tf file
 	location := vmaasProviderSettings[constants.LOCATION].(string)
+	space_name := vmaasProviderSettings[constants.SPACENAME].(string)
 
+	// Create VMaas Client
 	client := new(Client)
-	// Token to read from environment
-	client.IAMToken = "DUMMY_IAM_TOKEN"
-	client.VMaaSAPIUrl = apiURL
-	client.location = location
 
-	// Call agena-api to get the VMaaSAPIToken
-	// client.VMaaSToken = getVMaaSToken(config.IAMToken)
-	client.VMaaSToken = "DUMMY_CMP_TOKEN"
+	// Token to read from gltform from hpegl-lib
+	if token == "" {
+		gltoken, err := gltform.GetGLConfig()
+		if err != nil {
+			return nil, fmt.Errorf("Error reading GL token file:  %w", err)
+		}
+		token = gltoken.Token
+	}
+	client.IAMToken = token
 
-	// With VMaaS Swagger we will create new vmaasClient
+	// Get the Service Instance using agena-api call by sending space_name amd location
+	serviceInstanceId := "SERVICE_INSTANCE_ID"
+	client.VMaaSAPIUrl = constants.ServiceURL + serviceInstanceId + "/"
+
+	// location and space_naem supplied from the terraform tf file
+	client.Location = location
+	client.SpaceName = space_name
 
 	return client, nil
 }
