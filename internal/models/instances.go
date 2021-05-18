@@ -135,7 +135,7 @@ type GetInstanceResponseInstance struct {
 	Owner               *GetInstanceResponseInstanceCreatedBy       `json:"owner,omitempty"`
 }
 
-//GetInstanceResponseInstanceCloud
+// GetInstanceResponseInstanceCloud
 type GetInstanceResponseInstanceCloud struct {
 	Id   int32  `json:"id,omitempty"`
 	Name string `json:"name,omitempty"`

@@ -36,7 +36,6 @@ func (i InitialiseClient) NewClient(r *schema.ResourceData) (interface{}, error)
 	// token := r.Get("iam_token").(string)
 
 	vmaasProviderSettings, err := client.GetServiceSettingsMap(constants.ServiceName, r)
-
 	if err != nil {
 		return nil, nil
 	}

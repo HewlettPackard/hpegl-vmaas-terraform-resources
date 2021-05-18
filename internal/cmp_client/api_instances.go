@@ -13,11 +13,12 @@ package cmp_client
 import (
 	"context"
 	"fmt"
-	"github.com/antihax/optional"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
+
+	"github.com/antihax/optional"
 
 	models "github.com/hpe-hcss/vmaas-terraform-resources/internal/models"
 )

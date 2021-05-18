@@ -9,4 +9,5 @@ require (
 	github.com/stretchr/testify v1.6.1
 	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d
 	gopkg.in/yaml.v2 v2.4.0
+	mvdan.cc/gofumpt v0.1.1 // indirect
 )
