@@ -10,14 +10,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
 	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/client"
-	cmp_client "github.com/hpe-hcss/vmaas-terraform-resources/internal/cmp_client"
-	models "github.com/hpe-hcss/vmaas-terraform-resources/internal/models"
 )
 
 const (
 	vmAvailableTimeout = 60 * time.Minute
 	vmDeleteTimeout    = 60 * time.Minute
-
 )
 
 func VirtualMachine() *schema.Resource {
@@ -120,13 +117,13 @@ func vmCreateContext(ctx context.Context, d *schema.ResourceData, meta interface
 
 	println(" Create Context IAM Token : " + token + " URL : " + url)
 
-	var diags diag.Diagnostics
+	diags := new(diag.Diagnostics)
 
 	if c.IAMToken == "" {
-		diags = append(diags, diag.Errorf("Empty token")...)
+		*diags = append(*diags, diag.Errorf("Empty token")...)
 	}
-	//instanceCreateOpts := models.CreateInstanceBodyInstance{}
-	//cmp_client.APIClient{}.InstancesApi.CreateAnInstance(ctx, sid, instanceCreateOpts)
+	// instanceCreateOpts := models.CreateInstanceBodyInstance{}
+	// cmp_client.APIClient{}.InstancesApi.CreateAnInstance(ctx, sid, instanceCreateOpts)
 	d.SetId(string(1))
 
 	return vmReadContext(ctx, d, meta)
@@ -162,13 +159,10 @@ func vmDeleteContext(ctx context.Context, d *schema.ResourceData, meta interface
 	var diags diag.Diagnostics
 	id := d.Id()
 
-
 	if id == "" {
 		diags = append(diags, diag.Errorf("Empty ID")...)
 	}
 	d.SetId("")
 
-		return diags
+	return diags
 }
-
-

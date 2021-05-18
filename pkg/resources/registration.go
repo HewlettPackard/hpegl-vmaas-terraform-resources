@@ -1,14 +1,13 @@
-// (C) Copyright 2020 Hewlett Packard Enterprise Development LP
+// (C) Copyright 2021 Hewlett Packard Enterprise Development LP
 
 package resources
 
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/constants"
 
 	"github.com/hpe-hcss/hpegl-provider-lib/pkg/registration"
-
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/resources"
+	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/constants"
 )
 
 // Assert that Registration implements the ServiceRegistration interface
@@ -26,7 +25,7 @@ func (r Registration) SupportedDataSources() map[string]*schema.Resource {
 
 func (r Registration) SupportedResources() map[string]*schema.Resource {
 	return map[string]*schema.Resource{
-		"hpegl_vmaas_vm":           resources.VirtualMachine(),
+		"hpegl_vmaas_vm": resources.VirtualMachine(),
 	}
 }
 
@@ -48,7 +47,3 @@ func (r Registration) ProviderSchemaEntry() *schema.Resource {
 		},
 	}
 }
-
-
-
-

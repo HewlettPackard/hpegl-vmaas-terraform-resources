@@ -5,6 +5,8 @@ run:
   tests: true
   skip-dirs:
     - vendor
+    - internal/cmp_client
+    - internal/models
   build-tags: acceptance
 
 linters-settings:
@@ -33,16 +35,16 @@ linters:
     - gomnd
     - gochecknoinits
     - gochecknoglobals
-    - exhaustivestruct
-    - forbidigo
+    # - exhaustivestruct
+    # - forbidigo
     - testpackage
     - nolintlint
     # Temporarily disabling paralleltest
-    - paralleltest
+    # - paralleltest
     #Temporarily disabling wrapcheck
-    - wrapcheck
+    # - wrapcheck
     # Disable the 'cyclop' cyclometric complexity linter. 'gocyclo' already
-    # covers cyclometric complexity, and 'cyclop' has no documentation to 
+    # covers cyclometric complexity, and 'cyclop' has no documentation to
     # help with resolving the flagged lints
     # - cyclop
 

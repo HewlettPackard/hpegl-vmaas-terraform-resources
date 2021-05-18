@@ -4,10 +4,10 @@ package client
 
 import (
 	"fmt"
-	"github.com/hpe-hcss/hpegl-provider-lib/pkg/client"
-
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+
+	"github.com/hpe-hcss/hpegl-provider-lib/pkg/client"
 	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/constants"
 )
 
@@ -20,10 +20,10 @@ var _ client.Initialisation = (*InitialiseClient)(nil)
 
 // Client is the client struct that is used by the provider code
 type Client struct {
-	IAMToken   string
-	VMaaSAPIUrl   string
-	location string
-	VMaaSToken string
+	IAMToken    string
+	VMaaSAPIUrl string
+	location    string
+	VMaaSToken  string
 }
 
 // InitialiseClient is imported by hpegl from each service repo
@@ -34,11 +34,9 @@ type InitialiseClient struct{}
 // The hpegl provider will put *Client at the value of keyForGLClientMap (returned by ServiceName) in
 // the map of clients that it creates and passes down to provider code.  hpegl executes NewClient for each service.
 func (i InitialiseClient) NewClient(r *schema.ResourceData) (interface{}, error) {
-
-	//token := r.Get("iam_token").(string)
+	// token := r.Get("iam_token").(string)
 
 	vmaasProviderSettings, err := client.GetServiceSettingsMap(constants.ServiceName, r)
-
 	if err != nil {
 		return nil, nil
 	}

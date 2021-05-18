@@ -9,6 +9,6 @@ const (
 
 	// Provider Service Block keys
 	// APIURL - CaaS api_url
-	APIURL = "api_url"
+	APIURL   = "api_url"
 	LOCATION = "location"
 )

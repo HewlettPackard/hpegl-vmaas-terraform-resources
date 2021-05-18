@@ -1,0 +1,126 @@
+# (c) Copyright 2021 Hewlett Packard Enterprise Development LP
+version: 2.1
+
+defaults: &defaults
+  docker:
+    - image: 657273346644.dkr.ecr.us-east-1.amazonaws.com/hpe-hcss/go-build:v0.1.5
+      environment:
+        GO111MODULE: "on"
+
+common-context: &common-context
+  context: ecr-6644
+
+common-filters: &filters
+  filters:
+    tags:
+      only: /.*/
+
+common-settings: &common
+  <<: [*common-context, *filters]
+
+restore_cache:  &restore_cache
+  restore_cache:
+    key: gopkg-v1-{{ checksum "go.mod" }}-{{ checksum "go.sum" }}
+
+workflows:
+  secret-scanning:
+    jobs:
+      - secret-scanning:
+          # for AWS creds to download image
+          <<: *common-context
+
+  build_terraform:
+    jobs:
+      - checkout-workspace:
+          <<: *filters
+      - copyright-check:
+          <<: *common
+          requires:
+            - checkout-workspace
+      - go-vendor:
+          <<: *common
+          requires:
+            - copyright-check
+      - go-lint:
+          <<: *common
+          requires:
+            - go-vendor
+      - go-build:
+          <<: *common
+          requires:
+            - go-lint
+          
+jobs:
+  secret-scanning:
+    docker:
+      - image: 657273346644.dkr.ecr.us-east-1.amazonaws.com/hpe-hcss/secrets-scanner:v0.3.3
+    working_directory: /src
+    steps:
+      # also injects host key
+      - checkout
+      - run:
+          name: Check for secrets leaked
+          command: scanner
+
+  checkout-workspace:
+    docker:
+      - image: circleci/golang:1.15.8
+    steps:
+      - checkout
+      - persist_to_workspace:
+          root: ~/project
+          paths: ['.']
+
+  copyright-check:
+    docker:
+      - image: 657273346644.dkr.ecr.us-east-1.amazonaws.com/hpe-hcss/copyright-tool:0.3.0
+    steps:
+      - attach_workspace:
+          at: ~/project
+      - run:
+          name: Check copyright
+          command: |
+            copyright-tool --check
+
+  go-vendor:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/project
+      - run:
+          name: go-vendor
+          command: |
+            git config --global url.https://$GITHUB_TOKEN@github.com/.insteadOf https://github.com/
+            make vendor
+      - persist_to_workspace:
+          root: ~/project
+          paths:
+            - vendor
+            - go.mod
+            - go.sum
+      - save_cache:
+          key: gopkg-v1-{{ checksum "go.mod" }}-{{ checksum "go.sum" }}
+          paths:
+            - /go/pkg
+
+  go-lint:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/project
+      - <<: *restore_cache
+      - run:
+          name: go-lint
+          command: |
+            make lint
+
+  go-build:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/project
+      - <<: *restore_cache
+      - run:
+          name: go-build
+          command: |
+            make build
