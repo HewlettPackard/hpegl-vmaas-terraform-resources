@@ -4,6 +4,7 @@ package resources
 
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+
 	"github.com/hpe-hcss/hpegl-provider-lib/pkg/registration"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/resources"
 	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/constants"

@@ -117,10 +117,10 @@ func vmCreateContext(ctx context.Context, d *schema.ResourceData, meta interface
 
 	println(" Create Context IAM Token : " + token + " URL : " + url)
 
-	var diags diag.Diagnostics
+	diags := new(diag.Diagnostics)
 
 	if c.IAMToken == "" {
-		diags = append(diags, diag.Errorf("Empty token")...)
+		*diags = append(*diags, diag.Errorf("Empty token")...)
 	}
 	// instanceCreateOpts := models.CreateInstanceBodyInstance{}
 	// cmp_client.APIClient{}.InstancesApi.CreateAnInstance(ctx, sid, instanceCreateOpts)
