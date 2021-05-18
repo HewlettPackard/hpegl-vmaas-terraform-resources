@@ -29,7 +29,7 @@ workflows:
           # for AWS creds to download image
           <<: *common-context
 
-  build_docker_images:
+  build_terraform:
     jobs:
       - checkout-workspace:
           <<: *filters
@@ -45,6 +45,10 @@ workflows:
           <<: *common
           requires:
             - go-vendor
+      - go-build:
+          <<: *common
+          requires:
+            - go-build
 jobs:
   secret-scanning:
     docker:
@@ -108,3 +112,14 @@ jobs:
           name: go-lint
           command: |
             make lint
+
+  go-build:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/project
+      - <<: *restore_cache
+      - run:
+          name: go-build
+          command: |
+            make build
