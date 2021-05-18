@@ -47,6 +47,8 @@ workflows:
             - go-vendor
       - go-build:
           <<: *common
+          requires:
+            go-lint
           
 jobs:
   secret-scanning:
