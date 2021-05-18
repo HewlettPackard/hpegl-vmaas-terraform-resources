@@ -47,8 +47,7 @@ workflows:
             - go-vendor
       - go-build:
           <<: *common
-          requires:
-            - go-build
+          
 jobs:
   secret-scanning:
     docker:
