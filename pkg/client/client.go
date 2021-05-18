@@ -45,7 +45,7 @@ func (i InitialiseClient) NewClient(r *schema.ResourceData) (interface{}, error)
 
 	// Read the value supplied in the tf file
 	location := vmaasProviderSettings[constants.LOCATION].(string)
-	space_name := vmaasProviderSettings[constants.SPACENAME].(string)
+	spaceName := vmaasProviderSettings[constants.SPACENAME].(string)
 
 	// Create VMaas Client
 	client := new(Client)
@@ -61,12 +61,12 @@ func (i InitialiseClient) NewClient(r *schema.ResourceData) (interface{}, error)
 	client.IAMToken = token
 
 	// Get the Service Instance using agena-api call by sending space_name amd location
-	serviceInstanceId := "SERVICE_INSTANCE_ID"
-	client.VMaaSAPIUrl = constants.ServiceURL + serviceInstanceId + "/"
+	serviceInstanceID := "SERVICE_INSTANCE_ID"
+	client.VMaaSAPIUrl = constants.ServiceURL + serviceInstanceID + "/"
 
 	// location and space_naem supplied from the terraform tf file
 	client.Location = location
-	client.SpaceName = space_name
+	client.SpaceName = spaceName
 
 	return client, nil
 }
