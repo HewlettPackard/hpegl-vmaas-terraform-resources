@@ -48,7 +48,7 @@ workflows:
       - go-build:
           <<: *common
           requires:
-            go-lint
+            - go-lint
           
 jobs:
   secret-scanning:
