@@ -5,6 +5,7 @@ run:
   tests: true
   skip-dirs:
     - vendor
+    - internal/cmp_client
   build-tags: acceptance
 
 linters-settings:
