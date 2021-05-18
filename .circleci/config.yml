@@ -86,8 +86,7 @@ jobs:
           name: go-vendor
           command: |
             git config --global url.https://$GITHUB_TOKEN@github.com/.insteadOf https://github.com/
-            go mod download
-            go mod vendor
+            make vendor
       - persist_to_workspace:
           root: ~/project
           paths:
@@ -108,6 +107,4 @@ jobs:
       - run:
           name: go-lint
           command: |
-            vendor .golangci.yaml
-            golangci-lint version
-            golangci-lint run --config .golangci.yaml
+            make lint
