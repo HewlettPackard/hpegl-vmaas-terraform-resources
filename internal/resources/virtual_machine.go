@@ -10,8 +10,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
 	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/client"
-	cmp_client "github.com/hpe-hcss/vmaas-terraform-resources/internal/cmp_client"
-	models "github.com/hpe-hcss/vmaas-terraform-resources/internal/models"
 )
 
 const (
