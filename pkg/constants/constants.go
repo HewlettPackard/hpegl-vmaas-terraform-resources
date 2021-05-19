@@ -6,9 +6,8 @@ package constants
 const (
 	// ServiceName - the service mnemonic
 	ServiceName = "vmaas"
+	ServiceURL  = "https://client.greenlake.hpe.com/api/vmaas/v1/"
 
-	// Provider Service Block keys
-	// APIURL - CaaS api_url
-	APIURL = "api_url"
-	LOCATION = "location"
+	LOCATION  = "location"
+	SPACENAME = "space_name"
 )

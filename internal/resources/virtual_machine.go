@@ -9,7 +9,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
-	cmp_client "github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
 	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/client"
 )
@@ -125,14 +124,13 @@ func vmCreateContext(ctx context.Context, d *schema.ResourceData, meta interface
 
 	println(" Create Context IAM Token : " + token + " URL : " + url)
 
-	var diags diag.Diagnostics
+	diags := new(diag.Diagnostics)
 
 	if c.IAMToken == "" {
-		diags = append(diags, diag.Errorf("Empty token")...)
+		*diags = append(*diags, diag.Errorf("Empty token")...)
 	}
-	_ = cmp_client.InstancesApiCreateAnInstanceOpts{}
-	//instanceCreateOpts := models.CreateInstanceBodyInstance{}
-	//cmp_client.APIClient{}.InstancesApi.CreateAnInstance(ctx, sid, instanceCreateOpts)
+	// instanceCreateOpts := models.CreateInstanceBodyInstance{}
+	// cmp_client.APIClient{}.InstancesApi.CreateAnInstance(ctx, sid, instanceCreateOpts)
 	d.SetId(string(1))
 
 	return vmReadContext(ctx, d, meta)
