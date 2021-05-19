@@ -10,6 +10,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
 	"github.com/hpe-hcss/hpegl-provider-lib/pkg/client"
+	api_client "github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
+	cmp_client "github.com/hpe-hcss/vmaas-terraform-resources/internal/cmp"
 	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/constants"
 )
 
@@ -26,6 +28,7 @@ type Client struct {
 	VMaaSAPIUrl string
 	Location    string
 	SpaceName   string
+	CmpClient   *cmp_client.Client
 }
 
 // InitialiseClient is imported by hpegl from each service repo
@@ -59,6 +62,10 @@ func (i InitialiseClient) NewClient(r *schema.ResourceData) (interface{}, error)
 		token = gltoken.Token
 	}
 	client.IAMToken = token
+	apiClient := api_client.NewAPIClient(&api_client.Configuration{
+		BasePath: client.VMaaSAPIUrl,
+	})
+	client.CmpClient = cmp_client.NewClient(apiClient)
 
 	// Get the Service Instance using agena-api call by sending space_name amd location
 	serviceInstanceID := "SERVICE_INSTANCE_ID"

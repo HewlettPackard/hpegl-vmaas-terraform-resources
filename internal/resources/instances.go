@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
+	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/models"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
 	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/client"
 )
@@ -18,7 +19,7 @@ const (
 	vmDeleteTimeout    = 60 * time.Minute
 )
 
-func VirtualMachine() *schema.Resource {
+func Instances() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"name": {
@@ -95,11 +96,11 @@ func VirtualMachine() *schema.Resource {
 		},
 		SchemaVersion:  0,
 		StateUpgraders: nil,
-		CreateContext:  vmCreateContext,
-		ReadContext:    vmReadContext,
+		CreateContext:  instanceCreateContext,
+		ReadContext:    instanceReadContext,
 		// TODO figure out if a VM can be updated
 		// Update:             vmUpdate,
-		DeleteContext: vmDeleteContext,
+		DeleteContext: instanceDeleteContext,
 		CustomizeDiff: nil,
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
@@ -114,29 +115,25 @@ func VirtualMachine() *schema.Resource {
 	}
 }
 
-func vmCreateContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func instanceCreateContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, err := client.GetClientFromMetaMap(meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	token := c.IAMToken
-	url := c.VMaaSAPIUrl
 
-	println(" Create Context IAM Token : " + token + " URL : " + url)
-
-	diags := new(diag.Diagnostics)
+	var diags diag.Diagnostics
 
 	if c.IAMToken == "" {
-		*diags = append(*diags, diag.Errorf("Empty token")...)
+		diags = append(diags, diag.Errorf("Empty token")...)
 	}
-	// instanceCreateOpts := models.CreateInstanceBodyInstance{}
-	// cmp_client.APIClient{}.InstancesApi.CreateAnInstance(ctx, sid, instanceCreateOpts)
-	d.SetId(string(1))
+	if err := c.CmpClient.CreateInstance(models.CreateInstanceBody{}); err != nil {
+		diags = append(diags, diag.FromErr(err)...)
+	}
 
-	return vmReadContext(ctx, d, meta)
+	return instanceReadContext(ctx, d, meta)
 }
 
-func vmReadContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func instanceReadContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, err := client.GetClientFromMetaMap(meta)
 	if err != nil {
 		return diag.FromErr(err)
@@ -156,7 +153,7 @@ func vmReadContext(ctx context.Context, d *schema.ResourceData, meta interface{}
 	return diags
 }
 
-func vmDeleteContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func instanceDeleteContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, err := client.GetClientFromMetaMap(meta)
 	if err != nil {
 		return diag.FromErr(err)

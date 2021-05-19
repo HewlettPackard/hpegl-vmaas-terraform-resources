@@ -25,7 +25,7 @@ func (r Registration) SupportedDataSources() map[string]*schema.Resource {
 
 func (r Registration) SupportedResources() map[string]*schema.Resource {
 	return map[string]*schema.Resource{
-		"hpegl_vmaas_vm": resources.VirtualMachine(),
+		"hpegl_vmaas_vm": resources.Instances(),
 	}
 }
 

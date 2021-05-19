@@ -199,6 +199,8 @@ github.com/hashicorp/yamux v0.0.0-20181012175058-2f1d1f20f75d h1:kJCB4vdITiW1eC1
 github.com/hashicorp/yamux v0.0.0-20181012175058-2f1d1f20f75d/go.mod h1:+NfK9FKeTrX5uv1uIXGdwYDTeHna2qgaIlx54MXqjAM=
 github.com/hpe-hcss/hpegl-provider-lib v0.0.5 h1:Y24xMqQKkXMZMfI+07gjHHJdsTgnujzQbuk0fOAJ9dI=
 github.com/hpe-hcss/hpegl-provider-lib v0.0.5/go.mod h1:x9VOq6CVppz8gNg4Tzl7YcAq8CsNSBGoe6Tbv/80uQc=
+github.com/hpe-hcss/vmaas-cmp-go-sdk v0.0.0-20210518112634-cfc137680fef h1:uDD2QdCkEnZ/JXoTZP1vuu4FI6OtJaVNjl6aQuh3YTQ=
+github.com/hpe-hcss/vmaas-cmp-go-sdk v0.0.0-20210518112634-cfc137680fef/go.mod h1:QvkPBJ/Ow4woC+AV98AmQDkx7bxhHRYY+M+6jxEjNw8=
 github.com/ianlancetaylor/demangle v0.0.0-20181102032728-5e5cf60278f6/go.mod h1:aSSvb/t6k1mPoxDqO4vJh6VOCGPwU4O0C2/Eqndh1Sc=
 github.com/imdario/mergo v0.3.9 h1:UauaLniWCFHWd+Jp9oCEkTBj8VO/9DKg3PV3VCNMDIg=
 github.com/imdario/mergo v0.3.9/go.mod h1:2EnlNZ0deacrJVfApfmtdGgDfMuh/nq6Ok1EcJh5FfA=
