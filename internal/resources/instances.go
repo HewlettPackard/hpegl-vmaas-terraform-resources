@@ -10,7 +10,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/models"
-	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
 	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/client"
 )
 
@@ -45,14 +44,15 @@ func Instances() *schema.Resource {
 				Required: true,
 			},
 			"networks": {
-				Type: schema.TypeList,
+				Type:     schema.TypeList,
+				Required: true,
 				Elem: &schema.Schema{
 					Type: schema.TypeInt,
 				},
-				Required: true,
 			},
 			"volumes": {
-				Type: schema.TypeList,
+				Type:     schema.TypeList,
+				Required: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"size": {
@@ -65,17 +65,24 @@ func Instances() *schema.Resource {
 						},
 					},
 				},
-				Required: true,
 			},
 			"labels": {
-				Type: schema.TypeList,
+				Type:     schema.TypeList,
+				Optional: true,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
 			},
-			"tags": utils.ListOfMap(),
+			"tags": {
+				Type:     schema.TypeMap,
+				Optional: true,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
 			"config": {
-				Type: schema.TypeSet,
+				Type:     schema.TypeSet,
+				Required: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"vmware_resource_pool": {
@@ -83,23 +90,31 @@ func Instances() *schema.Resource {
 							Required: true,
 						},
 						"public_key": {
-							Type: schema.TypeString,
+							Type:     schema.TypeString,
+							Optional: true,
 						},
 					},
 				},
 			},
 			"copies": {
-				Type:    schema.TypeInt,
-				Default: 1,
+				Type:     schema.TypeInt,
+				Optional: true,
+				Default:  1,
 			},
-			"evars": utils.ListOfMap(),
+			"evars": {
+				Type:     schema.TypeMap,
+				Optional: true,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
 		},
 		SchemaVersion:  0,
 		StateUpgraders: nil,
 		CreateContext:  instanceCreateContext,
 		ReadContext:    instanceReadContext,
 		// TODO figure out if a VM can be updated
-		// Update:             vmUpdate,
+		UpdateContext: instanceUpdate,
 		DeleteContext: instanceDeleteContext,
 		CustomizeDiff: nil,
 		Importer: &schema.ResourceImporter{
@@ -121,15 +136,13 @@ func instanceCreateContext(ctx context.Context, d *schema.ResourceData, meta int
 		return diag.FromErr(err)
 	}
 
-	var diags diag.Diagnostics
-
 	if c.IAMToken == "" {
-		diags = append(diags, diag.Errorf("Empty token")...)
+		return diag.Errorf("Empty token")
 	}
 	if err := c.CmpClient.CreateInstance(models.CreateInstanceBody{}); err != nil {
-		diags = append(diags, diag.FromErr(err)...)
+		return diag.FromErr(err)
 	}
-
+	d.SetId("1")
 	return instanceReadContext(ctx, d, meta)
 }
 
@@ -169,4 +182,8 @@ func instanceDeleteContext(ctx context.Context, d *schema.ResourceData, meta int
 	d.SetId("")
 
 	return diags
+}
+
+func instanceUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	return nil
 }

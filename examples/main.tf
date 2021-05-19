@@ -10,25 +10,40 @@ terraform {
   }
 }
 
-provider hpegl {
-  vmaas_api_url = "https://client.greenlake.hpe-gl-intg.com/api/v1/vmaas/"
-  iam_tokem = "iam-token"
-
+provider "hpegl" {
+  vmaas{
+    location = "location"
+    space_name = "space_name"
+  }
+  iam_token  = "iam-token"
 }
 
-resource hpegl_vmaas_vm test {
-  name         = "Terrform-VM-1"
-  zone_id      = "10"
-  cloud_name   = "HPE GreenLake VMaaS Cloud"
-  site_id      = "4"
-  type         = "centos"
-  instance_type_code = "centos"
-  layout_id = "2"
-  resourcepool_id = "1"
-  agent_install = "yes"
-  plan_id = "10"
-  volume_size = "20"
-  datastore_id = "1"
-  network_id = "5"
+resource "hpegl_vmaas_vm" "test" {
+  name          = "test"
+  cloud_id      = 1
+  group_id      = 1
+  plan_id       = 1
+  instance_type = "test"
+  networks      = [1]
+  volumes  {
+    size         = 5
+    datastore_id = "test"
+
+  }
+  volumes  {
+    size         = 10
+    datastore_id = "test2"
+
+  }
+  labels = ["test"]
+  tags = {
+    name = "value"
+    data = "data"
+  }
+  config  {
+    vmware_resource_pool = "test"
+  }
+
+  copies = 1
 
 }

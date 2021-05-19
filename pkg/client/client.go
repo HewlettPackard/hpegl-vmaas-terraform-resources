@@ -24,11 +24,10 @@ var _ client.Initialisation = (*InitialiseClient)(nil)
 
 // Client is the client struct that is used by the provider code
 type Client struct {
-	IAMToken    string
-	VMaaSAPIUrl string
-	Location    string
-	SpaceName   string
-	CmpClient   *cmp_client.Client
+	IAMToken  string
+	Location  string
+	SpaceName string
+	CmpClient *cmp_client.Client
 }
 
 // InitialiseClient is imported by hpegl from each service repo
@@ -62,18 +61,18 @@ func (i InitialiseClient) NewClient(r *schema.ResourceData) (interface{}, error)
 		token = gltoken.Token
 	}
 	client.IAMToken = token
-	apiClient := api_client.NewAPIClient(&api_client.Configuration{
-		BasePath: client.VMaaSAPIUrl,
-	})
-	client.CmpClient = cmp_client.NewClient(apiClient)
 
 	// Get the Service Instance using agena-api call by sending space_name amd location
 	serviceInstanceID := "SERVICE_INSTANCE_ID"
-	client.VMaaSAPIUrl = constants.ServiceURL + serviceInstanceID + "/"
 
 	// location and space_naem supplied from the terraform tf file
 	client.Location = location
 	client.SpaceName = spaceName
+
+	apiClient := api_client.NewAPIClient(&api_client.Configuration{
+		BasePath: constants.ServiceURL + serviceInstanceID + "/",
+	})
+	client.CmpClient = cmp_client.NewClient(apiClient)
 
 	return client, nil
 }
