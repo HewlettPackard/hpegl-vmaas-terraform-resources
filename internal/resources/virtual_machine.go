@@ -9,85 +9,90 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
+	cmp_client "github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
+	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
 	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/client"
-	cmp_client "github.com/hpe-hcss/vmaas-terraform-resources/internal/cmp_client"
-	models "github.com/hpe-hcss/vmaas-terraform-resources/internal/models"
 )
 
 const (
 	vmAvailableTimeout = 60 * time.Minute
 	vmDeleteTimeout    = 60 * time.Minute
-
 )
 
 func VirtualMachine() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"name": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Type:        schema.TypeString,
+				Required:    true,
+				ForceNew:    true,
+				Description: "Name of the instance",
 			},
-			"zone_id": {
+			"cloud_id": {
 				Type:     schema.TypeString,
 				Required: true,
-				ForceNew: true,
 			},
-			"cloud_name": {
+			"group_id": {
 				Type:     schema.TypeString,
 				Required: true,
-				ForceNew: true,
-			},
-			"site_id": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
-			},
-			"type": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
-			},
-			"instance_type_code": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
-			},
-			"layout_id": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
-			},
-			"resourcepool_id": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
-			},
-			"agent_install": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
 			},
 			"plan_id": {
 				Type:     schema.TypeString,
 				Required: true,
-				ForceNew: true,
 			},
-			"volume_size": {
+			"instance_type": {
 				Type:     schema.TypeString,
 				Required: true,
-				ForceNew: true,
 			},
-			"datastore_id": {
-				Type:     schema.TypeString,
+			"networks": {
+				Type: schema.TypeList,
+				Elem: &schema.Schema{
+					Type: schema.TypeInt,
+				},
 				Required: true,
-				ForceNew: true,
 			},
-			"network_id": {
-				Type:     schema.TypeString,
+			"volumes": {
+				Type: schema.TypeList,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"size": {
+							Type:     schema.TypeString,
+							Required: true,
+						},
+						"datastore_id": {
+							Type:     schema.TypeString,
+							Required: true,
+						},
+					},
+				},
 				Required: true,
-				ForceNew: true,
 			},
+			"labels": {
+				Type: schema.TypeList,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
+			"tags": utils.ListOfMap(),
+			"config": {
+				Type: schema.TypeSet,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"vmware_resource_pool": {
+							Type:     schema.TypeString,
+							Required: true,
+						},
+						"public_key": {
+							Type: schema.TypeString,
+						},
+					},
+				},
+			},
+			"copies": {
+				Type:    schema.TypeInt,
+				Default: 1,
+			},
+			"evars": utils.ListOfMap(),
 		},
 		SchemaVersion:  0,
 		StateUpgraders: nil,
@@ -106,7 +111,7 @@ func VirtualMachine() *schema.Resource {
 			// Update: schema.DefaultTimeout(vmAvailableTimeout),
 			Delete: schema.DefaultTimeout(vmDeleteTimeout),
 		},
-		Description: "",
+		Description: "Create/update/delete instance",
 	}
 }
 
@@ -125,6 +130,7 @@ func vmCreateContext(ctx context.Context, d *schema.ResourceData, meta interface
 	if c.IAMToken == "" {
 		diags = append(diags, diag.Errorf("Empty token")...)
 	}
+	_ = cmp_client.InstancesApiCreateAnInstanceOpts{}
 	//instanceCreateOpts := models.CreateInstanceBodyInstance{}
 	//cmp_client.APIClient{}.InstancesApi.CreateAnInstance(ctx, sid, instanceCreateOpts)
 	d.SetId(string(1))
@@ -162,13 +168,10 @@ func vmDeleteContext(ctx context.Context, d *schema.ResourceData, meta interface
 	var diags diag.Diagnostics
 	id := d.Id()
 
-
 	if id == "" {
 		diags = append(diags, diag.Errorf("Empty ID")...)
 	}
 	d.SetId("")
 
-		return diags
+	return diags
 }
-
-
