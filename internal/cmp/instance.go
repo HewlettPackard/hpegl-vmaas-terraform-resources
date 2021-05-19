@@ -14,6 +14,5 @@ type instance struct {
 
 // CreateInstance create instance
 func (i *instance) CreateInstance(instanceBody models.CreateInstanceBody) error {
-
 	return nil
 }

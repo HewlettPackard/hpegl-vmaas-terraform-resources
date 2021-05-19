@@ -143,6 +143,7 @@ func instanceCreateContext(ctx context.Context, d *schema.ResourceData, meta int
 		return diag.FromErr(err)
 	}
 	d.SetId("1")
+
 	return instanceReadContext(ctx, d, meta)
 }
 
