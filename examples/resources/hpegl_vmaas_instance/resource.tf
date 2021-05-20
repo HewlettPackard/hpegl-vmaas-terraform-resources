@@ -1,24 +1,6 @@
 # (C) Copyright 2021 Hewlett Packard Enterprise Development LP
 
-# Set-up for terraform >= v0.13
-terraform {
-  required_providers {
-    hpegl = {
-      source  = "terraform.example.com/vmaas/hpegl"
-      version = ">= 0.0.1"
-    }
-  }
-}
-
-provider "hpegl" {
-  vmaas {
-    location   = "location"
-    space_name = "space_name"
-  }
-  iam_token = "iam-token"
-}
-
-resource "hpegl_vmaas_vm" "test" {
+resource "hpegl_vmaas_instance" "test" {
   name          = "test"
   cloud_id      = 1
   group_id      = 1
