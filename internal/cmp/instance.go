@@ -16,3 +16,7 @@ type instance struct {
 func (i *instance) CreateInstance(instanceBody models.CreateInstanceBody) error {
 	return nil
 }
+
+func (i *instance) GetInstance(id int) (models.GetInstanceResponse, error) {
+	return models.GetInstanceResponse{}, nil
+}

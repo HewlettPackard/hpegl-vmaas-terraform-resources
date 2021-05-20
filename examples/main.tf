@@ -11,11 +11,11 @@ terraform {
 }
 
 provider "hpegl" {
-  vmaas{
-    location = "location"
+  vmaas {
+    location   = "location"
     space_name = "space_name"
   }
-  iam_token  = "iam-token"
+  iam_token = "iam-token"
 }
 
 resource "hpegl_vmaas_vm" "test" {
@@ -25,12 +25,12 @@ resource "hpegl_vmaas_vm" "test" {
   plan_id       = 1
   instance_type = "test"
   networks      = [1]
-  volumes  {
+  volumes {
     size         = 5
     datastore_id = "test"
 
   }
-  volumes  {
+  volumes {
     size         = 10
     datastore_id = "test2"
 
@@ -40,7 +40,7 @@ resource "hpegl_vmaas_vm" "test" {
     name = "value"
     data = "data"
   }
-  config  {
+  config {
     vmware_resource_pool = "test"
   }
 

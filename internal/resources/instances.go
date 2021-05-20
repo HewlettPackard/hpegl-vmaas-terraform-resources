@@ -28,12 +28,14 @@ func Instances() *schema.Resource {
 				Description: "Name of the instance",
 			},
 			"cloud_id": {
-				Type:     schema.TypeString,
-				Required: true,
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "ID for cloud or zone",
 			},
 			"group_id": {
-				Type:     schema.TypeString,
-				Required: true,
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "ID for group",
 			},
 			"plan_id": {
 				Type:     schema.TypeString,
