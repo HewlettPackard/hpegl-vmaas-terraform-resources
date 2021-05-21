@@ -116,7 +116,7 @@ func Instances() *schema.Resource {
 		CreateContext:  instanceCreateContext,
 		ReadContext:    instanceReadContext,
 		// TODO figure out if a VM can be updated
-		UpdateContext: instanceUpdate,
+		UpdateContext: instanceUpdateContext,
 		DeleteContext: instanceDeleteContext,
 		CustomizeDiff: nil,
 		Importer: &schema.ResourceImporter{
@@ -180,6 +180,6 @@ func instanceDeleteContext(ctx context.Context, d *schema.ResourceData, meta int
 	return diags
 }
 
-func instanceUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func instanceUpdateContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	return nil
 }

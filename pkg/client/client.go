@@ -69,13 +69,14 @@ func (i InitialiseClient) NewClient(r *schema.ResourceData) (interface{}, error)
 	client.Location = location
 	client.SpaceName = spaceName
 
-	apiClient := api_client.NewAPIClient(&api_client.Configuration{
+	cfg := api_client.Configuration{
 		BasePath: constants.ServiceURL + serviceInstanceID,
 		DefaultHeader: map[string]string{
 			"Authorization": token,
 		},
-	})
-	client.CmpClient = cmp_client.NewClient(apiClient)
+	}
+	apiClient := api_client.NewAPIClient(&cfg)
+	client.CmpClient = cmp_client.NewClient(apiClient, cfg)
 
 	return client, nil
 }

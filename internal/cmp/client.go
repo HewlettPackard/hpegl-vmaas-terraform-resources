@@ -12,10 +12,13 @@ type Client struct {
 }
 
 // NewClient returns configured client
-func NewClient(apiClient *apiClient.APIClient) *Client {
+func NewClient(client *apiClient.APIClient, cfg apiClient.Configuration) *Client {
 	return &Client{
 		Instance: &instance{
-			iClient: apiClient.InstancesApi,
+			iClient: &apiClient.InstancesApiService{
+				Client: client,
+				Cfg:    cfg,
+			},
 		},
 	}
 }
