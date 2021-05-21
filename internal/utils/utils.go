@@ -30,15 +30,15 @@ func ListToIntSlice(src []interface{}) ([]int, error) {
 	return dst, nil
 }
 
-// func MapToSet(src map[string]interface{})(*schema.Set,error) {
-// 	dst := schema.NewSet(nil, src)
+func ListToMap(src []interface{}) ([]map[string]interface{}, error) {
+	var dst []map[string]interface{}
 
-// 	for _, s := range src {
-// 		d, ok := s.(int)
-// 		if !ok {
-// 			return nil, fmt.Errorf("unale to convert %v (%T) to int", s, s)
-// 		}
-// 		dst = append(dst, d)
-// 	}
-// 	return dst, nil
-// }
+	for _, s := range src {
+		d, ok := s.(map[string]interface{})
+		if !ok {
+			return nil, fmt.Errorf("unale to convert %v (%T) to int", s, s)
+		}
+		dst = append(dst, d)
+	}
+	return dst, nil
+}

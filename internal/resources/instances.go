@@ -41,8 +41,16 @@ func Instances() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"instance_type": {
+			"layout_id": {
 				Type:     schema.TypeString,
+				Required: true,
+			},
+			"instance_code": {
+				Type:     schema.TypeString,
+				Required: true,
+			},
+			"network_interface_id": {
+				Type:     schema.TypeInt,
 				Required: true,
 			},
 			"networks": {
@@ -145,7 +153,7 @@ func instanceCreateContext(ctx context.Context, d *schema.ResourceData, meta int
 	}
 	d.SetId("1")
 
-	return instanceReadContext(ctx, d, meta)
+	return nil
 }
 
 func instanceReadContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {

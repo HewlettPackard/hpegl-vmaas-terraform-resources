@@ -56,7 +56,7 @@ func (i InitialiseClient) NewClient(r *schema.ResourceData) (interface{}, error)
 	if token == "" {
 		gltoken, err := gltform.GetGLConfig()
 		if err != nil {
-			return nil, fmt.Errorf("Error reading GL token file:  %w", err)
+			return nil, fmt.Errorf("error reading GL token file:  %w", err)
 		}
 		token = gltoken.Token
 	}
@@ -70,7 +70,7 @@ func (i InitialiseClient) NewClient(r *schema.ResourceData) (interface{}, error)
 	client.SpaceName = spaceName
 
 	cfg := api_client.Configuration{
-		BasePath: constants.ServiceURL + serviceInstanceID,
+		Host: constants.ServiceURL + serviceInstanceID,
 		DefaultHeader: map[string]string{
 			"Authorization": token,
 		},
