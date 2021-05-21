@@ -21,71 +21,54 @@ type instance struct {
 	serviceInstance string
 }
 
+// Create instance
 func (i *instance) Create(ctx context.Context, d *schema.ResourceData) error {
 	groupID, err := strconv.Atoi(d.Get("group_id").(string))
 	if err != nil {
 		return err
 	}
-	networkIDs, err := utils.ListToIntSlice(d.Get("networks").([]interface{}))
+	networks, err := getNetwork(d.Get("networks"))
 	if err != nil {
 		return err
 	}
-	var networks []models.CreateInstanceBodyNetworkInterfaces
-	for _, id := range networkIDs {
-		networks = append(networks, models.CreateInstanceBodyNetworkInterfaces{Network: &models.CreateInstanceBodyNetwork{Id: int32(id)}})
-	}
-	volumes, err := utils.ListToMap(d.Get("volumes").([]interface{}))
+	volumes, err := getVolume(d.Get("volumes"))
 	if err != nil {
 		return err
 	}
-	var volumesModel []models.CreateInstanceBodyVolumes
-	for i := range volumes {
-		vID, err := strconv.Atoi(volumes[i]["size"].(string))
-		if err != nil {
-			return err
-		}
-		volumesModel = append(volumesModel, models.CreateInstanceBodyVolumes{
-			Size:        int32(vID),
-			DatastoreId: volumes[i]["datastore_id"],
-		})
-	}
-	log.Printf("\n[DEBUG] volumes = %T", volumes[0]["size"])
 	// config, err := utils.SetToMap(d.Get("config").([]interface{}))
-	// if err != nil {
-	// 	return err
-	// }
-	log.Println("[DEBUG] config = ! ", d.Get("config"))
-
+	log.Println("[DEBUG] config =  ", d.Get("config"))
 	req := &models.CreateInstanceBody{
-		ZoneId: d.Get("cloud_id").(string),
+		ZoneId: utils.JsonNumber(d.Get("cloud_id")),
 		Instance: &models.CreateInstanceBodyInstance{
 			Name:  d.Get("name").(string),
-			Cloud: d.Get("cloud_id").(string),
+			Cloud: "HPE GreenLake VMaaS Cloud",
 			InstanceType: &models.CreateInstanceBodyInstanceInstanceType{
 				Code: d.Get("instance_code").(string),
 			},
 			Plan: &models.CreateInstanceBodyInstancePlan{
-				Id: d.Get("plan_id").(string),
+				Id: utils.JsonNumber(d.Get("plan_id")),
 			},
 			Site: &models.CreateInstanceBodyInstanceSite{
 				Id: int32(groupID),
 			},
-			// Type: d.Get("instance_type").(string),
+			Type: d.Get("instance_code").(string),
 			Layout: &models.CreateInstanceBodyInstanceLayout{
-				Id: d.Get("layout_id").(string),
+				Id: utils.JsonNumber(d.Get("layout_id")),
 			},
 		},
-		Volumes:           volumesModel,
+		Volumes:           volumes,
 		NetworkInterfaces: networks,
 		Config: &models.CreateInstanceBodyConfig{
-			ResourcePoolId: 2,
+			ResourcePoolId: "2",
 		},
 	}
+
 	resp, err := i.iClient.CreateAnInstance(ctx, i.serviceInstance, req)
 	if err != nil {
 		return err
 	}
 	d.SetId(strconv.Itoa(int(resp.Instance.Id)))
+
 	return nil
 }
 
@@ -95,6 +78,8 @@ func (i *instance) Create(ctx context.Context, d *schema.ResourceData) error {
 func (i *instance) Update(ctx context.Context, d *schema.ResourceData) error {
 	return nil
 }
+
+// Delete instance and set ID as ""
 func (i *instance) Delete(ctx context.Context, d *schema.ResourceData) error {
 	id, err := strconv.Atoi(d.Id())
 	if err != nil {
@@ -111,6 +96,8 @@ func (i *instance) Delete(ctx context.Context, d *schema.ResourceData) error {
 	}
 	return nil
 }
+
+// Read instance and set state values accordingly
 func (i *instance) Read(ctx context.Context, d *schema.ResourceData) error {
 	id, err := strconv.Atoi(d.Id())
 	if err != nil {
@@ -138,4 +125,46 @@ func (i *instance) Read(ctx context.Context, d *schema.ResourceData) error {
 	d.Set("copies", resp.Instance)
 	d.Set("evars", resp.Instance.Evars)
 	return nil
+}
+
+func getVolume(v interface{}) ([]models.CreateInstanceBodyVolumes, error) {
+	log.Printf("\n[INFO] Volumes V :  %+v", v)
+	volumes, err := utils.ListToMap(v)
+	if err != nil {
+		return nil, err
+	}
+	log.Printf("\n[INFO] Volumes :  %+v", volumes)
+	var volumesModel []models.CreateInstanceBodyVolumes
+	for i := range volumes {
+		vID, err := strconv.Atoi(volumes[i]["size"].(string))
+		if err != nil {
+			return nil, err
+		}
+		volumesModel = append(volumesModel, models.CreateInstanceBodyVolumes{
+			Id:          -1,
+			Name:        volumes[i]["name"].(string),
+			Size:        int32(vID),
+			DatastoreId: volumes[i]["datastore_id"],
+			RootVolume:  true,
+		})
+	}
+	return volumesModel, nil
+}
+
+func getNetwork(v interface{}) ([]models.CreateInstanceBodyNetworkInterfaces, error) {
+	networksMap, err := utils.ListToMap(v)
+	if err != nil {
+		return nil, err
+	}
+	log.Printf("\n[INFO] Networks :  %+v", networksMap)
+	var networks []models.CreateInstanceBodyNetworkInterfaces
+	for _, n := range networksMap {
+		networks = append(networks, models.CreateInstanceBodyNetworkInterfaces{
+			Network: &models.CreateInstanceBodyNetwork{
+				Id: int32(n["network_id"].(int)),
+			},
+			NetworkInterfaceTypeId: utils.JsonNumber(n["interface_type_id"]),
+		})
+	}
+	return networks, nil
 }

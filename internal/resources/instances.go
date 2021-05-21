@@ -49,15 +49,20 @@ func Instances() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"network_interface_id": {
-				Type:     schema.TypeInt,
-				Required: true,
-			},
 			"networks": {
 				Type:     schema.TypeList,
 				Required: true,
-				Elem: &schema.Schema{
-					Type: schema.TypeInt,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"interface_type_id": {
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
+						"network_id": {
+							Type:     schema.TypeInt,
+							Required: true,
+						},
+					},
 				},
 			},
 			"volumes": {
@@ -65,6 +70,10 @@ func Instances() *schema.Resource {
 				Required: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+						"name": {
+							Type:     schema.TypeString,
+							Required: true,
+						},
 						"size": {
 							Type:     schema.TypeString,
 							Required: true,
@@ -118,6 +127,10 @@ func Instances() *schema.Resource {
 					Type: schema.TypeString,
 				},
 			},
+			"state": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
 		},
 		SchemaVersion:  0,
 		StateUpgraders: nil,
@@ -151,7 +164,6 @@ func instanceCreateContext(ctx context.Context, d *schema.ResourceData, meta int
 	if err := c.CmpClient.Instance.Create(ctx, d); err != nil {
 		return diag.FromErr(err)
 	}
-	d.SetId("1")
 
 	return nil
 }

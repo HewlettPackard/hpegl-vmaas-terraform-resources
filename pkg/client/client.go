@@ -63,14 +63,14 @@ func (i InitialiseClient) NewClient(r *schema.ResourceData) (interface{}, error)
 	client.IAMToken = token
 
 	// Get the Service Instance using agena-api call by sending space_name amd location
-	serviceInstanceID := "SERVICE_INSTANCE_ID"
+	// serviceInstanceID := "SERVICE_INSTANCE_ID"
 
 	// location and space_naem supplied from the terraform tf file
 	client.Location = location
 	client.SpaceName = spaceName
 
 	cfg := api_client.Configuration{
-		Host: constants.ServiceURL + serviceInstanceID,
+		Host: constants.ServiceURL,
 		DefaultHeader: map[string]string{
 			"Authorization": token,
 		},
