@@ -4,6 +4,7 @@ package resources
 
 import (
 	"context"
+	"strconv"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -141,7 +142,7 @@ func instanceCreateContext(ctx context.Context, d *schema.ResourceData, meta int
 	if c.IAMToken == "" {
 		return diag.Errorf("Empty token")
 	}
-	if err := c.CmpClient.CreateInstance(models.CreateInstanceBody{}); err != nil {
+	if err := c.CmpClient.CreateInstance(ctx, d, models.CreateInstanceBody{}); err != nil {
 		return diag.FromErr(err)
 	}
 	d.SetId("1")
@@ -154,19 +155,16 @@ func instanceReadContext(ctx context.Context, d *schema.ResourceData, meta inter
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	token := c.IAMToken
-
-	println(" Read Context IAM Token : " + token)
-
-	var diags diag.Diagnostics
-	id := d.Id()
-	println(" ID : " + id)
-
-	if token == "" {
-		diags = append(diags, diag.Errorf("Empty token")...)
+	id, err := strconv.Atoi(d.Id())
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	_, err = c.CmpClient.GetInstance(ctx, d, id)
+	if err != nil {
+		return diag.FromErr(err)
 	}
 
-	return diags
+	return nil
 }
 
 func instanceDeleteContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {

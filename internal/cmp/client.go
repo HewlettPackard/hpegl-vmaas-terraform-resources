@@ -14,7 +14,7 @@ type Client struct {
 func NewClient(apiClient *apiClient.APIClient) *Client {
 	return &Client{
 		Instance: &instance{
-			client: apiClient,
+			iClient: apiClient.InstancesApi,
 		},
 	}
 }

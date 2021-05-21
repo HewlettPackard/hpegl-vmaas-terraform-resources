@@ -70,7 +70,10 @@ func (i InitialiseClient) NewClient(r *schema.ResourceData) (interface{}, error)
 	client.SpaceName = spaceName
 
 	apiClient := api_client.NewAPIClient(&api_client.Configuration{
-		BasePath: constants.ServiceURL + serviceInstanceID + "/",
+		BasePath: constants.ServiceURL + serviceInstanceID,
+		DefaultHeader: map[string]string{
+			"Authorization": token,
+		},
 	})
 	client.CmpClient = cmp_client.NewClient(apiClient)
 

@@ -3,20 +3,42 @@
 package cmp
 
 import (
+	"context"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	client "github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/models"
 )
 
 // instance implements functions related to cmp instances
 type instance struct {
-	client *client.APIClient
+	// expose Instance API service to instances related operations
+	iClient         *client.InstancesApiService
+	serviceInstance string
 }
 
 // CreateInstance create instance
-func (i *instance) CreateInstance(instanceBody models.CreateInstanceBody) error {
+func (i *instance) CreateInstance(ctx context.Context, d *schema.ResourceData, instanceBody models.CreateInstanceBody) error {
 	return nil
 }
 
-func (i *instance) GetInstance(id int) (models.GetInstanceResponse, error) {
-	return models.GetInstanceResponse{}, nil
+func (i *instance) GetInstance(ctx context.Context, d *schema.ResourceData, id int) (models.GetInstanceResponse, error) {
+	resp, err := i.iClient.GetASpecificInstance(ctx, i.serviceInstance, int32(id))
+	d.Set("name", resp.Instance.Name)
+	d.Set("cloud_id", resp.Instance.Cloud.Id)
+	d.Set("group_id", resp.Instance.Group.Id)
+	d.Set("plan_id", resp.Instance.Plan.Id)
+	d.Set("instance_type", resp.Instance.InstanceType)
+	d.Set("networks", resp.Instance)
+	d.Set("volumes", resp.Instance.Volumes)
+	d.Set("size", resp.Instance.Volumes[0].Size)
+	d.Set("datastore_id", resp.Instance.Volumes[0].DatastoreId)
+	d.Set("labels", resp.Instance.Labels)
+	d.Set("tags", resp.Instance.Tags)
+	d.Set("config", resp.Instance.Config)
+	d.Set("vmware_resource_pool", resp.Instance.Config.ResourcePoolID)
+	// d.Set("public_key", resp.Instance.Config)
+	// d.Set("copies", resp.Instance)
+	d.Set("evars", resp.Instance.Evars)
+	return resp, err
 }
