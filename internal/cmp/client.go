@@ -7,7 +7,8 @@ import apiClient "github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
 // Client is the cmp client which will implements all the
 // functions in interface.go
 type Client struct {
-	Instance
+	// Instance resource
+	Instance Resource
 }
 
 // NewClient returns configured client

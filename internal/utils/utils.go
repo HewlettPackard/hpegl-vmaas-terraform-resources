@@ -2,9 +2,11 @@
 
 package utils
 
-import "fmt"
+import (
+	"fmt"
+)
 
-func listToStringSlice(src []interface{}) ([]string, error) {
+func ListToStringSlice(src []interface{}) ([]string, error) {
 	dst := make([]string, 0, len(src))
 	for _, s := range src {
 		d, ok := s.(string)
@@ -16,7 +18,7 @@ func listToStringSlice(src []interface{}) ([]string, error) {
 	return dst, nil
 }
 
-func listToIntSlice(src []interface{}) ([]int, error) {
+func ListToIntSlice(src []interface{}) ([]int, error) {
 	dst := make([]int, 0, len(src))
 	for _, s := range src {
 		d, ok := s.(int)
@@ -27,3 +29,16 @@ func listToIntSlice(src []interface{}) ([]int, error) {
 	}
 	return dst, nil
 }
+
+// func MapToSet(src map[string]interface{})(*schema.Set,error) {
+// 	dst := schema.NewSet(nil, src)
+
+// 	for _, s := range src {
+// 		d, ok := s.(int)
+// 		if !ok {
+// 			return nil, fmt.Errorf("unale to convert %v (%T) to int", s, s)
+// 		}
+// 		dst = append(dst, d)
+// 	}
+// 	return dst, nil
+// }

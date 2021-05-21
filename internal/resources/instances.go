@@ -4,19 +4,18 @@ package resources
 
 import (
 	"context"
-	"strconv"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
-	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/models"
 	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/client"
 )
 
 const (
-	vmAvailableTimeout = 60 * time.Minute
-	vmDeleteTimeout    = 60 * time.Minute
+	instanceAvailableTimeout = 60 * time.Minute
+	instanceReadTimeout      = 2 * time.Minute
+	instanceDeleteTimeout    = 60 * time.Minute
 )
 
 func Instances() *schema.Resource {
@@ -123,11 +122,10 @@ func Instances() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
-		DeprecationMessage: "",
 		Timeouts: &schema.ResourceTimeout{
-			Create: schema.DefaultTimeout(vmAvailableTimeout),
-			// Update: schema.DefaultTimeout(vmAvailableTimeout),
-			Delete: schema.DefaultTimeout(vmDeleteTimeout),
+			Create: schema.DefaultTimeout(instanceAvailableTimeout),
+			Update: schema.DefaultTimeout(instanceAvailableTimeout),
+			Delete: schema.DefaultTimeout(instanceDeleteTimeout),
 		},
 		Description: "Create/update/delete instance",
 	}
@@ -142,7 +140,7 @@ func instanceCreateContext(ctx context.Context, d *schema.ResourceData, meta int
 	if c.IAMToken == "" {
 		return diag.Errorf("Empty token")
 	}
-	if err := c.CmpClient.CreateInstance(ctx, d, models.CreateInstanceBody{}); err != nil {
+	if err := c.CmpClient.Instance.Create(ctx, d); err != nil {
 		return diag.FromErr(err)
 	}
 	d.SetId("1")
@@ -155,11 +153,8 @@ func instanceReadContext(ctx context.Context, d *schema.ResourceData, meta inter
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	id, err := strconv.Atoi(d.Id())
-	if err != nil {
-		return diag.FromErr(err)
-	}
-	_, err = c.CmpClient.GetInstance(ctx, d, id)
+
+	err = c.CmpClient.Instance.Read(ctx, d)
 	if err != nil {
 		return diag.FromErr(err)
 	}

@@ -4,10 +4,10 @@ package cmp
 
 import (
 	"context"
+	"strconv"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	client "github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
-	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/models"
 )
 
 // instance implements functions related to cmp instances
@@ -17,13 +17,24 @@ type instance struct {
 	serviceInstance string
 }
 
-// CreateInstance create instance
-func (i *instance) CreateInstance(ctx context.Context, d *schema.ResourceData, instanceBody models.CreateInstanceBody) error {
+func (i *instance) Create(ctx context.Context, d *schema.ResourceData) error {
 	return nil
 }
-
-func (i *instance) GetInstance(ctx context.Context, d *schema.ResourceData, id int) (models.GetInstanceResponse, error) {
+func (i *instance) Update(ctx context.Context, d *schema.ResourceData) error {
+	return nil
+}
+func (i *instance) Delete(ctx context.Context, d *schema.ResourceData) error {
+	return nil
+}
+func (i *instance) Read(ctx context.Context, d *schema.ResourceData) error {
+	id, err := strconv.Atoi(d.Id())
+	if err != nil {
+		return err
+	}
 	resp, err := i.iClient.GetASpecificInstance(ctx, i.serviceInstance, int32(id))
+	if err != nil {
+		return err
+	}
 	d.Set("name", resp.Instance.Name)
 	d.Set("cloud_id", resp.Instance.Cloud.Id)
 	d.Set("group_id", resp.Instance.Group.Id)
@@ -40,5 +51,5 @@ func (i *instance) GetInstance(ctx context.Context, d *schema.ResourceData, id i
 	// d.Set("public_key", resp.Instance.Config)
 	// d.Set("copies", resp.Instance)
 	d.Set("evars", resp.Instance.Evars)
-	return resp, err
+	return nil
 }
