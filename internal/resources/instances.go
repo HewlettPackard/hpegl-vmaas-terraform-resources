@@ -186,6 +186,7 @@ func instanceCreateContext(ctx context.Context, d *schema.ResourceData, meta int
 			if err := c.CmpClient.Instance.Read(ctx, d); err != nil {
 				return nil, "", err
 			}
+
 			return d.Get("name"), d.Get("status").(string), nil
 		},
 	}

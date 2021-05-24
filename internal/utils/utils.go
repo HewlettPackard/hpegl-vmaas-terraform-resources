@@ -95,3 +95,7 @@ func JSONNumber(in interface{}) json.Number {
 func typeError(wantedType string, in interface{}) error {
 	return fmt.Errorf("error unable to convert %v (%T) to %s", in, in, wantedType)
 }
+
+func ParseInt(str string) (int64, error) {
+	return strconv.ParseInt(str, 10, 64)
+}

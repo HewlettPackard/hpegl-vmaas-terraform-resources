@@ -22,7 +22,7 @@ type instance struct {
 
 // Create instance
 func (i *instance) Create(ctx context.Context, d *schema.ResourceData) error {
-	groupID, err := strconv.Atoi(d.Get("group_id").(string))
+	groupID, err := utils.ParseInt(d.Get("group_id").(string))
 	if err != nil {
 		return err
 	}
@@ -45,8 +45,7 @@ func (i *instance) Create(ctx context.Context, d *schema.ResourceData) error {
 	req := &models.CreateInstanceBody{
 		ZoneId: utils.JSONNumber(d.Get("cloud_id")),
 		Instance: &models.CreateInstanceBodyInstance{
-			Name:  d.Get("name").(string),
-			Cloud: "HPE GreenLake VMaaS Cloud",
+			Name: d.Get("name").(string),
 			InstanceType: &models.CreateInstanceBodyInstanceInstanceType{
 				Code: d.Get("instance_code").(string),
 			},
@@ -84,7 +83,7 @@ func (i *instance) Update(ctx context.Context, d *schema.ResourceData) error {
 
 // Delete instance and set ID as ""
 func (i *instance) Delete(ctx context.Context, d *schema.ResourceData) error {
-	id, err := strconv.Atoi(d.Id())
+	id, err := utils.ParseInt(d.Id())
 	if err != nil {
 		return err
 	}
@@ -102,7 +101,7 @@ func (i *instance) Delete(ctx context.Context, d *schema.ResourceData) error {
 
 // Read instance and set state values accordingly
 func (i *instance) Read(ctx context.Context, d *schema.ResourceData) error {
-	id, err := strconv.Atoi(d.Id())
+	id, err := utils.ParseInt(d.Id())
 	if err != nil {
 		return err
 	}
@@ -125,7 +124,7 @@ func getVolume(v interface{}) ([]models.CreateInstanceBodyVolumes, error) {
 	}
 	volumesModel := make([]models.CreateInstanceBodyVolumes, 0, len(volumes))
 	for i := range volumes {
-		vID, err := strconv.Atoi(volumes[i]["size"].(string))
+		vID, err := utils.ParseInt(volumes[i]["size"].(string))
 		if err != nil {
 			return nil, err
 		}
