@@ -27,16 +27,22 @@ func (i *instance) Create(ctx context.Context, d *schema.ResourceData) error {
 	if err != nil {
 		return err
 	}
-	networks, err := getNetwork(d.Get("networks"))
+
+	networks, err := getNetwork(ctx, d.Get("networks"))
 	if err != nil {
 		return err
 	}
-	volumes, err := getVolume(d.Get("volumes"))
+
+	volumes, err := getVolume(ctx, d.Get("volumes"))
 	if err != nil {
 		return err
 	}
-	// config, err := utils.SetToMap(d.Get("config").([]interface{}))
-	log.Println("[DEBUG] config =  ", d.Get("config"))
+
+	config, err := getConfig(ctx, d.Get("config"))
+	if err != nil {
+		return err
+	}
+	tags, _ := getTags(ctx, d.Get("tags"))
 	req := &models.CreateInstanceBody{
 		ZoneId: utils.JsonNumber(d.Get("cloud_id")),
 		Instance: &models.CreateInstanceBodyInstance{
@@ -58,9 +64,8 @@ func (i *instance) Create(ctx context.Context, d *schema.ResourceData) error {
 		},
 		Volumes:           volumes,
 		NetworkInterfaces: networks,
-		Config: &models.CreateInstanceBodyConfig{
-			ResourcePoolId: "2",
-		},
+		Config:            config,
+		Tags:              tags,
 	}
 
 	resp, err := i.iClient.CreateAnInstance(ctx, i.serviceInstance, req)
@@ -127,13 +132,13 @@ func (i *instance) Read(ctx context.Context, d *schema.ResourceData) error {
 	return nil
 }
 
-func getVolume(v interface{}) ([]models.CreateInstanceBodyVolumes, error) {
-	log.Printf("\n[INFO] Volumes V :  %+v", v)
+func getVolume(ctx context.Context, v interface{}) ([]models.CreateInstanceBodyVolumes, error) {
+	log.Printf("[INFO] Volumes V :  %+v", v)
 	volumes, err := utils.ListToMap(v)
 	if err != nil {
 		return nil, err
 	}
-	log.Printf("\n[INFO] Volumes :  %+v", volumes)
+	log.Printf("[INFO] Volumes :  %+v", volumes)
 	var volumesModel []models.CreateInstanceBodyVolumes
 	for i := range volumes {
 		vID, err := strconv.Atoi(volumes[i]["size"].(string))
@@ -151,12 +156,12 @@ func getVolume(v interface{}) ([]models.CreateInstanceBodyVolumes, error) {
 	return volumesModel, nil
 }
 
-func getNetwork(v interface{}) ([]models.CreateInstanceBodyNetworkInterfaces, error) {
+func getNetwork(ctx context.Context, v interface{}) ([]models.CreateInstanceBodyNetworkInterfaces, error) {
 	networksMap, err := utils.ListToMap(v)
 	if err != nil {
 		return nil, err
 	}
-	log.Printf("\n[INFO] Networks :  %+v", networksMap)
+	log.Printf("[INFO] Networks :  %+v", networksMap)
 	var networks []models.CreateInstanceBodyNetworkInterfaces
 	for _, n := range networksMap {
 		networks = append(networks, models.CreateInstanceBodyNetworkInterfaces{
@@ -167,4 +172,30 @@ func getNetwork(v interface{}) ([]models.CreateInstanceBodyNetworkInterfaces, er
 		})
 	}
 	return networks, nil
+}
+
+func getConfig(ctx context.Context, v interface{}) (*models.CreateInstanceBodyConfig, error) {
+	c, err := utils.SetToMap(v)
+	if err != nil {
+		return nil, err
+	}
+	config := &models.CreateInstanceBodyConfig{
+		ResourcePoolId: utils.JsonNumber(c["vmware_resource_pool"]),
+	}
+	return config, nil
+}
+
+func getTags(ctx context.Context, v interface{}) ([]models.CreateInstanceBodyTag, error) {
+	t, err := utils.MapTopMap(v)
+	if err != nil {
+		return nil, err
+	}
+	tags := make([]models.CreateInstanceBodyTag, 0, len(t))
+	for k, v := range t {
+		tags = append(tags, models.CreateInstanceBodyTag{
+			Name:  k,
+			Value: v.(string),
+		})
+	}
+	return tags, nil
 }

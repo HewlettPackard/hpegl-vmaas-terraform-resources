@@ -8,7 +8,6 @@ import (
 	"github.com/hpe-hcss/hpegl-provider-lib/pkg/gltform"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-
 	"github.com/hpe-hcss/hpegl-provider-lib/pkg/client"
 	api_client "github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
 	cmp_client "github.com/hpe-hcss/vmaas-terraform-resources/internal/cmp"

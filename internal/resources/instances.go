@@ -6,9 +6,9 @@ import (
 	"context"
 	"time"
 
+	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-
 	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/client"
 )
 
@@ -158,14 +158,11 @@ func instanceCreateContext(ctx context.Context, d *schema.ResourceData, meta int
 		return diag.FromErr(err)
 	}
 
-	if c.IAMToken == "" {
-		return diag.Errorf("Empty token")
-	}
 	if err := c.CmpClient.Instance.Create(ctx, d); err != nil {
 		return diag.FromErr(err)
 	}
 
-	return nil
+	return instanceReadContext(ctx, d, meta)
 }
 
 func instanceReadContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -175,6 +172,16 @@ func instanceReadContext(ctx context.Context, d *schema.ResourceData, meta inter
 	}
 
 	err = c.CmpClient.Instance.Read(ctx, d)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	createStateConf := resource.StateChangeConf{
+		Delay:   time.Second * 10,
+		Pending: []string{"creating"},
+		Target:  []string{"running"},
+	}
+	_, err = createStateConf.WaitForState()
 	if err != nil {
 		return diag.FromErr(err)
 	}

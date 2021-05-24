@@ -19,6 +19,7 @@ func NewClient(client *apiClient.APIClient, cfg apiClient.Configuration) *Client
 				Client: client,
 				Cfg:    cfg,
 			},
+			serviceInstance: "0123456789abcdef",
 		},
 	}
 }

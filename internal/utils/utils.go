@@ -6,6 +6,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func ListToStringSlice(src interface{}) ([]string, error) {
@@ -54,6 +56,26 @@ func ListToMap(src interface{}) ([]map[string]interface{}, error) {
 			return nil, typeError("Map", s)
 		}
 		dst = append(dst, d)
+	}
+	return dst, nil
+}
+
+func SetToMap(src interface{}) (map[string]interface{}, error) {
+	set, ok := src.(*schema.Set)
+	if !ok {
+		return nil, typeError("*Set", src)
+	}
+	if set == nil {
+		return nil, fmt.Errorf("error nil set")
+	}
+	list := set.List()
+	return list[0].(map[string]interface{}), nil
+}
+
+func MapTopMap(src interface{}) (map[string]interface{}, error) {
+	dst, ok := src.(map[string]interface{})
+	if !ok {
+		return nil, typeError("map[string]interface{}", src)
 	}
 	return dst, nil
 }
