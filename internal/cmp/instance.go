@@ -57,7 +57,6 @@ func (i *instance) Create(ctx context.Context, d *schema.ResourceData) error {
 			Site: &models.CreateInstanceBodyInstanceSite{
 				Id: int32(groupID),
 			},
-			Type: d.Get("instance_code").(string),
 			Layout: &models.CreateInstanceBodyInstanceLayout{
 				Id: utils.JsonNumber(d.Get("layout_id")),
 			},
@@ -94,11 +93,10 @@ func (i *instance) Delete(ctx context.Context, d *schema.ResourceData) error {
 	if err != nil {
 		return err
 	}
-	if res.Success {
-		d.SetId("")
-	} else {
+	if !res.Success {
 		return fmt.Errorf("%s", res.Message)
 	}
+	d.SetId("")
 	return nil
 }
 
@@ -112,23 +110,10 @@ func (i *instance) Read(ctx context.Context, d *schema.ResourceData) error {
 	if err != nil {
 		return err
 	}
-	d.Set("name", resp.Instance.Name)
-	d.Set("layout", resp.Instance.Cloud.Id)
-	d.Set("cloud_id", resp.Instance.Cloud.Id)
-	d.Set("group_id", resp.Instance.Group.Id)
-	d.Set("plan_id", resp.Instance.Plan.Id)
-	d.Set("instance_type", resp.Instance.InstanceType)
-	d.Set("networks", resp.Instance)
-	d.Set("volumes", resp.Instance.Volumes)
-	d.Set("size", resp.Instance.Volumes[0].Size)
-	d.Set("datastore_id", resp.Instance.Volumes[0].DatastoreId)
-	d.Set("labels", resp.Instance.Labels)
-	d.Set("tags", resp.Instance.Tags)
-	d.Set("config", resp.Instance.Config)
-	d.Set("vmware_resource_pool", resp.Instance.Config.ResourcePoolID)
-	d.Set("public_key", resp.Instance.Config)
-	d.Set("copies", resp.Instance)
-	d.Set("evars", resp.Instance.Evars)
+	d.SetId(strconv.Itoa(int(resp.Instance.Id)))
+	d.Set("status", resp.Instance.Status)
+	d.Set("state", "poweron")
+
 	return nil
 }
 
@@ -166,7 +151,7 @@ func getNetwork(ctx context.Context, v interface{}) ([]models.CreateInstanceBody
 	for _, n := range networksMap {
 		networks = append(networks, models.CreateInstanceBodyNetworkInterfaces{
 			Network: &models.CreateInstanceBodyNetwork{
-				Id: int32(n["network_id"].(int)),
+				Id: int32(n["id"].(int)),
 			},
 			NetworkInterfaceTypeId: utils.JsonNumber(n["interface_type_id"]),
 		})
@@ -180,7 +165,8 @@ func getConfig(ctx context.Context, v interface{}) (*models.CreateInstanceBodyCo
 		return nil, err
 	}
 	config := &models.CreateInstanceBodyConfig{
-		ResourcePoolId: utils.JsonNumber(c["vmware_resource_pool"]),
+		ResourcePoolId: utils.JsonNumber(c["resource_pool_id"]),
+		Template:       int32(c["template_id"].(int)),
 	}
 	return config, nil
 }

@@ -6,8 +6,8 @@ import (
 	"context"
 	"time"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/client"
 )
@@ -58,7 +58,11 @@ func Instances() *schema.Resource {
 							Type:     schema.TypeInt,
 							Optional: true,
 						},
-						"network_id": {
+						"name": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"id": {
 							Type:     schema.TypeInt,
 							Required: true,
 						},
@@ -104,13 +108,17 @@ func Instances() *schema.Resource {
 				Required: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"vmware_resource_pool": {
+						"resource_pool_id": {
 							Type:     schema.TypeString,
 							Required: true,
 						},
 						"public_key": {
 							Type:     schema.TypeString,
 							Optional: true,
+						},
+						"template_id": {
+							Type:     schema.TypeInt,
+							Required: true,
 						},
 					},
 				},
@@ -128,6 +136,10 @@ func Instances() *schema.Resource {
 				},
 			},
 			"state": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"status": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
@@ -162,7 +174,25 @@ func instanceCreateContext(ctx context.Context, d *schema.ResourceData, meta int
 		return diag.FromErr(err)
 	}
 
-	return instanceReadContext(ctx, d, meta)
+	// Wait for the status to be running
+	createStateConf := resource.StateChangeConf{
+		Delay:      time.Second * 30,
+		Pending:    []string{"provisioning"},
+		Target:     []string{"running"},
+		Timeout:    time.Minute * 10,
+		MinTimeout: time.Second * 30,
+		Refresh: func() (result interface{}, state string, err error) {
+			if err := c.CmpClient.Instance.Read(ctx, d); err != nil {
+				return nil, "", err
+			}
+			return d.Get("name"), d.Get("status").(string), nil
+		},
+	}
+	_, err = createStateConf.WaitForStateContext(ctx)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	return nil
 }
 
 func instanceReadContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -176,16 +206,6 @@ func instanceReadContext(ctx context.Context, d *schema.ResourceData, meta inter
 		return diag.FromErr(err)
 	}
 
-	createStateConf := resource.StateChangeConf{
-		Delay:   time.Second * 10,
-		Pending: []string{"creating"},
-		Target:  []string{"running"},
-	}
-	_, err = createStateConf.WaitForState()
-	if err != nil {
-		return diag.FromErr(err)
-	}
-
 	return nil
 }
 
@@ -194,17 +214,11 @@ func instanceDeleteContext(ctx context.Context, d *schema.ResourceData, meta int
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	token := c.IAMToken
-	print(" Delete IAM Token : " + token)
-	var diags diag.Diagnostics
-	id := d.Id()
 
-	if id == "" {
-		diags = append(diags, diag.Errorf("Empty ID")...)
+	if err := c.CmpClient.Instance.Delete(ctx, d); err != nil {
+		return diag.FromErr(err)
 	}
-	d.SetId("")
-
-	return diags
+	return nil
 }
 
 func instanceUpdateContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
