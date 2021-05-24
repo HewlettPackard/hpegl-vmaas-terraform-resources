@@ -5,11 +5,10 @@ package cmp
 import (
 	"context"
 	"fmt"
-	"log"
 	"strconv"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	client "github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
+	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/models"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
 )
@@ -28,23 +27,23 @@ func (i *instance) Create(ctx context.Context, d *schema.ResourceData) error {
 		return err
 	}
 
-	networks, err := getNetwork(ctx, d.Get("networks"))
+	networks, err := getNetwork(d.Get("networks"))
 	if err != nil {
 		return err
 	}
 
-	volumes, err := getVolume(ctx, d.Get("volumes"))
+	volumes, err := getVolume(d.Get("volumes"))
 	if err != nil {
 		return err
 	}
 
-	config, err := getConfig(ctx, d.Get("config"))
+	config, err := getConfig(d.Get("config"))
 	if err != nil {
 		return err
 	}
-	tags, _ := getTags(ctx, d.Get("tags"))
+	tags, _ := getTags(d.Get("tags"))
 	req := &models.CreateInstanceBody{
-		ZoneId: utils.JsonNumber(d.Get("cloud_id")),
+		ZoneId: utils.JSONNumber(d.Get("cloud_id")),
 		Instance: &models.CreateInstanceBodyInstance{
 			Name:  d.Get("name").(string),
 			Cloud: "HPE GreenLake VMaaS Cloud",
@@ -52,13 +51,13 @@ func (i *instance) Create(ctx context.Context, d *schema.ResourceData) error {
 				Code: d.Get("instance_code").(string),
 			},
 			Plan: &models.CreateInstanceBodyInstancePlan{
-				Id: utils.JsonNumber(d.Get("plan_id")),
+				Id: utils.JSONNumber(d.Get("plan_id")),
 			},
 			Site: &models.CreateInstanceBodyInstanceSite{
 				Id: int32(groupID),
 			},
 			Layout: &models.CreateInstanceBodyInstanceLayout{
-				Id: utils.JsonNumber(d.Get("layout_id")),
+				Id: utils.JSONNumber(d.Get("layout_id")),
 			},
 		},
 		Volumes:           volumes,
@@ -77,7 +76,7 @@ func (i *instance) Create(ctx context.Context, d *schema.ResourceData) error {
 }
 
 // Update instance including poweroff, powerOn, restart, suspend
-// changing network, volumes and instance properies such as labels
+// changing network, volumes and instance properties such as labels
 // groups and tags
 func (i *instance) Update(ctx context.Context, d *schema.ResourceData) error {
 	return nil
@@ -97,6 +96,7 @@ func (i *instance) Delete(ctx context.Context, d *schema.ResourceData) error {
 		return fmt.Errorf("%s", res.Message)
 	}
 	d.SetId("")
+
 	return nil
 }
 
@@ -111,20 +111,19 @@ func (i *instance) Read(ctx context.Context, d *schema.ResourceData) error {
 		return err
 	}
 	d.SetId(strconv.Itoa(int(resp.Instance.Id)))
-	d.Set("status", resp.Instance.Status)
-	d.Set("state", "poweron")
+	if err := d.Set("status", resp.Instance.Status); err != nil {
+		return err
+	}
 
 	return nil
 }
 
-func getVolume(ctx context.Context, v interface{}) ([]models.CreateInstanceBodyVolumes, error) {
-	log.Printf("[INFO] Volumes V :  %+v", v)
+func getVolume(v interface{}) ([]models.CreateInstanceBodyVolumes, error) {
 	volumes, err := utils.ListToMap(v)
 	if err != nil {
 		return nil, err
 	}
-	log.Printf("[INFO] Volumes :  %+v", volumes)
-	var volumesModel []models.CreateInstanceBodyVolumes
+	volumesModel := make([]models.CreateInstanceBodyVolumes, 0, len(volumes))
 	for i := range volumes {
 		vID, err := strconv.Atoi(volumes[i]["size"].(string))
 		if err != nil {
@@ -138,40 +137,42 @@ func getVolume(ctx context.Context, v interface{}) ([]models.CreateInstanceBodyV
 			RootVolume:  true,
 		})
 	}
+
 	return volumesModel, nil
 }
 
-func getNetwork(ctx context.Context, v interface{}) ([]models.CreateInstanceBodyNetworkInterfaces, error) {
+func getNetwork(v interface{}) ([]models.CreateInstanceBodyNetworkInterfaces, error) {
 	networksMap, err := utils.ListToMap(v)
 	if err != nil {
 		return nil, err
 	}
-	log.Printf("[INFO] Networks :  %+v", networksMap)
-	var networks []models.CreateInstanceBodyNetworkInterfaces
+	networks := make([]models.CreateInstanceBodyNetworkInterfaces, 0, len(networksMap))
 	for _, n := range networksMap {
 		networks = append(networks, models.CreateInstanceBodyNetworkInterfaces{
 			Network: &models.CreateInstanceBodyNetwork{
 				Id: int32(n["id"].(int)),
 			},
-			NetworkInterfaceTypeId: utils.JsonNumber(n["interface_type_id"]),
+			NetworkInterfaceTypeId: utils.JSONNumber(n["interface_type_id"]),
 		})
 	}
+
 	return networks, nil
 }
 
-func getConfig(ctx context.Context, v interface{}) (*models.CreateInstanceBodyConfig, error) {
+func getConfig(v interface{}) (*models.CreateInstanceBodyConfig, error) {
 	c, err := utils.SetToMap(v)
 	if err != nil {
 		return nil, err
 	}
 	config := &models.CreateInstanceBodyConfig{
-		ResourcePoolId: utils.JsonNumber(c["resource_pool_id"]),
+		ResourcePoolId: utils.JSONNumber(c["resource_pool_id"]),
 		Template:       int32(c["template_id"].(int)),
 	}
+
 	return config, nil
 }
 
-func getTags(ctx context.Context, v interface{}) ([]models.CreateInstanceBodyTag, error) {
+func getTags(v interface{}) ([]models.CreateInstanceBodyTag, error) {
 	t, err := utils.MapTopMap(v)
 	if err != nil {
 		return nil, err
@@ -183,5 +184,6 @@ func getTags(ctx context.Context, v interface{}) ([]models.CreateInstanceBodyTag
 			Value: v.(string),
 		})
 	}
+
 	return tags, nil
 }

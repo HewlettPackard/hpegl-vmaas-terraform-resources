@@ -159,6 +159,7 @@ func Instances() *schema.Resource {
 			Create: schema.DefaultTimeout(instanceAvailableTimeout),
 			Update: schema.DefaultTimeout(instanceAvailableTimeout),
 			Delete: schema.DefaultTimeout(instanceDeleteTimeout),
+			Read:   schema.DefaultTimeout(instanceReadTimeout),
 		},
 		Description: "Create/update/delete instance",
 	}
@@ -192,6 +193,7 @@ func instanceCreateContext(ctx context.Context, d *schema.ResourceData, meta int
 	if err != nil {
 		return diag.FromErr(err)
 	}
+
 	return nil
 }
 
@@ -218,6 +220,7 @@ func instanceDeleteContext(ctx context.Context, d *schema.ResourceData, meta int
 	if err := c.CmpClient.Instance.Delete(ctx, d); err != nil {
 		return diag.FromErr(err)
 	}
+
 	return nil
 }
 

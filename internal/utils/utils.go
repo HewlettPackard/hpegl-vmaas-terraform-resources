@@ -23,6 +23,7 @@ func ListToStringSlice(src interface{}) ([]string, error) {
 		}
 		dst = append(dst, d)
 	}
+
 	return dst, nil
 }
 
@@ -40,11 +41,11 @@ func ListToIntSlice(src interface{}) ([]int, error) {
 		}
 		dst = append(dst, d)
 	}
+
 	return dst, nil
 }
 
 func ListToMap(src interface{}) ([]map[string]interface{}, error) {
-
 	list, ok := src.([]interface{})
 	if !ok {
 		return nil, typeError("[]interface{}", src)
@@ -57,6 +58,7 @@ func ListToMap(src interface{}) ([]map[string]interface{}, error) {
 		}
 		dst = append(dst, d)
 	}
+
 	return dst, nil
 }
 
@@ -69,6 +71,7 @@ func SetToMap(src interface{}) (map[string]interface{}, error) {
 		return nil, fmt.Errorf("error nil set")
 	}
 	list := set.List()
+
 	return list[0].(map[string]interface{}), nil
 }
 
@@ -77,13 +80,15 @@ func MapTopMap(src interface{}) (map[string]interface{}, error) {
 	if !ok {
 		return nil, typeError("map[string]interface{}", src)
 	}
+
 	return dst, nil
 }
 
-func JsonNumber(in interface{}) json.Number {
+func JSONNumber(in interface{}) json.Number {
 	if a, ok := in.(int); ok {
 		return json.Number(strconv.Itoa(a))
 	}
+
 	return json.Number(in.(string))
 }
 

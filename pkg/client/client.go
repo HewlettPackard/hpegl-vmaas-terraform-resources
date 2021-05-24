@@ -37,7 +37,6 @@ type InitialiseClient struct{}
 // The hpegl provider will put *Client at the value of keyForGLClientMap (returned by ServiceName) in
 // the map of clients that it creates and passes down to provider code.  hpegl executes NewClient for each service.
 func (i InitialiseClient) NewClient(r *schema.ResourceData) (interface{}, error) {
-	// token := r.Get("iam_token").(string)
 	token := r.Get("iam_token").(string)
 	vmaasProviderSettings, err := client.GetServiceSettingsMap(constants.ServiceName, r)
 	if err != nil {
