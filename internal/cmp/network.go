@@ -14,30 +14,30 @@ import (
 
 type network struct {
 	nClient           *client.NetworksApiService
-	log               logger.Logger
-	serviceInstanceId string
+	serviceInstanceID string
 }
 
-func newNetwork(nClient *client.NetworksApiService, serviceInstanceId string) *network {
-	return &network{nClient: nClient, serviceInstanceId: serviceInstanceId}
+func newNetwork(nClient *client.NetworksApiService, serviceInstanceID string) *network {
+	return &network{nClient: nClient, serviceInstanceID: serviceInstanceID}
 }
 func (n *network) Read(ctx context.Context, d *utils.Data) error {
-	n.log.Debug("Get Network")
+	logger.Debug("Get Network")
 
 	name := d.GetString("name")
-	networks, err := n.nClient.GetAllNetworks(ctx, n.serviceInstanceId, map[string]string{
+	networks, err := n.nClient.GetAllNetworks(ctx, n.serviceInstanceID, map[string]string{
 		"name": name,
 	})
 	if err != nil {
 		return err
 	}
-	n.log.Info(networks.NetworkCount)
-	n.log.Info(networks.Networks)
+
 	if len(networks.Networks) != 1 {
 		return errors.New("error coudn't find exact network, please check the name")
 	}
-	d.SetID(strconv.Itoa(int(networks.Networks[0].Id)))
-	if d.HaveError() {
+	d.SetID(strconv.Itoa(networks.Networks[0].Id))
+
+	// post check
+	if err := d.Error(); err != nil {
 		return err
 	}
 

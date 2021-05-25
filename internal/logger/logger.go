@@ -4,8 +4,6 @@ package logger
 
 import "log"
 
-type Logger struct{}
-
 const (
 	debug = "[DEBUG] "
 	info  = "[INFO] "
@@ -13,38 +11,38 @@ const (
 	err   = "[ERROR] "
 )
 
-func (l *Logger) Debugf(format string, v ...interface{}) {
-	l.printf(debug, format, v)
+func Debugf(format string, v ...interface{}) {
+	loggerPrintf(debug, format, v)
 }
 
-func (l *Logger) Debug(v ...interface{}) {
-	l.printf(debug, "%v", v)
+func Debug(v ...interface{}) {
+	loggerPrintf(debug, "%v", v)
 }
 
-func (l *Logger) Infof(format string, v ...interface{}) {
-	l.printf(info, format, v)
+func Infof(format string, v ...interface{}) {
+	loggerPrintf(info, format, v)
 }
 
-func (l *Logger) Info(v ...interface{}) {
-	l.printf(info, "%v", v)
+func Info(v ...interface{}) {
+	loggerPrintf(info, "%v", v)
 }
 
-func (l *Logger) Warnf(format string, v ...interface{}) {
-	l.printf(warn, format, v)
+func Warnf(format string, v ...interface{}) {
+	loggerPrintf(warn, format, v)
 }
 
-func (l *Logger) Warn(v ...interface{}) {
-	l.printf(warn, "%v", v)
+func Warn(v ...interface{}) {
+	loggerPrintf(warn, "%v", v)
 }
 
-func (l *Logger) Errorf(format string, v ...interface{}) {
-	l.printf(err, format, v)
+func Errorf(format string, v ...interface{}) {
+	loggerPrintf(err, format, v)
 }
 
-func (l *Logger) Error(v ...interface{}) {
-	l.printf(err, "%v", v)
+func Error(v ...interface{}) {
+	loggerPrintf(err, "%v", v)
 }
 
-func (l *Logger) printf(level, format string, v ...interface{}) {
+func loggerPrintf(level, format string, v ...interface{}) {
 	log.Printf(level+format, v...)
 }

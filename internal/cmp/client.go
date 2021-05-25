@@ -11,6 +11,8 @@ type Client struct {
 	Instance Resource
 	// Network data source
 	Network DataSource
+	// Plan data source
+	Plan DataSource
 }
 
 // NewClient returns configured client
@@ -18,5 +20,6 @@ func NewClient(client *apiClient.APIClient, cfg apiClient.Configuration) *Client
 	return &Client{
 		Instance: newInstance(&apiClient.InstancesApiService{Client: client, Cfg: cfg}, ""),
 		Network:  newNetwork(&apiClient.NetworksApiService{Client: client, Cfg: cfg}, ""),
+		Plan:     newPlan(&apiClient.PlansApiService{Client: client, Cfg: cfg}, ""),
 	}
 }

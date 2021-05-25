@@ -6,40 +6,52 @@ import (
 	"encoding/json"
 	"errors"
 	"strconv"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 const (
-	ErrInvalid = "Invalid Type"
-	NAN        = -999999
+	ErrInvalidType   = "error : Invalid Type"
+	ErrKeyNotDefined = "error : Key is not defined"
+	ErrSet           = "error : Failed to set"
+	NAN              = -999999
 )
 
 type Data struct {
 	d *schema.ResourceData
 	// errors will hold list of errors for each attrib
 	// attrib name will be the key
-	errors map[string][]error
+	errors map[string][]string
 }
 
 // NewData returns new Data instance
 func NewData(d *schema.ResourceData) *Data {
 	return &Data{
 		d:      d,
-		errors: make(map[string][]error),
+		errors: make(map[string][]string),
 	}
 }
 
 func (d *Data) Error() error {
+	if d.hasError() {
+		errStr := ""
+		for k, v := range d.errors {
+			errStr += k + " : " + strings.Join(v, ",") + "\n"
+		}
+
+		return errors.New(errStr)
+	}
+
 	return nil
 }
 
-func (d *Data) HaveError() bool {
+func (d *Data) hasError() bool {
 	return len(d.errors) > 0
 }
 
 func (d *Data) err(key, msg string) {
-	d.errors[key] = append(d.errors[key], errors.New(msg))
+	d.errors[key] = append(d.errors[key], msg)
 }
 
 // GetListMap take key as parameter and returns []map[string]interfac{}.
@@ -51,7 +63,7 @@ func (d *Data) GetListMap(key string) []map[string]interface{} {
 	}
 	list, ok := src.([]interface{})
 	if !ok {
-		d.err(key, ErrInvalid)
+		d.err(key, ErrInvalidType)
 
 		return nil
 	}
@@ -73,9 +85,11 @@ func (d *Data) get(key string) interface{} {
 func (d *Data) GetID() int64 {
 	id, err := ParseInt(d.d.Id())
 	if err != nil {
-		d.err("id", "ID is not int")
+		d.err("id", ErrInvalidType)
+
 		return NAN
 	}
+
 	return id
 }
 
@@ -111,13 +125,15 @@ func (d *Data) GetStringList(key string) []string {
 func (d *Data) GetInt(key string) int64 {
 	valString, ok := d.d.GetOk(key)
 	if !ok {
-		d.err(key, "given key not defined")
+		d.err(key, ErrKeyNotDefined)
+
 		return NAN
 	}
 	val, err := ParseInt(valString.(string))
 	if err != nil {
-		d.err(key, "given key is not proper type. Expected int")
+		d.err(key, ErrInvalidType)
 	}
+
 	return val
 }
 
@@ -166,12 +182,13 @@ func (d *Data) GetString(key string) string {
 
 func (d *Data) GetJSONNumber(key string) json.Number {
 	in := d.get(key)
+
 	return json.Number(in.(string))
 }
 
 func (d *Data) SetString(key string, value string) {
 	if err := d.set(key, value); err != nil {
-		d.err(key, "error failed to set value. Error: "+err.Error())
+		d.err(key, ErrSet+" : "+err.Error())
 	}
 }
 
@@ -186,7 +203,7 @@ func (d *Data) ListToIntSlice(key string) []int {
 	for i, s := range list {
 		ds, ok := s.(int)
 		if !ok {
-			d.err(key, "Failed to convert value to int on index "+strconv.Itoa(i))
+			d.err(key, ErrInvalidType+" at index "+strconv.Itoa(i))
 		} else {
 			dst = append(dst, ds)
 		}

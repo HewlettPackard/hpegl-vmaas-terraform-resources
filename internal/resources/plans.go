@@ -22,7 +22,13 @@ func PlanData() *schema.Resource {
 			"name": {
 				Type:     schema.TypeString,
 				Required: true,
-				Description: `Name of the Plam. This needs to be exact name or
+				Description: `Name of the Plan. This needs to be exact name or
+				else will return error not found`,
+			},
+			"provision_name": {
+				Type:     schema.TypeString,
+				Required: true,
+				Description: `Name of the provision. This needs to be exact name or
 				else will return error not found`,
 			},
 		},
@@ -45,7 +51,7 @@ func planReadContext(ctx context.Context, d *schema.ResourceData, meta interface
 		return diag.FromErr(err)
 	}
 	data := utils.NewData(d)
-	err = c.CmpClient.Network.Read(ctx, data)
+	err = c.CmpClient.Plan.Read(ctx, data)
 	if err != nil {
 		return diag.FromErr(err)
 	}

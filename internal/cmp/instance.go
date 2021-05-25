@@ -17,20 +17,19 @@ import (
 type instance struct {
 	// expose Instance API service to instances related operations
 	iClient           *client.InstancesApiService
-	serviceInstanceId string
-	log               logger.Logger
+	serviceInstanceID string
 }
 
-func newInstance(iClient *client.InstancesApiService, serviceInstanceId string) *instance {
+func newInstance(iClient *client.InstancesApiService, serviceInstanceID string) *instance {
 	return &instance{
 		iClient:           iClient,
-		serviceInstanceId: serviceInstanceId,
+		serviceInstanceID: serviceInstanceID,
 	}
 }
 
 // Create instance
 func (i *instance) Create(ctx context.Context, d *utils.Data) error {
-	i.log.Debug("Creating new instance")
+	logger.Debug("Creating new instance")
 
 	req := &models.CreateInstanceBody{
 		ZoneId: d.GetJSONNumber("cloud_id"),
@@ -55,15 +54,22 @@ func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 		Tags:              getTags(d.GetMap("tags")),
 	}
 
-	resp, err := i.iClient.CreateAnInstance(ctx, i.serviceInstanceId, req)
+	// Pre check
+	if err := d.Error(); err != nil {
+		return err
+	}
+
+	resp, err := i.iClient.CreateAnInstance(ctx, i.serviceInstanceID, req)
 	if err != nil {
 		return err
 	}
 	d.SetID(strconv.Itoa(int(resp.Instance.Id)))
 
-	if d.HaveError() {
-		return fmt.Errorf("%s", "error in d ")
+	// post check
+	if err := d.Error(); err != nil {
+		return err
 	}
+
 	return nil
 }
 
@@ -71,7 +77,7 @@ func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 // changing network, volumes and instance properties such as labels
 // groups and tags
 func (i *instance) Update(ctx context.Context, d *utils.Data) error {
-	i.log.Debug("Updating the instance")
+	logger.Debug("Updating the instance")
 
 	return nil
 }
@@ -79,9 +85,14 @@ func (i *instance) Update(ctx context.Context, d *utils.Data) error {
 // Delete instance and set ID as ""
 func (i *instance) Delete(ctx context.Context, d *utils.Data) error {
 	id := d.GetID()
-	i.log.Debugf("Deleting instance with ID : %d", id)
+	logger.Debugf("Deleting instance with ID : %d", id)
 
-	res, err := i.iClient.DeleteAnInstance(ctx, i.serviceInstanceId, int32(id))
+	// Precheck
+	if err := d.Error(); err != nil {
+		return err
+	}
+
+	res, err := i.iClient.DeleteAnInstance(ctx, i.serviceInstanceID, int32(id))
 	if err != nil {
 		return err
 	}
@@ -90,8 +101,9 @@ func (i *instance) Delete(ctx context.Context, d *utils.Data) error {
 	}
 	d.SetID("")
 
-	if d.HaveError() {
-		return fmt.Errorf("%s", "error in d ")
+	// post check
+	if err := d.Error(); err != nil {
+		return err
 	}
 
 	return nil
@@ -101,16 +113,23 @@ func (i *instance) Delete(ctx context.Context, d *utils.Data) error {
 func (i *instance) Read(ctx context.Context, d *utils.Data) error {
 	id := d.GetID()
 
-	i.log.Debug("Get instance with ID %d", id)
-	resp, err := i.iClient.GetASpecificInstance(ctx, i.serviceInstanceId, int32(id))
+	logger.Debug("Get instance with ID %d", id)
+
+	// Precheck
+	if err := d.Error(); err != nil {
+		return err
+	}
+
+	resp, err := i.iClient.GetASpecificInstance(ctx, i.serviceInstanceID, int32(id))
 	if err != nil {
 		return err
 	}
 	d.SetID(strconv.Itoa(int(resp.Instance.Id)))
 	d.SetString("status", resp.Instance.Status)
 
-	if d.HaveError() {
-		return fmt.Errorf("%s", "error in d ")
+	// post check
+	if err := d.Error(); err != nil {
+		return err
 	}
 
 	return nil

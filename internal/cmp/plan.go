@@ -12,21 +12,21 @@ import (
 
 type plan struct {
 	pClient           *client.PlansApiService
-	log               logger.Logger
-	serviceInstanceId string
+	serviceInstanceID string
 }
 
-func newPlan(pClient *client.PlansApiService, serviceInstanceId string) *plan {
-	return &plan{pClient: pClient, serviceInstanceId: serviceInstanceId}
+func newPlan(pClient *client.PlansApiService, serviceInstanceID string) *plan {
+	return &plan{pClient: pClient, serviceInstanceID: serviceInstanceID}
 }
 func (n *plan) Read(ctx context.Context, d *utils.Data) error {
-	// n.log.Debug("Get plan")
+	logger.Debug("Get plan")
 
 	// name := d.GetString("name")
-	// plans, err := n.pClient.GetAllServicePlans(ctx, n.serviceInstanceId, map[string]string{"name": name})
-	// if err != nil {
-	// 	return err
-	// }
+	_, err := n.pClient.GetAllServicePlans(ctx, n.serviceInstanceID)
+	// plans, err := n.pClient.GetAllServicePlans(ctx, n.serviceInstanceID, map[string]string{"name": name})
+	if err != nil {
+		return err
+	}
 	// if len(plans) != 1 {
 	// 	return errors.New("Coudn't find exact plan, please check the name")
 	// }
