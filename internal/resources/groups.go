@@ -4,6 +4,7 @@ package resources
 
 import (
 	"context"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -11,24 +12,20 @@ import (
 	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/client"
 )
 
-func PlanData() *schema.Resource {
+const readTimeout = 30 * time.Second
+
+func GroupData() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"name": {
 				Type:     schema.TypeString,
 				Required: true,
-				Description: `Name of the Plan. This needs to be exact name or
-				else will return error not found`,
-			},
-			"provision_name": {
-				Type:     schema.TypeString,
-				Required: true,
-				Description: `Name of the provision. This needs to be exact name or
+				Description: `Name of the group. This needs to be exact name or
 				else will return error not found`,
 			},
 		},
-		ReadContext: planReadContext,
-		Description: "Get the plan details",
+		ReadContext: groupReadContext,
+		Description: "Get the group details",
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(readTimeout),
 		},
@@ -40,13 +37,13 @@ func PlanData() *schema.Resource {
 	}
 }
 
-func planReadContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func groupReadContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, err := client.GetClientFromMetaMap(meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 	data := utils.NewData(d)
-	err = c.CmpClient.Plan.Read(ctx, data)
+	err = c.CmpClient.Group.Read(ctx, data)
 	if err != nil {
 		return diag.FromErr(err)
 	}
