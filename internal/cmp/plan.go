@@ -18,6 +18,7 @@ type plan struct {
 func newPlan(pClient *client.PlansApiService, serviceInstanceID string) *plan {
 	return &plan{pClient: pClient, serviceInstanceID: serviceInstanceID}
 }
+
 func (n *plan) Read(ctx context.Context, d *utils.Data) error {
 	logger.Debug("Get plan")
 

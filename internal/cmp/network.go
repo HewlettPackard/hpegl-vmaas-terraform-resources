@@ -20,6 +20,7 @@ type network struct {
 func newNetwork(nClient *client.NetworksApiService, serviceInstanceID string) *network {
 	return &network{nClient: nClient, serviceInstanceID: serviceInstanceID}
 }
+
 func (n *network) Read(ctx context.Context, d *utils.Data) error {
 	logger.Debug("Get Network")
 

@@ -47,5 +47,6 @@ func networkReadContext(ctx context.Context, d *schema.ResourceData, meta interf
 	if err != nil {
 		return diag.FromErr(err)
 	}
+
 	return nil
 }

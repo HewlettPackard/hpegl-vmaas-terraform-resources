@@ -55,5 +55,6 @@ func planReadContext(ctx context.Context, d *schema.ResourceData, meta interface
 	if err != nil {
 		return diag.FromErr(err)
 	}
+
 	return nil
 }
