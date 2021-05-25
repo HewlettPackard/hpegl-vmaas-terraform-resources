@@ -5,7 +5,7 @@ package cmp
 import (
 	"context"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
 )
 
 // Resource interface implements all the resource operations (CRUD)
@@ -17,17 +17,17 @@ type Resource interface {
 	DataSource
 	// Create terraform operations. Context and resource data as params.
 	// will return error
-	Create(context.Context, *schema.ResourceData) error
+	Create(context.Context, *utils.Data) error
 	// Update terraform operations. Context and resource data as params.
 	// will return error
-	Update(context.Context, *schema.ResourceData) error
+	Update(context.Context, *utils.Data) error
 	// Delete terraform operations. Context and resource data as params.
 	// will return error
-	Delete(context.Context, *schema.ResourceData) error
+	Delete(context.Context, *utils.Data) error
 }
 
 // DataSource interface wraps read operations which is expected to
 // implement by all data source clients
 type DataSource interface {
-	Read(context.Context, *schema.ResourceData) error
+	Read(context.Context, *utils.Data) error
 }

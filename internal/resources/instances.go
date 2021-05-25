@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
 	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/client"
 )
 
@@ -171,7 +172,8 @@ func instanceCreateContext(ctx context.Context, d *schema.ResourceData, meta int
 		return diag.FromErr(err)
 	}
 
-	if err := c.CmpClient.Instance.Create(ctx, d); err != nil {
+	data := utils.NewData(d)
+	if err := c.CmpClient.Instance.Create(ctx, data); err != nil {
 		return diag.FromErr(err)
 	}
 
@@ -183,7 +185,7 @@ func instanceCreateContext(ctx context.Context, d *schema.ResourceData, meta int
 		Timeout:    time.Minute * 10,
 		MinTimeout: time.Second * 30,
 		Refresh: func() (result interface{}, state string, err error) {
-			if err := c.CmpClient.Instance.Read(ctx, d); err != nil {
+			if err := c.CmpClient.Instance.Read(ctx, data); err != nil {
 				return nil, "", err
 			}
 
@@ -204,7 +206,8 @@ func instanceReadContext(ctx context.Context, d *schema.ResourceData, meta inter
 		return diag.FromErr(err)
 	}
 
-	err = c.CmpClient.Instance.Read(ctx, d)
+	data := utils.NewData(d)
+	err = c.CmpClient.Instance.Read(ctx, data)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -218,7 +221,8 @@ func instanceDeleteContext(ctx context.Context, d *schema.ResourceData, meta int
 		return diag.FromErr(err)
 	}
 
-	if err := c.CmpClient.Instance.Delete(ctx, d); err != nil {
+	data := utils.NewData(d)
+	if err := c.CmpClient.Instance.Delete(ctx, data); err != nil {
 		return diag.FromErr(err)
 	}
 
