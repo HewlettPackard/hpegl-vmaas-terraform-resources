@@ -20,7 +20,9 @@ func (r Registration) Name() string {
 }
 
 func (r Registration) SupportedDataSources() map[string]*schema.Resource {
-	return nil
+	return map[string]*schema.Resource{
+		"hpegl_vmaas_network": resources.NetworkData(),
+	}
 }
 
 func (r Registration) SupportedResources() map[string]*schema.Resource {
