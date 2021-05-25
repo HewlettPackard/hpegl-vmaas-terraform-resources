@@ -4,15 +4,12 @@ package resources
 
 import (
 	"context"
-	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
 	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/client"
 )
-
-const networkReadTimeout = 30 * time.Second
 
 func NetworkData() *schema.Resource {
 	return &schema.Resource{
@@ -27,7 +24,7 @@ func NetworkData() *schema.Resource {
 		ReadContext: networkReadContext,
 		Description: "Get the Network details",
 		Timeouts: &schema.ResourceTimeout{
-			Create: schema.DefaultTimeout(networkReadTimeout),
+			Create: schema.DefaultTimeout(readTimeout),
 		},
 		SchemaVersion:  0,
 		StateUpgraders: nil,

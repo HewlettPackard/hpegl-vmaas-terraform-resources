@@ -61,7 +61,7 @@ func (i InitialiseClient) NewClient(r *schema.ResourceData) (interface{}, error)
 	client.IAMToken = token
 
 	// Get the Service Instance using agena-api call by sending space_name amd location
-	// serviceInstanceID := "SERVICE_INSTANCE_ID"
+	serviceInstanceID := "SERVICE_INSTANCE_ID"
 
 	// location and space_naem supplied from the terraform tf file
 	client.Location = location
@@ -74,7 +74,7 @@ func (i InitialiseClient) NewClient(r *schema.ResourceData) (interface{}, error)
 		},
 	}
 	apiClient := api_client.NewAPIClient(&cfg)
-	client.CmpClient = cmp_client.NewClient(apiClient, cfg)
+	client.CmpClient = cmp_client.NewClient(apiClient, cfg,serviceInstanceID)
 
 	return client, nil
 }
