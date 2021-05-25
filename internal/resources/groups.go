@@ -14,7 +14,7 @@ import (
 
 const readTimeout = 30 * time.Second
 
-func GroupkData() *schema.Resource {
+func GroupData() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"name": {
