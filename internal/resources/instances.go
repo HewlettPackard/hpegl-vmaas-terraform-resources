@@ -7,15 +7,15 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-
-	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/models"
 	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/client"
 )
 
 const (
-	vmAvailableTimeout = 60 * time.Minute
-	vmDeleteTimeout    = 60 * time.Minute
+	instanceAvailableTimeout = 60 * time.Minute
+	instanceReadTimeout      = 2 * time.Minute
+	instanceDeleteTimeout    = 60 * time.Minute
 )
 
 func Instances() *schema.Resource {
@@ -41,15 +41,32 @@ func Instances() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"instance_type": {
+			"layout_id": {
+				Type:     schema.TypeString,
+				Required: true,
+			},
+			"instance_code": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
 			"networks": {
 				Type:     schema.TypeList,
 				Required: true,
-				Elem: &schema.Schema{
-					Type: schema.TypeInt,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"interface_type_id": {
+							Type:     schema.TypeInt,
+							Optional: true,
+						},
+						"name": {
+							Type:     schema.TypeString,
+							Computed: true,
+						},
+						"id": {
+							Type:     schema.TypeInt,
+							Required: true,
+						},
+					},
 				},
 			},
 			"volumes": {
@@ -57,6 +74,10 @@ func Instances() *schema.Resource {
 				Required: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+						"name": {
+							Type:     schema.TypeString,
+							Required: true,
+						},
 						"size": {
 							Type:     schema.TypeString,
 							Required: true,
@@ -87,13 +108,17 @@ func Instances() *schema.Resource {
 				Required: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"vmware_resource_pool": {
+						"resource_pool_id": {
 							Type:     schema.TypeString,
 							Required: true,
 						},
 						"public_key": {
 							Type:     schema.TypeString,
 							Optional: true,
+						},
+						"template_id": {
+							Type:     schema.TypeInt,
+							Required: true,
 						},
 					},
 				},
@@ -110,23 +135,31 @@ func Instances() *schema.Resource {
 					Type: schema.TypeString,
 				},
 			},
+			"state": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+			"status": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
 		},
 		SchemaVersion:  0,
 		StateUpgraders: nil,
 		CreateContext:  instanceCreateContext,
 		ReadContext:    instanceReadContext,
 		// TODO figure out if a VM can be updated
-		UpdateContext: instanceUpdate,
+		UpdateContext: instanceUpdateContext,
 		DeleteContext: instanceDeleteContext,
 		CustomizeDiff: nil,
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
-		DeprecationMessage: "",
 		Timeouts: &schema.ResourceTimeout{
-			Create: schema.DefaultTimeout(vmAvailableTimeout),
-			// Update: schema.DefaultTimeout(vmAvailableTimeout),
-			Delete: schema.DefaultTimeout(vmDeleteTimeout),
+			Create: schema.DefaultTimeout(instanceAvailableTimeout),
+			Update: schema.DefaultTimeout(instanceAvailableTimeout),
+			Delete: schema.DefaultTimeout(instanceDeleteTimeout),
+			Read:   schema.DefaultTimeout(instanceReadTimeout),
 		},
 		Description: "Create/update/delete instance",
 	}
@@ -138,15 +171,31 @@ func instanceCreateContext(ctx context.Context, d *schema.ResourceData, meta int
 		return diag.FromErr(err)
 	}
 
-	if c.IAMToken == "" {
-		return diag.Errorf("Empty token")
-	}
-	if err := c.CmpClient.CreateInstance(models.CreateInstanceBody{}); err != nil {
+	if err := c.CmpClient.Instance.Create(ctx, d); err != nil {
 		return diag.FromErr(err)
 	}
-	d.SetId("1")
 
-	return instanceReadContext(ctx, d, meta)
+	// Wait for the status to be running
+	createStateConf := resource.StateChangeConf{
+		Delay:      time.Second * 30,
+		Pending:    []string{"provisioning"},
+		Target:     []string{"running"},
+		Timeout:    time.Minute * 10,
+		MinTimeout: time.Second * 30,
+		Refresh: func() (result interface{}, state string, err error) {
+			if err := c.CmpClient.Instance.Read(ctx, d); err != nil {
+				return nil, "", err
+			}
+
+			return d.Get("name"), d.Get("status").(string), nil
+		},
+	}
+	_, err = createStateConf.WaitForStateContext(ctx)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	return nil
 }
 
 func instanceReadContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -154,19 +203,13 @@ func instanceReadContext(ctx context.Context, d *schema.ResourceData, meta inter
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	token := c.IAMToken
 
-	println(" Read Context IAM Token : " + token)
-
-	var diags diag.Diagnostics
-	id := d.Id()
-	println(" ID : " + id)
-
-	if token == "" {
-		diags = append(diags, diag.Errorf("Empty token")...)
+	err = c.CmpClient.Instance.Read(ctx, d)
+	if err != nil {
+		return diag.FromErr(err)
 	}
 
-	return diags
+	return nil
 }
 
 func instanceDeleteContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -174,19 +217,14 @@ func instanceDeleteContext(ctx context.Context, d *schema.ResourceData, meta int
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	token := c.IAMToken
-	print(" Delete IAM Token : " + token)
-	var diags diag.Diagnostics
-	id := d.Id()
 
-	if id == "" {
-		diags = append(diags, diag.Errorf("Empty ID")...)
+	if err := c.CmpClient.Instance.Delete(ctx, d); err != nil {
+		return diag.FromErr(err)
 	}
-	d.SetId("")
 
-	return diags
+	return nil
 }
 
-func instanceUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func instanceUpdateContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	return nil
 }

@@ -8,7 +8,6 @@ import (
 	"github.com/hpe-hcss/hpegl-provider-lib/pkg/gltform"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-
 	"github.com/hpe-hcss/hpegl-provider-lib/pkg/client"
 	api_client "github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
 	cmp_client "github.com/hpe-hcss/vmaas-terraform-resources/internal/cmp"
@@ -38,7 +37,6 @@ type InitialiseClient struct{}
 // The hpegl provider will put *Client at the value of keyForGLClientMap (returned by ServiceName) in
 // the map of clients that it creates and passes down to provider code.  hpegl executes NewClient for each service.
 func (i InitialiseClient) NewClient(r *schema.ResourceData) (interface{}, error) {
-	// token := r.Get("iam_token").(string)
 	token := r.Get("iam_token").(string)
 	vmaasProviderSettings, err := client.GetServiceSettingsMap(constants.ServiceName, r)
 	if err != nil {
@@ -56,23 +54,27 @@ func (i InitialiseClient) NewClient(r *schema.ResourceData) (interface{}, error)
 	if token == "" {
 		gltoken, err := gltform.GetGLConfig()
 		if err != nil {
-			return nil, fmt.Errorf("Error reading GL token file:  %w", err)
+			return nil, fmt.Errorf("error reading GL token file:  %w", err)
 		}
 		token = gltoken.Token
 	}
 	client.IAMToken = token
 
 	// Get the Service Instance using agena-api call by sending space_name amd location
-	serviceInstanceID := "SERVICE_INSTANCE_ID"
+	// serviceInstanceID := "SERVICE_INSTANCE_ID"
 
 	// location and space_naem supplied from the terraform tf file
 	client.Location = location
 	client.SpaceName = spaceName
 
-	apiClient := api_client.NewAPIClient(&api_client.Configuration{
-		BasePath: constants.ServiceURL + serviceInstanceID + "/",
-	})
-	client.CmpClient = cmp_client.NewClient(apiClient)
+	cfg := api_client.Configuration{
+		Host: constants.ServiceURL,
+		DefaultHeader: map[string]string{
+			"Authorization": token,
+		},
+	}
+	apiClient := api_client.NewAPIClient(&cfg)
+	client.CmpClient = cmp_client.NewClient(apiClient, cfg)
 
 	return client, nil
 }
