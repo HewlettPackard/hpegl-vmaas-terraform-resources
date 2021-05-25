@@ -16,9 +16,16 @@ import (
 // instance implements functions related to cmp instances
 type instance struct {
 	// expose Instance API service to instances related operations
-	iClient         *client.InstancesApiService
-	serviceInstance string
-	log             logger.Logger
+	iClient           *client.InstancesApiService
+	serviceInstanceId string
+	log               logger.Logger
+}
+
+func newInstance(iClient *client.InstancesApiService, serviceInstanceId string) *instance {
+	return &instance{
+		iClient:           iClient,
+		serviceInstanceId: serviceInstanceId,
+	}
 }
 
 // Create instance
@@ -48,7 +55,7 @@ func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 		Tags:              getTags(d.GetMap("tags")),
 	}
 
-	resp, err := i.iClient.CreateAnInstance(ctx, i.serviceInstance, req)
+	resp, err := i.iClient.CreateAnInstance(ctx, i.serviceInstanceId, req)
 	if err != nil {
 		return err
 	}
@@ -74,7 +81,7 @@ func (i *instance) Delete(ctx context.Context, d *utils.Data) error {
 	id := d.GetID()
 	i.log.Debugf("Deleting instance with ID : %d", id)
 
-	res, err := i.iClient.DeleteAnInstance(ctx, i.serviceInstance, int32(id))
+	res, err := i.iClient.DeleteAnInstance(ctx, i.serviceInstanceId, int32(id))
 	if err != nil {
 		return err
 	}
@@ -95,7 +102,7 @@ func (i *instance) Read(ctx context.Context, d *utils.Data) error {
 	id := d.GetID()
 
 	i.log.Debug("Get instance with ID %d", id)
-	resp, err := i.iClient.GetASpecificInstance(ctx, i.serviceInstance, int32(id))
+	resp, err := i.iClient.GetASpecificInstance(ctx, i.serviceInstanceId, int32(id))
 	if err != nil {
 		return err
 	}
@@ -132,7 +139,6 @@ func getNetwork(networksMap []map[string]interface{}) []models.CreateInstanceBod
 			Network: &models.CreateInstanceBodyNetwork{
 				Id: int32(n["id"].(int)),
 			},
-			NetworkInterfaceTypeId: utils.JSONNumber(n["interface_type_id"]),
 		})
 	}
 

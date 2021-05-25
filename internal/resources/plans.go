@@ -12,22 +12,24 @@ import (
 	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/client"
 )
 
-const networkReadTimeout = 30 * time.Second
+const (
+	planReadTimeout = 30 * time.Second
+)
 
-func NetworkData() *schema.Resource {
+func PlanData() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"name": {
 				Type:     schema.TypeString,
 				Required: true,
-				Description: `Name of the network. This needs to be exact name or
+				Description: `Name of the Plam. This needs to be exact name or
 				else will return error not found`,
 			},
 		},
-		ReadContext: networkReadContext,
-		Description: "Get the Network details",
+		ReadContext: planReadContext,
+		Description: "Get the plan details",
 		Timeouts: &schema.ResourceTimeout{
-			Create: schema.DefaultTimeout(networkReadTimeout),
+			Create: schema.DefaultTimeout(planReadTimeout),
 		},
 		SchemaVersion:  0,
 		StateUpgraders: nil,
@@ -37,7 +39,7 @@ func NetworkData() *schema.Resource {
 	}
 }
 
-func networkReadContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func planReadContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, err := client.GetClientFromMetaMap(meta)
 	if err != nil {
 		return diag.FromErr(err)
