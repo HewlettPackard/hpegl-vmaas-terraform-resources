@@ -12,7 +12,6 @@ import (
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
 )
 
-
 type cloud struct {
 	cloudClient       *client.CloudsApiService
 	serviceInstanceID string
@@ -32,7 +31,6 @@ func (c *cloud) Read(ctx context.Context, d *utils.Data) error {
 	cloud, err := c.cloudClient.GetAllClouds(ctx, c.serviceInstanceID, map[string]string{
 		"name": name,
 	})
-
 	if err != nil {
 		return err
 	}
@@ -45,5 +43,6 @@ func (c *cloud) Read(ctx context.Context, d *utils.Data) error {
 	if err := d.Error(); err != nil {
 		return err
 	}
+
 	return nil
 }
