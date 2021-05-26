@@ -21,9 +21,10 @@ func (r Registration) Name() string {
 
 func (r Registration) SupportedDataSources() map[string]*schema.Resource {
 	return map[string]*schema.Resource{
-		"hpegl_vmaas_network": resources.NetworkData(),
-		"hpegl_vmaas_layout":  resources.LayoutData(),
-		"hpegl_vmaas_group":   resources.GroupData(),
+		"hpegl_vmaas_network":   resources.NetworkData(),
+		"hpegl_vmaas_datastore": resources.DatastoreData(),
+		"hpegl_vmaas_layout":    resources.LayoutData(),
+		"hpegl_vmaas_group":     resources.GroupData(),
 	}
 }
 

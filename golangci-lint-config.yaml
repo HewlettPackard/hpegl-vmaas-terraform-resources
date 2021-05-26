@@ -5,8 +5,6 @@ run:
   tests: true
   skip-dirs:
     - vendor
-    - internal/cmp_client
-    - internal/models
   build-tags: acceptance
 
 linters-settings:
@@ -28,6 +26,7 @@ linters-settings:
 linters:
   enable-all: true
   disable:
+    - dupl
     - wsl
     - gci
     - goerr113
@@ -62,9 +61,9 @@ issues:
         - goerr113
       path: _test\.go
 
-    - linters:
-        - dupl
-      path: ".*generated.*go"
+    # - linters:
+    #     - dupl
+    #   path: ".*generated.*go"
 
     - linters:
         - goconst
