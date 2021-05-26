@@ -14,11 +14,20 @@ import (
 func LayoutData() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
-			"code": {
+			"name": {
 				Type:     schema.TypeString,
 				Required: true,
 				Description: `Code of the layout. This needs to be exact code or
 				else will return error not found`,
+			},
+			"instance_type": {
+				Type:     schema.TypeString,
+				Required: true,
+			},
+			"instance_code": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Instance code for the given instance type",
 			},
 		},
 		ReadContext: layoutReadContext,
