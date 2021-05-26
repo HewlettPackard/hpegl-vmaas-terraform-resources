@@ -3,4 +3,3 @@ vendor/
 *_mock.go
 .vscode
 build
-cmp_api.py
