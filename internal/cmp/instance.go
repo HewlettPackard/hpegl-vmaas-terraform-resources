@@ -67,7 +67,6 @@ func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 
 	// post check
 	return d.Error()
-
 }
 
 // Update instance including poweroff, powerOn, restart, suspend

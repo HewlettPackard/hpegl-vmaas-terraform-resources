@@ -47,5 +47,4 @@ func (g *layout) Read(ctx context.Context, d *utils.Data) error {
 
 	// post check
 	return d.Error()
-
 }
