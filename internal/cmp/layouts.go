@@ -28,9 +28,9 @@ func newLayout(gClient *client.LibraryApiService, serviceInstanceID string) *lay
 func (g *layout) Read(ctx context.Context, d *utils.Data) error {
 	logger.Debug("Get Layout")
 
-	name := d.GetString("name")
+	name := d.GetString("code")
 	layouts, err := g.gClient.GetAllLayouts(ctx, g.serviceInstanceID, map[string]string{
-		"name": name,
+		"code": name,
 	})
 	if err != nil {
 		return err

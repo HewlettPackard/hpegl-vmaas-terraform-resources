@@ -14,10 +14,10 @@ import (
 func LayoutData() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
-			"name": {
+			"code": {
 				Type:     schema.TypeString,
 				Required: true,
-				Description: `Name of the layout. This needs to be exact name or
+				Description: `Code of the layout. This needs to be exact code or
 				else will return error not found`,
 			},
 		},
