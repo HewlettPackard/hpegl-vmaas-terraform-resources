@@ -13,12 +13,12 @@ import (
 )
 
 type resourcePool struct {
-	nClient           *client.CloudsApiService
+	rClient           *client.CloudsApiService
 	serviceInstanceID string
 }
 
-func newResourcePool(nClient *client.CloudsApiService, serviceInstanceID string) *resourcePool {
-	return &resourcePool{nClient: nClient, serviceInstanceID: serviceInstanceID}
+func newResourcePool(rClient *client.CloudsApiService, serviceInstanceID string) *resourcePool {
+	return &resourcePool{rClient: rClient, serviceInstanceID: serviceInstanceID}
 }
 
 func (n *resourcePool) Read(ctx context.Context, d *utils.Data) error {
@@ -26,7 +26,7 @@ func (n *resourcePool) Read(ctx context.Context, d *utils.Data) error {
 
 	name := d.GetString("name")
 	cloudID := d.GetInt("cloud_id")
-	resourcePools, err := n.nClient.GetAllCloudResourcePools(ctx, n.serviceInstanceID, int(cloudID), map[string]string{
+	resourcePools, err := n.rClient.GetAllCloudResourcePools(ctx, n.serviceInstanceID, int(cloudID), map[string]string{
 		"name": name,
 	})
 	if err != nil {
