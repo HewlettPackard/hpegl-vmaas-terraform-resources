@@ -13,8 +13,10 @@ import (
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
 )
 
-const VMWare = "vmware"
-const ErrExactMatch = "error coudn't find exact %s, please check the name"
+const (
+	VMWare        = "vmware"
+	ErrExactMatch = "error coudn't find exact %s, please check the name"
+)
 
 type layout struct {
 	gClient           *client.LibraryApiService
