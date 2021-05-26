@@ -18,13 +18,8 @@ func PlanData() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 				Description: `Name of the Plan. This needs to be exact name or
-				else will return error not found`,
-			},
-			"provision_name": {
-				Type:     schema.TypeString,
-				Required: true,
-				Description: `Name of the provision. This needs to be exact name or
-				else will return error not found`,
+				else will return error not found. Currently only vmware related
+				plans are supported`,
 			},
 		},
 		ReadContext: planReadContext,

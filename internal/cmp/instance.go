@@ -59,18 +59,15 @@ func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 		return err
 	}
 
-	resp, err := i.iClient.CreateAnInstance(ctx, i.serviceInstanceID, req)
+	instance, err := i.iClient.CreateAnInstance(ctx, i.serviceInstanceID, req)
 	if err != nil {
 		return err
 	}
-	d.SetID(strconv.Itoa(int(resp.Instance.Id)))
+	d.SetID(strconv.Itoa(int(instance.Instance.Id)))
 
 	// post check
-	if err := d.Error(); err != nil {
-		return err
-	}
+	return d.Error()
 
-	return nil
 }
 
 // Update instance including poweroff, powerOn, restart, suspend
@@ -102,11 +99,7 @@ func (i *instance) Delete(ctx context.Context, d *utils.Data) error {
 	d.SetID("")
 
 	// post check
-	if err := d.Error(); err != nil {
-		return err
-	}
-
-	return nil
+	return d.Error()
 }
 
 // Read instance and set state values accordingly

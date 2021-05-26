@@ -12,11 +12,6 @@ import (
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
 )
 
-const (
-	VMWare        = "vmware"
-	ErrExactMatch = "error coudn't find exact %s, please check the name"
-)
-
 type layout struct {
 	gClient           *client.LibraryApiService
 	serviceInstanceID string
@@ -34,26 +29,23 @@ func (g *layout) Read(ctx context.Context, d *utils.Data) error {
 
 	name := d.GetString("name")
 	instanceTypes, err := g.gClient.GetAllInstanceTypes(ctx, g.serviceInstanceID, map[string]string{
-		"name":          name,
-		"provisionType": VMWare,
+		nameKey:          name,
+		provisionTypeKey: vmware,
 	})
 	if err != nil {
 		return err
 	}
 
 	if len(instanceTypes.InstanceTypes) != 1 {
-		return fmt.Errorf(ErrExactMatch, "instance type")
+		return fmt.Errorf(errExactMatch, "instance type")
 	}
 	if len(instanceTypes.InstanceTypes[0].Instancetypelayouts) != 1 {
-		return fmt.Errorf(ErrExactMatch, "layout type")
+		return fmt.Errorf(errExactMatch, "layout type")
 	}
 	d.SetString("instance_code", instanceTypes.InstanceTypes[0].Code)
 	d.SetID(strconv.Itoa(instanceTypes.InstanceTypes[0].Instancetypelayouts[0].ID))
 
 	// post check
-	if err := d.Error(); err != nil {
-		return err
-	}
+	return d.Error()
 
-	return nil
 }

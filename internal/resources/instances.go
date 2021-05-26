@@ -29,21 +29,21 @@ func Instances() *schema.Resource {
 				Description: "Name of the instance",
 			},
 			"cloud_id": {
-				Type:        schema.TypeString,
+				Type:        schema.TypeInt,
 				Required:    true,
 				Description: "ID for cloud or zone",
 			},
 			"group_id": {
-				Type:        schema.TypeString,
+				Type:        schema.TypeInt,
 				Required:    true,
 				Description: "ID for group",
 			},
 			"plan_id": {
-				Type:     schema.TypeString,
+				Type:     schema.TypeInt,
 				Required: true,
 			},
 			"layout_id": {
-				Type:     schema.TypeString,
+				Type:     schema.TypeInt,
 				Required: true,
 			},
 			"instance_code": {
@@ -72,7 +72,7 @@ func Instances() *schema.Resource {
 							Required: true,
 						},
 						"size": {
-							Type:     schema.TypeString,
+							Type:     schema.TypeInt,
 							Required: true,
 						},
 						"datastore_id": {
@@ -102,7 +102,7 @@ func Instances() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"resource_pool_id": {
-							Type:     schema.TypeString,
+							Type:     schema.TypeInt,
 							Required: true,
 						},
 						"public_key": {
@@ -181,7 +181,7 @@ func instanceCreateContext(ctx context.Context, d *schema.ResourceData, meta int
 				return nil, "", err
 			}
 
-			return d.Get("name"), d.Get("status").(string), nil
+			return d.Get("name"), data.GetString("status"), nil
 		},
 	}
 	_, err = createStateConf.WaitForStateContext(ctx)

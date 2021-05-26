@@ -4,7 +4,7 @@ package cmp
 
 import (
 	"context"
-	"errors"
+	"fmt"
 	"strconv"
 
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
@@ -26,21 +26,17 @@ func (n *network) Read(ctx context.Context, d *utils.Data) error {
 
 	name := d.GetString("name")
 	networks, err := n.nClient.GetAllNetworks(ctx, n.serviceInstanceID, map[string]string{
-		"name": name,
+		nameKey: name,
 	})
 	if err != nil {
 		return err
 	}
 
 	if len(networks.Networks) != 1 {
-		return errors.New("error coudn't find exact network, please check the name")
+		return fmt.Errorf(errExactMatch, "Network")
 	}
 	d.SetID(strconv.Itoa(networks.Networks[0].Id))
 
 	// post check
-	if err := d.Error(); err != nil {
-		return err
-	}
-
-	return nil
+	return d.Error()
 }

@@ -4,7 +4,7 @@ package cmp
 
 import (
 	"context"
-	"errors"
+	"fmt"
 	"strconv"
 
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
@@ -29,22 +29,18 @@ func (g *group) Read(ctx context.Context, d *utils.Data) error {
 
 	name := d.GetString("name")
 	groups, err := g.gClient.GetAllGroups(ctx, g.serviceInstanceID, map[string]string{
-		"name": name,
+		nameKey: name,
 	})
 	if err != nil {
 		return err
 	}
 
 	if len(*groups.Groups) != 1 {
-		return errors.New("error coudn't find exact group, please check the name")
+		return fmt.Errorf(errExactMatch, "group")
 	}
 
 	d.SetID(strconv.Itoa((*groups.Groups)[0].Id))
 
 	// post check
-	if err := d.Error(); err != nil {
-		return err
-	}
-
-	return nil
+	return d.Error()
 }
