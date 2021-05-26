@@ -10,8 +10,8 @@ run:
   build-tags: acceptance
 
 linters-settings:
-  dupl:
-    threshold: 110
+  # dupl:
+  #   threshold: 110
   lll:
     line-length: 128
   goimports:

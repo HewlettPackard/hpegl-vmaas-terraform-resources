@@ -12,6 +12,7 @@ type Client struct {
 	Plan         DataSource
 	Group        DataSource
 	ResourcePool DataSource
+	Layout       DataSource
 }
 
 // NewClient returns configured client
@@ -22,5 +23,6 @@ func NewClient(client *apiClient.APIClient, cfg apiClient.Configuration, sID str
 		Plan:         newPlan(&apiClient.PlansApiService{Client: client, Cfg: cfg}, sID),
 		Group:        newGroup(&apiClient.GroupsApiService{Client: client, Cfg: cfg}, sID),
 		ResourcePool: newResourcePool(&apiClient.CloudsApiService{Client: client, Cfg: cfg}, sID),
+		Layout:       newLayout(&apiClient.LibraryApiService{Client: client, Cfg: cfg}, sID),
 	}
 }
