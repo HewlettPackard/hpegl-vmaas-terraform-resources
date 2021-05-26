@@ -4,7 +4,8 @@ package cmp
 
 import (
 	"context"
-	"io/ioutil"
+	"errors"
+	"strconv"
 
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/logger"
@@ -25,21 +26,24 @@ func (n *datastore) Read(ctx context.Context, d *utils.Data) error {
 
 	// name := d.GetString("name")
 	cloudID := d.GetInt("cloud_id")
-	res, err := n.nClient.GetAllCloudDataStores(ctx, n.serviceInstanceID, int(cloudID), nil)
+	name := d.GetString("name")
+	datastores, err := n.nClient.GetAllCloudDataStores(ctx,
+		n.serviceInstanceID,
+		int(cloudID),
+		map[string]string{"name": name},
+	)
 	if err != nil {
 		return err
 	}
-	body, _ := ioutil.ReadAll(res.Body)
-	logger.Debug(string(body))
-	// if len(datastores.Datastores) != 1 {
-	// 	return errors.New("error coudn't find exact datastore, please check the name")
-	// }
-	// d.SetID(strconv.Itoa(datastores.Datastores[0].Id))
+	if len(datastores.Datastores) != 1 {
+		return errors.New("error coudn't find exact datastore, please check the name")
+	}
+	d.SetID(strconv.Itoa(datastores.Datastores[0].ID))
 
-	// // post check
-	// if err := d.Error(); err != nil {
-	// 	return err
-	// }
+	// post check
+	if err := d.Error(); err != nil {
+		return err
+	}
 
 	return nil
 }
