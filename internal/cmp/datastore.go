@@ -25,7 +25,7 @@ func (n *datastore) Read(ctx context.Context, d *utils.Data) error {
 
 	// name := d.GetString("name")
 	cloudID := d.GetInt("cloud_id")
-	res, err := n.nClient.GetAllCloudDataStores(ctx, n.serviceInstanceID, int32(cloudID))
+	res, err := n.nClient.GetAllCloudDataStores(ctx, n.serviceInstanceID, int(cloudID), nil)
 	if err != nil {
 		return err
 	}

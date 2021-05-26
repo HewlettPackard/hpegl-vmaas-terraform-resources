@@ -25,16 +25,6 @@ func DatastoreData() *schema.Resource {
 				Required:    true,
 				Description: "ID for cloud or zone",
 			},
-			"group_id": {
-				Type:        schema.TypeString,
-				Required:    true,
-				Description: "ID for group",
-			},
-			"resource_pool_id": {
-				Type:        schema.TypeString,
-				Required:    true,
-				Description: "Resource pool ID",
-			},
 		},
 		ReadContext: datastoreReadContext,
 		Description: "Get the datastore details",
