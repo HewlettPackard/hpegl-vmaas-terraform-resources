@@ -11,6 +11,7 @@ type Client struct {
 	Network  DataSource
 	Plan     DataSource
 	Group    DataSource
+	Layout   DataSource
 }
 
 // NewClient returns configured client
@@ -20,5 +21,6 @@ func NewClient(client *apiClient.APIClient, cfg apiClient.Configuration, sID str
 		Network:  newNetwork(&apiClient.NetworksApiService{Client: client, Cfg: cfg}, sID),
 		Plan:     newPlan(&apiClient.PlansApiService{Client: client, Cfg: cfg}, sID),
 		Group:    newGroup(&apiClient.GroupsApiService{Client: client, Cfg: cfg}, sID),
+		Layout:   newLayout(&apiClient.LibraryApiService{Client: client, Cfg: cfg}, sID),
 	}
 }
