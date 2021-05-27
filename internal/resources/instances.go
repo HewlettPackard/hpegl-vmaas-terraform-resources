@@ -26,7 +26,7 @@ func Instances() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
-				Description: "Name of the instance",
+				Description: "Name of the Instance",
 			},
 			"cloud_id": {
 				Type:        schema.TypeString,
