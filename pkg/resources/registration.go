@@ -25,6 +25,7 @@ func (r Registration) SupportedDataSources() map[string]*schema.Resource {
 		"hpegl_vmaas_layout":       resources.LayoutData(),
 		"hpegl_vmaas_group":        resources.GroupData(),
 		"hpegl_vmaas_plan":         resources.PlanData(),
+		"hpegl_vmaas_cloud":        resources.CloudData(),
 		"hpegl_vmaas_resourcePool": resources.ResourcePoolData(),
 		"hpegl_vmaas_datastore":    resources.DatastoreData(),
 	}
