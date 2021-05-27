@@ -71,6 +71,8 @@ func (i InitialiseClient) NewClient(r *schema.ResourceData) (interface{}, error)
 		Host: constants.ServiceURL,
 		DefaultHeader: map[string]string{
 			"Authorization": token,
+			"location":      location,
+			"space":         spaceName,
 		},
 	}
 	apiClient := api_client.NewAPIClient(&cfg)

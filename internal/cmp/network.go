@@ -4,7 +4,9 @@ package cmp
 
 import (
 	"context"
+	"crypto/tls"
 	"fmt"
+	"net/http"
 	"strconv"
 
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
@@ -23,6 +25,8 @@ func newNetwork(nClient *client.NetworksApiService, serviceInstanceID string) *n
 }
 
 func (n *network) Read(ctx context.Context, d *utils.Data) error {
+	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+
 	logger.Debug("Get Network")
 
 	name := d.GetString("name")

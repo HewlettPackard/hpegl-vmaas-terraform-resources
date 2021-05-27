@@ -54,6 +54,7 @@ func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 		Config:            getConfig(d.GetSMap("config")),
 		Tags:              getTags(d.GetMap("tags")),
 	}
+	// template:=d.GetString("template")
 
 	// Pre check
 	if err := d.Error(); err != nil {
