@@ -40,7 +40,7 @@ func (n *network) Read(ctx context.Context, d *utils.Data) error {
 	isMatch := false
 	networks := resp.(models.ListNetworksBody)
 	for i, n := range networks.Networks {
-		if n.Name == name {
+		if n.DisplayName == name {
 			isMatch = true
 			d.SetID(strconv.Itoa(networks.Networks[i].Id))
 
