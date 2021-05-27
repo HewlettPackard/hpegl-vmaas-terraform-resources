@@ -17,6 +17,9 @@ const (
 	instanceAvailableTimeout = 60 * time.Minute
 	instanceReadTimeout      = 2 * time.Minute
 	instanceDeleteTimeout    = 60 * time.Minute
+	instanceRetryTimeout     = 10 * time.Minute
+	instanceRetryDelay       = 120 * time.Second
+	instanceRetryMinTimeout  = 30 * time.Second
 )
 
 func Instances() *schema.Resource {
@@ -29,26 +32,30 @@ func Instances() *schema.Resource {
 				Description: "Name of the instance",
 			},
 			"cloud_id": {
-				Type:        schema.TypeString,
+				Type:        schema.TypeInt,
 				Required:    true,
 				Description: "ID for cloud or zone",
 			},
 			"group_id": {
-				Type:        schema.TypeString,
+				Type:        schema.TypeInt,
 				Required:    true,
 				Description: "ID for group",
 			},
 			"plan_id": {
-				Type:     schema.TypeString,
+				Type:     schema.TypeInt,
 				Required: true,
 			},
 			"layout_id": {
-				Type:     schema.TypeString,
+				Type:     schema.TypeInt,
 				Required: true,
 			},
 			"instance_code": {
 				Type:     schema.TypeString,
 				Required: true,
+			},
+			"instance_type": {
+				Type:     schema.TypeString,
+				Computed: true,
 			},
 			"networks": {
 				Type:     schema.TypeList,
@@ -72,7 +79,7 @@ func Instances() *schema.Resource {
 							Required: true,
 						},
 						"size": {
-							Type:     schema.TypeString,
+							Type:     schema.TypeInt,
 							Required: true,
 						},
 						"datastore_id": {
@@ -102,15 +109,15 @@ func Instances() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"resource_pool_id": {
-							Type:     schema.TypeString,
+							Type:     schema.TypeInt,
 							Required: true,
 						},
 						"public_key": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
-						"template_id": {
-							Type:     schema.TypeInt,
+						"template": {
+							Type:     schema.TypeString,
 							Required: true,
 						},
 					},
@@ -171,17 +178,17 @@ func instanceCreateContext(ctx context.Context, d *schema.ResourceData, meta int
 
 	// Wait for the status to be running
 	createStateConf := resource.StateChangeConf{
-		Delay:      time.Second * 30,
+		Delay:      instanceRetryDelay,
 		Pending:    []string{"provisioning"},
 		Target:     []string{"running"},
-		Timeout:    time.Minute * 10,
-		MinTimeout: time.Second * 30,
+		Timeout:    instanceRetryTimeout,
+		MinTimeout: instanceRetryMinTimeout,
 		Refresh: func() (result interface{}, state string, err error) {
 			if err := c.CmpClient.Instance.Read(ctx, data); err != nil {
 				return nil, "", err
 			}
 
-			return d.Get("name"), d.Get("status").(string), nil
+			return d.Get("name"), data.GetString("status"), nil
 		},
 	}
 	_, err = createStateConf.WaitForStateContext(ctx)

@@ -16,14 +16,14 @@ import (
 // instance implements functions related to cmp instances
 type instance struct {
 	// expose Instance API service to instances related operations
-	iClient           *client.InstancesApiService
-	serviceInstanceID string
+	iClient *client.InstancesApiService
+	tClient *client.VirtualImagesApiService
 }
 
-func newInstance(iClient *client.InstancesApiService, serviceInstanceID string) *instance {
+func newInstance(iClient *client.InstancesApiService, tClient *client.VirtualImagesApiService) *instance {
 	return &instance{
-		iClient:           iClient,
-		serviceInstanceID: serviceInstanceID,
+		iClient: iClient,
+		tClient: tClient,
 	}
 }
 
@@ -31,6 +31,7 @@ func newInstance(iClient *client.InstancesApiService, serviceInstanceID string) 
 func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 	logger.Debug("Creating new instance")
 
+	c := d.GetSMap("config")
 	req := &models.CreateInstanceBody{
 		ZoneId: d.GetJSONNumber("cloud_id"),
 		Instance: &models.CreateInstanceBodyInstance{
@@ -42,15 +43,16 @@ func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 				Id: d.GetJSONNumber("plan_id"),
 			},
 			Site: &models.CreateInstanceBodyInstanceSite{
-				Id: int32(d.GetInt("group_id")),
+				Id: d.GetInt("group_id"),
 			},
 			Layout: &models.CreateInstanceBodyInstanceLayout{
 				Id: d.GetJSONNumber("layout_id"),
 			},
+			Type: d.GetString("instance_code"),
 		},
 		Volumes:           getVolume(d.GetListMap("volumes")),
 		NetworkInterfaces: getNetwork(d.GetListMap("networks")),
-		Config:            getConfig(d.GetSMap("config")),
+		Config:            getConfig(c),
 		Tags:              getTags(d.GetMap("tags")),
 	}
 
@@ -58,19 +60,30 @@ func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 	if err := d.Error(); err != nil {
 		return err
 	}
-
-	resp, err := i.iClient.CreateAnInstance(ctx, i.serviceInstanceID, req)
+	// Get template id
+	vResp, err := i.tClient.GetAllVirtualImages(ctx, map[string]string{
+		nameKey: c["template"].(string),
+	})
 	if err != nil {
 		return err
 	}
-	d.SetID(strconv.Itoa(int(resp.Instance.Id)))
+	if len(vResp.VirtualImages) != 1 {
+		return fmt.Errorf(errExactMatch, "templates")
+	}
+	req.Config.Template = vResp.VirtualImages[0].ID
 
-	// post check
-	if err := d.Error(); err != nil {
+	// create instance
+	resp, err := utils.Retry(func() (interface{}, error) {
+		return i.iClient.CreateAnInstance(ctx, req)
+	})
+	if err != nil {
 		return err
 	}
+	instance := resp.(models.GetInstanceResponse)
+	d.SetID(strconv.Itoa(instance.Instance.Id))
 
-	return nil
+	// post check
+	return d.Error()
 }
 
 // Update instance including poweroff, powerOn, restart, suspend
@@ -92,21 +105,20 @@ func (i *instance) Delete(ctx context.Context, d *utils.Data) error {
 		return err
 	}
 
-	res, err := i.iClient.DeleteAnInstance(ctx, i.serviceInstanceID, int32(id))
+	resp, err := utils.Retry(func() (interface{}, error) {
+		return i.iClient.DeleteAnInstance(ctx, id)
+	})
+	deleResp := resp.(models.SuccessOrErrorMessage)
 	if err != nil {
 		return err
 	}
-	if !res.Success {
-		return fmt.Errorf("%s", res.Message)
+	if !deleResp.Success {
+		return fmt.Errorf("%s", deleResp.Message)
 	}
 	d.SetID("")
 
 	// post check
-	if err := d.Error(); err != nil {
-		return err
-	}
-
-	return nil
+	return d.Error()
 }
 
 // Read instance and set state values accordingly
@@ -120,29 +132,29 @@ func (i *instance) Read(ctx context.Context, d *utils.Data) error {
 		return err
 	}
 
-	resp, err := i.iClient.GetASpecificInstance(ctx, i.serviceInstanceID, int32(id))
+	resp, err := utils.Retry(func() (interface{}, error) {
+		return i.iClient.GetASpecificInstance(ctx, id)
+	})
 	if err != nil {
 		return err
 	}
-	d.SetID(strconv.Itoa(int(resp.Instance.Id)))
-	d.SetString("status", resp.Instance.Status)
+	instance := resp.(models.GetInstanceResponse)
+	d.SetID(strconv.Itoa(instance.Instance.Id))
+	d.SetString("status", instance.Instance.Status)
 
 	// post check
-	if err := d.Error(); err != nil {
-		return err
-	}
-
-	return nil
+	return d.Error()
 }
 
 func getVolume(volumes []map[string]interface{}) []models.CreateInstanceBodyVolumes {
 	volumesModel := make([]models.CreateInstanceBodyVolumes, 0, len(volumes))
+	logger.Debug(volumes)
 	for i := range volumes {
-		vID, _ := utils.ParseInt(volumes[i]["size"].(string))
+		// vID, _ := utils.ParseInt(volumes[i]["size"].(string))
 		volumesModel = append(volumesModel, models.CreateInstanceBodyVolumes{
 			Id:          -1,
 			Name:        volumes[i]["name"].(string),
-			Size:        int32(vID),
+			Size:        volumes[i]["size"].(int),
 			DatastoreId: volumes[i]["datastore_id"],
 			RootVolume:  true,
 		})
@@ -156,7 +168,7 @@ func getNetwork(networksMap []map[string]interface{}) []models.CreateInstanceBod
 	for _, n := range networksMap {
 		networks = append(networks, models.CreateInstanceBodyNetworkInterfaces{
 			Network: &models.CreateInstanceBodyNetwork{
-				Id: int32(n["id"].(int)),
+				Id: n["id"].(int),
 			},
 		})
 	}
@@ -167,7 +179,6 @@ func getNetwork(networksMap []map[string]interface{}) []models.CreateInstanceBod
 func getConfig(c map[string]interface{}) *models.CreateInstanceBodyConfig {
 	config := &models.CreateInstanceBodyConfig{
 		ResourcePoolId: utils.JSONNumber(c["resource_pool_id"]),
-		Template:       int32(c["template_id"].(int)),
 	}
 
 	return config
