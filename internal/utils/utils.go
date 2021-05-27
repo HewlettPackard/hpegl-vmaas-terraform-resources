@@ -35,5 +35,6 @@ func Retry(fn func() (interface{}, error)) (interface{}, error) {
 		}
 		time.Sleep(defaultTimeout)
 	}
+
 	return resp, err
 }

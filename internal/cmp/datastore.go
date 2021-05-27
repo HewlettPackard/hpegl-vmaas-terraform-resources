@@ -34,7 +34,7 @@ func (n *datastore) Read(ctx context.Context, d *utils.Data) error {
 		return err
 	}
 	resp, err := utils.Retry(func() (interface{}, error) {
-		return n.nClient.GetAllCloudDataStores(ctx, n.serviceInstanceID, int(cloudID),
+		return n.nClient.GetAllCloudDataStores(ctx, n.serviceInstanceID, cloudID,
 			map[string]string{"name": name},
 		)
 	})

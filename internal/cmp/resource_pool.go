@@ -34,18 +34,20 @@ func (n *resourcePool) Read(ctx context.Context, d *utils.Data) error {
 
 	flag := false
 	resp, err := utils.Retry(func() (interface{}, error) {
-		return n.rClient.GetAllCloudResourcePools(ctx, n.serviceInstanceID, int(cloudID), map[string]string{
+		return n.rClient.GetAllCloudResourcePools(ctx, n.serviceInstanceID, cloudID, map[string]string{
 			maxKey: "100",
 		})
 	})
 	if err != nil {
 		return err
 	}
-	resourcePools:=resp.(models.ResourcePoolsResp)
+
+	resourcePools := resp.(models.ResourcePoolsResp)
 	for i, r := range resourcePools.ResourcePools {
 		if r.Name == name {
 			flag = true
 			d.SetID(strconv.Itoa(resourcePools.ResourcePools[i].ID))
+
 			break
 		}
 	}

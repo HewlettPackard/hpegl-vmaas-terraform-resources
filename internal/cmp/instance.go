@@ -67,7 +67,7 @@ func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 		return err
 	}
 	instance := resp.(models.GetInstanceResponse)
-	d.SetID(strconv.Itoa(int(instance.Instance.Id)))
+	d.SetID(strconv.Itoa(instance.Instance.Id))
 
 	// post check
 	return d.Error()
@@ -126,7 +126,7 @@ func (i *instance) Read(ctx context.Context, d *utils.Data) error {
 		return err
 	}
 	instance := resp.(models.GetInstanceResponse)
-	d.SetID(strconv.Itoa(int(instance.Instance.Id)))
+	d.SetID(strconv.Itoa(instance.Instance.Id))
 	d.SetString("status", instance.Instance.Status)
 
 	// post check
