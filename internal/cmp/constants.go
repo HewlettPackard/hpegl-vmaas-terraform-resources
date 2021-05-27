@@ -4,7 +4,7 @@ package cmp
 
 const (
 	vmware           = "vmware"
-	errExactMatch    = "error coudn't find exact %s, please check the name"
+	errExactMatch    = "error, could not find the %s with the specified name. Please verify the name and try again"
 	provisionTypeKey = "provisionType"
 	nameKey          = "name"
 )
