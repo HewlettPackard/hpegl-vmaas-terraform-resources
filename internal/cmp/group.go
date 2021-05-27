@@ -8,6 +8,7 @@ import (
 	"strconv"
 
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
+	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/models"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/logger"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
 )
@@ -28,9 +29,16 @@ func (g *group) Read(ctx context.Context, d *utils.Data) error {
 	logger.Debug("Get Group")
 
 	name := d.GetString("name")
-	groups, err := g.gClient.GetAllGroups(ctx, g.serviceInstanceID, map[string]string{
-		nameKey: name,
+	// Pre check
+	if err := d.Error(); err != nil {
+		return err
+	}
+	resp, err := utils.Retry(func() (interface{}, error) {
+		return g.gClient.GetAllGroups(ctx, g.serviceInstanceID, map[string]string{
+			nameKey: name,
+		})
 	})
+	groups := resp.(models.Groups)
 	if err != nil {
 		return err
 	}

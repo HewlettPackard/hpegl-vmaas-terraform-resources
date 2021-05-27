@@ -82,7 +82,7 @@ func (d *Data) get(key string) interface{} {
 	return d.d.Get(key)
 }
 
-func (d *Data) GetID() int64 {
+func (d *Data) GetID() int {
 	id, err := ParseInt(d.d.Id())
 	if err != nil {
 		d.err("id", ErrInvalidType)
@@ -90,7 +90,7 @@ func (d *Data) GetID() int64 {
 		return NAN
 	}
 
-	return id
+	return int(id)
 }
 
 func (d *Data) GetIDString() string {
@@ -122,19 +122,33 @@ func (d *Data) GetStringList(key string) []string {
 	return dst
 }
 
-func (d *Data) GetInt(key string) int64 {
-	valString, ok := d.d.GetOk(key)
+func (d *Data) GetInt(key string) int {
+	valInter, ok := d.d.GetOk(key)
 	if !ok {
 		d.err(key, ErrKeyNotDefined)
 
 		return NAN
 	}
-	val, err := ParseInt(valString.(string))
-	if err != nil {
+	valInt, ok := valInter.(int)
+	var err error
+	if !ok {
+		valString, ok := valInter.(string)
+		if ok {
+			valInt, err = strconv.Atoi(valString)
+			if err != nil {
+				d.err(key, ErrInvalidType+valString)
+
+				return NAN
+			}
+
+			return valInt
+		}
 		d.err(key, ErrInvalidType)
+
+		return NAN
 	}
 
-	return val
+	return valInt
 }
 
 // GetSMap for get map for a Set
@@ -183,7 +197,7 @@ func (d *Data) GetString(key string) string {
 func (d *Data) GetJSONNumber(key string) json.Number {
 	in := d.get(key)
 
-	return json.Number(in.(string))
+	return JSONNumber(in)
 }
 
 func (d *Data) SetString(key string, value string) {

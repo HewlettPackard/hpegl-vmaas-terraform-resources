@@ -8,6 +8,7 @@ import (
 	"strconv"
 
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
+	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/models"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/logger"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
 )
@@ -28,13 +29,20 @@ func (g *layout) Read(ctx context.Context, d *utils.Data) error {
 	logger.Debug("Get Layout")
 
 	name := d.GetString("name")
-	instanceTypes, err := g.gClient.GetAllInstanceTypes(ctx, g.serviceInstanceID, map[string]string{
-		nameKey:          name,
-		provisionTypeKey: vmware,
+	// Pre check
+	if err := d.Error(); err != nil {
+		return err
+	}
+	resp, err := utils.Retry(func() (interface{}, error) {
+		return g.gClient.GetAllInstanceTypes(ctx, g.serviceInstanceID, map[string]string{
+			nameKey:          name,
+			provisionTypeKey: vmware,
+		})
 	})
 	if err != nil {
 		return err
 	}
+	instanceTypes := resp.(models.InstanceTypesResp)
 
 	if len(instanceTypes.InstanceTypes) != 1 {
 		return fmt.Errorf(errExactMatch, "instance type")

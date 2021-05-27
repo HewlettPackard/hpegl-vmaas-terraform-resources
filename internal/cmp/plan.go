@@ -8,6 +8,7 @@ import (
 	"strconv"
 
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
+	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/models"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/logger"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
 )
@@ -25,13 +26,20 @@ func (n *plan) Read(ctx context.Context, d *utils.Data) error {
 	logger.Debug("Get plan")
 
 	name := d.GetString("name")
-	plans, err := n.pClient.GetAllServicePlans(ctx, n.serviceInstanceID, map[string]string{
-		provisionTypeKey: vmware,
-		nameKey:          name,
+	// Pre check
+	if err := d.Error(); err != nil {
+		return err
+	}
+	resp, err := utils.Retry(func() (interface{}, error) {
+		return n.pClient.GetAllServicePlans(ctx, n.serviceInstanceID, map[string]string{
+			provisionTypeKey: vmware,
+			nameKey:          name,
+		})
 	})
 	if err != nil {
 		return err
 	}
+	plans := resp.(models.ServicePlans)
 	if len(plans.ServicePlansResponse) != 1 {
 		return fmt.Errorf(errExactMatch, "plan")
 	}

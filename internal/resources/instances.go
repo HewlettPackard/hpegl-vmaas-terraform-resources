@@ -50,6 +50,10 @@ func Instances() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
+			"instance_type": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
 			"networks": {
 				Type:     schema.TypeList,
 				Required: true,
