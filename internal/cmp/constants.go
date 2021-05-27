@@ -8,5 +8,4 @@ const (
 	provisionTypeKey = "provisionType"
 	nameKey          = "name"
 	maxKey           = "max"
-	phraseKey        = "phrase"
 )

@@ -32,9 +32,7 @@ func (g *group) Read(ctx context.Context, d *utils.Data) error {
 		return err
 	}
 	resp, err := utils.Retry(func() (interface{}, error) {
-		return g.gClient.GetAllGroups(ctx, map[string]string{
-			nameKey: name,
-		})
+		return g.gClient.GetAllGroups(ctx, nil)
 	})
 	groups := resp.(models.Groups)
 	if err != nil {
@@ -45,6 +43,7 @@ func (g *group) Read(ctx context.Context, d *utils.Data) error {
 		if g.Name == name {
 			isMatched = true
 			d.SetID(strconv.Itoa((*groups.Groups)[i].Id))
+
 			break
 		}
 	}

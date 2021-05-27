@@ -22,7 +22,6 @@ func newNetwork(nClient *client.NetworksApiService) *network {
 }
 
 func (n *network) Read(ctx context.Context, d *utils.Data) error {
-
 	logger.Debug("Get Network")
 
 	name := d.GetString("name")
