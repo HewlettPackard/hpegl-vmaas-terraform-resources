@@ -14,14 +14,12 @@ import (
 )
 
 type layout struct {
-	gClient           *client.LibraryApiService
-	serviceInstanceID string
+	gClient *client.LibraryApiService
 }
 
-func newLayout(gClient *client.LibraryApiService, serviceInstanceID string) *layout {
+func newLayout(gClient *client.LibraryApiService) *layout {
 	return &layout{
-		gClient:           gClient,
-		serviceInstanceID: serviceInstanceID,
+		gClient: gClient,
 	}
 }
 
@@ -34,7 +32,7 @@ func (g *layout) Read(ctx context.Context, d *utils.Data) error {
 		return err
 	}
 	resp, err := utils.Retry(func() (interface{}, error) {
-		return g.gClient.GetAllInstanceTypes(ctx, g.serviceInstanceID, map[string]string{
+		return g.gClient.GetAllInstanceTypes(ctx, map[string]string{
 			nameKey:          name,
 			provisionTypeKey: vmware,
 		})

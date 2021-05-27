@@ -14,14 +14,12 @@ import (
 )
 
 type group struct {
-	gClient           *client.GroupsApiService
-	serviceInstanceID string
+	gClient *client.GroupsApiService
 }
 
-func newGroup(gClient *client.GroupsApiService, serviceInstanceID string) *group {
+func newGroup(gClient *client.GroupsApiService) *group {
 	return &group{
-		gClient:           gClient,
-		serviceInstanceID: serviceInstanceID,
+		gClient: gClient,
 	}
 }
 
@@ -34,7 +32,7 @@ func (g *group) Read(ctx context.Context, d *utils.Data) error {
 		return err
 	}
 	resp, err := utils.Retry(func() (interface{}, error) {
-		return g.gClient.GetAllGroups(ctx, g.serviceInstanceID, map[string]string{
+		return g.gClient.GetAllGroups(ctx, map[string]string{
 			nameKey: name,
 		})
 	})
@@ -42,12 +40,17 @@ func (g *group) Read(ctx context.Context, d *utils.Data) error {
 	if err != nil {
 		return err
 	}
-
-	if len(*groups.Groups) != 1 {
+	isMatched := false
+	for i, g := range *groups.Groups {
+		if g.Name == name {
+			isMatched = true
+			d.SetID(strconv.Itoa((*groups.Groups)[i].Id))
+			break
+		}
+	}
+	if !isMatched {
 		return fmt.Errorf(errExactMatch, "group")
 	}
-
-	d.SetID(strconv.Itoa((*groups.Groups)[0].Id))
 
 	// post check
 	return d.Error()

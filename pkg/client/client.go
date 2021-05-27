@@ -3,7 +3,9 @@
 package client
 
 import (
+	"crypto/tls"
 	"fmt"
+	"net/http"
 
 	"github.com/hpe-hcss/hpegl-provider-lib/pkg/gltform"
 
@@ -37,6 +39,8 @@ type InitialiseClient struct{}
 // The hpegl provider will put *Client at the value of keyForGLClientMap (returned by ServiceName) in
 // the map of clients that it creates and passes down to provider code.  hpegl executes NewClient for each service.
 func (i InitialiseClient) NewClient(r *schema.ResourceData) (interface{}, error) {
+	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+
 	token := r.Get("iam_token").(string)
 	vmaasProviderSettings, err := client.GetServiceSettingsMap(constants.ServiceName, r)
 	if err != nil {
@@ -60,9 +64,6 @@ func (i InitialiseClient) NewClient(r *schema.ResourceData) (interface{}, error)
 	}
 	client.IAMToken = token
 
-	// Get the Service Instance using agena-api call by sending space_name amd location
-	serviceInstanceID := "SERVICE_INSTANCE_ID"
-
 	// location and space_naem supplied from the terraform tf file
 	client.Location = location
 	client.SpaceName = spaceName
@@ -76,7 +77,7 @@ func (i InitialiseClient) NewClient(r *schema.ResourceData) (interface{}, error)
 		},
 	}
 	apiClient := api_client.NewAPIClient(&cfg)
-	client.CmpClient = cmp_client.NewClient(apiClient, cfg, serviceInstanceID)
+	client.CmpClient = cmp_client.NewClient(apiClient, cfg)
 
 	return client, nil
 }

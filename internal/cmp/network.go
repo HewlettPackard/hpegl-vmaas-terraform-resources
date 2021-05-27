@@ -4,9 +4,7 @@ package cmp
 
 import (
 	"context"
-	"crypto/tls"
 	"fmt"
-	"net/http"
 	"strconv"
 
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
@@ -16,16 +14,14 @@ import (
 )
 
 type network struct {
-	nClient           *client.NetworksApiService
-	serviceInstanceID string
+	nClient *client.NetworksApiService
 }
 
-func newNetwork(nClient *client.NetworksApiService, serviceInstanceID string) *network {
-	return &network{nClient: nClient, serviceInstanceID: serviceInstanceID}
+func newNetwork(nClient *client.NetworksApiService) *network {
+	return &network{nClient: nClient}
 }
 
 func (n *network) Read(ctx context.Context, d *utils.Data) error {
-	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 
 	logger.Debug("Get Network")
 
@@ -35,19 +31,25 @@ func (n *network) Read(ctx context.Context, d *utils.Data) error {
 		return err
 	}
 	resp, err := utils.Retry(func() (interface{}, error) {
-		return n.nClient.GetAllNetworks(ctx, n.serviceInstanceID, map[string]string{
-			nameKey: name,
-		})
+		return n.nClient.GetAllNetworks(ctx, nil)
 	})
 	if err != nil {
 		return err
 	}
 
+	isMatch := false
 	networks := resp.(models.ListNetworksBody)
-	if len(networks.Networks) != 1 {
+	for i, n := range networks.Networks {
+		if n.Name == name {
+			isMatch = true
+			d.SetID(strconv.Itoa(networks.Networks[i].Id))
+
+			break
+		}
+	}
+	if !isMatch {
 		return fmt.Errorf(errExactMatch, "Network")
 	}
-	d.SetID(strconv.Itoa(networks.Networks[0].Id))
 
 	// post check
 	return d.Error()

@@ -16,14 +16,14 @@ import (
 // instance implements functions related to cmp instances
 type instance struct {
 	// expose Instance API service to instances related operations
-	iClient           *client.InstancesApiService
-	serviceInstanceID string
+	iClient *client.InstancesApiService
+	tClient *client.VirtualImagesApiService
 }
 
-func newInstance(iClient *client.InstancesApiService, serviceInstanceID string) *instance {
+func newInstance(iClient *client.InstancesApiService, tClient *client.VirtualImagesApiService) *instance {
 	return &instance{
-		iClient:           iClient,
-		serviceInstanceID: serviceInstanceID,
+		iClient: iClient,
+		tClient: tClient,
 	}
 }
 
@@ -31,6 +31,7 @@ func newInstance(iClient *client.InstancesApiService, serviceInstanceID string) 
 func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 	logger.Debug("Creating new instance")
 
+	c := d.GetSMap("config")
 	req := &models.CreateInstanceBody{
 		ZoneId: d.GetJSONNumber("cloud_id"),
 		Instance: &models.CreateInstanceBodyInstance{
@@ -51,18 +52,29 @@ func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 		},
 		Volumes:           getVolume(d.GetListMap("volumes")),
 		NetworkInterfaces: getNetwork(d.GetListMap("networks")),
-		Config:            getConfig(d.GetSMap("config")),
+		Config:            getConfig(c),
 		Tags:              getTags(d.GetMap("tags")),
 	}
-	// template:=d.GetString("template")
 
 	// Pre check
 	if err := d.Error(); err != nil {
 		return err
 	}
+	// Get template id
+	vResp, err := i.tClient.GetAllVirtualImages(ctx, map[string]string{
+		nameKey: c["template"].(string),
+	})
+	if err != nil {
+		return err
+	}
+	if len(vResp.VirtualImages) != 1 {
+		return fmt.Errorf(errExactMatch, "templates")
+	}
+	req.Config.Template = vResp.VirtualImages[0].ID
 
+	// create instance
 	resp, err := utils.Retry(func() (interface{}, error) {
-		return i.iClient.CreateAnInstance(ctx, i.serviceInstanceID, req)
+		return i.iClient.CreateAnInstance(ctx, req)
 	})
 	if err != nil {
 		return err
@@ -94,7 +106,7 @@ func (i *instance) Delete(ctx context.Context, d *utils.Data) error {
 	}
 
 	resp, err := utils.Retry(func() (interface{}, error) {
-		return i.iClient.DeleteAnInstance(ctx, i.serviceInstanceID, id)
+		return i.iClient.DeleteAnInstance(ctx, id)
 	})
 	deleResp := resp.(models.SuccessOrErrorMessage)
 	if err != nil {
@@ -121,7 +133,7 @@ func (i *instance) Read(ctx context.Context, d *utils.Data) error {
 	}
 
 	resp, err := utils.Retry(func() (interface{}, error) {
-		return i.iClient.GetASpecificInstance(ctx, i.serviceInstanceID, id)
+		return i.iClient.GetASpecificInstance(ctx, id)
 	})
 	if err != nil {
 		return err
@@ -167,7 +179,6 @@ func getNetwork(networksMap []map[string]interface{}) []models.CreateInstanceBod
 func getConfig(c map[string]interface{}) *models.CreateInstanceBodyConfig {
 	config := &models.CreateInstanceBodyConfig{
 		ResourcePoolId: utils.JSONNumber(c["resource_pool_id"]),
-		Template:       c["template_id"].(int),
 	}
 
 	return config

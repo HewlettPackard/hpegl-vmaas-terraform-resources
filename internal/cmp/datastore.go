@@ -14,12 +14,11 @@ import (
 )
 
 type datastore struct {
-	nClient           *client.CloudsApiService
-	serviceInstanceID string
+	nClient *client.CloudsApiService
 }
 
-func newDatastore(nClient *client.CloudsApiService, serviceInstanceID string) *datastore {
-	return &datastore{nClient: nClient, serviceInstanceID: serviceInstanceID}
+func newDatastore(nClient *client.CloudsApiService) *datastore {
+	return &datastore{nClient: nClient}
 }
 
 func (n *datastore) Read(ctx context.Context, d *utils.Data) error {
@@ -34,7 +33,7 @@ func (n *datastore) Read(ctx context.Context, d *utils.Data) error {
 		return err
 	}
 	resp, err := utils.Retry(func() (interface{}, error) {
-		return n.nClient.GetAllCloudDataStores(ctx, n.serviceInstanceID, cloudID,
+		return n.nClient.GetAllCloudDataStores(ctx, cloudID,
 			map[string]string{"name": name},
 		)
 	})

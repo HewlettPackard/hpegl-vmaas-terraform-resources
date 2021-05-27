@@ -18,15 +18,18 @@ type Client struct {
 }
 
 // NewClient returns configured client
-func NewClient(client *apiClient.APIClient, cfg apiClient.Configuration, sID string) *Client {
+func NewClient(client *apiClient.APIClient, cfg apiClient.Configuration) *Client {
 	return &Client{
-		Instance:     newInstance(&apiClient.InstancesApiService{Client: client, Cfg: cfg}, sID),
-		Network:      newNetwork(&apiClient.NetworksApiService{Client: client, Cfg: cfg}, sID),
-		Plan:         newPlan(&apiClient.PlansApiService{Client: client, Cfg: cfg}, sID),
-		Group:        newGroup(&apiClient.GroupsApiService{Client: client, Cfg: cfg}, sID),
-		Layout:       newLayout(&apiClient.LibraryApiService{Client: client, Cfg: cfg}, sID),
-		Cloud:        newCloud(&apiClient.CloudsApiService{Client: client, Cfg: cfg}, sID),
-		ResourcePool: newResourcePool(&apiClient.CloudsApiService{Client: client, Cfg: cfg}, sID),
-		Datastore:    newDatastore(&apiClient.CloudsApiService{Client: client, Cfg: cfg}, sID),
+		Instance: newInstance(
+			&apiClient.InstancesApiService{Client: client, Cfg: cfg},
+			&apiClient.VirtualImagesApiService{Client: client, Cfg: cfg},
+		),
+		Network:      newNetwork(&apiClient.NetworksApiService{Client: client, Cfg: cfg}),
+		Plan:         newPlan(&apiClient.PlansApiService{Client: client, Cfg: cfg}),
+		Group:        newGroup(&apiClient.GroupsApiService{Client: client, Cfg: cfg}),
+		Layout:       newLayout(&apiClient.LibraryApiService{Client: client, Cfg: cfg}),
+		Cloud:        newCloud(&apiClient.CloudsApiService{Client: client, Cfg: cfg}),
+		ResourcePool: newResourcePool(&apiClient.CloudsApiService{Client: client, Cfg: cfg}),
+		Datastore:    newDatastore(&apiClient.CloudsApiService{Client: client, Cfg: cfg}),
 	}
 }

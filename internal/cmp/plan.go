@@ -14,12 +14,11 @@ import (
 )
 
 type plan struct {
-	pClient           *client.PlansApiService
-	serviceInstanceID string
+	pClient *client.PlansApiService
 }
 
-func newPlan(pClient *client.PlansApiService, serviceInstanceID string) *plan {
-	return &plan{pClient: pClient, serviceInstanceID: serviceInstanceID}
+func newPlan(pClient *client.PlansApiService) *plan {
+	return &plan{pClient: pClient}
 }
 
 func (n *plan) Read(ctx context.Context, d *utils.Data) error {
@@ -31,7 +30,7 @@ func (n *plan) Read(ctx context.Context, d *utils.Data) error {
 		return err
 	}
 	resp, err := utils.Retry(func() (interface{}, error) {
-		return n.pClient.GetAllServicePlans(ctx, n.serviceInstanceID, map[string]string{
+		return n.pClient.GetAllServicePlans(ctx, map[string]string{
 			provisionTypeKey: vmware,
 			nameKey:          name,
 		})

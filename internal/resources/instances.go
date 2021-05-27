@@ -17,6 +17,9 @@ const (
 	instanceAvailableTimeout = 60 * time.Minute
 	instanceReadTimeout      = 2 * time.Minute
 	instanceDeleteTimeout    = 60 * time.Minute
+	instanceRetryTimeout     = 10 * time.Minute
+	instanceRetryDelay       = 120 * time.Second
+	instanceRetryMinTimeout  = 30 * time.Second
 )
 
 func Instances() *schema.Resource {
@@ -113,8 +116,8 @@ func Instances() *schema.Resource {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
-						"template_id": {
-							Type:     schema.TypeInt,
+						"template": {
+							Type:     schema.TypeString,
 							Required: true,
 						},
 					},
@@ -175,11 +178,11 @@ func instanceCreateContext(ctx context.Context, d *schema.ResourceData, meta int
 
 	// Wait for the status to be running
 	createStateConf := resource.StateChangeConf{
-		Delay:      time.Second * 30,
+		Delay:      instanceRetryDelay,
 		Pending:    []string{"provisioning"},
 		Target:     []string{"running"},
-		Timeout:    time.Minute * 10,
-		MinTimeout: time.Second * 30,
+		Timeout:    instanceRetryTimeout,
+		MinTimeout: instanceRetryMinTimeout,
 		Refresh: func() (result interface{}, state string, err error) {
 			if err := c.CmpClient.Instance.Read(ctx, data); err != nil {
 				return nil, "", err

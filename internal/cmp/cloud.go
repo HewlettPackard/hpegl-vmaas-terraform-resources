@@ -14,14 +14,12 @@ import (
 )
 
 type cloud struct {
-	cloudClient       *client.CloudsApiService
-	serviceInstanceID string
+	cloudClient *client.CloudsApiService
 }
 
-func newCloud(cloudClient *client.CloudsApiService, serviceInstanceID string) *cloud {
+func newCloud(cloudClient *client.CloudsApiService) *cloud {
 	return &cloud{
-		cloudClient:       cloudClient,
-		serviceInstanceID: serviceInstanceID,
+		cloudClient: cloudClient,
 	}
 }
 
@@ -33,7 +31,7 @@ func (c *cloud) Read(ctx context.Context, d *utils.Data) error {
 		return err
 	}
 	resp, err := utils.Retry(func() (interface{}, error) {
-		return c.cloudClient.GetAllClouds(ctx, c.serviceInstanceID, map[string]string{
+		return c.cloudClient.GetAllClouds(ctx, map[string]string{
 			nameKey: name,
 		})
 	})

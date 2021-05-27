@@ -190,6 +190,7 @@ func (d *Data) GetString(key string) string {
 	if val != nil {
 		return val.(string)
 	}
+	d.err(key, ErrInvalidType)
 
 	return ""
 }
