@@ -4,6 +4,7 @@ package resources
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -28,105 +29,122 @@ func Instances() *schema.Resource {
 			"name": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "Name of the Instance",
+				Description: "Name of the instance to be provisioned",
 			},
 			"cloud_id": {
 				Type:        schema.TypeInt,
 				Required:    true,
-				Description: ``,
+				Description: cloudIDDesc,
 			},
 			"group_id": {
 				Type:        schema.TypeInt,
 				Required:    true,
-				Description: "ID for group",
+				Description: groupIDDesc,
 			},
 			"plan_id": {
-				Type:     schema.TypeInt,
-				Required: true,
+				Type:        schema.TypeInt,
+				Required:    true,
+				Description: planIDDesc,
 			},
 			"layout_id": {
-				Type:     schema.TypeInt,
-				Required: true,
+				Type:        schema.TypeInt,
+				Required:    true,
+				Description: layoutIDDesc,
 			},
 			"instance_code": {
-				Type:     schema.TypeString,
-				Required: true,
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "Unique code used to identify the instance type",
 			},
 			"instance_type": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Type for the instance type. This should be vmware for vmaas resource",
 			},
 			"networks": {
-				Type:     schema.TypeList,
-				Required: true,
+				Type:        schema.TypeList,
+				Required:    true,
+				Description: "Network details of which network the instance should belong to",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"id": {
-							Type:     schema.TypeInt,
-							Required: true,
+							Type:        schema.TypeInt,
+							Required:    true,
+							Description: networkIDDesc,
 						},
 					},
 				},
 			},
 			"volumes": {
-				Type:        schema.TypeList,
-				Required:    true,
-				Description: "string",
+				Type:     schema.TypeList,
+				Required: true,
+				Description: `A list of volumes which consist of the volumes to be created inside a provisioned instance.
+				It can have a root volume and other secondary volumes.`,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"name": {
-							Type:     schema.TypeString,
-							Required: true,
+							Type:        schema.TypeString,
+							Required:    true,
+							Description: "Unique name for the volume.",
 						},
 						"size": {
-							Type:     schema.TypeInt,
-							Required: true,
+							Type:        schema.TypeInt,
+							Required:    true,
+							Description: "Size of the volume in GB.",
 						},
 						"datastore_id": {
-							Type:     schema.TypeString,
-							Required: true,
+							Type:        schema.TypeString,
+							Required:    true,
+							Description: "Unique ID for the datastore.",
 						},
 					},
 				},
 			},
 			"labels": {
-				Type:     schema.TypeList,
-				Optional: true,
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "A list of strings used for labelling instances.",
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
 			},
 			"tags": {
-				Type:     schema.TypeMap,
-				Optional: true,
+				Type:        schema.TypeMap,
+				Optional:    true,
+				Description: "A list of key and value pairs used to tag instances of similar type.",
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
 			},
 			"config": {
-				Type:     schema.TypeSet,
-				Required: true,
+				Type:        schema.TypeSet,
+				Required:    true,
+				Description: "Configuration details for the instance to be provisioned'",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"resource_pool_id": {
-							Type:     schema.TypeInt,
-							Required: true,
+							Type:        schema.TypeInt,
+							Required:    true,
+							Description: "Unique ID of resource pool.",
 						},
 						"public_key": {
-							Type:     schema.TypeString,
-							Optional: true,
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "ID of a public key to add to the instance.",
 						},
 						"template": {
-							Type:     schema.TypeString,
-							Required: true,
+							Type:        schema.TypeString,
+							Required:    true,
+							Description: "Unique ID of virtual image to be used.",
 						},
 					},
 				},
 			},
 			"copies": {
-				Type:     schema.TypeInt,
-				Optional: true,
-				Default:  1,
+				Type:        schema.TypeInt,
+				Optional:    true,
+				Default:     1,
+				Description: "Number of instance copies to be provisioned.",
 			},
 			"evars": {
 				Type:     schema.TypeMap,
@@ -134,14 +152,18 @@ func Instances() *schema.Resource {
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
+				Description: "Environment Variables to be added to the provisioned instance.",
 			},
 			"state": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "State of the instance provisioned.",
 			},
 			"status": {
 				Type:     schema.TypeString,
 				Computed: true,
+				Description: `Status of the instance .It can be one among these:
+				 Provisioning/Failed/Unknown/Running.`,
 			},
 		},
 		SchemaVersion:  0,
@@ -161,7 +183,11 @@ func Instances() *schema.Resource {
 			Delete: schema.DefaultTimeout(instanceDeleteTimeout),
 			Read:   schema.DefaultTimeout(instanceReadTimeout),
 		},
-		Description: "Create/update/delete instance",
+		Description: fmt.Sprintf(resourceHeadingDesc, `Instance resource facilitates creating, 
+		updating and deleting virtual machines.
+		For creating an instance, provide a unique name and all the Mandatory(Required) parameters.,
+		It is recommened to use the Vmware type for provisioning. 
+	    `),
 	}
 }
 

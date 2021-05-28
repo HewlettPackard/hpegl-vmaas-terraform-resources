@@ -4,6 +4,7 @@ package resources
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -17,21 +18,23 @@ func LayoutData() *schema.Resource {
 			"name": {
 				Type:     schema.TypeString,
 				Required: true,
-				Description: `Code of the layout. This needs to be exact code or
-				else will return error not found`,
+				Description: `Name of the layout. Provide appropriate name as appears on the GLC` +
+					fmt.Sprintf(notFoundDesc, "layout"),
 			},
 			"instance_type": {
-				Type:     schema.TypeString,
-				Required: true,
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: `Type for the instance type. This should be vmware for vmaas resource`,
 			},
 			"instance_code": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: "Instance code for the given instance type",
+				Description: "Unique code used to identify the instance type",
 			},
 		},
 		ReadContext: layoutReadContext,
-		Description: "Get the Layout details",
+		Description: fmt.Sprintf(dsHeadingDesc, `layout which should be used for 
+		the instance to be provisioned`, "Provisioning->Library->Layouts"),
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(readTimeout),
 		},

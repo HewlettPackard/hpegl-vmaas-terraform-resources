@@ -4,6 +4,7 @@ package resources
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -17,12 +18,12 @@ func CloudData() *schema.Resource {
 			"name": {
 				Type:     schema.TypeString,
 				Required: true,
-				Description: `Name of the cloud. This needs to be exact name or
-				else will return error not found`,
+				Description: `Name of the cloud. Provide appropriate name as appears on the GLC` +
+					fmt.Sprintf(notFoundDesc, "cloud"),
 			},
 		},
 		ReadContext: cloudReadContext,
-		Description: "Get the Cloud details",
+		Description: fmt.Sprintf(dsHeadingDesc, "Cloud", "Infrastructure->Clouds"),
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(readTimeout),
 		},

@@ -4,6 +4,7 @@ package resources
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -17,13 +18,13 @@ func PlanData() *schema.Resource {
 			"name": {
 				Type:     schema.TypeString,
 				Required: true,
-				Description: `Name of the Plan. This needs to be exact name or
-				else will return error not found. Currently only vmware related
-				plans are supported`,
+				Description: `Name of the Plan. Provide appropriate name as appears on the GLC` +
+					fmt.Sprintf(notFoundDesc, "plan."),
 			},
 		},
 		ReadContext: planReadContext,
-		Description: "Get the plan details",
+		Description: fmt.Sprintf(dsHeadingDesc, "plans for vmaas", "Administration->Plans and Pricing") +
+			fmt.Sprintf(notFoundDesc, "plan"),
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(readTimeout),
 		},

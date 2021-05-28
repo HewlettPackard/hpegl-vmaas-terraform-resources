@@ -4,6 +4,7 @@ package resources
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -17,17 +18,18 @@ func DatastoreData() *schema.Resource {
 			"name": {
 				Type:     schema.TypeString,
 				Required: true,
-				Description: `Name of the datastore. This needs to be exact name or
-				else will return error not found`,
+				Description: `Name of the datastore. Provide appropriate name as appears on the GLC` +
+					fmt.Sprintf(notFoundDesc, "data store"),
 			},
 			"cloud_id": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "ID for cloud or zone",
+				Description: cloudIDDesc,
 			},
 		},
 		ReadContext: datastoreReadContext,
-		Description: "Get the datastore details",
+		Description: fmt.Sprintf(dsHeadingDesc, `data store of a cluster which should be used for 
+		the instance to be provisioned`, "Infrastructure->Clouds->Data Stores"),
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(readTimeout),
 		},

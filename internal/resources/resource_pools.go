@@ -4,6 +4,7 @@ package resources
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -17,17 +18,18 @@ func ResourcePoolData() *schema.Resource {
 			"name": {
 				Type:     schema.TypeString,
 				Required: true,
-				Description: `Name of the resource pool. This needs to be exact name or
-				else will return error not found`,
+				Description: "Provide ResourcePool name of a cluster" +
+					fmt.Sprintf(notFoundDesc, "resourcepool"),
 			},
 			"cloud_id": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: `Cloud or Zone ID`,
+				Description: cloudIDDesc,
 			},
 		},
 		ReadContext: resourcePoolReadContext,
-		Description: "Get the ResourcePool details",
+		Description: fmt.Sprintf(dsHeadingDesc, `resource pool of a cluster where the instance 
+		should be provisioned`, "Infrastructure->Clouds->Resources"),
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(readTimeout),
 		},
