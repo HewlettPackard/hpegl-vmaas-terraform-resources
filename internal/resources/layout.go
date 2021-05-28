@@ -4,7 +4,6 @@ package resources
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -16,10 +15,9 @@ func LayoutData() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"name": {
-				Type:     schema.TypeString,
-				Required: true,
-				Description: `Name of the layout. Provide appropriate name as appears on the GLC` +
-					fmt.Sprintf(notFoundDesc, "layout"),
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: f(generalNamedesc, "layout", "layout"),
 			},
 			"instance_type": {
 				Type:        schema.TypeString,
@@ -33,7 +31,7 @@ func LayoutData() *schema.Resource {
 			},
 		},
 		ReadContext: layoutReadContext,
-		Description: fmt.Sprintf(dsHeadingDesc, `layout which should be used for 
+		Description: f(dsHeadingDesc, `layout which should be used for
 		the instance to be provisioned`, "Provisioning->Library->Layouts"),
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(readTimeout),

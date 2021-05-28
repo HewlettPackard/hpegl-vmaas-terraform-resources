@@ -33,22 +33,22 @@ func Instances() *schema.Resource {
 			"cloud_id": {
 				Type:        schema.TypeInt,
 				Required:    true,
-				Description: cloudIDDesc,
+				Description: f(generalDDesc, "cloud"),
 			},
 			"group_id": {
 				Type:        schema.TypeInt,
 				Required:    true,
-				Description: groupIDDesc,
+				Description: f(generalDDesc, "group"),
 			},
 			"plan_id": {
 				Type:        schema.TypeInt,
 				Required:    true,
-				Description: planIDDesc,
+				Description: f(generalDDesc, "plan"),
 			},
 			"layout_id": {
 				Type:        schema.TypeInt,
 				Required:    true,
-				Description: layoutIDDesc,
+				Description: f(generalDDesc, "layout"),
 			},
 			"instance_code": {
 				Type:        schema.TypeString,
@@ -58,18 +58,18 @@ func Instances() *schema.Resource {
 			"instance_type": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: "Type for the instance type. This should be vmware for vmaas resource",
+				Description: "Type of the instance. This should be 'vmware' for vmaas resource",
 			},
 			"networks": {
 				Type:        schema.TypeList,
 				Required:    true,
-				Description: "Network details of which network the instance should belong to",
+				Description: "Details of the network to which the instance should belong",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"id": {
 							Type:        schema.TypeInt,
 							Required:    true,
-							Description: networkIDDesc,
+							Description: f(generalDDesc, "network"),
 						},
 					},
 				},
@@ -77,7 +77,7 @@ func Instances() *schema.Resource {
 			"volumes": {
 				Type:     schema.TypeList,
 				Required: true,
-				Description: `A list of volumes which consist of the volumes to be created inside a provisioned instance.
+				Description: `A list of volumes to be created inside a provisioned instance.
 				It can have a root volume and other secondary volumes.`,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -94,7 +94,7 @@ func Instances() *schema.Resource {
 						"datastore_id": {
 							Type:        schema.TypeString,
 							Required:    true,
-							Description: "Unique ID for the datastore.",
+							Description: f(generalDDesc, "datastore"),
 						},
 					},
 				},
@@ -124,17 +124,17 @@ func Instances() *schema.Resource {
 						"resource_pool_id": {
 							Type:        schema.TypeInt,
 							Required:    true,
-							Description: "Unique ID of resource pool.",
+							Description: f(generalDDesc, "resource pool"),
 						},
 						"public_key": {
 							Type:        schema.TypeString,
 							Optional:    true,
-							Description: "ID of a public key to add to the instance.",
+							Description: "Public key to be configured for the VM.",
 						},
 						"template": {
 							Type:        schema.TypeString,
 							Required:    true,
-							Description: "Unique ID of virtual image to be used.",
+							Description: f(generalNamedesc, "virtual image", "template"),
 						},
 					},
 				},
@@ -169,10 +169,9 @@ func Instances() *schema.Resource {
 		StateUpgraders: nil,
 		CreateContext:  instanceCreateContext,
 		ReadContext:    instanceReadContext,
-		// TODO figure out if a VM can be updated
-		UpdateContext: instanceUpdateContext,
-		DeleteContext: instanceDeleteContext,
-		CustomizeDiff: nil,
+		UpdateContext:  instanceUpdateContext,
+		DeleteContext:  instanceDeleteContext,
+		CustomizeDiff:  nil,
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},

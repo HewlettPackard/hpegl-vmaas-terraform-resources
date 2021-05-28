@@ -4,7 +4,6 @@ package resources
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -19,14 +18,13 @@ func GroupData() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"name": {
-				Type:     schema.TypeString,
-				Required: true,
-				Description: `Name of the group. Provide appropriate name as appears on the GLC` +
-					fmt.Sprintf(notFoundDesc, "group"),
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: f(generalNamedesc, "group", "group"),
 			},
 		},
 		ReadContext: groupReadContext,
-		Description: fmt.Sprintf(dsHeadingDesc, "Group", "Infrastructure->Groups"),
+		Description: f(dsHeadingDesc, "Group", "Infrastructure->Groups"),
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(readTimeout),
 		},

@@ -4,7 +4,6 @@ package resources
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -16,14 +15,13 @@ func NetworkData() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"name": {
-				Type:     schema.TypeString,
-				Required: true,
-				Description: `Name of the network. Provide appropriate name as appears on the GLC` +
-					fmt.Sprintf(notFoundDesc, "network"),
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: f(generalNamedesc, "network", "network"),
 			},
 		},
 		ReadContext: networkReadContext,
-		Description: fmt.Sprintf(dsHeadingDesc, "network details", "Infrastructure->Networks"),
+		Description: f(dsHeadingDesc, "network details", "Infrastructure->Networks"),
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(readTimeout),
 		},
