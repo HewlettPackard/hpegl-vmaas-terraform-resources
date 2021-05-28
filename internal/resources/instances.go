@@ -185,7 +185,7 @@ func Instances() *schema.Resource {
 		Description: `Instance resource facilitates creating,
 		updating and deleting virtual machines.
 		For creating an instance, provide a unique name and all the Mandatory(Required) parameters.,
-		It is recommened to use the Vmware type for provisioning.`,
+		It is recommend to use the Vmware type for provisioning.`,
 	}
 }
 
