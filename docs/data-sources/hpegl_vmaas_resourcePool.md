@@ -9,7 +9,7 @@ description: |-
 
 # hpegl_vmaas_resourcePool (Data Source)
 
-Use this data source to get the resource pool of a cluster where the instance 
+Use this data source to get the resource pool of a cluster where the instance
 		should be provisioned. This data can be fetched under Infrastructure->Clouds->Resources
 
 ## Example Usage
@@ -28,8 +28,8 @@ data "hpegl_vmaas_resourcePool" "cluster" {
 
 ### Required
 
-- **cloud_id** (String) This is the unique Id used to identify a cloud
-- **name** (String) Provide ResourcePool name of a clusterIf no resourcepool is found with this name, an error will be returned
+- **cloud_id** (String) Unique ID to identify a cloud
+- **name** (String) Name of the Resource pool of a cluster as it appears on GLC. If no Resource pool is found with this name, an error will be returned
 
 ### Optional
 

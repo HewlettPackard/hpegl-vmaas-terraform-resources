@@ -25,7 +25,7 @@ data "hpegl_vmaas_network" "blue_net" {
 
 ### Required
 
-- **name** (String) Name of the network. Provide appropriate name as appears on the GLCIf no network is found with this name, an error will be returned
+- **name** (String) Name of the network as it appears on GLC. If no network is found with this name, an error will be returned
 
 ### Optional
 

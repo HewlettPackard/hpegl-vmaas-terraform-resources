@@ -2,7 +2,6 @@
 
 //go:generate terraform fmt -recursive ./examples/
 //go:generate tfplugindocs
-
 package main
 
 import (

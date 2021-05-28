@@ -9,7 +9,7 @@ description: |-
 
 # hpegl_vmaas_layout (Data Source)
 
-Use this data source to get the layout which should be used for 
+Use this data source to get the layout which should be used for
 		the instance to be provisioned. This data can be fetched under Provisioning->Library->Layouts
 
 ## Example Usage
@@ -29,7 +29,7 @@ data "hpegl_vmaas_layout" "vmware" {
 ### Required
 
 - **instance_type** (String) Type for the instance type. This should be vmware for vmaas resource
-- **name** (String) Name of the layout. Provide appropriate name as appears on the GLCIf no layout is found with this name, an error will be returned
+- **name** (String) Name of the layout as it appears on GLC. If no layout is found with this name, an error will be returned
 
 ### Optional
 
