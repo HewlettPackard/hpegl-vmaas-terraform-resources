@@ -3,12 +3,12 @@
 page_title: "hpegl_vmaas_plan Data Source - vmaas-terraform-resources"
 subcategory: ""
 description: |-
-  Get the plan details
+  Use this data source to get the plans for vmaas. This data can be fetched under Administration->Plans and PricingIf no plan is found with this name, an error will be returned
 ---
 
 # hpegl_vmaas_plan (Data Source)
 
-Get the plan details
+Use this data source to get the plans for vmaas. This data can be fetched under Administration->Plans and PricingIf no plan is found with this name, an error will be returned
 
 ## Example Usage
 
@@ -25,9 +25,7 @@ data "hpegl_vmaas_plan" "g1_small" {
 
 ### Required
 
-- **name** (String) Name of the Plan. This needs to be exact name or
-				else will return error not found. Currently only vmware related
-				plans are supported
+- **name** (String) Name of the Plan. Provide appropriate name as appears on the GLCIf no plan. is found with this name, an error will be returned
 
 ### Optional
 

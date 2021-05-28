@@ -24,7 +24,7 @@ resource "hpegl_vmaas_instance" "tf_instance" {
   }
   config {
     resource_pool_id = data.hpegl_vmaas_resourcePool.cluster.id
-    template      = "apache-centos7-x86_64-09072020"
+    template         = "apache-centos7-x86_64-09072020"
   }
 
   copies = 1

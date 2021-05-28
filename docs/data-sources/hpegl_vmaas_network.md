@@ -3,12 +3,12 @@
 page_title: "hpegl_vmaas_network Data Source - vmaas-terraform-resources"
 subcategory: ""
 description: |-
-  Get the Network details
+  Use this data source to get the network details. This data can be fetched under Infrastructure->Networks
 ---
 
 # hpegl_vmaas_network (Data Source)
 
-Get the Network details
+Use this data source to get the network details. This data can be fetched under Infrastructure->Networks
 
 ## Example Usage
 
@@ -25,8 +25,7 @@ data "hpegl_vmaas_network" "blue_net" {
 
 ### Required
 
-- **name** (String) Name of the network. This needs to be exact name or
-				else will return error not found
+- **name** (String) Name of the network. Provide appropriate name as appears on the GLCIf no network is found with this name, an error will be returned
 
 ### Optional
 

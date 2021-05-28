@@ -4,7 +4,6 @@ package resources
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -183,11 +182,10 @@ func Instances() *schema.Resource {
 			Delete: schema.DefaultTimeout(instanceDeleteTimeout),
 			Read:   schema.DefaultTimeout(instanceReadTimeout),
 		},
-		Description: fmt.Sprintf(resourceHeadingDesc, `Instance resource facilitates creating, 
+		Description: `Instance resource facilitates creating,
 		updating and deleting virtual machines.
 		For creating an instance, provide a unique name and all the Mandatory(Required) parameters.,
-		It is recommened to use the Vmware type for provisioning. 
-	    `),
+		It is recommened to use the Vmware type for provisioning.`,
 	}
 }
 

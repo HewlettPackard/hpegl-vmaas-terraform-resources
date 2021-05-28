@@ -3,12 +3,14 @@
 page_title: "hpegl_vmaas_resourcePool Data Source - vmaas-terraform-resources"
 subcategory: ""
 description: |-
-  Get the ResourcePool details
+  Use this data source to get the resource pool of a cluster where the instance
+          should be provisioned. This data can be fetched under Infrastructure->Clouds->Resources
 ---
 
 # hpegl_vmaas_resourcePool (Data Source)
 
-Get the ResourcePool details
+Use this data source to get the resource pool of a cluster where the instance 
+		should be provisioned. This data can be fetched under Infrastructure->Clouds->Resources
 
 ## Example Usage
 
@@ -26,9 +28,8 @@ data "hpegl_vmaas_resourcePool" "cluster" {
 
 ### Required
 
-- **cloud_id** (String) Cloud or Zone ID
-- **name** (String) Name of the resource pool. This needs to be exact name or
-				else will return error not found
+- **cloud_id** (String) This is the unique Id used to identify a cloud
+- **name** (String) Provide ResourcePool name of a clusterIf no resourcepool is found with this name, an error will be returned
 
 ### Optional
 

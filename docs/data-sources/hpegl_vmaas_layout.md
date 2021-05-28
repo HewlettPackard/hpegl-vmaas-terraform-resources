@@ -3,12 +3,14 @@
 page_title: "hpegl_vmaas_layout Data Source - vmaas-terraform-resources"
 subcategory: ""
 description: |-
-  Get the Layout details
+  Use this data source to get the layout which should be used for
+          the instance to be provisioned. This data can be fetched under Provisioning->Library->Layouts
 ---
 
 # hpegl_vmaas_layout (Data Source)
 
-Get the Layout details
+Use this data source to get the layout which should be used for 
+		the instance to be provisioned. This data can be fetched under Provisioning->Library->Layouts
 
 ## Example Usage
 
@@ -26,9 +28,8 @@ data "hpegl_vmaas_layout" "vmware" {
 
 ### Required
 
-- **instance_type** (String)
-- **name** (String) Code of the layout. This needs to be exact code or
-				else will return error not found
+- **instance_type** (String) Type for the instance type. This should be vmware for vmaas resource
+- **name** (String) Name of the layout. Provide appropriate name as appears on the GLCIf no layout is found with this name, an error will be returned
 
 ### Optional
 
@@ -37,7 +38,7 @@ data "hpegl_vmaas_layout" "vmware" {
 
 ### Read-Only
 
-- **instance_code** (String) Instance code for the given instance type
+- **instance_code** (String) Unique code used to identify the instance type
 
 <a id="nestedblock--timeouts"></a>
 ### Nested Schema for `timeouts`

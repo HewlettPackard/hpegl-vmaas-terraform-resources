@@ -3,12 +3,12 @@
 page_title: "hpegl_vmaas_cloud Data Source - vmaas-terraform-resources"
 subcategory: ""
 description: |-
-  Get the Cloud details
+  Use this data source to get the Cloud. This data can be fetched under Infrastructure->Clouds
 ---
 
 # hpegl_vmaas_cloud (Data Source)
 
-Get the Cloud details
+Use this data source to get the Cloud. This data can be fetched under Infrastructure->Clouds
 
 ## Example Usage
 
@@ -25,8 +25,7 @@ data "hpegl_vmaas_cloud" "cloud" {
 
 ### Required
 
-- **name** (String) Name of the cloud. This needs to be exact name or
-				else will return error not found
+- **name** (String) Name of the cloud. Provide appropriate name as appears on the GLCIf no cloud is found with this name, an error will be returned
 
 ### Optional
 

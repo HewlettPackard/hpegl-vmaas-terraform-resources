@@ -3,12 +3,14 @@
 page_title: "hpegl_vmaas_datastore Data Source - vmaas-terraform-resources"
 subcategory: ""
 description: |-
-  Get the datastore details
+  Use this data source to get the data store of a cluster which should be used for
+          the instance to be provisioned. This data can be fetched under Infrastructure->Clouds->Data Stores
 ---
 
 # hpegl_vmaas_datastore (Data Source)
 
-Get the datastore details
+Use this data source to get the data store of a cluster which should be used for 
+		the instance to be provisioned. This data can be fetched under Infrastructure->Clouds->Data Stores
 
 
 
@@ -17,9 +19,8 @@ Get the datastore details
 
 ### Required
 
-- **cloud_id** (String) ID for cloud or zone
-- **name** (String) Name of the datastore. This needs to be exact name or
-				else will return error not found
+- **cloud_id** (String) This is the unique Id used to identify a cloud
+- **name** (String) Name of the datastore. Provide appropriate name as appears on the GLCIf no data store is found with this name, an error will be returned
 
 ### Optional
 

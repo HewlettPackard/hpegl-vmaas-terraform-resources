@@ -3,12 +3,12 @@
 page_title: "hpegl_vmaas_group Data Source - vmaas-terraform-resources"
 subcategory: ""
 description: |-
-  Get the group details
+  Use this data source to get the Group. This data can be fetched under Infrastructure->Groups
 ---
 
 # hpegl_vmaas_group (Data Source)
 
-Get the group details
+Use this data source to get the Group. This data can be fetched under Infrastructure->Groups
 
 ## Example Usage
 
@@ -25,8 +25,7 @@ data "hpegl_vmaas_group" "default_group" {
 
 ### Required
 
-- **name** (String) Name of the group. This needs to be exact name or
-				else will return error not found
+- **name** (String) Name of the group. Provide appropriate name as appears on the GLCIf no group is found with this name, an error will be returned
 
 ### Optional
 
