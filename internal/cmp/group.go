@@ -4,23 +4,22 @@ package cmp
 
 import (
 	"context"
-	"errors"
+	"fmt"
 	"strconv"
 
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
+	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/models"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/logger"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
 )
 
 type group struct {
-	gClient           *client.GroupsApiService
-	serviceInstanceID string
+	gClient *client.GroupsApiService
 }
 
-func newGroup(gClient *client.GroupsApiService, serviceInstanceID string) *group {
+func newGroup(gClient *client.GroupsApiService) *group {
 	return &group{
-		gClient:           gClient,
-		serviceInstanceID: serviceInstanceID,
+		gClient: gClient,
 	}
 }
 
@@ -28,23 +27,30 @@ func (g *group) Read(ctx context.Context, d *utils.Data) error {
 	logger.Debug("Get Group")
 
 	name := d.GetString("name")
-	groups, err := g.gClient.GetAllGroups(ctx, g.serviceInstanceID, map[string]string{
-		"name": name,
-	})
-	if err != nil {
-		return err
-	}
-
-	if len(*groups.Groups) != 1 {
-		return errors.New("error coudn't find exact group, please check the name")
-	}
-
-	d.SetID(strconv.Itoa((*groups.Groups)[0].Id))
-
-	// post check
+	// Pre check
 	if err := d.Error(); err != nil {
 		return err
 	}
+	resp, err := utils.Retry(func() (interface{}, error) {
+		return g.gClient.GetAllGroups(ctx, nil)
+	})
+	groups := resp.(models.Groups)
+	if err != nil {
+		return err
+	}
+	isMatched := false
+	for i, g := range *groups.Groups {
+		if g.Name == name {
+			isMatched = true
+			d.SetID(strconv.Itoa((*groups.Groups)[i].Id))
 
-	return nil
+			break
+		}
+	}
+	if !isMatched {
+		return fmt.Errorf(errExactMatch, "group")
+	}
+
+	// post check
+	return d.Error()
 }

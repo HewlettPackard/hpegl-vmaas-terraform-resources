@@ -4,43 +4,52 @@ package cmp
 
 import (
 	"context"
-	"errors"
+	"fmt"
 	"strconv"
 
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
+	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/models"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/logger"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
 )
 
 type network struct {
-	nClient           *client.NetworksApiService
-	serviceInstanceID string
+	nClient *client.NetworksApiService
 }
 
-func newNetwork(nClient *client.NetworksApiService, serviceInstanceID string) *network {
-	return &network{nClient: nClient, serviceInstanceID: serviceInstanceID}
+func newNetwork(nClient *client.NetworksApiService) *network {
+	return &network{nClient: nClient}
 }
 
 func (n *network) Read(ctx context.Context, d *utils.Data) error {
 	logger.Debug("Get Network")
 
 	name := d.GetString("name")
-	networks, err := n.nClient.GetAllNetworks(ctx, n.serviceInstanceID, map[string]string{
-		"name": name,
+	// Pre check
+	if err := d.Error(); err != nil {
+		return err
+	}
+	resp, err := utils.Retry(func() (interface{}, error) {
+		return n.nClient.GetAllNetworks(ctx, nil)
 	})
 	if err != nil {
 		return err
 	}
 
-	if len(networks.Networks) != 1 {
-		return errors.New("error coudn't find exact network, please check the name")
+	isMatch := false
+	networks := resp.(models.ListNetworksBody)
+	for i, n := range networks.Networks {
+		if n.DisplayName == name {
+			isMatch = true
+			d.SetID(strconv.Itoa(networks.Networks[i].Id))
+
+			break
+		}
 	}
-	d.SetID(strconv.Itoa(networks.Networks[0].Id))
+	if !isMatch {
+		return fmt.Errorf(errExactMatch, "Network")
+	}
 
 	// post check
-	if err := d.Error(); err != nil {
-		return err
-	}
-
-	return nil
+	return d.Error()
 }

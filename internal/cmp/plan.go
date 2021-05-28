@@ -4,37 +4,45 @@ package cmp
 
 import (
 	"context"
+	"fmt"
+	"strconv"
 
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
+	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/models"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/logger"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
 )
 
 type plan struct {
-	pClient           *client.PlansApiService
-	serviceInstanceID string
+	pClient *client.PlansApiService
 }
 
-func newPlan(pClient *client.PlansApiService, serviceInstanceID string) *plan {
-	return &plan{pClient: pClient, serviceInstanceID: serviceInstanceID}
+func newPlan(pClient *client.PlansApiService) *plan {
+	return &plan{pClient: pClient}
 }
 
 func (n *plan) Read(ctx context.Context, d *utils.Data) error {
 	logger.Debug("Get plan")
 
-	// name := d.GetString("name")
-	_, err := n.pClient.GetAllServicePlans(ctx, n.serviceInstanceID)
-	// plans, err := n.pClient.GetAllServicePlans(ctx, n.serviceInstanceID, map[string]string{"name": name})
+	name := d.GetString("name")
+	// Pre check
+	if err := d.Error(); err != nil {
+		return err
+	}
+	resp, err := utils.Retry(func() (interface{}, error) {
+		return n.pClient.GetAllServicePlans(ctx, map[string]string{
+			provisionTypeKey: vmware,
+			nameKey:          name,
+		})
+	})
 	if err != nil {
 		return err
 	}
-	// if len(plans) != 1 {
-	// 	return errors.New("Coudn't find exact plan, please check the name")
-	// }
-	// d.SetID(strconv.Itoa(int(plans.plans[0].Id)))
-	// if d.HaveError() {
-	// 	return err
-	// }
+	plans := resp.(models.ServicePlans)
+	if len(plans.ServicePlansResponse) != 1 {
+		return fmt.Errorf(errExactMatch, "plan")
+	}
+	d.SetID(strconv.Itoa(plans.ServicePlansResponse[0].ID))
 
-	return nil
+	return d.Error()
 }

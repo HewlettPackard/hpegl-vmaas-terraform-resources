@@ -11,19 +11,18 @@ import (
 	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/client"
 )
 
-func PlanData() *schema.Resource {
+func CloudData() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"name": {
 				Type:     schema.TypeString,
 				Required: true,
-				Description: `Name of the Plan. This needs to be exact name or
-				else will return error not found. Currently only vmware related
-				plans are supported`,
+				Description: `Name of the cloud. This needs to be exact name or
+				else will return error not found`,
 			},
 		},
-		ReadContext: planReadContext,
-		Description: "Get the plan details",
+		ReadContext: cloudReadContext,
+		Description: "Get the Cloud details",
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(readTimeout),
 		},
@@ -35,13 +34,13 @@ func PlanData() *schema.Resource {
 	}
 }
 
-func planReadContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func cloudReadContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, err := client.GetClientFromMetaMap(meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 	data := utils.NewData(d)
-	err = c.CmpClient.Plan.Read(ctx, data)
+	err = c.CmpClient.Cloud.Read(ctx, data)
 	if err != nil {
 		return diag.FromErr(err)
 	}
