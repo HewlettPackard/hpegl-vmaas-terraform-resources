@@ -28,13 +28,12 @@ func Instances() *schema.Resource {
 			"name": {
 				Type:        schema.TypeString,
 				Required:    true,
-				ForceNew:    true,
 				Description: "Name of the Instance",
 			},
 			"cloud_id": {
 				Type:        schema.TypeInt,
 				Required:    true,
-				Description: "ID for cloud or zone",
+				Description: ``,
 			},
 			"group_id": {
 				Type:        schema.TypeInt,
@@ -70,8 +69,9 @@ func Instances() *schema.Resource {
 				},
 			},
 			"volumes": {
-				Type:     schema.TypeList,
-				Required: true,
+				Type:        schema.TypeList,
+				Required:    true,
+				Description: "string",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"name": {
