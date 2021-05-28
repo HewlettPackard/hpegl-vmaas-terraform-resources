@@ -51,13 +51,14 @@ resource "hpegl_vmaas_instance" "test" {
 
 ### Required
 
-- **cloud_id** (String) ID for cloud or zone
+- **cloud_id** (Number) ID for cloud or zone
 - **config** (Block Set, Min: 1) (see [below for nested schema](#nestedblock--config))
-- **group_id** (String) ID for group
-- **instance_type** (String)
+- **group_id** (Number) ID for group
+- **instance_code** (String)
+- **layout_id** (Number)
 - **name** (String) Name of the instance
-- **networks** (List of Number)
-- **plan_id** (String)
+- **networks** (Block List, Min: 1) (see [below for nested schema](#nestedblock--networks))
+- **plan_id** (Number)
 - **volumes** (Block List, Min: 1) (see [below for nested schema](#nestedblock--volumes))
 
 ### Optional
@@ -69,16 +70,31 @@ resource "hpegl_vmaas_instance" "test" {
 - **tags** (Map of String)
 - **timeouts** (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
 
+### Read-Only
+
+- **instance_type** (String)
+- **state** (String)
+- **status** (String)
+
 <a id="nestedblock--config"></a>
 ### Nested Schema for `config`
 
 Required:
 
-- **vmware_resource_pool** (String)
+- **resource_pool_id** (Number)
+- **template** (String)
 
 Optional:
 
 - **public_key** (String)
+
+
+<a id="nestedblock--networks"></a>
+### Nested Schema for `networks`
+
+Required:
+
+- **id** (Number) The ID of this resource.
 
 
 <a id="nestedblock--volumes"></a>
@@ -87,7 +103,8 @@ Optional:
 Required:
 
 - **datastore_id** (String)
-- **size** (String)
+- **name** (String)
+- **size** (Number)
 
 
 <a id="nestedblock--timeouts"></a>
@@ -97,5 +114,7 @@ Optional:
 
 - **create** (String)
 - **delete** (String)
+- **read** (String)
+- **update** (String)
 
 
