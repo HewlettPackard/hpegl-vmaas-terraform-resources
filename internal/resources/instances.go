@@ -18,7 +18,7 @@ const (
 	instanceReadTimeout      = 2 * time.Minute
 	instanceDeleteTimeout    = 60 * time.Minute
 	instanceRetryTimeout     = 10 * time.Minute
-	instanceRetryDelay       = 120 * time.Second
+	instanceRetryDelay       = 90 * time.Second
 	instanceRetryMinTimeout  = 30 * time.Second
 )
 
@@ -86,6 +86,12 @@ func Instances() *schema.Resource {
 							Type:     schema.TypeString,
 							Required: true,
 						},
+						"root": {
+							Type:        schema.TypeBool,
+							Default:     true,
+							Optional:    true,
+							Description: "If true then the given volume as considered as root volume.",
+						},
 					},
 				},
 			},
@@ -119,6 +125,12 @@ func Instances() *schema.Resource {
 						"template": {
 							Type:     schema.TypeString,
 							Required: true,
+						},
+						"agent": {
+							Type:        schema.TypeBool,
+							Optional:    true,
+							Default:     false,
+							Description: "If true agent will be installed on the instance",
 						},
 					},
 				},

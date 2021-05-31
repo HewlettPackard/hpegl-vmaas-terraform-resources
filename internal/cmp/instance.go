@@ -150,13 +150,12 @@ func getVolume(volumes []map[string]interface{}) []models.CreateInstanceBodyVolu
 	volumesModel := make([]models.CreateInstanceBodyVolumes, 0, len(volumes))
 	logger.Debug(volumes)
 	for i := range volumes {
-		// vID, _ := utils.ParseInt(volumes[i]["size"].(string))
 		volumesModel = append(volumesModel, models.CreateInstanceBodyVolumes{
 			Id:          -1,
 			Name:        volumes[i]["name"].(string),
 			Size:        volumes[i]["size"].(int),
 			DatastoreId: volumes[i]["datastore_id"],
-			RootVolume:  true,
+			RootVolume:  volumes[i]["root"].(bool),
 		})
 	}
 
@@ -179,6 +178,7 @@ func getNetwork(networksMap []map[string]interface{}) []models.CreateInstanceBod
 func getConfig(c map[string]interface{}) *models.CreateInstanceBodyConfig {
 	config := &models.CreateInstanceBodyConfig{
 		ResourcePoolId: utils.JSONNumber(c["resource_pool_id"]),
+		NoAgent:        strconv.FormatBool(c["agent"].(bool)),
 	}
 
 	return config
