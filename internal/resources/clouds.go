@@ -21,7 +21,7 @@ func CloudData() *schema.Resource {
 			},
 		},
 		ReadContext: cloudReadContext,
-		Description: f(dsHeadingDesc, "Cloud", "Infrastructure->Clouds"),
+		Description: f(dsHeadingDesc, "Cloud"),
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(readTimeout),
 		},

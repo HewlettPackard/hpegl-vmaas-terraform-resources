@@ -21,7 +21,7 @@ func PlanData() *schema.Resource {
 			},
 		},
 		ReadContext: planReadContext,
-		Description: f(dsHeadingDesc, "plans for vmaas", "Administration->Plans and Pricing"),
+		Description: f(dsHeadingDesc, "plans for vmaas"),
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(readTimeout),
 		},

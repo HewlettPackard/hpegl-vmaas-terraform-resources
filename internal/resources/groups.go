@@ -24,7 +24,7 @@ func GroupData() *schema.Resource {
 			},
 		},
 		ReadContext: groupReadContext,
-		Description: f(dsHeadingDesc, "Group", "Infrastructure->Groups"),
+		Description: f(dsHeadingDesc, "Group"),
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(readTimeout),
 		},

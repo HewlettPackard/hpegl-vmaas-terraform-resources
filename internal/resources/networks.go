@@ -21,7 +21,7 @@ func NetworkData() *schema.Resource {
 			},
 		},
 		ReadContext: networkReadContext,
-		Description: f(dsHeadingDesc, "network details", "Infrastructure->Networks"),
+		Description: f(dsHeadingDesc, "network details"),
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(readTimeout),
 		},

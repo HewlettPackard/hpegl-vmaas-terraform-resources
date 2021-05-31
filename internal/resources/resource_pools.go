@@ -27,7 +27,7 @@ func ResourcePoolData() *schema.Resource {
 		},
 		ReadContext: resourcePoolReadContext,
 		Description: f(dsHeadingDesc, `resource pool of a cluster where the instance
-		should be provisioned`, "Infrastructure->Clouds->Resources"),
+		should be provisioned`),
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(readTimeout),
 		},

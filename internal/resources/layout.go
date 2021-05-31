@@ -32,7 +32,7 @@ func LayoutData() *schema.Resource {
 		},
 		ReadContext: layoutReadContext,
 		Description: f(dsHeadingDesc, `layout which should be used for
-		the instance to be provisioned`, "Provisioning->Library->Layouts"),
+		the instance to be provisioned`),
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(readTimeout),
 		},

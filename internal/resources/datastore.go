@@ -27,7 +27,7 @@ func DatastoreData() *schema.Resource {
 		},
 		ReadContext: datastoreReadContext,
 		Description: f(dsHeadingDesc, `data store of a cluster which should be used for
-		the instance to be provisioned`, "Infrastructure->Clouds->Data Stores"),
+		the instance to be provisioned`),
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(readTimeout),
 		},
