@@ -26,8 +26,9 @@ func DatastoreData() *schema.Resource {
 			},
 		},
 		ReadContext: datastoreReadContext,
-		Description: setDsHeader(dsHeadingDesc, DSDatastore, `data store of a cluster which should be used for
-		the instance to be provisioned`),
+		Description: `The ` + DSDatastore + ` data source can be used to discover the ID of a hpegl vmaas datastore.
+		This can then be used with resources or data sources that require a ` + DSDatastore + `,
+		such as the ` + ResInstance + ` resources etc.`,
 		Timeouts: &schema.ResourceTimeout{
 			Read: schema.DefaultTimeout(readTimeout),
 		},

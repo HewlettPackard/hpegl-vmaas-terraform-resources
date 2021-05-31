@@ -3,12 +3,16 @@
 page_title: "hpegl_vmaas_cloud Data Source - vmaas-terraform-resources"
 subcategory: ""
 description: |-
-  The The %s data source can be used to discover the ID of a %s. This can then be used with resources or data sources that require a %s, such as the %s etc. data source can be used to discover the ID of a hpeglvmaascloud. This can then be used with resources or data sources that require a hpeglvmaascloud, such as the Cloud etc.
+  The hpeglvmaascloud data source can be used to discover the ID of a hpegl vmaas Cloud.
+           This can then be used with resources or data sources that require a hpegl vmaas cloud,
+           such as the hpeglvmaasdatastore data source, hpeglvmaasinstance resource, etc.
 ---
 
 # hpegl_vmaas_cloud (Data Source)
 
-The The %s data source can be used to discover the ID of a %s. This can then be used with resources or data sources that require a %s, such as the %s etc. data source can be used to discover the ID of a hpegl_vmaas_cloud. This can then be used with resources or data sources that require a hpegl_vmaas_cloud, such as the Cloud etc.
+The hpegl_vmaas_cloud data source can be used to discover the ID of a hpegl vmaas Cloud.
+		 This can then be used with resources or data sources that require a hpegl vmaas cloud,
+		 such as the hpegl_vmaas_datastore data source, hpegl_vmaas_instance resource, etc.
 
 ## Example Usage
 

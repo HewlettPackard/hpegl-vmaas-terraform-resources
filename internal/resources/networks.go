@@ -21,7 +21,9 @@ func NetworkData() *schema.Resource {
 			},
 		},
 		ReadContext: networkReadContext,
-		Description: setDsHeader(dsHeadingDesc, DSNetwork, "Hpegl vmaas network", "network details"),
+		Description: `The ` + DSNetwork + ` data source can be used to discover the ID of a hpegl vmaas network.
+		This can then be used with resources or data sources that require a ` + DSNetwork + `,
+		such as the ` + ResInstance + ` resources etc.`,
 		Timeouts: &schema.ResourceTimeout{
 			Read: schema.DefaultTimeout(readTimeout),
 		},

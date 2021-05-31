@@ -21,7 +21,9 @@ func CloudData() *schema.Resource {
 			},
 		},
 		ReadContext: cloudReadContext,
-		Description: setDsHeader(dsHeadingDesc, DSCloud, "Cloud"),
+		Description: `The ` + DSCloud + ` data source can be used to discover the ID of a hpegl vmaas Cloud.
+		 This can then be used with resources or data sources that require a hpegl vmaas cloud,
+		 such as the hpegl_vmaas_datastore data source, hpegl_vmaas_instance resource, etc.`,
 		Timeouts: &schema.ResourceTimeout{
 			Read: schema.DefaultTimeout(readTimeout),
 		},
