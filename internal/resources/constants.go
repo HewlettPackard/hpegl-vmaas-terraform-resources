@@ -17,8 +17,5 @@ const (
 	// documentation related constants
 	generalNamedesc = "Name of the %s as it appears on GLPC Portal. " +
 		"If no %s is found with this name standard not found error returns will return."
-	generalDDesc  = "Unique ID to identify a %s."
-	dsHeadingDesc = "The %s data source can be used to discover the ID" +
-		" of a %s. This can then be used with resources or data sources that" +
-		" require a %s, such as the %s etc."
+	generalDDesc = "Unique ID to identify a %s."
 )
