@@ -5,7 +5,7 @@ subcategory: ""
 description: |-
   Instance resource facilitates creating,
           updating and deleting virtual machines.
-          For creating an instance, provide a unique name and all the Mandatory(Required) parameters.,
+          For creating an instance, provide a unique name and all the Mandatory(Required) parameters.
           It is recommend to use the Vmware type for provisioning.
 ---
 
@@ -13,7 +13,7 @@ description: |-
 
 Instance resource facilitates creating,
 		updating and deleting virtual machines.
-		For creating an instance, provide a unique name and all the Mandatory(Required) parameters.,
+		For creating an instance, provide a unique name and all the Mandatory(Required) parameters.
 		It is recommend to use the Vmware type for provisioning.
 
 ## Example Usage
@@ -40,8 +40,8 @@ resource "hpegl_vmaas_instance" "tf_instance" {
 
   labels = ["test"]
   tags = {
-    name = "valu"
-    data = "data"
+    name = "vmaas"
+    data = "test_vm"
   }
   config {
     resource_pool_id = data.hpegl_vmaas_resourcePool.cluster.id

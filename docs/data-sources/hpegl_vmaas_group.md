@@ -3,12 +3,12 @@
 page_title: "hpegl_vmaas_group Data Source - vmaas-terraform-resources"
 subcategory: ""
 description: |-
-  Use this data source to get the Group. This data can be fetched under Infrastructure->Groups
+  Use this data source to get the Group.
 ---
 
 # hpegl_vmaas_group (Data Source)
 
-Use this data source to get the Group. This data can be fetched under Infrastructure->Groups
+Use this data source to get the Group.
 
 ## Example Usage
 

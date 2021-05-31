@@ -3,12 +3,12 @@
 page_title: "hpegl_vmaas_cloud Data Source - vmaas-terraform-resources"
 subcategory: ""
 description: |-
-  Use this data source to get the Cloud. This data can be fetched under Infrastructure->Clouds
+  Use this data source to get the Cloud.
 ---
 
 # hpegl_vmaas_cloud (Data Source)
 
-Use this data source to get the Cloud. This data can be fetched under Infrastructure->Clouds
+Use this data source to get the Cloud.
 
 ## Example Usage
 

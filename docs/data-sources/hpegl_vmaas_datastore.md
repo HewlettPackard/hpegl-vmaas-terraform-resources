@@ -4,13 +4,13 @@ page_title: "hpegl_vmaas_datastore Data Source - vmaas-terraform-resources"
 subcategory: ""
 description: |-
   Use this data source to get the data store of a cluster which should be used for
-          the instance to be provisioned. This data can be fetched under Infrastructure->Clouds->Data Stores
+          the instance to be provisioned.
 ---
 
 # hpegl_vmaas_datastore (Data Source)
 
 Use this data source to get the data store of a cluster which should be used for
-		the instance to be provisioned. This data can be fetched under Infrastructure->Clouds->Data Stores
+		the instance to be provisioned.
 
 
 

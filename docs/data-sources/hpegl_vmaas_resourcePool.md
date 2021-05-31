@@ -4,13 +4,13 @@ page_title: "hpegl_vmaas_resourcePool Data Source - vmaas-terraform-resources"
 subcategory: ""
 description: |-
   Use this data source to get the resource pool of a cluster where the instance
-          should be provisioned. This data can be fetched under Infrastructure->Clouds->Resources
+          should be provisioned.
 ---
 
 # hpegl_vmaas_resourcePool (Data Source)
 
 Use this data source to get the resource pool of a cluster where the instance
-		should be provisioned. This data can be fetched under Infrastructure->Clouds->Resources
+		should be provisioned.
 
 ## Example Usage
 

@@ -3,12 +3,12 @@
 page_title: "hpegl_vmaas_network Data Source - vmaas-terraform-resources"
 subcategory: ""
 description: |-
-  Use this data source to get the network details. This data can be fetched under Infrastructure->Networks
+  Use this data source to get the network details.
 ---
 
 # hpegl_vmaas_network (Data Source)
 
-Use this data source to get the network details. This data can be fetched under Infrastructure->Networks
+Use this data source to get the network details.
 
 ## Example Usage
 

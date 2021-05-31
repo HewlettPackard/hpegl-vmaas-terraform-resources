@@ -19,8 +19,8 @@ resource "hpegl_vmaas_instance" "tf_instance" {
 
   labels = ["test"]
   tags = {
-    name = "valu"
-    data = "data"
+    name = "vmaas"
+    data = "test_vm"
   }
   config {
     resource_pool_id = data.hpegl_vmaas_resourcePool.cluster.id

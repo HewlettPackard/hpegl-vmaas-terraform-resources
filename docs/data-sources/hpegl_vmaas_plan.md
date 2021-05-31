@@ -3,12 +3,12 @@
 page_title: "hpegl_vmaas_plan Data Source - vmaas-terraform-resources"
 subcategory: ""
 description: |-
-  Use this data source to get the plans for vmaas. This data can be fetched under Administration->Plans and Pricing
+  Use this data source to get the plans for vmaas.
 ---
 
 # hpegl_vmaas_plan (Data Source)
 
-Use this data source to get the plans for vmaas. This data can be fetched under Administration->Plans and Pricing
+Use this data source to get the plans for vmaas.
 
 ## Example Usage
 
