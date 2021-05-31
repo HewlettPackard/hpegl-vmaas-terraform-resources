@@ -178,7 +178,7 @@ func getNetwork(networksMap []map[string]interface{}) []models.CreateInstanceBod
 func getConfig(c map[string]interface{}) *models.CreateInstanceBodyConfig {
 	config := &models.CreateInstanceBodyConfig{
 		ResourcePoolId: utils.JSONNumber(c["resource_pool_id"]),
-		NoAgent:        strconv.FormatBool(c["agent"].(bool)),
+		NoAgent:        strconv.FormatBool(c["no_agent"].(bool)),
 	}
 
 	return config

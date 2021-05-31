@@ -126,11 +126,11 @@ func Instances() *schema.Resource {
 							Type:     schema.TypeString,
 							Required: true,
 						},
-						"agent": {
+						"no_agent": {
 							Type:        schema.TypeBool,
 							Optional:    true,
-							Default:     false,
-							Description: "If true agent will be installed on the instance",
+							Default:     true,
+							Description: "If true agent will not be installed on the instance",
 						},
 					},
 				},

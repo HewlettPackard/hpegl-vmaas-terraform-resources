@@ -211,6 +211,8 @@ github.com/hpe-hcss/vmaas-cmp-go-sdk v0.0.0-20210527171019-bcc2332a635f h1:iCd2A
 github.com/hpe-hcss/vmaas-cmp-go-sdk v0.0.0-20210527171019-bcc2332a635f/go.mod h1:iTVhCT9gxmnMV1nLm3m1RfUyBS0ayRopVonAvLSFBu4=
 github.com/hpe-hcss/vmaas-cmp-go-sdk v0.0.0-20210531133158-34145d7643af h1:ZJbp0aeR9NxilNxXaEBr4DFeokeum0uquA/hfm2iESg=
 github.com/hpe-hcss/vmaas-cmp-go-sdk v0.0.0-20210531133158-34145d7643af/go.mod h1:iTVhCT9gxmnMV1nLm3m1RfUyBS0ayRopVonAvLSFBu4=
+github.com/hpe-hcss/vmaas-cmp-go-sdk v0.0.0-20210531135031-68d7b2b1016f h1:p6W7Y7ni7DWssij74dprMpYcUKM+rXBPfhpbJzo2svk=
+github.com/hpe-hcss/vmaas-cmp-go-sdk v0.0.0-20210531135031-68d7b2b1016f/go.mod h1:iTVhCT9gxmnMV1nLm3m1RfUyBS0ayRopVonAvLSFBu4=
 github.com/ianlancetaylor/demangle v0.0.0-20181102032728-5e5cf60278f6/go.mod h1:aSSvb/t6k1mPoxDqO4vJh6VOCGPwU4O0C2/Eqndh1Sc=
 github.com/imdario/mergo v0.3.9 h1:UauaLniWCFHWd+Jp9oCEkTBj8VO/9DKg3PV3VCNMDIg=
 github.com/imdario/mergo v0.3.9/go.mod h1:2EnlNZ0deacrJVfApfmtdGgDfMuh/nq6Ok1EcJh5FfA=
