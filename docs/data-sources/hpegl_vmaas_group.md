@@ -25,7 +25,7 @@ data "hpegl_vmaas_group" "default_group" {
 
 ### Required
 
-- **name** (String) Name of the group as it appears on GLC. If no group is found with this name, an error will be returned
+- **name** (String) Name of the group as it appears on GLC. If no group is found with this name, an error will be returned.
 
 ### Optional
 

@@ -19,8 +19,8 @@ Use this data source to get the data store of a cluster which should be used for
 
 ### Required
 
-- **cloud_id** (String) Unique ID to identify a cloud
-- **name** (String) Name of the datastore as it appears on GLC. If no datastore is found with this name, an error will be returned
+- **cloud_id** (String) Unique ID to identify a cloud.
+- **name** (String) Name of the datastore as it appears on GLC. If no datastore is found with this name, an error will be returned.
 
 ### Optional
 

@@ -28,7 +28,7 @@ func Instances() *schema.Resource {
 			"name": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "Name of the instance to be provisioned",
+				Description: "Name of the instance to be provisioned.",
 			},
 			"cloud_id": {
 				Type:        schema.TypeInt,
@@ -53,17 +53,17 @@ func Instances() *schema.Resource {
 			"instance_code": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "Unique code used to identify the instance type",
+				Description: "Unique code used to identify the instance type.",
 			},
 			"instance_type": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: "Type of the instance. This should be 'vmware' for vmaas resource",
+				Description: "Type of the instance. This should be 'vmware' for vmaas resource.",
 			},
 			"networks": {
 				Type:        schema.TypeList,
 				Required:    true,
-				Description: "Details of the network to which the instance should belong",
+				Description: "Details of the network to which the instance should belong.",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"id": {
@@ -118,7 +118,7 @@ func Instances() *schema.Resource {
 			"config": {
 				Type:        schema.TypeSet,
 				Required:    true,
-				Description: "Configuration details for the instance to be provisioned'",
+				Description: "Configuration details for the instance to be provisioned.",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"resource_pool_id": {

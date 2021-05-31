@@ -5,8 +5,8 @@ package resources
 import "fmt"
 
 const (
-	generalNamedesc = "Name of the %s as it appears on GLC. If no %s is found with this name, an error will be returned"
-	generalDDesc    = "Unique ID to identify a %s"
+	generalNamedesc = "Name of the %s as it appears on GLC. If no %s is found with this name, an error will be returned."
+	generalDDesc    = "Unique ID to identify a %s."
 	dsHeadingDesc   = "Use this data source to get the %s."
 )
 

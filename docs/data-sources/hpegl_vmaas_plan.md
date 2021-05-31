@@ -25,7 +25,7 @@ data "hpegl_vmaas_plan" "g1_small" {
 
 ### Required
 
-- **name** (String) Name of the Plan as it appears on GLC. If no Plan is found with this name, an error will be returned
+- **name** (String) Name of the Plan as it appears on GLC. If no Plan is found with this name, an error will be returned.
 
 ### Optional
 

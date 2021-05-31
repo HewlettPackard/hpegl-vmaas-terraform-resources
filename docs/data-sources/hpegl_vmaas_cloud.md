@@ -25,7 +25,7 @@ data "hpegl_vmaas_cloud" "cloud" {
 
 ### Required
 
-- **name** (String) Name of the cloud as it appears on GLC. If no cloud is found with this name, an error will be returned
+- **name** (String) Name of the cloud as it appears on GLC. If no cloud is found with this name, an error will be returned.
 
 ### Optional
 

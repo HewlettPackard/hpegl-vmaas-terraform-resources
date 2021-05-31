@@ -57,14 +57,14 @@ resource "hpegl_vmaas_instance" "tf_instance" {
 
 ### Required
 
-- **cloud_id** (Number) Unique ID to identify a cloud
-- **config** (Block Set, Min: 1) Configuration details for the instance to be provisioned' (see [below for nested schema](#nestedblock--config))
-- **group_id** (Number) Unique ID to identify a group
-- **instance_code** (String) Unique code used to identify the instance type
-- **layout_id** (Number) Unique ID to identify a layout
-- **name** (String) Name of the instance to be provisioned
-- **networks** (Block List, Min: 1) Details of the network to which the instance should belong (see [below for nested schema](#nestedblock--networks))
-- **plan_id** (Number) Unique ID to identify a plan
+- **cloud_id** (Number) Unique ID to identify a cloud.
+- **config** (Block Set, Min: 1) Configuration details for the instance to be provisioned. (see [below for nested schema](#nestedblock--config))
+- **group_id** (Number) Unique ID to identify a group.
+- **instance_code** (String) Unique code used to identify the instance type.
+- **layout_id** (Number) Unique ID to identify a layout.
+- **name** (String) Name of the instance to be provisioned.
+- **networks** (Block List, Min: 1) Details of the network to which the instance should belong. (see [below for nested schema](#nestedblock--networks))
+- **plan_id** (Number) Unique ID to identify a plan.
 - **volumes** (Block List, Min: 1) A list of volumes to be created inside a provisioned instance.
 				It can have a root volume and other secondary volumes. (see [below for nested schema](#nestedblock--volumes))
 
@@ -79,7 +79,7 @@ resource "hpegl_vmaas_instance" "tf_instance" {
 
 ### Read-Only
 
-- **instance_type** (String) Type of the instance. This should be 'vmware' for vmaas resource
+- **instance_type** (String) Type of the instance. This should be 'vmware' for vmaas resource.
 - **state** (String) State of the instance provisioned.
 - **status** (String) Status of the instance .It can be one among these:
 				 Provisioning/Failed/Unknown/Running.
@@ -89,8 +89,8 @@ resource "hpegl_vmaas_instance" "tf_instance" {
 
 Required:
 
-- **resource_pool_id** (Number) Unique ID to identify a resource pool
-- **template** (String) Name of the virtual image as it appears on GLC. If no template is found with this name, an error will be returned
+- **resource_pool_id** (Number) Unique ID to identify a resource pool.
+- **template** (String) Name of the virtual image as it appears on GLC. If no template is found with this name, an error will be returned.
 
 Optional:
 
@@ -102,7 +102,7 @@ Optional:
 
 Required:
 
-- **id** (Number) Unique ID to identify a network
+- **id** (Number) Unique ID to identify a network.
 
 
 <a id="nestedblock--volumes"></a>
@@ -110,7 +110,7 @@ Required:
 
 Required:
 
-- **datastore_id** (String) Unique ID to identify a datastore
+- **datastore_id** (String) Unique ID to identify a datastore.
 - **name** (String) Unique name for the volume.
 - **size** (Number) Size of the volume in GB.
 

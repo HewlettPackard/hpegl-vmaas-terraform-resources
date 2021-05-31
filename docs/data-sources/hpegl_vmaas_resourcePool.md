@@ -28,8 +28,8 @@ data "hpegl_vmaas_resourcePool" "cluster" {
 
 ### Required
 
-- **cloud_id** (String) Unique ID to identify a cloud
-- **name** (String) Name of the Resource pool of a cluster as it appears on GLC. If no Resource pool is found with this name, an error will be returned
+- **cloud_id** (String) Unique ID to identify a cloud.
+- **name** (String) Name of the Resource pool of a cluster as it appears on GLC. If no Resource pool is found with this name, an error will be returned.
 
 ### Optional
 

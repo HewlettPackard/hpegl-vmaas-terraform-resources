@@ -22,12 +22,12 @@ func LayoutData() *schema.Resource {
 			"instance_type": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: `Type for the instance. This should be vmware for vmaas resource`,
+				Description: `Type for the instance. This should be vmware for vmaas resource.`,
 			},
 			"instance_code": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: "Unique code used to identify the instance type",
+				Description: "Unique code used to identify the instance type.",
 			},
 		},
 		ReadContext: layoutReadContext,

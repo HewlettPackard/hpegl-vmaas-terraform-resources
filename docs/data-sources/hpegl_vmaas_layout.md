@@ -28,8 +28,8 @@ data "hpegl_vmaas_layout" "vmware" {
 
 ### Required
 
-- **instance_type** (String) Type for the instance. This should be vmware for vmaas resource
-- **name** (String) Name of the layout as it appears on GLC. If no layout is found with this name, an error will be returned
+- **instance_type** (String) Type for the instance. This should be vmware for vmaas resource.
+- **name** (String) Name of the layout as it appears on GLC. If no layout is found with this name, an error will be returned.
 
 ### Optional
 
@@ -38,7 +38,7 @@ data "hpegl_vmaas_layout" "vmware" {
 
 ### Read-Only
 
-- **instance_code** (String) Unique code used to identify the instance type
+- **instance_code** (String) Unique code used to identify the instance type.
 
 <a id="nestedblock--timeouts"></a>
 ### Nested Schema for `timeouts`
