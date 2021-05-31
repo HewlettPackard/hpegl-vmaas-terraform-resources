@@ -21,7 +21,9 @@ func PlanData() *schema.Resource {
 			},
 		},
 		ReadContext: planReadContext,
-		Description: setDsHeader(dsHeadingDesc, DSPlan, "plans for vmaas"),
+		Description: `The ` + DSPlan + ` data source can be used to discover the ID of a hpegl vmaas plan.
+		This can then be used with resources or data sources that require a ` + DSPlan + `,
+		such as the ` + ResInstance + ` resources etc.`,
 		Timeouts: &schema.ResourceTimeout{
 			Read: schema.DefaultTimeout(readTimeout),
 		},

@@ -32,8 +32,9 @@ func LayoutData() *schema.Resource {
 			},
 		},
 		ReadContext: layoutReadContext,
-		Description: setDsHeader(dsHeadingDesc, DSLayout, "Hpegl vmaas layout", `layout which should be used for
-		the instance to be provisioned`),
+		Description: `The ` + DSLayout + ` data source can be used to discover the ID of a hpegl vmaas layout.
+		This can then be used with resources or data sources that require a ` + DSLayout + `,
+		such as the ` + ResInstance + ` resources etc.`,
 		Timeouts: &schema.ResourceTimeout{
 			Read: schema.DefaultTimeout(readTimeout),
 		},

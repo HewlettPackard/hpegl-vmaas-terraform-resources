@@ -10,7 +10,7 @@ import (
 // Set header description for datastore
 func setDsHeader(dsName, dsTitle string, examples ...string) string {
 	ex := strings.Join(examples, ",")
-	return f(dsHeadingDesc, dsName, dsTitle, dsTitle, ex)
+	return fmt.Sprintf(dsHeadingDesc, dsName, dsTitle, dsTitle, ex)
 }
 
 // f for format

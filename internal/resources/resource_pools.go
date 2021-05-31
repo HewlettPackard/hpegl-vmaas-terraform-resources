@@ -26,8 +26,9 @@ func ResourcePoolData() *schema.Resource {
 			},
 		},
 		ReadContext: resourcePoolReadContext,
-		Description: setDsHeader(dsHeadingDesc, DSResourcePool, `resource pool for a cluster where the instance
-		should be provisioned`),
+		Description: `The ` + DSResourcePool + ` data source can be used to discover the ID of a hpegl vmaas resource pool.
+		This can then be used with resources or data sources that require a ` + DSResourcePool + `,
+		such as the ` + ResInstance + ` resources etc.`,
 		Timeouts: &schema.ResourceTimeout{
 			Read: schema.DefaultTimeout(readTimeout),
 		},
