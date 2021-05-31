@@ -80,7 +80,7 @@ resource "hpegl_vmaas_instance" "tf_instance" {
 ### Read-Only
 
 - **instance_type** (String) Type of the instance. This should be 'vmware' for vmaas resource.
-- **state** (String) State of the instance provisioned.
+- **state** (String) State of the instance provisioned. This can be powerOn/powerOff/Suspended
 - **status** (String) Status of the instance .It can be one among these:
 				 Provisioning/Failed/Unknown/Running.
 
@@ -90,7 +90,7 @@ resource "hpegl_vmaas_instance" "tf_instance" {
 Required:
 
 - **resource_pool_id** (Number) Unique ID to identify a resource pool.
-- **template** (String) Name of the virtual image as it appears on GLC. If no template is found with this name, an error will be returned.
+- **template** (String) Name of the virtual image as it appears on GLPC Portal. If no template is found with this name standard not found error returns will return.
 
 Optional:
 

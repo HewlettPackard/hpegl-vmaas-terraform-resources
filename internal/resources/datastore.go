@@ -26,10 +26,10 @@ func DatastoreData() *schema.Resource {
 			},
 		},
 		ReadContext: datastoreReadContext,
-		Description: f(dsHeadingDesc, `data store of a cluster which should be used for
+		Description: setDsHeader(dsHeadingDesc, DSDatastore, `data store of a cluster which should be used for
 		the instance to be provisioned`),
 		Timeouts: &schema.ResourceTimeout{
-			Create: schema.DefaultTimeout(readTimeout),
+			Read: schema.DefaultTimeout(readTimeout),
 		},
 		SchemaVersion:  0,
 		StateUpgraders: nil,

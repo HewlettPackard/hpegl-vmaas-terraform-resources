@@ -26,10 +26,10 @@ func ResourcePoolData() *schema.Resource {
 			},
 		},
 		ReadContext: resourcePoolReadContext,
-		Description: f(dsHeadingDesc, `resource pool of a cluster where the instance
+		Description: setDsHeader(dsHeadingDesc, DSResourcePool, `resource pool for a cluster where the instance
 		should be provisioned`),
 		Timeouts: &schema.ResourceTimeout{
-			Create: schema.DefaultTimeout(readTimeout),
+			Read: schema.DefaultTimeout(readTimeout),
 		},
 		SchemaVersion:  0,
 		StateUpgraders: nil,

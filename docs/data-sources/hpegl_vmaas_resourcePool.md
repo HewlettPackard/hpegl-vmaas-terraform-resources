@@ -3,14 +3,14 @@
 page_title: "hpegl_vmaas_resourcePool Data Source - vmaas-terraform-resources"
 subcategory: ""
 description: |-
-  Use this data source to get the resource pool of a cluster where the instance
-          should be provisioned.
+  The The %s data source can be used to discover the ID of a %s. This can then be used with resources or data sources that require a %s, such as the %s etc. data source can be used to discover the ID of a hpeglvmaasresourcePool. This can then be used with resources or data sources that require a hpeglvmaasresourcePool, such as the resource pool for a cluster where the instance
+          should be provisioned etc.
 ---
 
 # hpegl_vmaas_resourcePool (Data Source)
 
-Use this data source to get the resource pool of a cluster where the instance
-		should be provisioned.
+The The %s data source can be used to discover the ID of a %s. This can then be used with resources or data sources that require a %s, such as the %s etc. data source can be used to discover the ID of a hpegl_vmaas_resourcePool. This can then be used with resources or data sources that require a hpegl_vmaas_resourcePool, such as the resource pool for a cluster where the instance
+		should be provisioned etc.
 
 ## Example Usage
 
@@ -29,7 +29,7 @@ data "hpegl_vmaas_resourcePool" "cluster" {
 ### Required
 
 - **cloud_id** (String) Unique ID to identify a cloud.
-- **name** (String) Name of the Resource pool of a cluster as it appears on GLC. If no Resource pool is found with this name, an error will be returned.
+- **name** (String) Name of the Resource pool of a cluster as it appears on GLPC Portal. If no Resource pool is found with this name standard not found error returns will return.
 
 ### Optional
 
@@ -41,6 +41,6 @@ data "hpegl_vmaas_resourcePool" "cluster" {
 
 Optional:
 
-- **create** (String)
+- **read** (String)
 
 

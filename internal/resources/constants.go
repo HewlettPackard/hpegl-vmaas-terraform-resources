@@ -2,15 +2,23 @@
 
 package resources
 
-import "fmt"
-
 const (
-	generalNamedesc = "Name of the %s as it appears on GLC. If no %s is found with this name, an error will be returned."
-	generalDDesc    = "Unique ID to identify a %s."
-	dsHeadingDesc   = "Use this data source to get the %s."
-)
+	// datasource key
+	DSNetwork      = "hpegl_vmaas_network"
+	DSLayout       = "hpegl_vmaas_layout"
+	DSGroup        = "hpegl_vmaas_group"
+	DSPlan         = "hpegl_vmaas_plan"
+	DSCloud        = "hpegl_vmaas_cloud"
+	DSResourcePool = "hpegl_vmaas_resourcePool"
+	DSDatastore    = "hpegl_vmaas_datastore"
+	// resource key
+	ResInstance = "hpegl_vmaas_instance"
 
-// f for format
-func f(format string, val ...interface{}) string {
-	return fmt.Sprintf(format, val...)
-}
+	// documentation related constants
+	generalNamedesc = "Name of the %s as it appears on GLPC Portal. " +
+		"If no %s is found with this name standard not found error returns will return."
+	generalDDesc  = "Unique ID to identify a %s."
+	dsHeadingDesc = "The %s data source can be used to discover the ID" +
+		" of a %s. This can then be used with resources or data sources that" +
+		" require a %s, such as the %s etc."
+)

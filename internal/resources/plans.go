@@ -21,9 +21,9 @@ func PlanData() *schema.Resource {
 			},
 		},
 		ReadContext: planReadContext,
-		Description: f(dsHeadingDesc, "plans for vmaas"),
+		Description: setDsHeader(dsHeadingDesc, DSPlan, "plans for vmaas"),
 		Timeouts: &schema.ResourceTimeout{
-			Create: schema.DefaultTimeout(readTimeout),
+			Read: schema.DefaultTimeout(readTimeout),
 		},
 		SchemaVersion:  0,
 		StateUpgraders: nil,

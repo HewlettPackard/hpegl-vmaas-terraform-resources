@@ -3,12 +3,12 @@
 page_title: "hpegl_vmaas_network Data Source - vmaas-terraform-resources"
 subcategory: ""
 description: |-
-  Use this data source to get the network details.
+  The The %s data source can be used to discover the ID of a %s. This can then be used with resources or data sources that require a %s, such as the %s etc. data source can be used to discover the ID of a hpeglvmaasnetwork. This can then be used with resources or data sources that require a hpeglvmaasnetwork, such as the Hpegl vmaas network,network details etc.
 ---
 
 # hpegl_vmaas_network (Data Source)
 
-Use this data source to get the network details.
+The The %s data source can be used to discover the ID of a %s. This can then be used with resources or data sources that require a %s, such as the %s etc. data source can be used to discover the ID of a hpegl_vmaas_network. This can then be used with resources or data sources that require a hpegl_vmaas_network, such as the Hpegl vmaas network,network details etc.
 
 ## Example Usage
 
@@ -25,7 +25,7 @@ data "hpegl_vmaas_network" "blue_net" {
 
 ### Required
 
-- **name** (String) Name of the network as it appears on GLC. If no network is found with this name, an error will be returned.
+- **name** (String) Name of the network as it appears on GLPC Portal. If no network is found with this name standard not found error returns will return.
 
 ### Optional
 
@@ -37,6 +37,6 @@ data "hpegl_vmaas_network" "blue_net" {
 
 Optional:
 
-- **create** (String)
+- **read** (String)
 
 

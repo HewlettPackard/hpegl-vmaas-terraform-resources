@@ -3,14 +3,14 @@
 page_title: "hpegl_vmaas_datastore Data Source - vmaas-terraform-resources"
 subcategory: ""
 description: |-
-  Use this data source to get the data store of a cluster which should be used for
-          the instance to be provisioned.
+  The The %s data source can be used to discover the ID of a %s. This can then be used with resources or data sources that require a %s, such as the %s etc. data source can be used to discover the ID of a hpeglvmaasdatastore. This can then be used with resources or data sources that require a hpeglvmaasdatastore, such as the data store of a cluster which should be used for
+          the instance to be provisioned etc.
 ---
 
 # hpegl_vmaas_datastore (Data Source)
 
-Use this data source to get the data store of a cluster which should be used for
-		the instance to be provisioned.
+The The %s data source can be used to discover the ID of a %s. This can then be used with resources or data sources that require a %s, such as the %s etc. data source can be used to discover the ID of a hpegl_vmaas_datastore. This can then be used with resources or data sources that require a hpegl_vmaas_datastore, such as the data store of a cluster which should be used for
+		the instance to be provisioned etc.
 
 
 
@@ -20,7 +20,7 @@ Use this data source to get the data store of a cluster which should be used for
 ### Required
 
 - **cloud_id** (String) Unique ID to identify a cloud.
-- **name** (String) Name of the datastore as it appears on GLC. If no datastore is found with this name, an error will be returned.
+- **name** (String) Name of the datastore as it appears on GLPC Portal. If no datastore is found with this name standard not found error returns will return.
 
 ### Optional
 
@@ -32,6 +32,6 @@ Use this data source to get the data store of a cluster which should be used for
 
 Optional:
 
-- **create** (String)
+- **read** (String)
 
 

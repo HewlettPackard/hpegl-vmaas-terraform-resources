@@ -3,12 +3,12 @@
 page_title: "hpegl_vmaas_plan Data Source - vmaas-terraform-resources"
 subcategory: ""
 description: |-
-  Use this data source to get the plans for vmaas.
+  The The %s data source can be used to discover the ID of a %s. This can then be used with resources or data sources that require a %s, such as the %s etc. data source can be used to discover the ID of a hpeglvmaasplan. This can then be used with resources or data sources that require a hpeglvmaasplan, such as the plans for vmaas etc.
 ---
 
 # hpegl_vmaas_plan (Data Source)
 
-Use this data source to get the plans for vmaas.
+The The %s data source can be used to discover the ID of a %s. This can then be used with resources or data sources that require a %s, such as the %s etc. data source can be used to discover the ID of a hpegl_vmaas_plan. This can then be used with resources or data sources that require a hpegl_vmaas_plan, such as the plans for vmaas etc.
 
 ## Example Usage
 
@@ -25,7 +25,7 @@ data "hpegl_vmaas_plan" "g1_small" {
 
 ### Required
 
-- **name** (String) Name of the Plan as it appears on GLC. If no Plan is found with this name, an error will be returned.
+- **name** (String) Name of the Plan as it appears on GLPC Portal. If no Plan is found with this name standard not found error returns will return.
 
 ### Optional
 
@@ -37,6 +37,6 @@ data "hpegl_vmaas_plan" "g1_small" {
 
 Optional:
 
-- **create** (String)
+- **read** (String)
 
 

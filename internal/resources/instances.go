@@ -156,7 +156,7 @@ func Instances() *schema.Resource {
 			"state": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: "State of the instance provisioned.",
+				Description: "State of the instance provisioned. This can be powerOn/powerOff/Suspended",
 			},
 			"status": {
 				Type:     schema.TypeString,

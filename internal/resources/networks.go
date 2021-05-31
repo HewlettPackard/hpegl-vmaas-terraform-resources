@@ -21,9 +21,9 @@ func NetworkData() *schema.Resource {
 			},
 		},
 		ReadContext: networkReadContext,
-		Description: f(dsHeadingDesc, "network details"),
+		Description: setDsHeader(dsHeadingDesc, DSNetwork, "Hpegl vmaas network", "network details"),
 		Timeouts: &schema.ResourceTimeout{
-			Create: schema.DefaultTimeout(readTimeout),
+			Read: schema.DefaultTimeout(readTimeout),
 		},
 		SchemaVersion:  0,
 		StateUpgraders: nil,

@@ -3,14 +3,14 @@
 page_title: "hpegl_vmaas_layout Data Source - vmaas-terraform-resources"
 subcategory: ""
 description: |-
-  Use this data source to get the layout which should be used for
-          the instance to be provisioned.
+  The The %s data source can be used to discover the ID of a %s. This can then be used with resources or data sources that require a %s, such as the %s etc. data source can be used to discover the ID of a hpeglvmaaslayout. This can then be used with resources or data sources that require a hpeglvmaaslayout, such as the Hpegl vmaas layout,layout which should be used for
+          the instance to be provisioned etc.
 ---
 
 # hpegl_vmaas_layout (Data Source)
 
-Use this data source to get the layout which should be used for
-		the instance to be provisioned.
+The The %s data source can be used to discover the ID of a %s. This can then be used with resources or data sources that require a %s, such as the %s etc. data source can be used to discover the ID of a hpegl_vmaas_layout. This can then be used with resources or data sources that require a hpegl_vmaas_layout, such as the Hpegl vmaas layout,layout which should be used for
+		the instance to be provisioned etc.
 
 ## Example Usage
 
@@ -29,7 +29,7 @@ data "hpegl_vmaas_layout" "vmware" {
 ### Required
 
 - **instance_type** (String) Type for the instance. This should be vmware for vmaas resource.
-- **name** (String) Name of the layout as it appears on GLC. If no layout is found with this name, an error will be returned.
+- **name** (String) Name of the layout as it appears on GLPC Portal. If no layout is found with this name standard not found error returns will return.
 
 ### Optional
 
@@ -38,13 +38,13 @@ data "hpegl_vmaas_layout" "vmware" {
 
 ### Read-Only
 
-- **instance_code** (String) Unique code used to identify the instance type.
+- **instance_code** (String) Unique code used to identify the instance type. Instance_code can use as ID for instance type.
 
 <a id="nestedblock--timeouts"></a>
 ### Nested Schema for `timeouts`
 
 Optional:
 
-- **create** (String)
+- **read** (String)
 
 

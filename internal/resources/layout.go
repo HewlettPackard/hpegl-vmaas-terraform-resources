@@ -25,16 +25,17 @@ func LayoutData() *schema.Resource {
 				Description: `Type for the instance. This should be vmware for vmaas resource.`,
 			},
 			"instance_code": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: "Unique code used to identify the instance type.",
+				Type:     schema.TypeString,
+				Computed: true,
+				Description: "Unique code used to identify the instance type. " +
+					"Instance_code can use as ID for instance type.",
 			},
 		},
 		ReadContext: layoutReadContext,
-		Description: f(dsHeadingDesc, `layout which should be used for
+		Description: setDsHeader(dsHeadingDesc, DSLayout, "Hpegl vmaas layout", `layout which should be used for
 		the instance to be provisioned`),
 		Timeouts: &schema.ResourceTimeout{
-			Create: schema.DefaultTimeout(readTimeout),
+			Read: schema.DefaultTimeout(readTimeout),
 		},
 		SchemaVersion:  0,
 		StateUpgraders: nil,

@@ -3,12 +3,12 @@
 page_title: "hpegl_vmaas_cloud Data Source - vmaas-terraform-resources"
 subcategory: ""
 description: |-
-  Use this data source to get the Cloud.
+  The The %s data source can be used to discover the ID of a %s. This can then be used with resources or data sources that require a %s, such as the %s etc. data source can be used to discover the ID of a hpeglvmaascloud. This can then be used with resources or data sources that require a hpeglvmaascloud, such as the Cloud etc.
 ---
 
 # hpegl_vmaas_cloud (Data Source)
 
-Use this data source to get the Cloud.
+The The %s data source can be used to discover the ID of a %s. This can then be used with resources or data sources that require a %s, such as the %s etc. data source can be used to discover the ID of a hpegl_vmaas_cloud. This can then be used with resources or data sources that require a hpegl_vmaas_cloud, such as the Cloud etc.
 
 ## Example Usage
 
@@ -25,7 +25,7 @@ data "hpegl_vmaas_cloud" "cloud" {
 
 ### Required
 
-- **name** (String) Name of the cloud as it appears on GLC. If no cloud is found with this name, an error will be returned.
+- **name** (String) Name of the cloud as it appears on GLPC Portal. If no cloud is found with this name standard not found error returns will return.
 
 ### Optional
 
@@ -37,6 +37,6 @@ data "hpegl_vmaas_cloud" "cloud" {
 
 Optional:
 
-- **create** (String)
+- **read** (String)
 
 
