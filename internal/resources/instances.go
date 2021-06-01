@@ -18,7 +18,7 @@ const (
 	instanceReadTimeout      = 2 * time.Minute
 	instanceDeleteTimeout    = 60 * time.Minute
 	instanceRetryTimeout     = 10 * time.Minute
-	instanceRetryDelay       = 90 * time.Second
+	instanceRetryDelay       = 60 * time.Second
 	instanceRetryMinTimeout  = 30 * time.Second
 )
 
