@@ -18,16 +18,17 @@ func GroupData() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"name": {
-				Type:     schema.TypeString,
-				Required: true,
-				Description: `Name of the group. This needs to be exact name or
-				else will return error not found`,
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: f(generalNamedesc, "group", "group"),
 			},
 		},
 		ReadContext: groupReadContext,
-		Description: "Get the group details",
+		Description: `The ` + DSGroup + ` data source can be used to discover the ID of a hpegl vmaas group.
+		This can then be used with resources or data sources that require a ` + DSGroup + `,
+		such as the ` + ResInstance + ` resources etc.`,
 		Timeouts: &schema.ResourceTimeout{
-			Create: schema.DefaultTimeout(readTimeout),
+			Read: schema.DefaultTimeout(readTimeout),
 		},
 		SchemaVersion:  0,
 		StateUpgraders: nil,

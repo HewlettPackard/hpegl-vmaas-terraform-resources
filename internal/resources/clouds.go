@@ -15,16 +15,17 @@ func CloudData() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"name": {
-				Type:     schema.TypeString,
-				Required: true,
-				Description: `Name of the cloud. This needs to be exact name or
-				else will return error not found`,
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: f(generalNamedesc, "cloud", "cloud"),
 			},
 		},
 		ReadContext: cloudReadContext,
-		Description: "Get the Cloud details",
+		Description: `The ` + DSCloud + ` data source can be used to discover the ID of a hpegl vmaas Cloud.
+		 This can then be used with resources or data sources that require a hpegl vmaas cloud,
+		 such as the hpegl_vmaas_datastore data source, hpegl_vmaas_instance resource, etc.`,
 		Timeouts: &schema.ResourceTimeout{
-			Create: schema.DefaultTimeout(readTimeout),
+			Read: schema.DefaultTimeout(readTimeout),
 		},
 		SchemaVersion:  0,
 		StateUpgraders: nil,

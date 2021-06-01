@@ -3,46 +3,52 @@
 page_title: "hpegl_vmaas_instance Resource - vmaas-terraform-resources"
 subcategory: ""
 description: |-
-  Create/update/delete instance
+  Instance resource facilitates creating,
+          updating and deleting virtual machines.
+          For creating an instance, provide a unique name and all the Mandatory(Required) parameters.
+          It is recommend to use the Vmware type for provisioning.
 ---
 
 # hpegl_vmaas_instance (Resource)
 
-Create/update/delete instance
+Instance resource facilitates creating,
+		updating and deleting virtual machines.
+		For creating an instance, provide a unique name and all the Mandatory(Required) parameters.
+		It is recommend to use the Vmware type for provisioning.
 
 ## Example Usage
 
 ```terraform
 # (C) Copyright 2021 Hewlett Packard Enterprise Development LP
 
-resource "hpegl_vmaas_instance" "test" {
-  name          = "test"
-  cloud_id      = 1
-  group_id      = 1
-  plan_id       = 1
-  instance_type = "test"
-  networks      = [1]
+resource "hpegl_vmaas_instance" "tf_instance" {
+  name          = "instance_tf"
+  cloud_id      = data.hpegl_vmaas_cloud.cloud.id
+  group_id      = data.hpegl_vmaas_group.default_group.id
+  layout_id     = data.hpegl_vmaas_layout.vmware.id
+  plan_id       = data.hpegl_vmaas_plan.g1_small.id
+  instance_code = data.hpegl_vmaas_layout.vmware.instance_code
+  networks {
+    id = data.hpegl_vmaas_network.blue_net.id
+  }
+
   volumes {
+    name         = "root"
     size         = 5
-    datastore_id = "test"
-
+    datastore_id = "auto"
   }
-  volumes {
-    size         = 10
-    datastore_id = "test2"
 
-  }
   labels = ["test"]
   tags = {
-    name = "value"
-    data = "data"
+    name = "vmaas"
+    data = "test_vm"
   }
   config {
-    vmware_resource_pool = "test"
+    resource_pool_id = data.hpegl_vmaas_resourcePool.cluster.id
+    template         = "apache-centos7-x86_64-09072020"
   }
 
   copies = 1
-
 }
 ```
 
@@ -51,34 +57,52 @@ resource "hpegl_vmaas_instance" "test" {
 
 ### Required
 
-- **cloud_id** (String) ID for cloud or zone
-- **config** (Block Set, Min: 1) (see [below for nested schema](#nestedblock--config))
-- **group_id** (String) ID for group
-- **instance_type** (String)
-- **name** (String) Name of the instance
-- **networks** (List of Number)
-- **plan_id** (String)
-- **volumes** (Block List, Min: 1) (see [below for nested schema](#nestedblock--volumes))
+- **cloud_id** (Number) Unique ID to identify a cloud.
+- **config** (Block Set, Min: 1) Configuration details for the instance to be provisioned. (see [below for nested schema](#nestedblock--config))
+- **group_id** (Number) Unique ID to identify a group.
+- **instance_code** (String) Unique code used to identify the instance type.
+- **layout_id** (Number) Unique ID to identify a layout.
+- **name** (String) Name of the instance to be provisioned.
+- **networks** (Block List, Min: 1) Details of the network to which the instance should belong. (see [below for nested schema](#nestedblock--networks))
+- **plan_id** (Number) Unique ID to identify a plan.
+- **volumes** (Block List, Min: 1) A list of volumes to be created inside a provisioned instance.
+				It can have a root volume and other secondary volumes. (see [below for nested schema](#nestedblock--volumes))
 
 ### Optional
 
-- **copies** (Number)
-- **evars** (Map of String)
+- **copies** (Number) Number of instance copies to be provisioned.
+- **evars** (Map of String) Environment Variables to be added to the provisioned instance.
 - **id** (String) The ID of this resource.
-- **labels** (List of String)
-- **tags** (Map of String)
+- **labels** (List of String) A list of strings used for labelling instances.
+- **tags** (Map of String) A list of key and value pairs used to tag instances of similar type.
 - **timeouts** (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
+
+### Read-Only
+
+- **instance_type** (String) Type of the instance. This should be 'vmware' for vmaas resource.
+- **state** (String) State of the instance provisioned. This can be powerOn/powerOff/Suspended
+- **status** (String) Status of the instance .It can be one among these:
+				 Provisioning/Failed/Unknown/Running.
 
 <a id="nestedblock--config"></a>
 ### Nested Schema for `config`
 
 Required:
 
-- **vmware_resource_pool** (String)
+- **resource_pool_id** (Number) Unique ID to identify a resource pool.
+- **template** (String) Name of the virtual image as it appears on GLPC Portal. If no template is found with this name standard not found error returns will return.
 
 Optional:
 
-- **public_key** (String)
+- **public_key** (String) Public key to be configured for the VM.
+
+
+<a id="nestedblock--networks"></a>
+### Nested Schema for `networks`
+
+Required:
+
+- **id** (Number) Unique ID to identify a network.
 
 
 <a id="nestedblock--volumes"></a>
@@ -86,8 +110,9 @@ Optional:
 
 Required:
 
-- **datastore_id** (String)
-- **size** (String)
+- **datastore_id** (String) Unique ID to identify a datastore.
+- **name** (String) Unique name for the volume.
+- **size** (Number) Size of the volume in GB.
 
 
 <a id="nestedblock--timeouts"></a>
@@ -97,5 +122,7 @@ Optional:
 
 - **create** (String)
 - **delete** (String)
+- **read** (String)
+- **update** (String)
 
 

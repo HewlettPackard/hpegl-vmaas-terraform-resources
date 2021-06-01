@@ -15,25 +15,28 @@ func LayoutData() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"name": {
-				Type:     schema.TypeString,
-				Required: true,
-				Description: `Code of the layout. This needs to be exact code or
-				else will return error not found`,
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: f(generalNamedesc, "layout", "layout"),
 			},
 			"instance_type": {
-				Type:     schema.TypeString,
-				Required: true,
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: `Type for the instance. This should be vmware for vmaas resource.`,
 			},
 			"instance_code": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: "Instance code for the given instance type",
+				Type:     schema.TypeString,
+				Computed: true,
+				Description: "Unique code used to identify the instance type. " +
+					"Instance_code can use as ID for instance type.",
 			},
 		},
 		ReadContext: layoutReadContext,
-		Description: "Get the Layout details",
+		Description: `The ` + DSLayout + ` data source can be used to discover the ID of a hpegl vmaas layout.
+		This can then be used with resources or data sources that require a ` + DSLayout + `,
+		such as the ` + ResInstance + ` resources etc.`,
 		Timeouts: &schema.ResourceTimeout{
-			Create: schema.DefaultTimeout(readTimeout),
+			Read: schema.DefaultTimeout(readTimeout),
 		},
 		SchemaVersion:  0,
 		StateUpgraders: nil,
