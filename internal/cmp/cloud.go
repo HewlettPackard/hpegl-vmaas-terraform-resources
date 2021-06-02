@@ -5,7 +5,6 @@ package cmp
 import (
 	"context"
 	"fmt"
-	"strconv"
 
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/models"
@@ -42,7 +41,7 @@ func (c *cloud) Read(ctx context.Context, d *utils.Data) error {
 	if len(cloud.Clouds) != 1 {
 		return fmt.Errorf(errExactMatch, "clouds")
 	}
-	d.SetID(strconv.Itoa(cloud.Clouds[0].ID))
+	d.SetID(cloud.Clouds[0].ID)
 
 	// post check
 	return d.Error()

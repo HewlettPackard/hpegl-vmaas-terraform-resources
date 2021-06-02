@@ -56,33 +56,45 @@ func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 		Tags:              getTags(d.GetMap("tags")),
 		LayoutSize:        d.GetInt("vm_copies"),
 	}
-
+	cloneData := d.GetSMap("clone", true)
 	// Pre check
 	if err := d.Error(); err != nil {
 		return err
 	}
 	// Get template id
-	vResp, err := i.tClient.GetAllVirtualImages(ctx, map[string]string{
-		nameKey: c["template"].(string),
+	vResp, err := utils.Retry(func() (interface{}, error) {
+		return i.tClient.GetAllVirtualImages(ctx, map[string]string{
+			nameKey: c["template"].(string),
+		})
 	})
+	vmImages := vResp.(models.VirtualImages)
 	if err != nil {
 		return err
 	}
-	if len(vResp.VirtualImages) != 1 {
+	if len(vmImages.VirtualImages) != 1 {
 		return fmt.Errorf(errExactMatch, "templates")
 	}
-	req.Config.Template = vResp.VirtualImages[0].ID
+	req.Config.Template = vmImages.VirtualImages[0].ID
 
-	// create instance
-	resp, err := utils.Retry(func() (interface{}, error) {
-		return i.iClient.CreateAnInstance(ctx, req)
-	})
+	var resp interface{}
+	// check whether vm to be cloned?
+	if cloneData != nil {
+		sourceID := cloneData["source_instance_id"].(int)
+		resp, err = utils.Retry(func() (interface{}, error) {
+			return i.iClient.CloneAnInstance(ctx, sourceID, req)
+		})
+	} else {
+		// create instance
+		resp, err = utils.Retry(func() (interface{}, error) {
+			return i.iClient.CreateAnInstance(ctx, req)
+		})
+	}
 	if err != nil {
 		return err
 	}
 	instance := resp.(models.GetInstanceResponse)
 	d.SetString("state", utils.GetPowerState(d.GetString("status")))
-	d.SetID(strconv.Itoa(instance.Instance.Id))
+	d.SetID(instance.Instance.Id)
 
 	// post check
 	return d.Error()
@@ -141,7 +153,7 @@ func (i *instance) Read(ctx context.Context, d *utils.Data) error {
 		return err
 	}
 	instance := resp.(models.GetInstanceResponse)
-	d.SetID(strconv.Itoa(instance.Instance.Id))
+	d.SetID(instance.Instance.Id)
 	d.SetString("status", instance.Instance.Status)
 
 	// post check

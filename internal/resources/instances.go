@@ -186,6 +186,28 @@ func Instances() *schema.Resource {
 				Description: `Status of the instance .It can be one among these:
 				 Provisioning/Failed/Unknown/Running.`,
 			},
+			"clone": {
+				Type:        schema.TypeSet,
+				Optional:    true,
+				Description: "If Clone is provided, this instance will created from cloning an existing instance",
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"source_instance_id": {
+							Type:        schema.TypeString,
+							Required:    true,
+							Description: "Instance ID of the source.",
+						},
+					},
+				},
+			},
+			"environment": {
+				Type:     schema.TypeString,
+				Optional: true,
+				ValidateFunc: validation.StringInSlice([]string{
+					"Dev", "test", "Production", "Staging",
+				}, true),
+				Description: "Environment can be one of the following (Dev, test, Production or Staging)",
+			},
 		},
 		SchemaVersion:  0,
 		StateUpgraders: nil,

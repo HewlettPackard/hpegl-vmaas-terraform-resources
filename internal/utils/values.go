@@ -19,5 +19,6 @@ func GetPowerState(key string) string {
 	if val, ok := powerStateMap[key]; ok {
 		return val
 	}
+
 	return StateUnknown
 }

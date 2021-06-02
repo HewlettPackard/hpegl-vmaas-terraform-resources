@@ -5,7 +5,6 @@ package cmp
 import (
 	"context"
 	"fmt"
-	"strconv"
 
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/models"
@@ -42,7 +41,7 @@ func (g *group) Read(ctx context.Context, d *utils.Data) error {
 	for i, g := range *groups.Groups {
 		if g.Name == name {
 			isMatched = true
-			d.SetID(strconv.Itoa((*groups.Groups)[i].Id))
+			d.SetID((*groups.Groups)[i].Id)
 
 			break
 		}
