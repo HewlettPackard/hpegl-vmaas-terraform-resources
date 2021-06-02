@@ -6,6 +6,8 @@ import (
 	"encoding/json"
 	"strconv"
 	"time"
+
+	"github.com/hpe-hcss/vmaas-terraform-resources/internal/logger"
 )
 
 const (
@@ -33,6 +35,7 @@ func Retry(fn func() (interface{}, error)) (interface{}, error) {
 		if err == nil {
 			break
 		}
+		logger.Error("error inside retry, ", err, ". Response: ", resp)
 		time.Sleep(defaultTimeout)
 	}
 

@@ -4,6 +4,7 @@ package cmp
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strconv"
 
@@ -76,25 +77,56 @@ func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 	}
 	req.Config.Template = vmImages.VirtualImages[0].ID
 
-	var resp interface{}
+	var GetInstanceBody models.GetInstanceResponseInstance
 	// check whether vm to be cloned?
 	if cloneData != nil {
-		sourceID := cloneData["source_instance_id"].(int)
-		resp, err = utils.Retry(func() (interface{}, error) {
+		req.CloneVMName = req.Instance.Name
+		req.Instance.Name = ""
+		sourceID, _ := strconv.Atoi(cloneData["source_instance_id"].(string))
+
+		logger.Info("Cloning the instance")
+		respClone, err := utils.Retry(func() (interface{}, error) {
 			return i.iClient.CloneAnInstance(ctx, sourceID, req)
 		})
+		if err != nil {
+			return err
+		}
+
+		logger.Info("Check clone success")
+		isCloneSuccess := respClone.(models.SuccessOrErrorMessage)
+		if !isCloneSuccess.Success {
+			return fmt.Errorf("failed to clone, error: %s", isCloneSuccess.Message)
+		}
+
+		logger.Info("Get all instances")
+		instancesResp, err := utils.Retry(func() (interface{}, error) {
+			return i.iClient.GetAllInstances(ctx, map[string]string{
+				nameKey: req.CloneVMName,
+			})
+		})
+		if err != nil {
+			return err
+		}
+
+		instancesList := instancesResp.(models.Instances)
+		if len(instancesList.Instances) != 1 {
+			return errors.New("get cloned instance is failed")
+		}
+		logger.Info("Instance id = ", instancesList.Instances[0])
+		GetInstanceBody = instancesList.Instances[0]
 	} else {
 		// create instance
-		resp, err = utils.Retry(func() (interface{}, error) {
+		respVM, err := utils.Retry(func() (interface{}, error) {
 			return i.iClient.CreateAnInstance(ctx, req)
 		})
+		if err != nil {
+			return err
+		}
+		GetInstanceBody = *respVM.(models.GetInstanceResponse).Instance
 	}
-	if err != nil {
-		return err
-	}
-	instance := resp.(models.GetInstanceResponse)
+	// set power state
 	d.SetString("state", utils.GetPowerState(d.GetString("status")))
-	d.SetID(instance.Instance.Id)
+	d.SetID(GetInstanceBody.Id)
 
 	// post check
 	return d.Error()

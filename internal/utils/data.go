@@ -164,8 +164,10 @@ func (d *Data) GetInt(key string, ignore ...bool) int {
 
 func (d *Data) getOk(key string, ignore []bool) (interface{}, bool) {
 	val, ok := d.d.GetOk(key)
-	if len(ignore) == 0 || ignore[0] == false {
-		d.err(key, ErrKeyNotDefined)
+	if len(ignore) != 0 && !ignore[0] {
+		if !ok {
+			d.err(key, ErrKeyNotDefined)
+		}
 	}
 	return val, ok
 }
