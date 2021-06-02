@@ -54,6 +54,7 @@ func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 		NetworkInterfaces: getNetwork(d.GetListMap("networks")),
 		Config:            getConfig(c),
 		Tags:              getTags(d.GetMap("tags")),
+		LayoutSize:        d.GetInt("vm_copies"),
 	}
 
 	// Pre check
@@ -80,6 +81,7 @@ func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 		return err
 	}
 	instance := resp.(models.GetInstanceResponse)
+	d.SetString("state", utils.GetPowerState(d.GetString("status")))
 	d.SetID(strconv.Itoa(instance.Instance.Id))
 
 	// post check
@@ -179,6 +181,7 @@ func getConfig(c map[string]interface{}) *models.CreateInstanceBodyConfig {
 	config := &models.CreateInstanceBodyConfig{
 		ResourcePoolId: utils.JSONNumber(c["resource_pool_id"]),
 		NoAgent:        strconv.FormatBool(c["no_agent"].(bool)),
+		VMwareFolderId: c["vm_folder"].(string),
 	}
 
 	return config

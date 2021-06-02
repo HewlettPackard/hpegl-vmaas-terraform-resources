@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
 	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/client"
 )
@@ -146,16 +147,21 @@ func Instances() *schema.Resource {
 							Type:        schema.TypeBool,
 							Optional:    true,
 							Default:     true,
-							Description: "If true agent will not be installed on the instance",
+							Description: "If true agent will not be installed on the instance.",
+						},
+						"vm_folder": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "Folder name where will will be stored.",
 						},
 					},
 				},
 			},
-			"copies": {
+			"vm_copies": {
 				Type:        schema.TypeInt,
 				Optional:    true,
 				Default:     1,
-				Description: "Number of instance copies to be provisioned.",
+				Description: "Number of VM instance copies to be provisioned.",
 			},
 			"evars": {
 				Type:     schema.TypeMap,
@@ -167,8 +173,12 @@ func Instances() *schema.Resource {
 			},
 			"state": {
 				Type:        schema.TypeString,
-				Computed:    true,
-				Description: "State of the instance provisioned. This can be powerOn/powerOff/Suspended",
+				Optional:    true,
+				Default:     "powerOn",
+				Description: "State of the instance provisioned. This can be powerOn/powerOff/suspend/restart",
+				ValidateFunc: validation.StringInSlice([]string{
+					"powerOn", "powerOff", "suspend", "restart",
+				}, true),
 			},
 			"status": {
 				Type:     schema.TypeString,
