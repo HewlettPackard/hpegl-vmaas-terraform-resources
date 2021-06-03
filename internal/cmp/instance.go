@@ -7,11 +7,18 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
+	"time"
 
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/models"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/logger"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
+)
+
+const (
+	instanceCloneRetryDelay   = time.Second * 60
+	instanceCloneRetryTimeout = time.Second * 10
+	instanceCloneRetryCount   = 10
 )
 
 // instance implements functions related to cmp instances
@@ -80,11 +87,12 @@ func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 	var GetInstanceBody models.GetInstanceResponseInstance
 	// check whether vm to be cloned?
 	if cloneData != nil {
-		req.CloneVMName = req.Instance.Name
+		req.CloneName = req.Instance.Name
 		req.Instance.Name = ""
 		sourceID, _ := strconv.Atoi(cloneData["source_instance_id"].(string))
 
-		logger.Info("Cloning the instance")
+		// clone the instance
+		logger.Info("Cloning the instance with ", sourceID)
 		respClone, err := utils.Retry(func() (interface{}, error) {
 			return i.iClient.CloneAnInstance(ctx, sourceID, req)
 		})
@@ -99,9 +107,15 @@ func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 		}
 
 		logger.Info("Get all instances")
-		instancesResp, err := utils.Retry(func() (interface{}, error) {
+		customRetry := &utils.CustomRetry{
+			Delay:        instanceCloneRetryDelay,
+			RetryTimeout: instanceCloneRetryTimeout,
+			RetryCount:   instanceCloneRetryCount,
+		}
+		// get cloned instance ID
+		instancesResp, err := customRetry.Retry(func() (interface{}, error) {
 			return i.iClient.GetAllInstances(ctx, map[string]string{
-				nameKey: req.CloneVMName,
+				nameKey: req.CloneName,
 			})
 		})
 		if err != nil {
@@ -112,7 +126,7 @@ func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 		if len(instancesList.Instances) != 1 {
 			return errors.New("get cloned instance is failed")
 		}
-		logger.Info("Instance id = ", instancesList.Instances[0])
+		logger.Info("Instance id = ", instancesList.Instances[0].Id)
 		GetInstanceBody = instancesList.Instances[0]
 	} else {
 		// create instance
@@ -125,7 +139,7 @@ func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 		GetInstanceBody = *respVM.(models.GetInstanceResponse).Instance
 	}
 	// set power state
-	d.SetString("state", utils.GetPowerState(d.GetString("status")))
+	// d.SetString("state", utils.GetPowerState(d.GetString("status")))
 	d.SetID(GetInstanceBody.Id)
 
 	// post check
