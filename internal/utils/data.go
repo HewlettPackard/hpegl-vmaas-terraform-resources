@@ -169,6 +169,7 @@ func (d *Data) getOk(key string, ignore []bool) (interface{}, bool) {
 			d.err(key, ErrKeyNotDefined)
 		}
 	}
+
 	return val, ok
 }
 

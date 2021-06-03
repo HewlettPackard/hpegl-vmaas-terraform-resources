@@ -49,5 +49,6 @@ func (c *CustomRetry) Retry(fn func() (interface{}, error)) (interface{}, error)
 		c.RetryTimeout = defaultTimeout
 	}
 	time.Sleep(c.Delay)
+
 	return retry(c.RetryCount, c.RetryTimeout, fn)
 }

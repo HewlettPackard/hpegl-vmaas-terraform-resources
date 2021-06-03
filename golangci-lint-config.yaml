@@ -20,7 +20,7 @@ linters-settings:
   exhaustive:
     default-signifies-exhaustive: true
   funlen:
-    lines: 200
+    lines:300
     statements: 60
 
 linters:
@@ -46,7 +46,7 @@ linters:
     # Disable the 'cyclop' cyclometric complexity linter. 'gocyclo' already
     # covers cyclometric complexity, and 'cyclop' has no documentation to
     # help with resolving the flagged lints
-    # - cyclop
+    - cyclop
 
 issues:
 
