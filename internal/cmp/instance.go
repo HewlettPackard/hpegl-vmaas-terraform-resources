@@ -63,6 +63,8 @@ func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 		Config:            getConfig(c),
 		Tags:              getTags(d.GetMap("tags")),
 		LayoutSize:        d.GetInt("vm_copies"),
+		HostName:          d.GetString("hostname"),
+		InstanceContext:   d.GetString("environment"),
 	}
 	cloneData := d.GetSMap("clone", true)
 	// Pre check

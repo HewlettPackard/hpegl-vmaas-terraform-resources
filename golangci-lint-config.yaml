@@ -23,7 +23,8 @@ linters-settings:
     lines: 300
     statements: 60
   nestif:
-    complexity: 10
+    # minimal complexity of if statements to report
+    min-complexity: 10
 
 linters:
   enable-all: true
@@ -37,6 +38,7 @@ linters:
     - gomnd
     - gochecknoinits
     - gochecknoglobals
+    - wrapcheck
     # - exhaustivestruct
     # - forbidigo
     - testpackage
