@@ -20,8 +20,10 @@ linters-settings:
   exhaustive:
     default-signifies-exhaustive: true
   funlen:
-    lines:300
+    lines: 300
     statements: 60
+  nestif:
+    complexity: 10
 
 linters:
   enable-all: true
@@ -35,7 +37,6 @@ linters:
     - gomnd
     - gochecknoinits
     - gochecknoglobals
-    - gocyclo
     # - exhaustivestruct
     # - forbidigo
     - testpackage

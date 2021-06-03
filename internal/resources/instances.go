@@ -122,6 +122,11 @@ func Instances() *schema.Resource {
 					Type: schema.TypeString,
 				},
 			},
+			"hostname": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Hostname for the instance",
+			},
 			"config": {
 				Type:        schema.TypeSet,
 				Required:    true,
