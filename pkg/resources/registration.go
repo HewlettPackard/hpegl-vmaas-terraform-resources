@@ -21,13 +21,14 @@ func (r Registration) Name() string {
 
 func (r Registration) SupportedDataSources() map[string]*schema.Resource {
 	return map[string]*schema.Resource{
-		"hpegl_vmaas_network":      resources.NetworkData(),
-		"hpegl_vmaas_layout":       resources.LayoutData(),
-		"hpegl_vmaas_group":        resources.GroupData(),
-		"hpegl_vmaas_plan":         resources.PlanData(),
-		"hpegl_vmaas_cloud":        resources.CloudData(),
-		"hpegl_vmaas_resourcePool": resources.ResourcePoolData(),
-		"hpegl_vmaas_datastore":    resources.DatastoreData(),
+		resources.DSNetwork:       resources.NetworkData(),
+		resources.DSLayout:        resources.LayoutData(),
+		resources.DSGroup:         resources.GroupData(),
+		resources.DSPlan:          resources.PlanData(),
+		resources.DSCloud:         resources.CloudData(),
+		resources.DSResourcePool:  resources.ResourcePoolData(),
+		resources.DSDatastore:     resources.DatastoreData(),
+		resources.DSPowerSchedule: resources.PowerScheduleData(),
 	}
 }
 

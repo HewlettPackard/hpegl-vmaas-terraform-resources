@@ -9,7 +9,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
 	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/client"
 )
@@ -145,7 +144,7 @@ func Instances() *schema.Resource {
 						},
 						"template": {
 							Type:        schema.TypeString,
-							Required:    true,
+							Optional:    true,
 							Description: f(generalNamedesc, "virtual image", "template"),
 						},
 						"no_agent": {
@@ -158,6 +157,11 @@ func Instances() *schema.Resource {
 							Type:        schema.TypeString,
 							Optional:    true,
 							Description: "Folder name where will will be stored.",
+						},
+						"create_user": {
+							Type:        schema.TypeBool,
+							Optional:    true,
+							Description: "If true new user will be created",
 						},
 					},
 				},
@@ -176,15 +180,15 @@ func Instances() *schema.Resource {
 				},
 				Description: "Environment Variables to be added to the provisioned instance.",
 			},
-			"state": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Default:     "powerOn",
-				Description: "State of the instance provisioned. This can be powerOn/powerOff/suspend/restart",
-				ValidateFunc: validation.StringInSlice([]string{
-					"powerOn", "powerOff", "suspend", "restart",
-				}, true),
-			},
+			// "state": {
+			// 	Type:        schema.TypeString,
+			// 	Optional:    true,
+			// 	Default:     "powerOn",
+			// 	Description: "State of the instance provisioned. This can be powerOn/powerOff/suspend/restart",
+			// 	ValidateFunc: validation.StringInSlice([]string{
+			// 		"powerOn", "powerOff", "suspend", "restart",
+			// 	}, true),
+			// },
 			"status": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -205,14 +209,38 @@ func Instances() *schema.Resource {
 					},
 				},
 			},
-			"environment": {
-				Type:     schema.TypeString,
-				Optional: true,
-				ValidateFunc: validation.StringInSlice([]string{
-					"Dev", "test", "Production", "Staging",
-				}, true),
-				Description: "Environment can be one of the following (Dev, test, Production or Staging)",
+			"power_schedule": {
+				Type:        schema.TypeSet,
+				Optional:    true,
+				Description: "Scheduled power operations",
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"id": {
+							Type:        schema.TypeInt,
+							Description: "Power schedule type id",
+							Required:    true,
+						},
+						"shutdown_days": {
+							Type:        schema.TypeInt,
+							Optional:    true,
+							Description: "Shutdown days",
+						},
+						"expire_days": {
+							Type:        schema.TypeInt,
+							Optional:    true,
+							Description: "Shutdown days",
+						},
+					},
+				},
 			},
+			// "environment": {
+			// 	Type:     schema.TypeString,
+			// 	Optional: true,
+			// 	ValidateFunc: validation.StringInSlice([]string{
+			// 		"Dev", "test", "Production", "Staging",
+			// 	}, false),
+			// 	Description: "Environment can be one of the following (Dev, test, Production or Staging)",
+			// },
 		},
 		SchemaVersion:  0,
 		StateUpgraders: nil,

@@ -56,15 +56,24 @@ func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 			Layout: &models.CreateInstanceBodyInstanceLayout{
 				Id: d.GetJSONNumber("layout_id"),
 			},
-			Type: d.GetString("instance_code"),
+			Type:     d.GetString("instance_code"),
+			HostName: d.GetString("hostname"),
+			Tags:     d.GetString("tags"),
 		},
 		Volumes:           getVolume(d.GetListMap("volumes")),
 		NetworkInterfaces: getNetwork(d.GetListMap("networks")),
 		Config:            getConfig(c),
-		Tags:              getTags(d.GetMap("tags")),
 		LayoutSize:        d.GetInt("vm_copies"),
-		HostName:          d.GetString("hostname"),
-		InstanceContext:   d.GetString("environment"),
+		// Context:           d.GetString("environment"),
+	}
+	if req.Instance.InstanceType.Code == vmware && req.Config.Template == 0 {
+		return errors.New("error, template should be provided if instance type is vmware")
+	}
+	powerSchedule := d.GetSMap("PowerScheduleType")
+	if powerSchedule != nil {
+		req.Instance.PowerScheduleType = utils.JSONNumber(powerSchedule["id"])
+		req.Instance.ShutdownDays = utils.JSONNumber(powerSchedule["shutdown_days"])
+		req.Instance.ExpireDays = utils.JSONNumber(powerSchedule["expire_days"])
 	}
 	cloneData := d.GetSMap("clone", true)
 	// Pre check
@@ -242,6 +251,7 @@ func getConfig(c map[string]interface{}) *models.CreateInstanceBodyConfig {
 		ResourcePoolId: utils.JSONNumber(c["resource_pool_id"]),
 		NoAgent:        strconv.FormatBool(c["no_agent"].(bool)),
 		VMwareFolderId: c["vm_folder"].(string),
+		CreateUser:     c["create_user"].(bool),
 	}
 
 	return config

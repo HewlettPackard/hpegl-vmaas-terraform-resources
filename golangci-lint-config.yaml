@@ -38,7 +38,6 @@ linters:
     - gomnd
     - gochecknoinits
     - gochecknoglobals
-    - wrapcheck
     # - exhaustivestruct
     # - forbidigo
     - testpackage
