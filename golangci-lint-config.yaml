@@ -35,6 +35,7 @@ linters:
     - gomnd
     - gochecknoinits
     - gochecknoglobals
+    - gocyclo
     # - exhaustivestruct
     # - forbidigo
     - testpackage
@@ -46,7 +47,7 @@ linters:
     # Disable the 'cyclop' cyclometric complexity linter. 'gocyclo' already
     # covers cyclometric complexity, and 'cyclop' has no documentation to
     # help with resolving the flagged lints
-    - cyclop
+    # - cyclop
 
 issues:
 
