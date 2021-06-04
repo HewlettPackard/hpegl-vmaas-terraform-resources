@@ -16,15 +16,13 @@ type Client struct {
 	Layout        DataSource
 	Datastore     DataSource
 	PowerSchedule DataSource
+	Template      DataSource
 }
 
 // NewClient returns configured client
 func NewClient(client *apiClient.APIClient, cfg apiClient.Configuration) *Client {
 	return &Client{
-		Instance: newInstance(
-			&apiClient.InstancesApiService{Client: client, Cfg: cfg},
-			&apiClient.VirtualImagesApiService{Client: client, Cfg: cfg},
-		),
+		Instance:      newInstance(&apiClient.InstancesApiService{Client: client, Cfg: cfg}),
 		Network:       newNetwork(&apiClient.NetworksApiService{Client: client, Cfg: cfg}),
 		Plan:          newPlan(&apiClient.PlansApiService{Client: client, Cfg: cfg}),
 		Group:         newGroup(&apiClient.GroupsApiService{Client: client, Cfg: cfg}),
@@ -33,5 +31,6 @@ func NewClient(client *apiClient.APIClient, cfg apiClient.Configuration) *Client
 		ResourcePool:  newResourcePool(&apiClient.CloudsApiService{Client: client, Cfg: cfg}),
 		Datastore:     newDatastore(&apiClient.CloudsApiService{Client: client, Cfg: cfg}),
 		PowerSchedule: newPowerSchedule(&apiClient.PowerSchedulesApiService{Client: client, Cfg: cfg}),
+		Template:      newTemplate(&apiClient.VirtualImagesApiService{Client: client, Cfg: cfg}),
 	}
 }

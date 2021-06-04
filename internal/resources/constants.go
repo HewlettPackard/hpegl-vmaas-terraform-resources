@@ -12,6 +12,7 @@ const (
 	DSResourcePool  = "hpegl_vmaas_resourcePool"
 	DSDatastore     = "hpegl_vmaas_datastore"
 	DSPowerSchedule = "hpegl_vmaas_powerSchedule"
+	DSTemplate      = "hpegl_vmaas_template"
 	// resource key
 	ResInstance = "hpegl_vmaas_instance"
 

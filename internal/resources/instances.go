@@ -55,11 +55,6 @@ func Instances() *schema.Resource {
 				Required:    true,
 				Description: "Unique code used to identify the instance type.",
 			},
-			"instance_type": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: "Type of the instance. This should be 'vmware' for vmaas resource.",
-			},
 			"networks": {
 				Type:        schema.TypeList,
 				Required:    true,
@@ -102,16 +97,22 @@ func Instances() *schema.Resource {
 							Optional:    true,
 							Description: "If true then the given volume as considered as root volume.",
 						},
+						"id": {
+							Computed:    true,
+							Type:        schema.TypeInt,
+							Description: "ID for the volume",
+						},
+						"persist_volume_on_update": {
+							Optional: true,
+							Type:     schema.TypeBool,
+						},
 					},
 				},
 			},
-			"labels": {
-				Type:        schema.TypeList,
+			"label": {
+				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "A list of strings used for labelling instances.",
-				Elem: &schema.Schema{
-					Type: schema.TypeString,
-				},
+				Description: "A string used for labelling instances.",
 			},
 			"tags": {
 				Type:        schema.TypeMap,
@@ -143,9 +144,9 @@ func Instances() *schema.Resource {
 							Description: "Public key to be configured for the VM.",
 						},
 						"template": {
-							Type:        schema.TypeString,
+							Type:        schema.TypeInt,
 							Optional:    true,
-							Description: f(generalNamedesc, "virtual image", "template"),
+							Description: "Unique ID for the template",
 						},
 						"no_agent": {
 							Type:        schema.TypeBool,
@@ -161,6 +162,7 @@ func Instances() *schema.Resource {
 						"create_user": {
 							Type:        schema.TypeBool,
 							Optional:    true,
+							Default:     false,
 							Description: "If true new user will be created",
 						},
 					},

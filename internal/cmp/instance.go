@@ -25,13 +25,11 @@ const (
 type instance struct {
 	// expose Instance API service to instances related operations
 	iClient *client.InstancesApiService
-	tClient *client.VirtualImagesApiService
 }
 
-func newInstance(iClient *client.InstancesApiService, tClient *client.VirtualImagesApiService) *instance {
+func newInstance(iClient *client.InstancesApiService) *instance {
 	return &instance{
 		iClient: iClient,
-		tClient: tClient,
 	}
 }
 
@@ -58,17 +56,23 @@ func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 			},
 			Type:     d.GetString("instance_code"),
 			HostName: d.GetString("hostname"),
-			Tags:     d.GetString("tags"),
+			Tags:     d.GetString("label"),
 		},
 		Volumes:           getVolume(d.GetListMap("volumes")),
 		NetworkInterfaces: getNetwork(d.GetListMap("networks")),
 		Config:            getConfig(c),
+		Tags:              getTags(d.GetMap("tags")),
 		LayoutSize:        d.GetInt("vm_copies"),
 		// Context:           d.GetString("environment"),
 	}
-	if req.Instance.InstanceType.Code == vmware && req.Config.Template == 0 {
-		return errors.New("error, template should be provided if instance type is vmware")
+	if req.Instance.InstanceType.Code == vmware {
+		templateID := c["template"]
+		if templateID == nil {
+			return errors.New("error, template id is required for vmware instance type")
+		}
+		req.Config.Template = templateID.(int)
 	}
+
 	powerSchedule := d.GetSMap("PowerScheduleType")
 	if powerSchedule != nil {
 		req.Instance.PowerScheduleType = utils.JSONNumber(powerSchedule["id"])
@@ -81,19 +85,6 @@ func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 		return err
 	}
 	// Get template id
-	vResp, err := utils.Retry(func() (interface{}, error) {
-		return i.tClient.GetAllVirtualImages(ctx, map[string]string{
-			nameKey: c["template"].(string),
-		})
-	})
-	vmImages := vResp.(models.VirtualImages)
-	if err != nil {
-		return err
-	}
-	if len(vmImages.VirtualImages) != 1 {
-		return fmt.Errorf(errExactMatch, "templates")
-	}
-	req.Config.Template = vmImages.VirtualImages[0].ID
 
 	var GetInstanceBody models.GetInstanceResponseInstance
 	// check whether vm to be cloned?
@@ -210,6 +201,12 @@ func (i *instance) Read(ctx context.Context, d *utils.Data) error {
 		return err
 	}
 	instance := resp.(models.GetInstanceResponse)
+
+	volumes := d.GetListMap("volumes")
+	for i := range volumes {
+		volumes[i]["id"] = instance.Instance.Volumes[i].Id
+	}
+	d.Set("volumes", volumes)
 	d.SetID(instance.Instance.Id)
 	d.SetString("status", instance.Instance.Status)
 

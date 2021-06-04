@@ -248,3 +248,10 @@ func (d *Data) ListToIntSlice(key string) []int {
 
 	return dst
 }
+
+func (d *Data) Set(key string, val interface{}) {
+	err := d.d.Set(key, val)
+	if err != nil {
+		d.err(key, ErrSet+", "+err.Error())
+	}
+}

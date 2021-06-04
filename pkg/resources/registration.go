@@ -29,6 +29,7 @@ func (r Registration) SupportedDataSources() map[string]*schema.Resource {
 		resources.DSResourcePool:  resources.ResourcePoolData(),
 		resources.DSDatastore:     resources.DatastoreData(),
 		resources.DSPowerSchedule: resources.PowerScheduleData(),
+		resources.DSTemplate:      resources.TemplateData(),
 	}
 }
 
