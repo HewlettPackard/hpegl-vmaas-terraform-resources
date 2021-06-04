@@ -68,7 +68,6 @@ func (d *Data) getlistMap(key string, src interface{}) []map[string]interface{} 
 			dst = append(dst, ds)
 		}
 	}
-
 	return dst
 }
 
