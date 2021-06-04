@@ -54,13 +54,7 @@ func (d *Data) err(key, msg string) {
 	d.errors[key] = append(d.errors[key], msg)
 }
 
-// GetListMap take key as parameter and returns []map[string]interfac{}.
-// This function can be used for retrieving list of map or list of set
-func (d *Data) GetListMap(key string) []map[string]interface{} {
-	src := d.get(key)
-	if src == nil {
-		return nil
-	}
+func (d *Data) getlistMap(key string, src interface{}) []map[string]interface{} {
 	list, ok := src.([]interface{})
 	if !ok {
 		d.err(key, ErrInvalidType)
@@ -74,8 +68,30 @@ func (d *Data) GetListMap(key string) []map[string]interface{} {
 			dst = append(dst, ds)
 		}
 	}
-
 	return dst
+}
+
+// GetListMap take key as parameter and returns []map[string]interfac{}.
+// This function can be used for retrieving list of map or list of set
+func (d *Data) GetListMap(key string) []map[string]interface{} {
+	src := d.get(key)
+	if src == nil {
+		return nil
+	}
+	return d.getlistMap(key, src)
+}
+
+func (d *Data) GetChangedListMap(key string) []map[string]interface{} {
+	src, _ := d.d.GetChange(key)
+	if src == nil {
+		return nil
+	}
+	return d.getlistMap(key, src)
+}
+
+func (d *Data) HasChangedElement(key string) bool {
+	src := d.d.HasChange(key)
+	return src
 }
 
 func (d *Data) get(key string) interface{} {
@@ -195,6 +211,15 @@ func (d *Data) GetString(key string) string {
 	return ""
 }
 
+func (d *Data) GetBool(key string) bool {
+	val := d.get(key)
+	if val != nil {
+		return val.(bool)
+	}
+	d.err(key, ErrInvalidType)
+	return false
+}
+
 func (d *Data) GetJSONNumber(key string) json.Number {
 	in := d.get(key)
 
@@ -225,4 +250,11 @@ func (d *Data) ListToIntSlice(key string) []int {
 	}
 
 	return dst
+}
+
+func (d *Data) Set(key string, val interface{}) {
+	err := d.d.Set(key, val)
+	if err != nil {
+		d.err(key, ErrSet+", "+err.Error())
+	}
 }
