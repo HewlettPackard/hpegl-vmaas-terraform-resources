@@ -152,7 +152,6 @@ func Instances() *schema.Resource {
 			"copies": {
 				Type:        schema.TypeInt,
 				Optional:    true,
-				Default:     1,
 				Description: "Number of instance copies to be provisioned.",
 			},
 			"evars": {
@@ -257,6 +256,19 @@ func instanceDeleteContext(ctx context.Context, d *schema.ResourceData, meta int
 	if err := c.CmpClient.Instance.Delete(ctx, data); err != nil {
 		return diag.FromErr(err)
 	}
+
+	return nil
+}
+
+func instanceUpdateContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	c, err := client.GetClientFromMetaMap(meta)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	data := utils.NewData(d)
+	if err := c.CmpClient.Instance.Update(ctx, data); err != nil {
+		return diag.FromErr(err)
+	}
 	// Wait for the status to be running
 	createStateConf := resource.StateChangeConf{
 		Delay:      instanceRetryDelay,
@@ -274,19 +286,6 @@ func instanceDeleteContext(ctx context.Context, d *schema.ResourceData, meta int
 	}
 	_, err = createStateConf.WaitForStateContext(ctx)
 	if err != nil {
-		return diag.FromErr(err)
-	}
-
-	return nil
-}
-
-func instanceUpdateContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c, err := client.GetClientFromMetaMap(meta)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-	data := utils.NewData(d)
-	if err := c.CmpClient.Instance.Update(ctx, data); err != nil {
 		return diag.FromErr(err)
 	}
 

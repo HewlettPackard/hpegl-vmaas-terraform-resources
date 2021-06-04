@@ -81,11 +81,6 @@ func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 	}
 	instance := resp.(models.GetInstanceResponse)
 	d.SetID(strconv.Itoa(instance.Instance.Id))
-	volumes := d.GetListMap("volume")
-	for i := range volumes {
-		volumes[i]["id"] = instance.Instance.Volumes[i].Id
-	}
-	d.Set("volumes", volumes)
 	// post check
 	return d.Error()
 }
@@ -209,7 +204,7 @@ func getVolume(volumes []map[string]interface{}) []models.CreateInstanceBodyVolu
 			Name:        volumes[i]["name"].(string),
 			Size:        volumes[i]["size"].(int),
 			DatastoreId: volumes[i]["datastore_id"],
-			RootVolume:  true,
+			RootVolume:  volumes[i]["root"].(bool),
 		})
 	}
 
