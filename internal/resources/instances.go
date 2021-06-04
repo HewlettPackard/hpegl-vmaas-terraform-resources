@@ -81,6 +81,16 @@ func Instances() *schema.Resource {
 				It can have a root volume and other secondary volumes.`,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+						"id": {
+							Type:        schema.TypeInt,
+							Computed:    true,
+							Description: "ID of volume.",
+						},
+						"root": {
+							Type:        schema.TypeBool,
+							Optional:    true,
+							Description: "Type of volume.",
+						},
 						"name": {
 							Type:        schema.TypeString,
 							Required:    true,
@@ -247,10 +257,38 @@ func instanceDeleteContext(ctx context.Context, d *schema.ResourceData, meta int
 	if err := c.CmpClient.Instance.Delete(ctx, data); err != nil {
 		return diag.FromErr(err)
 	}
+	// Wait for the status to be running
+	createStateConf := resource.StateChangeConf{
+		Delay:      instanceRetryDelay,
+		Pending:    []string{"resizing"},
+		Target:     []string{"running"},
+		Timeout:    instanceRetryTimeout,
+		MinTimeout: instanceRetryMinTimeout,
+		Refresh: func() (result interface{}, state string, err error) {
+			if err := c.CmpClient.Instance.Read(ctx, data); err != nil {
+				return nil, "", err
+			}
+
+			return d.Get("name"), data.GetString("status"), nil
+		},
+	}
+	_, err = createStateConf.WaitForStateContext(ctx)
+	if err != nil {
+		return diag.FromErr(err)
+	}
 
 	return nil
 }
 
 func instanceUpdateContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	return nil
+	c, err := client.GetClientFromMetaMap(meta)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	data := utils.NewData(d)
+	if err := c.CmpClient.Instance.Update(ctx, data); err != nil {
+		return diag.FromErr(err)
+	}
+
+	return instanceReadContext(ctx, d, meta)
 }

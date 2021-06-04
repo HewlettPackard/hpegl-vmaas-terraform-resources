@@ -81,18 +81,65 @@ func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 	}
 	instance := resp.(models.GetInstanceResponse)
 	d.SetID(strconv.Itoa(instance.Instance.Id))
-
+	volumes := d.GetListMap("volume")
+	for i := range volumes {
+		volumes[i]["id"] = instance.Instance.Volumes[i].Id
+	}
+	d.Set("volumes", volumes)
 	// post check
 	return d.Error()
 }
 
 // Update instance including poweroff, powerOn, restart, suspend
-// changing network, volumes and instance properties such as labels
+// changing volumes and instance properties such as labels
 // groups and tags
 func (i *instance) Update(ctx context.Context, d *utils.Data) error {
 	logger.Debug("Updating the instance")
+	id := d.GetID()
+	if d.HasChangedElement("name") || d.HasChangedElement("group_id") {
+		updateReq := &models.UpdateInstanceBody{
+			Instance: &models.UpdateInstanceBodyInstance{
+				Name: d.GetString("name"),
+				Site: &models.CreateInstanceBodyInstanceSite{
+					Id: d.GetInt("group_id"),
+				},
+				AddTags:    getTags(d.GetMap("addTags")),
+				RemoveTags: getTags(d.GetMap("removeTags")),
+			},
+		}
+		if err := d.Error(); err != nil {
+			return err
+		}
+		// update instance
+		_, err := utils.Retry(func() (interface{}, error) {
+			return i.iClient.UpdatingAnInstance(ctx, id, updateReq)
+		})
+		if err != nil {
+			return err
+		}
+	}
 
-	return nil
+	if d.HasChangedElement("volumes") || d.HasChangedElement("plan_id") {
+		resizeReq := &models.ResizeInstanceBody{
+			Instance: &models.ResizeInstanceBodyInstance{
+				Plan: &models.ResizeInstanceBodyInstancePlan{
+					Id: d.GetInt("plan_id"),
+				},
+			},
+			Volumes: resizeVolume(d.GetListMap("volumes")),
+		}
+		if err := d.Error(); err != nil {
+			return err
+		}
+		_, err := utils.Retry(func() (interface{}, error) {
+			return i.iClient.ResizeAnInstance(ctx, id, resizeReq)
+		})
+		if err != nil {
+			return err
+		}
+	}
+
+	return d.Error()
 }
 
 // Delete instance and set ID as ""
@@ -142,6 +189,12 @@ func (i *instance) Read(ctx context.Context, d *utils.Data) error {
 	d.SetID(strconv.Itoa(instance.Instance.Id))
 	d.SetString("status", instance.Instance.Status)
 
+	volumes := d.GetListMap("volumes")
+
+	for i := range volumes {
+		volumes[i]["id"] = instance.Instance.Volumes[i].Id
+	}
+	d.Set("volumes", volumes)
 	// post check
 	return d.Error()
 }
@@ -157,6 +210,23 @@ func getVolume(volumes []map[string]interface{}) []models.CreateInstanceBodyVolu
 			Size:        volumes[i]["size"].(int),
 			DatastoreId: volumes[i]["datastore_id"],
 			RootVolume:  true,
+		})
+	}
+
+	return volumesModel
+}
+
+func resizeVolume(volumes []map[string]interface{}) []models.ResizeInstanceBodyInstanceVolumes {
+	volumesModel := make([]models.ResizeInstanceBodyInstanceVolumes, 0, len(volumes))
+	logger.Debug(volumes)
+	for i := range volumes {
+		// vID, _ := utils.ParseInt(volumes[i]["size"].(string))
+		volumesModel = append(volumesModel, models.ResizeInstanceBodyInstanceVolumes{
+			Id:          utils.JSONNumber(volumes[i]["id"]),
+			Name:        volumes[i]["name"].(string),
+			Size:        volumes[i]["size"].(int),
+			DatastoreId: volumes[i]["datastore_id"],
+			RootVolume:  volumes[i]["root"].(bool),
 		})
 	}
 
@@ -179,6 +249,7 @@ func getNetwork(networksMap []map[string]interface{}) []models.CreateInstanceBod
 func getConfig(c map[string]interface{}) *models.CreateInstanceBodyConfig {
 	config := &models.CreateInstanceBodyConfig{
 		ResourcePoolId: utils.JSONNumber(c["resource_pool_id"]),
+		NoAgent:        "true",
 	}
 
 	return config
