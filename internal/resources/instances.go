@@ -138,11 +138,6 @@ func Instances() *schema.Resource {
 							Required:    true,
 							Description: f(generalDDesc, "resource pool"),
 						},
-						"public_key": {
-							Type:        schema.TypeString,
-							Optional:    true,
-							Description: "Public key to be configured for the VM.",
-						},
 						"template": {
 							Type:        schema.TypeInt,
 							Optional:    true,
@@ -157,7 +152,7 @@ func Instances() *schema.Resource {
 						"vm_folder": {
 							Type:        schema.TypeString,
 							Optional:    true,
-							Description: "Folder name where will will be stored.",
+							Description: "Folder name where will be stored.",
 						},
 						"create_user": {
 							Type:        schema.TypeBool,
@@ -168,11 +163,11 @@ func Instances() *schema.Resource {
 					},
 				},
 			},
-			"vm_copies": {
+			"scale": {
 				Type:        schema.TypeInt,
 				Optional:    true,
 				Default:     1,
-				Description: "Number of VM instance copies to be provisioned.",
+				Description: "Number of nodes within an instance.",
 			},
 			"evars": {
 				Type:     schema.TypeMap,

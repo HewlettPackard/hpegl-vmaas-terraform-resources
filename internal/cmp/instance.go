@@ -62,7 +62,7 @@ func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 		NetworkInterfaces: getNetwork(d.GetListMap("networks")),
 		Config:            getConfig(c),
 		Tags:              getTags(d.GetMap("tags")),
-		LayoutSize:        d.GetInt("vm_copies"),
+		LayoutSize:        d.GetInt("scale"),
 		// Context:           d.GetString("environment"),
 	}
 	if req.Instance.InstanceType.Code == vmware {
