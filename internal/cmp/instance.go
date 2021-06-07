@@ -56,14 +56,15 @@ func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 			},
 			Type:     d.GetString("instance_code"),
 			HostName: d.GetString("hostname"),
-			Tags:     d.GetString("label"),
 		},
-		Volumes:           getVolume(d.GetListMap("volumes")),
-		NetworkInterfaces: getNetwork(d.GetListMap("networks")),
+		Evars:             getEvars(d.GetMap("evars")),
+		Labels:            d.GetStringList("labels"),
+		Volumes:           getVolume(d.GetListMap("volume")),
+		NetworkInterfaces: getNetwork(d.GetListMap("network")),
 		Config:            getConfig(c),
 		Tags:              getTags(d.GetMap("tags")),
 		LayoutSize:        d.GetInt("scale"),
-		// Context:           d.GetString("environment"),
+		PowerScheduleType: utils.JSONNumber(d.GetInt("power_schedule_id")),
 	}
 	if req.Instance.InstanceType.Code == vmware {
 		templateID := c["template"]
@@ -71,13 +72,6 @@ func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 			return errors.New("error, template id is required for vmware instance type")
 		}
 		req.Config.Template = templateID.(int)
-	}
-
-	powerSchedule := d.GetSMap("PowerScheduleType")
-	if powerSchedule != nil {
-		req.Instance.PowerScheduleType = utils.JSONNumber(powerSchedule["id"])
-		req.Instance.ShutdownDays = utils.JSONNumber(powerSchedule["shutdown_days"])
-		req.Instance.ExpireDays = utils.JSONNumber(powerSchedule["expire_days"])
 	}
 	cloneData := d.GetSMap("clone", true)
 	// Pre check
@@ -140,8 +134,6 @@ func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 		}
 		GetInstanceBody = *respVM.(models.GetInstanceResponse).Instance
 	}
-	// set power state
-	// d.SetString("state", utils.GetPowerState(d.GetString("status")))
 	d.SetID(GetInstanceBody.Id)
 
 	// post check
@@ -202,11 +194,11 @@ func (i *instance) Read(ctx context.Context, d *utils.Data) error {
 	}
 	instance := resp.(models.GetInstanceResponse)
 
-	volumes := d.GetListMap("volumes")
+	volumes := d.GetListMap("volume")
 	for i := range volumes {
 		volumes[i]["id"] = instance.Instance.Volumes[i].Id
 	}
-	d.Set("volumes", volumes)
+	d.Set("volume", volumes)
 	d.SetID(instance.Instance.Id)
 	d.SetString("status", instance.Instance.Status)
 
@@ -249,6 +241,7 @@ func getConfig(c map[string]interface{}) *models.CreateInstanceBodyConfig {
 		NoAgent:        strconv.FormatBool(c["no_agent"].(bool)),
 		VMwareFolderId: c["vm_folder"].(string),
 		CreateUser:     c["create_user"].(bool),
+		SmbiosAssetTag: c["assert_tag"].(string),
 	}
 
 	return config
@@ -264,4 +257,18 @@ func getTags(t map[string]interface{}) []models.CreateInstanceBodyTag {
 	}
 
 	return tags
+}
+
+func getEvars(evars map[string]interface{}) []models.GetInstanceResponseInstanceEvars {
+	evarModel := make([]models.GetInstanceResponseInstanceEvars, 0, len(evars))
+	for k, v := range evars {
+		evarModel = append(evarModel, models.GetInstanceResponseInstanceEvars{
+			Name:   k,
+			Value:  v.(string),
+			Export: true,
+			Masked: false,
+		})
+	}
+
+	return evarModel
 }

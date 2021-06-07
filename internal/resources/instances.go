@@ -4,6 +4,7 @@ package resources
 
 import (
 	"context"
+	"log"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -55,7 +56,7 @@ func Instances() *schema.Resource {
 				Required:    true,
 				Description: "Unique code used to identify the instance type.",
 			},
-			"networks": {
+			"network": {
 				Type:        schema.TypeList,
 				Required:    true,
 				Description: "Details of the network to which the instance should belong.",
@@ -69,7 +70,7 @@ func Instances() *schema.Resource {
 					},
 				},
 			},
-			"volumes": {
+			"volume": {
 				Type:     schema.TypeList,
 				Required: true,
 				Description: `A list of volumes to be created inside a provisioned instance.
@@ -109,10 +110,13 @@ func Instances() *schema.Resource {
 					},
 				},
 			},
-			"label": {
-				Type:        schema.TypeString,
+			"labels": {
+				Type:        schema.TypeList,
 				Optional:    true,
 				Description: "A string used for labelling instances.",
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
 			},
 			"tags": {
 				Type:        schema.TypeMap,
@@ -160,6 +164,11 @@ func Instances() *schema.Resource {
 							Default:     false,
 							Description: "If true new user will be created",
 						},
+						"assert_tag": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "Asset tag",
+						},
 					},
 				},
 			},
@@ -177,15 +186,6 @@ func Instances() *schema.Resource {
 				},
 				Description: "Environment Variables to be added to the provisioned instance.",
 			},
-			// "state": {
-			// 	Type:        schema.TypeString,
-			// 	Optional:    true,
-			// 	Default:     "powerOn",
-			// 	Description: "State of the instance provisioned. This can be powerOn/powerOff/suspend/restart",
-			// 	ValidateFunc: validation.StringInSlice([]string{
-			// 		"powerOn", "powerOff", "suspend", "restart",
-			// 	}, true),
-			// },
 			"status": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -206,38 +206,11 @@ func Instances() *schema.Resource {
 					},
 				},
 			},
-			"power_schedule": {
-				Type:        schema.TypeSet,
+			"power_schedule_id": {
+				Type:        schema.TypeInt,
 				Optional:    true,
 				Description: "Scheduled power operations",
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"id": {
-							Type:        schema.TypeInt,
-							Description: "Power schedule type id",
-							Required:    true,
-						},
-						"shutdown_days": {
-							Type:        schema.TypeInt,
-							Optional:    true,
-							Description: "Shutdown days",
-						},
-						"expire_days": {
-							Type:        schema.TypeInt,
-							Optional:    true,
-							Description: "Shutdown days",
-						},
-					},
-				},
 			},
-			// "environment": {
-			// 	Type:     schema.TypeString,
-			// 	Optional: true,
-			// 	ValidateFunc: validation.StringInSlice([]string{
-			// 		"Dev", "test", "Production", "Staging",
-			// 	}, false),
-			// 	Description: "Environment can be one of the following (Dev, test, Production or Staging)",
-			// },
 		},
 		SchemaVersion:  0,
 		StateUpgraders: nil,
@@ -297,6 +270,7 @@ func instanceCreateContext(ctx context.Context, d *schema.ResourceData, meta int
 }
 
 func instanceReadContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	log.Print("[INFO] this a log")
 	c, err := client.GetClientFromMetaMap(meta)
 	if err != nil {
 		return diag.FromErr(err)
