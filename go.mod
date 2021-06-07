@@ -6,8 +6,7 @@ require (
 	github.com/golang/protobuf v1.4.3 // indirect
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.5.0
 	github.com/hpe-hcss/hpegl-provider-lib v0.0.5
-	github.com/hpe-hcss/vmaas-cmp-go-sdk v0.0.0-20210603133029-cac7b1ba3a9e
-	github.com/imdario/mergo v0.3.11 // indirect
+	github.com/hpe-hcss/vmaas-cmp-go-sdk v0.0.0-20210607075216-3e98545e209b
 	github.com/mattn/go-colorable v0.1.8 // indirect
 	github.com/zclconf/go-cty v1.7.1 // indirect
 	golang.org/x/crypto v0.0.0-20200820211705-5c72a883971a // indirect

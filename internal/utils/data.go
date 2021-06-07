@@ -117,8 +117,19 @@ func (d *Data) GetIDString() string {
 	return d.d.Id()
 }
 
-func (d *Data) SetID(v string) {
-	d.d.SetId(v)
+// SetID should either be int or string
+func (d *Data) SetID(v interface{}) {
+	var stringID string
+	switch x := v.(type) {
+	case int:
+		stringID = strconv.Itoa(x)
+	case string:
+		stringID = x
+	default:
+		panic("Invalid data on SetID")
+	}
+
+	d.d.SetId(stringID)
 }
 
 func (d *Data) set(key string, value interface{}) error {
@@ -142,8 +153,8 @@ func (d *Data) GetStringList(key string) []string {
 	return dst
 }
 
-func (d *Data) GetInt(key string) int {
-	valInter, ok := d.d.GetOk(key)
+func (d *Data) GetInt(key string, ignore ...bool) int {
+	valInter, ok := d.getOk(key, ignore)
 	if !ok {
 		d.err(key, ErrKeyNotDefined)
 
@@ -171,9 +182,20 @@ func (d *Data) GetInt(key string) int {
 	return valInt
 }
 
+func (d *Data) getOk(key string, ignore []bool) (interface{}, bool) {
+	val, ok := d.d.GetOk(key)
+	if len(ignore) != 0 && !ignore[0] {
+		if !ok {
+			d.err(key, ErrKeyNotDefined)
+		}
+	}
+
+	return val, ok
+}
+
 // GetSMap for get map for a Set
-func (d *Data) GetSMap(key string) map[string]interface{} {
-	src, ok := d.d.GetOk(key)
+func (d *Data) GetSMap(key string, ignore ...bool) map[string]interface{} {
+	src, ok := d.getOk(key, ignore)
 	if !ok {
 		return nil
 	}
@@ -192,8 +214,8 @@ func (d *Data) GetSMap(key string) map[string]interface{} {
 	return list[0].(map[string]interface{})
 }
 
-func (d *Data) GetMap(key string) map[string]interface{} {
-	src, ok := d.d.GetOk(key)
+func (d *Data) GetMap(key string, ignore ...bool) map[string]interface{} {
+	src, ok := d.getOk(key, ignore)
 	if !ok {
 		return nil
 	}

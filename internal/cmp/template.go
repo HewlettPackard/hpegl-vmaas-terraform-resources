@@ -12,36 +12,36 @@ import (
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
 )
 
-type cloud struct {
-	cloudClient *client.CloudsApiService
+type template struct {
+	tClient *client.VirtualImagesApiService
 }
 
-func newCloud(cloudClient *client.CloudsApiService) *cloud {
-	return &cloud{
-		cloudClient: cloudClient,
+func newTemplate(tClient *client.VirtualImagesApiService) *template {
+	return &template{
+		tClient: tClient,
 	}
 }
 
-func (c *cloud) Read(ctx context.Context, d *utils.Data) error {
-	logger.Debug("Get Cloud")
+func (c *template) Read(ctx context.Context, d *utils.Data) error {
+	logger.Debug("Get Templates")
 
 	name := d.GetString("name")
 	if err := d.Error(); err != nil {
 		return err
 	}
 	resp, err := utils.Retry(func() (interface{}, error) {
-		return c.cloudClient.GetAllClouds(ctx, map[string]string{
+		return c.tClient.GetAllVirtualImages(ctx, map[string]string{
 			nameKey: name,
 		})
 	})
 	if err != nil {
 		return err
 	}
-	cloud := resp.(models.CloudsResp)
-	if len(cloud.Clouds) != 1 {
-		return fmt.Errorf(errExactMatch, "clouds")
+	template := resp.(models.VirtualImages)
+	if len(template.VirtualImages) != 1 {
+		return fmt.Errorf(errExactMatch, "templates")
 	}
-	d.SetID(cloud.Clouds[0].ID)
+	d.SetID(template.VirtualImages[0].ID)
 
 	// post check
 	return d.Error()

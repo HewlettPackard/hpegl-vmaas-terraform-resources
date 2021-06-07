@@ -4,8 +4,10 @@ package cmp
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strconv"
+	"time"
 
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/models"
@@ -13,17 +15,21 @@ import (
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
 )
 
+const (
+	instanceCloneRetryDelay   = time.Second * 60
+	instanceCloneRetryTimeout = time.Second * 10
+	instanceCloneRetryCount   = 10
+)
+
 // instance implements functions related to cmp instances
 type instance struct {
 	// expose Instance API service to instances related operations
 	iClient *client.InstancesApiService
-	tClient *client.VirtualImagesApiService
 }
 
-func newInstance(iClient *client.InstancesApiService, tClient *client.VirtualImagesApiService) *instance {
+func newInstance(iClient *client.InstancesApiService) *instance {
 	return &instance{
 		iClient: iClient,
-		tClient: tClient,
 	}
 }
 
@@ -48,39 +54,88 @@ func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 			Layout: &models.CreateInstanceBodyInstanceLayout{
 				Id: d.GetJSONNumber("layout_id"),
 			},
-			Type: d.GetString("instance_code"),
+			Type:     d.GetString("instance_code"),
+			HostName: d.GetString("hostname"),
 		},
-		Volumes:           getVolume(d.GetListMap("volumes")),
-		NetworkInterfaces: getNetwork(d.GetListMap("networks")),
+		Evars:             getEvars(d.GetMap("evars")),
+		Labels:            d.GetStringList("labels"),
+		Volumes:           getVolume(d.GetListMap("volume")),
+		NetworkInterfaces: getNetwork(d.GetListMap("network")),
 		Config:            getConfig(c),
 		Tags:              getTags(d.GetMap("tags")),
+		LayoutSize:        d.GetInt("scale"),
+		PowerScheduleType: utils.JSONNumber(d.GetInt("power_schedule_id")),
 	}
-
+	if req.Instance.InstanceType.Code == vmware {
+		templateID := c["template"]
+		if templateID == nil {
+			return errors.New("error, template id is required for vmware instance type")
+		}
+		req.Config.Template = templateID.(int)
+	}
+	cloneData := d.GetSMap("clone", true)
 	// Pre check
 	if err := d.Error(); err != nil {
 		return err
 	}
 	// Get template id
-	vResp, err := i.tClient.GetAllVirtualImages(ctx, map[string]string{
-		nameKey: c["template"].(string),
-	})
-	if err != nil {
-		return err
-	}
-	if len(vResp.VirtualImages) != 1 {
-		return fmt.Errorf(errExactMatch, "templates")
-	}
-	req.Config.Template = vResp.VirtualImages[0].ID
 
-	// create instance
-	resp, err := utils.Retry(func() (interface{}, error) {
-		return i.iClient.CreateAnInstance(ctx, req)
-	})
-	if err != nil {
-		return err
+	var GetInstanceBody models.GetInstanceResponseInstance
+	// check whether vm to be cloned?
+	if cloneData != nil {
+		req.CloneName = req.Instance.Name
+		req.Instance.Name = ""
+		sourceID, _ := strconv.Atoi(cloneData["source_instance_id"].(string))
+
+		// clone the instance
+		logger.Info("Cloning the instance with ", sourceID)
+		respClone, err := utils.Retry(func() (interface{}, error) {
+			return i.iClient.CloneAnInstance(ctx, sourceID, req)
+		})
+		if err != nil {
+			return err
+		}
+
+		logger.Info("Check clone success")
+		isCloneSuccess := respClone.(models.SuccessOrErrorMessage)
+		if !isCloneSuccess.Success {
+			return fmt.Errorf("failed to clone, error: %s", isCloneSuccess.Message)
+		}
+
+		logger.Info("Get all instances")
+		customRetry := &utils.CustomRetry{
+			Delay:        instanceCloneRetryDelay,
+			RetryTimeout: instanceCloneRetryTimeout,
+			RetryCount:   instanceCloneRetryCount,
+		}
+		// get cloned instance ID
+		instancesResp, err := customRetry.Retry(func() (interface{}, error) {
+			return i.iClient.GetAllInstances(ctx, map[string]string{
+				nameKey: req.CloneName,
+			})
+		})
+		if err != nil {
+			return err
+		}
+
+		instancesList := instancesResp.(models.Instances)
+		if len(instancesList.Instances) != 1 {
+			return errors.New("get cloned instance is failed")
+		}
+		logger.Info("Instance id = ", instancesList.Instances[0].Id)
+		GetInstanceBody = instancesList.Instances[0]
+	} else {
+		// create instance
+		respVM, err := utils.Retry(func() (interface{}, error) {
+			return i.iClient.CreateAnInstance(ctx, req)
+		})
+		if err != nil {
+			return err
+		}
+		GetInstanceBody = *respVM.(models.GetInstanceResponse).Instance
 	}
-	instance := resp.(models.GetInstanceResponse)
-	d.SetID(strconv.Itoa(instance.Instance.Id))
+	d.SetID(GetInstanceBody.Id)
+
 	// post check
 	return d.Error()
 }
@@ -181,7 +236,13 @@ func (i *instance) Read(ctx context.Context, d *utils.Data) error {
 		return err
 	}
 	instance := resp.(models.GetInstanceResponse)
-	d.SetID(strconv.Itoa(instance.Instance.Id))
+
+	volumes := d.GetListMap("volume")
+	for i := range volumes {
+		volumes[i]["id"] = instance.Instance.Volumes[i].Id
+	}
+	d.Set("volume", volumes)
+	d.SetID(instance.Instance.Id)
 	d.SetString("status", instance.Instance.Status)
 
 	volumes := d.GetListMap("volumes")
@@ -198,7 +259,6 @@ func getVolume(volumes []map[string]interface{}) []models.CreateInstanceBodyVolu
 	volumesModel := make([]models.CreateInstanceBodyVolumes, 0, len(volumes))
 	logger.Debug(volumes)
 	for i := range volumes {
-		// vID, _ := utils.ParseInt(volumes[i]["size"].(string))
 		volumesModel = append(volumesModel, models.CreateInstanceBodyVolumes{
 			Id:          -1,
 			Name:        volumes[i]["name"].(string),
@@ -244,7 +304,10 @@ func getNetwork(networksMap []map[string]interface{}) []models.CreateInstanceBod
 func getConfig(c map[string]interface{}) *models.CreateInstanceBodyConfig {
 	config := &models.CreateInstanceBodyConfig{
 		ResourcePoolId: utils.JSONNumber(c["resource_pool_id"]),
-		NoAgent:        "true",
+		NoAgent:        strconv.FormatBool(c["no_agent"].(bool)),
+		VMwareFolderId: c["vm_folder"].(string),
+		CreateUser:     c["create_user"].(bool),
+		SmbiosAssetTag: c["assert_tag"].(string),
 	}
 
 	return config
@@ -260,4 +323,18 @@ func getTags(t map[string]interface{}) []models.CreateInstanceBodyTag {
 	}
 
 	return tags
+}
+
+func getEvars(evars map[string]interface{}) []models.GetInstanceResponseInstanceEvars {
+	evarModel := make([]models.GetInstanceResponseInstanceEvars, 0, len(evars))
+	for k, v := range evars {
+		evarModel = append(evarModel, models.GetInstanceResponseInstanceEvars{
+			Name:   k,
+			Value:  v.(string),
+			Export: true,
+			Masked: false,
+		})
+	}
+
+	return evarModel
 }
