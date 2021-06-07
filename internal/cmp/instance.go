@@ -241,7 +241,7 @@ func getConfig(c map[string]interface{}) *models.CreateInstanceBodyConfig {
 		NoAgent:        strconv.FormatBool(c["no_agent"].(bool)),
 		VMwareFolderId: c["vm_folder"].(string),
 		CreateUser:     c["create_user"].(bool),
-		SmbiosAssetTag: c["assert_tag"].(string),
+		SmbiosAssetTag: c["asset_tag"].(string),
 	}
 
 	return config

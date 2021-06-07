@@ -164,7 +164,7 @@ func Instances() *schema.Resource {
 							Default:     false,
 							Description: "If true new user will be created",
 						},
-						"assert_tag": {
+						"asset_tag": {
 							Type:        schema.TypeString,
 							Optional:    true,
 							Description: "Asset tag",
