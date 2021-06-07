@@ -98,6 +98,20 @@ func (d *Data) HasChangedElement(key string) bool {
 	return src
 }
 
+func (d *Data) GetChangedMap(key string) (map[string]interface{}, map[string]interface{}) {
+	org, new := d.d.GetChange(key)
+
+	orgmap, ok := org.(map[string]interface{})
+	if !ok {
+		return nil, nil
+	}
+	newmap, ok := new.(map[string]interface{})
+	if !ok {
+		return nil, nil
+	}
+	return orgmap, newmap
+}
+
 func (d *Data) get(key string) interface{} {
 	return d.d.Get(key)
 }

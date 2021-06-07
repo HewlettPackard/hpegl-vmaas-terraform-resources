@@ -146,17 +146,19 @@ func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 func (i *instance) Update(ctx context.Context, d *utils.Data) error {
 	logger.Debug("Updating the instance")
 	id := d.GetID()
-	if d.HasChangedElement("name") || d.HasChangedElement("group_id") {
+	if d.HasChangedElement("name") || d.HasChangedElement("group_id") || d.HasChangedElement("tags") {
+		addTags, removeTags := compareTags(d.GetChangedMap("tags"))
 		updateReq := &models.UpdateInstanceBody{
 			Instance: &models.UpdateInstanceBodyInstance{
 				Name: d.GetString("name"),
 				Site: &models.CreateInstanceBodyInstanceSite{
 					Id: d.GetInt("group_id"),
 				},
-				AddTags:    getTags(d.GetMap("addTags")),
-				RemoveTags: getTags(d.GetMap("removeTags")),
+				AddTags:    addTags,
+				RemoveTags: removeTags,
 			},
 		}
+
 		if err := d.Error(); err != nil {
 			return err
 		}
@@ -169,15 +171,16 @@ func (i *instance) Update(ctx context.Context, d *utils.Data) error {
 		}
 	}
 
-	if d.HasChangedElement("volumes") || d.HasChangedElement("plan_id") {
+	if d.HasChangedElement("volume") || d.HasChangedElement("plan_id") {
 		resizeReq := &models.ResizeInstanceBody{
 			Instance: &models.ResizeInstanceBodyInstance{
 				Plan: &models.ResizeInstanceBodyInstancePlan{
 					Id: d.GetInt("plan_id"),
 				},
 			},
-			Volumes: resizeVolume(d.GetListMap("volumes")),
+			Volumes: resizeVolume(d.GetListMap("volume")),
 		}
+		logger.Debug(resizeReq.Volumes)
 		if err := d.Error(); err != nil {
 			return err
 		}
@@ -245,12 +248,6 @@ func (i *instance) Read(ctx context.Context, d *utils.Data) error {
 	d.SetID(instance.Instance.Id)
 	d.SetString("status", instance.Instance.Status)
 
-	volumes := d.GetListMap("volumes")
-
-	for i := range volumes {
-		volumes[i]["id"] = instance.Instance.Volumes[i].Id
-	}
-	d.Set("volumes", volumes)
 	// post check
 	return d.Error()
 }
@@ -275,7 +272,6 @@ func resizeVolume(volumes []map[string]interface{}) []models.ResizeInstanceBodyI
 	volumesModel := make([]models.ResizeInstanceBodyInstanceVolumes, 0, len(volumes))
 	logger.Debug(volumes)
 	for i := range volumes {
-		// vID, _ := utils.ParseInt(volumes[i]["size"].(string))
 		volumesModel = append(volumesModel, models.ResizeInstanceBodyInstanceVolumes{
 			Id:          utils.JSONNumber(volumes[i]["id"]),
 			Name:        volumes[i]["name"].(string),
@@ -307,7 +303,7 @@ func getConfig(c map[string]interface{}) *models.CreateInstanceBodyConfig {
 		NoAgent:        strconv.FormatBool(c["no_agent"].(bool)),
 		VMwareFolderId: c["vm_folder"].(string),
 		CreateUser:     c["create_user"].(bool),
-		SmbiosAssetTag: c["assert_tag"].(string),
+		SmbiosAssetTag: c["asset_tag"].(string),
 	}
 
 	return config
@@ -337,4 +333,26 @@ func getEvars(evars map[string]interface{}) []models.GetInstanceResponseInstance
 	}
 
 	return evarModel
+}
+
+func compareTags(org, new map[string]interface{}) ([]models.CreateInstanceBodyTag, []models.CreateInstanceBodyTag) {
+	addTags := make([]models.CreateInstanceBodyTag, 0, len(new))
+	removeTags := make([]models.CreateInstanceBodyTag, 0, len(new))
+	for k, v := range new {
+		addTags = append(addTags, models.CreateInstanceBodyTag{
+			Name:  k,
+			Value: v.(string),
+		})
+	}
+
+	for k, v := range org {
+		if _, ok := new[k]; !ok {
+			removeTags = append(removeTags, models.CreateInstanceBodyTag{
+				Name:  k,
+				Value: v.(string),
+			})
+		}
+	}
+
+	return addTags, removeTags
 }
