@@ -109,6 +109,7 @@ func (d *Data) GetChangedMap(key string) (map[string]interface{}, map[string]int
 	if !ok {
 		return nil, nil
 	}
+
 	return orgmap, newmap
 }
 
