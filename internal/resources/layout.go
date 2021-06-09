@@ -19,16 +19,11 @@ func LayoutData() *schema.Resource {
 				Required:    true,
 				Description: f(generalNamedesc, "layout", "layout"),
 			},
-			"instance_type": {
-				Type:        schema.TypeString,
-				Required:    true,
-				Description: `Type for the instance. This should be vmware for vmaas resource.`,
-			},
-			"instance_code": {
+			"instance_type_code": {
 				Type:     schema.TypeString,
-				Computed: true,
-				Description: "Unique code used to identify the instance type. " +
-					"Instance_code can use as ID for instance type.",
+				Required: true,
+				Description: `Unique code used to identify the instance type. instance_type_code
+					can be used in resource hpegl_vmaas_instance`,
 			},
 		},
 		ReadContext: layoutReadContext,

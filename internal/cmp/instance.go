@@ -43,7 +43,7 @@ func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 		Instance: &models.CreateInstanceBodyInstance{
 			Name: d.GetString("name"),
 			InstanceType: &models.CreateInstanceBodyInstanceInstanceType{
-				Code: d.GetString("instance_code"),
+				Code: d.GetString("instance_type_code"),
 			},
 			Plan: &models.CreateInstanceBodyInstancePlan{
 				Id: d.GetJSONNumber("plan_id"),
@@ -54,7 +54,6 @@ func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 			Layout: &models.CreateInstanceBodyInstanceLayout{
 				Id: d.GetJSONNumber("layout_id"),
 			},
-			Type:     d.GetString("instance_code"),
 			HostName: d.GetString("hostname"),
 		},
 		Evars:             getEvars(d.GetMap("evars")),
@@ -67,7 +66,7 @@ func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 		PowerScheduleType: utils.JSONNumber(d.GetInt("power_schedule_id")),
 	}
 	if req.Instance.InstanceType.Code == vmware {
-		templateID := c["template"]
+		templateID := c["template_id"]
 		if templateID == nil {
 			return errors.New("error, template id is required for vmware instance type")
 		}

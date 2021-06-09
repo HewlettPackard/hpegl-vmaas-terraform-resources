@@ -26,13 +26,14 @@ func (g *layout) Read(ctx context.Context, d *utils.Data) error {
 	logger.Debug("Get Layout")
 
 	name := d.GetString("name")
+	instanceTypeCode := d.GetString("instance_type_code")
 	// Pre check
 	if err := d.Error(); err != nil {
 		return err
 	}
 	resp, err := utils.Retry(func() (interface{}, error) {
 		return g.gClient.GetAllInstanceTypes(ctx, map[string]string{
-			nameKey:          name,
+			codeKey:          instanceTypeCode,
 			provisionTypeKey: vmware,
 		})
 	})
@@ -44,12 +45,12 @@ func (g *layout) Read(ctx context.Context, d *utils.Data) error {
 	if len(instanceTypes.InstanceTypes) != 1 {
 		return fmt.Errorf(errExactMatch, "instance type")
 	}
-	if len(instanceTypes.InstanceTypes[0].Instancetypelayouts) != 1 {
-		return fmt.Errorf(errExactMatch, "layout type")
+	for _, l := range instanceTypes.InstanceTypes[0].Instancetypelayouts {
+		if l.Name == name {
+			d.SetID(l.ID)
+			return d.Error()
+		}
 	}
-	d.SetString("instance_code", instanceTypes.InstanceTypes[0].Code)
-	d.SetID(instanceTypes.InstanceTypes[0].Instancetypelayouts[0].ID)
 
-	// post check
-	return d.Error()
+	return fmt.Errorf(errExactMatch, "layout name")
 }

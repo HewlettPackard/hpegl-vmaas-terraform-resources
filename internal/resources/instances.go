@@ -51,7 +51,7 @@ func Instances() *schema.Resource {
 				Required:    true,
 				Description: f(generalDDesc, "layout"),
 			},
-			"instance_code": {
+			"instance_type_code": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Unique code used to identify the instance type.",
@@ -113,7 +113,7 @@ func Instances() *schema.Resource {
 			"labels": {
 				Type:        schema.TypeList,
 				Optional:    true,
-				Description: "A string used for labelling instances.",
+				Description: "An array of strings used for labelling instance.",
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
@@ -142,7 +142,7 @@ func Instances() *schema.Resource {
 							Required:    true,
 							Description: f(generalDDesc, "resource pool"),
 						},
-						"template": {
+						"template_id": {
 							Type:        schema.TypeInt,
 							Optional:    true,
 							Description: "Unique ID for the template",

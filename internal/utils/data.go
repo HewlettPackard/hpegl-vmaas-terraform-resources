@@ -12,10 +12,10 @@ import (
 )
 
 const (
-	ErrInvalidType   = "error : Invalid Type"
-	ErrKeyNotDefined = "error : Key is not defined"
-	ErrSet           = "error : Failed to set"
-	NAN              = -999999
+	ErrInvalidType   = "invalid Type"
+	ErrKeyNotDefined = "key is not defined"
+	ErrSet           = "failed to set"
+	NAN              = 0
 )
 
 type Data struct {
@@ -56,8 +56,11 @@ func (d *Data) err(key, msg string) {
 
 // GetListMap take key as parameter and returns []map[string]interfac{}.
 // This function can be used for retrieving list of map or list of set
-func (d *Data) GetListMap(key string) []map[string]interface{} {
-	src := d.get(key)
+func (d *Data) GetListMap(key string, ignore ...bool) []map[string]interface{} {
+	src, ok := d.getOk(key, ignore)
+	if !ok {
+		return nil
+	}
 	if src == nil {
 		return nil
 	}
@@ -116,8 +119,11 @@ func (d *Data) set(key string, value interface{}) error {
 	return d.d.Set(key, value)
 }
 
-func (d *Data) GetStringList(key string) []string {
-	src := d.get(key)
+func (d *Data) GetStringList(key string, ignore ...bool) []string {
+	src, ok := d.getOk(key, ignore)
+	if !ok {
+		return nil
+	}
 	list, ok := src.([]interface{})
 	if !ok {
 		return nil
@@ -136,8 +142,6 @@ func (d *Data) GetStringList(key string) []string {
 func (d *Data) GetInt(key string, ignore ...bool) int {
 	valInter, ok := d.getOk(key, ignore)
 	if !ok {
-		d.err(key, ErrKeyNotDefined)
-
 		return NAN
 	}
 	valInt, ok := valInter.(int)
@@ -207,8 +211,11 @@ func (d *Data) GetMap(key string, ignore ...bool) map[string]interface{} {
 	return dst
 }
 
-func (d *Data) GetString(key string) string {
-	val := d.get(key)
+func (d *Data) GetString(key string, ignore ...bool) string {
+	val, ok := d.getOk(key, ignore)
+	if !ok {
+		return ""
+	}
 	if val != nil {
 		return val.(string)
 	}
@@ -217,9 +224,11 @@ func (d *Data) GetString(key string) string {
 	return ""
 }
 
-func (d *Data) GetJSONNumber(key string) json.Number {
-	in := d.get(key)
-
+func (d *Data) GetJSONNumber(key string, ignore ...bool) json.Number {
+	in, ok := d.getOk(key, ignore)
+	if !ok {
+		return "0"
+	}
 	return JSONNumber(in)
 }
 
@@ -229,8 +238,11 @@ func (d *Data) SetString(key string, value string) {
 	}
 }
 
-func (d *Data) ListToIntSlice(key string) []int {
-	src := d.get(key)
+func (d *Data) ListToIntSlice(key string, ignore ...bool) []int {
+	src, ok := d.getOk(key, ignore)
+	if !ok {
+		return nil
+	}
 	list, ok := src.([]interface{})
 	if !ok {
 		return nil
