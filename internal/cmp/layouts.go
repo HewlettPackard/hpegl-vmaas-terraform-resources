@@ -48,6 +48,7 @@ func (g *layout) Read(ctx context.Context, d *utils.Data) error {
 	for _, l := range instanceTypes.InstanceTypes[0].Instancetypelayouts {
 		if l.Name == name {
 			d.SetID(l.ID)
+
 			return d.Error()
 		}
 	}

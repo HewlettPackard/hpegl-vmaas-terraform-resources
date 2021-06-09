@@ -103,10 +103,6 @@ func Instances() *schema.Resource {
 							Type:        schema.TypeInt,
 							Description: "ID for the volume",
 						},
-						"persist_volume_on_update": {
-							Optional: true,
-							Type:     schema.TypeBool,
-						},
 					},
 				},
 			},

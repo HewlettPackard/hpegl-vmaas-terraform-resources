@@ -81,10 +81,7 @@ func (d *Data) GetListMap(key string, ignore ...bool) []map[string]interface{} {
 	return dst
 }
 
-func (d *Data) get(key string) interface{} {
-	return d.d.Get(key)
-}
-
+// GetID returns ID as int
 func (d *Data) GetID() int {
 	id, err := ParseInt(d.d.Id())
 	if err != nil {
@@ -96,6 +93,7 @@ func (d *Data) GetID() int {
 	return int(id)
 }
 
+// GetIDString returns ID as string
 func (d *Data) GetIDString() string {
 	return d.d.Id()
 }
@@ -119,6 +117,7 @@ func (d *Data) set(key string, value interface{}) error {
 	return d.d.Set(key, value)
 }
 
+// GetStringList returns list of string
 func (d *Data) GetStringList(key string, ignore ...bool) []string {
 	src, ok := d.getOk(key, ignore)
 	if !ok {
@@ -229,6 +228,7 @@ func (d *Data) GetJSONNumber(key string, ignore ...bool) json.Number {
 	if !ok {
 		return "0"
 	}
+
 	return JSONNumber(in)
 }
 
