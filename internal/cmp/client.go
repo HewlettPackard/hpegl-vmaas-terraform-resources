@@ -22,9 +22,7 @@ type Client struct {
 func NewClient(client *apiClient.APIClient, cfg apiClient.Configuration) *Client {
 	return &Client{
 		Instance: newInstance(
-			&apiClient.InstancesApiService{Client: client, Cfg: cfg},
-			&apiClient.VirtualImagesApiService{Client: client, Cfg: cfg},
-		),
+			&apiClient.InstancesApiService{Client: client, Cfg: cfg}),
 		Snapshot:     newSnapshot(&apiClient.InstancesApiService{Client: client, Cfg: cfg}),
 		Network:      newNetwork(&apiClient.NetworksApiService{Client: client, Cfg: cfg}),
 		Plan:         newPlan(&apiClient.PlansApiService{Client: client, Cfg: cfg}),
