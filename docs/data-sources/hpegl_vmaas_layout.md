@@ -17,11 +17,9 @@ The hpegl_vmaas_layout data source can be used to discover the ID of a hpegl vma
 ## Example Usage
 
 ```terraform
-#  (C) Copyright 2021 Hewlett Packard Enterprise Development LP
-
-data "hpegl_vmaas_layout" "vmware" {
-  name          = "VMware"
-  instance_type = "Vmware VM"
+data "hpegl_vmaas_layout" "vmware_centos" {
+  name               = "VMware VM with vanilla CentOS"
+  instance_type_code = "glhc-vanilla-centos"
 }
 ```
 
@@ -30,17 +28,14 @@ data "hpegl_vmaas_layout" "vmware" {
 
 ### Required
 
-- **instance_type** (String) Type for the instance. This should be vmware for vmaas resource.
+- **instance_type_code** (String) Unique code used to identify the instance type. instance_type_code
+					can be used in resource hpegl_vmaas_instance
 - **name** (String) Name of the layout as it appears on GLPC Portal. If no layout is found with this name standard not found error returns will return.
 
 ### Optional
 
 - **id** (String) The ID of this resource.
 - **timeouts** (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
-
-### Read-Only
-
-- **instance_code** (String) Unique code used to identify the instance type. Instance_code can use as ID for instance type.
 
 <a id="nestedblock--timeouts"></a>
 ### Nested Schema for `timeouts`

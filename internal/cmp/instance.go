@@ -79,7 +79,7 @@ func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 	}
 	// Get template id
 
-	var GetInstanceBody models.GetInstanceResponseInstance
+	var getInstanceBody models.GetInstanceResponseInstance
 	// check whether vm to be cloned?
 	if cloneData != nil {
 		req.CloneName = req.Instance.Name
@@ -122,7 +122,7 @@ func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 			return errors.New("get cloned instance is failed")
 		}
 		logger.Info("Instance id = ", instancesList.Instances[0].Id)
-		GetInstanceBody = instancesList.Instances[0]
+		getInstanceBody = instancesList.Instances[0]
 	} else {
 		// create instance
 		respVM, err := utils.Retry(func() (interface{}, error) {
@@ -131,9 +131,9 @@ func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 		if err != nil {
 			return err
 		}
-		GetInstanceBody = *respVM.(models.GetInstanceResponse).Instance
+		getInstanceBody = *respVM.(models.GetInstanceResponse).Instance
 	}
-	d.SetID(GetInstanceBody.Id)
+	d.SetID(getInstanceBody.Id)
 
 	// post check
 	return d.Error()
