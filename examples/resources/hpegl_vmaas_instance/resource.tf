@@ -1,3 +1,4 @@
+// (C) Copyright 2021 Hewlett Packard Enterprise Development LP
 
 # minimal instance creation
 resource "hpegl_vmaas_instance" "minimal_instance" {
