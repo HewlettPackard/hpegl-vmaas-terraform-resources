@@ -146,7 +146,8 @@ func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 func (i *instance) Update(ctx context.Context, d *utils.Data) error {
 	logger.Debug("Updating the instance")
 	id := d.GetID()
-	if d.HasChangedElement("name") || d.HasChangedElement("group_id") || d.HasChangedElement("tags") {
+	if d.HasChangedElement("name") || d.HasChangedElement("group_id") || d.HasChangedElement(
+		"tags") || d.HasChangedElement("labels") {
 		addTags, removeTags := compareTags(d.GetChangedMap("tags"))
 		updateReq := &models.UpdateInstanceBody{
 			Instance: &models.UpdateInstanceBodyInstance{
@@ -154,8 +155,10 @@ func (i *instance) Update(ctx context.Context, d *utils.Data) error {
 				Site: &models.CreateInstanceBodyInstanceSite{
 					Id: d.GetInt("group_id"),
 				},
-				AddTags:    addTags,
-				RemoveTags: removeTags,
+				AddTags:           addTags,
+				RemoveTags:        removeTags,
+				Labels:            d.GetStringList("labels"),
+				PowerScheduleType: utils.JSONNumber(d.GetInt("power_schedule_id")),
 			},
 		}
 
@@ -180,7 +183,6 @@ func (i *instance) Update(ctx context.Context, d *utils.Data) error {
 			},
 			Volumes: resizeVolume(d.GetListMap("volume")),
 		}
-		logger.Debug(resizeReq.Volumes)
 		if err := d.Error(); err != nil {
 			return err
 		}
@@ -242,7 +244,11 @@ func (i *instance) Read(ctx context.Context, d *utils.Data) error {
 
 	volumes := d.GetListMap("volume")
 	for i := range volumes {
-		volumes[i]["id"] = instance.Instance.Volumes[i].Id
+		for j := range instance.Instance.Volumes {
+			if volumes[i]["name"] == instance.Instance.Volumes[j].Name {
+				volumes[i]["id"] = instance.Instance.Volumes[j].Id
+			}
+		}
 	}
 	d.Set("volume", volumes)
 	d.SetID(instance.Instance.Id)

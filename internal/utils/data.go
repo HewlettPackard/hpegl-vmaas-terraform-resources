@@ -83,13 +83,16 @@ func (d *Data) GetListMap(key string) []map[string]interface{} {
 	return d.getlistMap(key, src)
 }
 
-func (d *Data) GetChangedListMap(key string) []map[string]interface{} {
-	src, _ := d.d.GetChange(key)
-	if src == nil {
-		return nil
+func (d *Data) GetChangedListMap(key string) ([]map[string]interface{}, []map[string]interface{}) {
+	org, new := d.d.GetChange(key)
+	var orgmap, newmap []map[string]interface{}
+	if org != nil {
+		orgmap = d.getlistMap(key, org)
 	}
-
-	return d.getlistMap(key, src)
+	if new != nil {
+		newmap = d.getlistMap(key, new)
+	}
+	return orgmap, newmap
 }
 
 func (d *Data) HasChangedElement(key string) bool {
