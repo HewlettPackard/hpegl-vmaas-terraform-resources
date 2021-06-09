@@ -5,7 +5,6 @@ package cmp
 import (
 	"context"
 	"errors"
-	"strconv"
 
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/models"
@@ -44,7 +43,7 @@ func (n *datastore) Read(ctx context.Context, d *utils.Data) error {
 	if len(datastores.Datastores) != 1 {
 		return errors.New("error coudn't find exact datastore, please check the name")
 	}
-	d.SetID(strconv.Itoa(datastores.Datastores[0].ID))
+	d.SetID(datastores.Datastores[0].ID)
 
 	// post check
 	return d.Error()

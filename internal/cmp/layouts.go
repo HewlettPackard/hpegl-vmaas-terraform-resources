@@ -5,7 +5,6 @@ package cmp
 import (
 	"context"
 	"fmt"
-	"strconv"
 
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/models"
@@ -49,7 +48,7 @@ func (g *layout) Read(ctx context.Context, d *utils.Data) error {
 		return fmt.Errorf(errExactMatch, "layout type")
 	}
 	d.SetString("instance_code", instanceTypes.InstanceTypes[0].Code)
-	d.SetID(strconv.Itoa(instanceTypes.InstanceTypes[0].Instancetypelayouts[0].ID))
+	d.SetID(instanceTypes.InstanceTypes[0].Instancetypelayouts[0].ID)
 
 	// post check
 	return d.Error()

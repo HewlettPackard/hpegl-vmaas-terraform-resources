@@ -5,7 +5,6 @@ package cmp
 import (
 	"context"
 	"fmt"
-	"strconv"
 
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/models"
@@ -45,7 +44,7 @@ func (n *resourcePool) Read(ctx context.Context, d *utils.Data) error {
 	for i, r := range resourcePools.ResourcePools {
 		if r.Name == name {
 			flag = true
-			d.SetID(strconv.Itoa(resourcePools.ResourcePools[i].ID))
+			d.SetID(resourcePools.ResourcePools[i].ID)
 
 			break
 		}
