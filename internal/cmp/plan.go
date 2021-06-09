@@ -5,7 +5,6 @@ package cmp
 import (
 	"context"
 	"fmt"
-	"strconv"
 
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/models"
@@ -42,7 +41,7 @@ func (n *plan) Read(ctx context.Context, d *utils.Data) error {
 	if len(plans.ServicePlansResponse) != 1 {
 		return fmt.Errorf(errExactMatch, "plan")
 	}
-	d.SetID(strconv.Itoa(plans.ServicePlansResponse[0].ID))
+	d.SetID(plans.ServicePlansResponse[0].ID)
 
 	return d.Error()
 }

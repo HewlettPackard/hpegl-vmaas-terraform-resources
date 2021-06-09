@@ -19,8 +19,8 @@ type snapshot struct {
 	iClient *client.InstancesApiService
 }
 
-func newSnapshot(iClient *client.InstancesApiService) *instance {
-	return &instance{
+func newSnapshot(iClient *client.InstancesApiService) *snapshot {
+	return &snapshot{
 		iClient: iClient,
 	}
 }
@@ -31,9 +31,9 @@ func (s *snapshot) Create(ctx context.Context, d *utils.Data) error {
 	instanceID := d.GetInt("instance_id")
 	req := &models.SnapshotBody{
 		Snapshot: &models.SnapshotBodySnapshot{
-			Name: d.GetString("name"),
-			Description: d.GetString("Description"),
-			},
+			Name:        d.GetString("name"),
+			Description: d.GetString("description"),
+		},
 	}
 
 	// Pre check
@@ -42,26 +42,25 @@ func (s *snapshot) Create(ctx context.Context, d *utils.Data) error {
 	}
 	// create snapshot
 	resp, err := utils.Retry(func() (interface{}, error) {
-		return s.iClient.SnapshotAnInstance(ctx,instanceID,req)
+		return s.iClient.SnapshotAnInstance(ctx, instanceID, req)
 	})
 	if err != nil {
 		return err
 	}
-	snapshotResp:= resp.(models.SuccessOrErrorMessage)
+	snapshotResp := resp.(models.Instances)
 	if !snapshotResp.Success {
-		return fmt.Errorf("%s", snapshotResp.Message)
+		return fmt.Errorf("%t", snapshotResp.Success)
 	}
 
 	// post check
 	return d.Error()
 }
 
-
 // Read snapshot and set state values accordingly
 func (s *snapshot) Read(ctx context.Context, d *utils.Data) error {
 	instanceId := d.GetInt("instance_id")
 
-//	logger.Debug("Get snapshot with ID %d", id)
+	//	logger.Debug("Get snapshot with ID %d", id)
 
 	// Precheck
 	if err := d.Error(); err != nil {
@@ -69,7 +68,7 @@ func (s *snapshot) Read(ctx context.Context, d *utils.Data) error {
 	}
 
 	resp, err := utils.Retry(func() (interface{}, error) {
-		return s.iClient.GetListOfSnapshotsForAnInstance(ctx,instanceId)
+		return s.iClient.GetListOfSnapshotsForAnInstance(ctx, instanceId)
 	})
 	if err != nil {
 		return err
@@ -80,4 +79,12 @@ func (s *snapshot) Read(ctx context.Context, d *utils.Data) error {
 
 	// post check
 	return d.Error()
+}
+
+func (s *snapshot) Delete(ctx context.Context, d *utils.Data) error {
+	return nil
+}
+
+func (s *snapshot) Update(ctx context.Context, d *utils.Data) error {
+	return nil
 }

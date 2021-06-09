@@ -2,7 +2,10 @@
 
 package logger
 
-import "log"
+import (
+	"fmt"
+	"log"
+)
 
 const (
 	debug = "[DEBUG] "
@@ -44,5 +47,5 @@ func Error(v ...interface{}) {
 }
 
 func loggerPrintf(level, format string, v ...interface{}) {
-	log.Printf(level+format, v...)
+	log.Print(fmt.Sprintf(level+format, v...))
 }

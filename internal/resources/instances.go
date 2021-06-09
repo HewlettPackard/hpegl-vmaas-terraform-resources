@@ -4,6 +4,7 @@ package resources
 
 import (
 	"context"
+	"log"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -18,7 +19,7 @@ const (
 	instanceReadTimeout      = 2 * time.Minute
 	instanceDeleteTimeout    = 60 * time.Minute
 	instanceRetryTimeout     = 10 * time.Minute
-	instanceRetryDelay       = 120 * time.Second
+	instanceRetryDelay       = 60 * time.Second
 	instanceRetryMinTimeout  = 30 * time.Second
 )
 
@@ -55,12 +56,7 @@ func Instances() *schema.Resource {
 				Required:    true,
 				Description: "Unique code used to identify the instance type.",
 			},
-			"instance_type": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: "Type of the instance. This should be 'vmware' for vmaas resource.",
-			},
-			"networks": {
+			"network": {
 				Type:        schema.TypeList,
 				Required:    true,
 				Description: "Details of the network to which the instance should belong.",
@@ -74,7 +70,7 @@ func Instances() *schema.Resource {
 					},
 				},
 			},
-			"volumes": {
+			"volume": {
 				Type:     schema.TypeList,
 				Required: true,
 				Description: `A list of volumes to be created inside a provisioned instance.
@@ -96,13 +92,28 @@ func Instances() *schema.Resource {
 							Required:    true,
 							Description: f(generalDDesc, "datastore"),
 						},
+						"root": {
+							Type:        schema.TypeBool,
+							Default:     true,
+							Optional:    true,
+							Description: "If true then the given volume as considered as root volume.",
+						},
+						"id": {
+							Computed:    true,
+							Type:        schema.TypeInt,
+							Description: "ID for the volume",
+						},
+						"persist_volume_on_update": {
+							Optional: true,
+							Type:     schema.TypeBool,
+						},
 					},
 				},
 			},
 			"labels": {
 				Type:        schema.TypeList,
 				Optional:    true,
-				Description: "A list of strings used for labelling instances.",
+				Description: "A string used for labelling instances.",
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
@@ -115,6 +126,11 @@ func Instances() *schema.Resource {
 					Type: schema.TypeString,
 				},
 			},
+			"hostname": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Hostname for the instance",
+			},
 			"config": {
 				Type:        schema.TypeSet,
 				Required:    true,
@@ -126,24 +142,41 @@ func Instances() *schema.Resource {
 							Required:    true,
 							Description: f(generalDDesc, "resource pool"),
 						},
-						"public_key": {
+						"template": {
+							Type:        schema.TypeInt,
+							Optional:    true,
+							Description: "Unique ID for the template",
+						},
+						"no_agent": {
+							Type:        schema.TypeBool,
+							Optional:    true,
+							Default:     true,
+							Description: "If true agent will not be installed on the instance.",
+						},
+						"vm_folder": {
 							Type:        schema.TypeString,
 							Optional:    true,
-							Description: "Public key to be configured for the VM.",
+							Description: "Folder name where will be stored.",
 						},
-						"template": {
+						"create_user": {
+							Type:        schema.TypeBool,
+							Optional:    true,
+							Default:     false,
+							Description: "If true new user will be created",
+						},
+						"asset_tag": {
 							Type:        schema.TypeString,
-							Required:    true,
-							Description: f(generalNamedesc, "virtual image", "template"),
+							Optional:    true,
+							Description: "Asset tag",
 						},
 					},
 				},
 			},
-			"copies": {
+			"scale": {
 				Type:        schema.TypeInt,
 				Optional:    true,
 				Default:     1,
-				Description: "Number of instance copies to be provisioned.",
+				Description: "Number of nodes within an instance.",
 			},
 			"evars": {
 				Type:     schema.TypeMap,
@@ -153,16 +186,30 @@ func Instances() *schema.Resource {
 				},
 				Description: "Environment Variables to be added to the provisioned instance.",
 			},
-			"state": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: "State of the instance provisioned. This can be powerOn/powerOff/Suspended",
-			},
 			"status": {
 				Type:     schema.TypeString,
 				Computed: true,
 				Description: `Status of the instance .It can be one among these:
 				 Provisioning/Failed/Unknown/Running.`,
+			},
+			"clone": {
+				Type:        schema.TypeSet,
+				Optional:    true,
+				Description: "If Clone is provided, this instance will created from cloning an existing instance",
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"source_instance_id": {
+							Type:        schema.TypeString,
+							Required:    true,
+							Description: "Instance ID of the source.",
+						},
+					},
+				},
+			},
+			"power_schedule_id": {
+				Type:        schema.TypeInt,
+				Optional:    true,
+				Description: "Scheduled power operations",
 			},
 		},
 		SchemaVersion:  0,
@@ -223,6 +270,7 @@ func instanceCreateContext(ctx context.Context, d *schema.ResourceData, meta int
 }
 
 func instanceReadContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	log.Print("[INFO] this a log")
 	c, err := client.GetClientFromMetaMap(meta)
 	if err != nil {
 		return diag.FromErr(err)

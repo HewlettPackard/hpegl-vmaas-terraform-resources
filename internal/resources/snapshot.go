@@ -18,50 +18,50 @@ const (
 	snapshotReadTimeout      = 2 * time.Minute
 	snapshotDeleteTimeout    = 60 * time.Minute
 	snapshotRetryTimeout     = 10 * time.Minute
-	snapshotRetryDelay       = 120 * time.Second
+	snapshotRetryDelay       = 10 * time.Second
 	snapshotRetryMinTimeout  = 30 * time.Second
 )
 
-func Snapshots() *schema.Resource{
+func Snapshots() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
-			    "instance_id": {
-					Type: schema.TypeInt,
-					ForceNew: true,
-					Required: true,
-					Description: "Instance ID of which VMware snapshot to be taken",
-				},
-			    "name": {
-					Type: schema.TypeString,
-					Optional: true,
-					ForceNew: true,
-					Description: "Name of the VMware Snapshot",
-				},
-			    "description": {
-					Type: schema.TypeString,
-					Optional: true,
-					ForceNew: true,
-					Description: "Description for VMware Snapshot",
-				},
-	},
-	SchemaVersion:  0,
-	StateUpgraders: nil,
-	CreateContext:  snapshotCreateContext,
-	ReadContext:    snapshotReadContext,
-	DeleteContext:  snapshotDeleteContext,
-	CustomizeDiff:  nil,
-	Importer: &schema.ResourceImporter{
-		StateContext: schema.ImportStatePassthroughContext,
-	},
-	Timeouts: &schema.ResourceTimeout{
-		Create: schema.DefaultTimeout(snapshotAvailableTimeout),
-		//Delete: schema.DefaultTimeout(instanceDeleteTimeout),
-		Read:   schema.DefaultTimeout(snapshotReadTimeout),
-	},
-	Description: `Snapshot resource facilitates creating,
+			"instance_id": {
+				Type:        schema.TypeInt,
+				ForceNew:    true,
+				Required:    true,
+				Description: "Instance ID of which VMware snapshot to be taken",
+			},
+			"name": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				ForceNew:    true,
+				Description: "Name of the Instance Snapshot",
+			},
+			"description": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				ForceNew:    true,
+				Description: "Description for VMware Snapshot",
+			},
+		},
+		SchemaVersion:  0,
+		StateUpgraders: nil,
+		CreateContext:  snapshotCreateContext,
+		ReadContext:    snapshotReadContext,
+		DeleteContext:  snapshotDeleteContext,
+		CustomizeDiff:  nil,
+		Importer: &schema.ResourceImporter{
+			StateContext: schema.ImportStatePassthroughContext,
+		},
+		Timeouts: &schema.ResourceTimeout{
+			Create: schema.DefaultTimeout(snapshotAvailableTimeout),
+			//Delete: schema.DefaultTimeout(instanceDeleteTimeout),
+			Read: schema.DefaultTimeout(snapshotReadTimeout),
+		},
+		Description: `Snapshot resource facilitates creating,
 	VMware snapshot of insatnces.
 	For creating an VMware snapshot of instance, provide a unique name and all the Mandatory(Required) parameters.`,
-}
+	}
 }
 
 func snapshotCreateContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -116,5 +116,3 @@ func snapshotReadContext(ctx context.Context, d *schema.ResourceData, meta inter
 func snapshotDeleteContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	return nil
 }
-
-
