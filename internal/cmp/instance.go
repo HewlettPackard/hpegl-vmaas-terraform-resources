@@ -175,13 +175,14 @@ func (i *instance) Update(ctx context.Context, d *utils.Data) error {
 	}
 
 	if d.HasChangedElement("volume") || d.HasChangedElement("plan_id") {
+		volumes := compareVolumes(d.GetChangedListMap("volume"))
 		resizeReq := &models.ResizeInstanceBody{
 			Instance: &models.ResizeInstanceBodyInstance{
 				Plan: &models.ResizeInstanceBodyInstancePlan{
 					Id: d.GetInt("plan_id"),
 				},
 			},
-			Volumes: resizeVolume(d.GetListMap("volume")),
+			Volumes: resizeVolume(volumes),
 		}
 		if err := d.Error(); err != nil {
 			return err
@@ -193,7 +194,6 @@ func (i *instance) Update(ctx context.Context, d *utils.Data) error {
 			return err
 		}
 	}
-
 	return d.Error()
 }
 
@@ -244,11 +244,7 @@ func (i *instance) Read(ctx context.Context, d *utils.Data) error {
 
 	volumes := d.GetListMap("volume")
 	for i := range volumes {
-		for j := range instance.Instance.Volumes {
-			if volumes[i]["name"] == instance.Instance.Volumes[j].Name {
-				volumes[i]["id"] = instance.Instance.Volumes[j].Id
-			}
-		}
+		volumes[i]["id"] = instance.Instance.Volumes[i].Id
 	}
 	d.Set("volume", volumes)
 	d.SetID(instance.Instance.Id)
@@ -274,6 +270,7 @@ func getVolume(volumes []map[string]interface{}) []models.CreateInstanceBodyVolu
 	return volumesModel
 }
 
+// Mapping volume data to model
 func resizeVolume(volumes []map[string]interface{}) []models.ResizeInstanceBodyInstanceVolumes {
 	volumesModel := make([]models.ResizeInstanceBodyInstanceVolumes, 0, len(volumes))
 	logger.Debug(volumes)
@@ -341,6 +338,7 @@ func getEvars(evars map[string]interface{}) []models.GetInstanceResponseInstance
 	return evarModel
 }
 
+//Function to compare tags and based on new and old data assign to AddTags or Removetags
 func compareTags(org, new map[string]interface{}) ([]models.CreateInstanceBodyTag, []models.CreateInstanceBodyTag) {
 	addTags := make([]models.CreateInstanceBodyTag, 0, len(new))
 	removeTags := make([]models.CreateInstanceBodyTag, 0, len(new))
@@ -361,4 +359,21 @@ func compareTags(org, new map[string]interface{}) ([]models.CreateInstanceBodyTa
 	}
 
 	return addTags, removeTags
+}
+
+// Function to compare previous and new(from terraform) volume data and assign proper ids based on name
+// Volume name should be unique
+func compareVolumes(org, new []map[string]interface{}) []map[string]interface{} {
+	for i := range new {
+		new[i]["id"] = -1
+		for j := range org {
+			if new[i]["name"] == org[j]["name"] {
+				new[i]["id"] = org[j]["id"]
+				new[i]["size"] = org[j]["size"]
+				break
+			}
+		}
+	}
+
+	return new
 }
