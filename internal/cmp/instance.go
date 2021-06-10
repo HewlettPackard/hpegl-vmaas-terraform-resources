@@ -278,12 +278,17 @@ func resizeVolume(volumes []map[string]interface{}) []models.ResizeInstanceBodyI
 	volumesModel := make([]models.ResizeInstanceBodyInstanceVolumes, 0, len(volumes))
 	logger.Debug(volumes)
 	for i := range volumes {
+		id := -1
+		rootVolume := volumes[i]["root"].(bool)
+		if rootVolume {
+			id = volumes[i]["id"].(int)
+		}
 		volumesModel = append(volumesModel, models.ResizeInstanceBodyInstanceVolumes{
-			Id:          utils.JSONNumber(volumes[i]["id"]),
+			Id:          utils.JSONNumber(id),
 			Name:        volumes[i]["name"].(string),
 			Size:        volumes[i]["size"].(int),
 			DatastoreId: volumes[i]["datastore_id"],
-			RootVolume:  volumes[i]["root"].(bool),
+			RootVolume:  rootVolume,
 		})
 	}
 
