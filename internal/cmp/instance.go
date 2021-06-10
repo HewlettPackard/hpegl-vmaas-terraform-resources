@@ -106,6 +106,14 @@ func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 			Delay:        instanceCloneRetryDelay,
 			RetryTimeout: instanceCloneRetryTimeout,
 			RetryCount:   instanceCloneRetryCount,
+			Cond: func(resp interface{}, err error) bool {
+				if err != nil {
+					return false
+				}
+
+				instancesList := resp.(models.Instances)
+				return len(instancesList.Instances) == 1
+			},
 		}
 		// get cloned instance ID
 		instancesResp, err := customRetry.Retry(func() (interface{}, error) {
@@ -121,7 +129,22 @@ func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 		if len(instancesList.Instances) != 1 {
 			return errors.New("get cloned instance is failed")
 		}
-		logger.Info("Instance id = ", instancesList.Instances[0].Id)
+		// get status of parent instance
+		sourceResp, err := utils.Retry(func() (interface{}, error) {
+			return i.iClient.GetASpecificInstance(ctx, sourceID)
+
+		})
+		if err == nil {
+			sourceInst := sourceResp.(models.GetInstanceResponse)
+			if sourceInst.Instance.Status != "running" {
+				_, err := utils.Retry(func() (interface{}, error) {
+					return i.iClient.StartAnInstance(ctx, sourceID)
+				})
+				if err != nil {
+					logger.Error("Failed to start the instance: ", sourceInst.Instance.Name)
+				}
+			}
+		}
 		getInstanceBody = instancesList.Instances[0]
 	} else {
 		// create instance

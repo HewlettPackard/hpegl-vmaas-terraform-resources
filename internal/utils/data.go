@@ -11,13 +11,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-const (
-	ErrInvalidType   = "invalid Type"
-	ErrKeyNotDefined = "key is not defined"
-	ErrSet           = "failed to set"
-	NAN              = 0
-)
-
 type Data struct {
 	d *schema.ResourceData
 	// errors will hold list of errors for each attrib
