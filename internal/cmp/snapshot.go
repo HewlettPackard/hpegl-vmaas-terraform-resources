@@ -6,6 +6,7 @@ import (
 	"context"
 	"fmt"
 	"strconv"
+	"time"
 
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/models"
@@ -13,7 +14,7 @@ import (
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
 )
 
-// instance implements functions related to cmp instances
+// snapshot implements functions related to cmp instances
 type snapshot struct {
 	// expose Instance API service to instances related operations
 	iClient *client.InstancesApiService
@@ -58,9 +59,7 @@ func (s *snapshot) Create(ctx context.Context, d *utils.Data) error {
 
 // Read snapshot and set state values accordingly
 func (s *snapshot) Read(ctx context.Context, d *utils.Data) error {
-	instanceId := d.GetInt("instance_id")
-
-	//	logger.Debug("Get snapshot with ID %d", id)
+	instanceID := d.GetInt("instance_id")
 
 	// Precheck
 	if err := d.Error(); err != nil {
@@ -68,7 +67,7 @@ func (s *snapshot) Read(ctx context.Context, d *utils.Data) error {
 	}
 
 	resp, err := utils.Retry(func() (interface{}, error) {
-		return s.iClient.GetListOfSnapshotsForAnInstance(ctx, instanceId)
+		return s.iClient.GetListOfSnapshotsForAnInstance(ctx, instanceID)
 	})
 	if err != nil {
 		return err
@@ -76,6 +75,7 @@ func (s *snapshot) Read(ctx context.Context, d *utils.Data) error {
 	snapshots := resp.(models.ListSnapshotResponse)
 	d.SetID(strconv.Itoa(snapshots.Snapshots[0].ID))
 	d.SetString("status", snapshots.Snapshots[0].Status)
+	d.SetString("timestamp", time.Time.String(snapshots.Snapshots[0].DateCreated))
 
 	// post check
 	return d.Error()

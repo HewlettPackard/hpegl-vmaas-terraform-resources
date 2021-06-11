@@ -14,12 +14,12 @@ import (
 )
 
 const (
-	snapshotAvailableTimeout = 60 * time.Minute
+	snapshotAvailableTimeout = 1 * time.Minute
 	snapshotReadTimeout      = 2 * time.Minute
-	snapshotDeleteTimeout    = 60 * time.Minute
-	snapshotRetryTimeout     = 10 * time.Minute
-	snapshotRetryDelay       = 10 * time.Second
-	snapshotRetryMinTimeout  = 30 * time.Second
+	//snapshotDeleteTimeout    = 20 * time.Second
+	snapshotRetryTimeout    = 10 * time.Minute
+	snapshotRetryDelay      = 10 * time.Second
+	snapshotRetryMinTimeout = 30 * time.Second
 )
 
 func Snapshots() *schema.Resource {
@@ -43,6 +43,16 @@ func Snapshots() *schema.Resource {
 				ForceNew:    true,
 				Description: "Description for VMware Snapshot",
 			},
+			"status": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "status of instance snapshot",
+			},
+			"timestamp": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Timestamp when instance snapshot is created",
+			},
 		},
 		SchemaVersion:  0,
 		StateUpgraders: nil,
@@ -55,12 +65,11 @@ func Snapshots() *schema.Resource {
 		},
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(snapshotAvailableTimeout),
-			//Delete: schema.DefaultTimeout(instanceDeleteTimeout),
-			Read: schema.DefaultTimeout(snapshotReadTimeout),
+			Read:   schema.DefaultTimeout(snapshotReadTimeout),
 		},
 		Description: `Snapshot resource facilitates creating,
-	VMware snapshot of insatnces.
-	For creating an VMware snapshot of instance, provide a unique name and all the Mandatory(Required) parameters.`,
+			VMware snapshot of insatnce.For creating an VMware snapshot of instance, 
+			provide a unique name and all the Mandatory(Required) parameters.`,
 	}
 }
 
@@ -77,7 +86,7 @@ func snapshotCreateContext(ctx context.Context, d *schema.ResourceData, meta int
 
 	// Wait for the status to be complete
 	createStateConf := resource.StateChangeConf{
-		Delay:      instanceRetryDelay,
+		Delay:      snapshotRetryDelay,
 		Pending:    []string{"creating"},
 		Target:     []string{"complete"},
 		Timeout:    snapshotRetryTimeout,
