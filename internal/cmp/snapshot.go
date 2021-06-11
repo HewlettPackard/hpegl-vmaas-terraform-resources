@@ -14,7 +14,7 @@ import (
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
 )
 
-// snapshot implements functions related to cmp instances
+// snapshot implements functions related to cmp instance snapshot
 type snapshot struct {
 	// expose Instance API service to instances related operations
 	iClient *client.InstancesApiService

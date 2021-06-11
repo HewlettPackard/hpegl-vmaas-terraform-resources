@@ -16,7 +16,7 @@ import (
 const (
 	snapshotAvailableTimeout = 1 * time.Minute
 	snapshotReadTimeout      = 2 * time.Minute
-	//snapshotDeleteTimeout    = 20 * time.Second
+	// snapshotDeleteTimeout    = 20 * time.Second
 	snapshotRetryTimeout    = 10 * time.Minute
 	snapshotRetryDelay      = 10 * time.Second
 	snapshotRetryMinTimeout = 30 * time.Second
