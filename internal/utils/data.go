@@ -92,6 +92,7 @@ func (d *Data) GetChangedListMap(key string) ([]map[string]interface{}, []map[st
 	if new != nil {
 		newmap = d.getlistMap(key, new)
 	}
+
 	return orgmap, newmap
 }
 

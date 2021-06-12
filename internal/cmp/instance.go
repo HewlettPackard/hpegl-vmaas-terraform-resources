@@ -194,6 +194,7 @@ func (i *instance) Update(ctx context.Context, d *utils.Data) error {
 			return err
 		}
 	}
+
 	return d.Error()
 }
 
@@ -338,7 +339,7 @@ func getEvars(evars map[string]interface{}) []models.GetInstanceResponseInstance
 	return evarModel
 }
 
-//Function to compare tags and based on new and old data assign to AddTags or Removetags
+// Function to compare tags and based on new and old data assign to AddTags or Removetags
 func compareTags(org, new map[string]interface{}) ([]models.CreateInstanceBodyTag, []models.CreateInstanceBodyTag) {
 	addTags := make([]models.CreateInstanceBodyTag, 0, len(new))
 	removeTags := make([]models.CreateInstanceBodyTag, 0, len(new))
@@ -361,7 +362,7 @@ func compareTags(org, new map[string]interface{}) ([]models.CreateInstanceBodyTa
 	return addTags, removeTags
 }
 
-// Function to compare previous and new(from terraform) volume data and assign proper ids based on name
+// Function to compare previous and new(from terraform) volume data and assign proper ids based on name.
 // Volume name should be unique
 func compareVolumes(org, new []map[string]interface{}) []map[string]interface{} {
 	for i := range new {
@@ -370,6 +371,7 @@ func compareVolumes(org, new []map[string]interface{}) []map[string]interface{} 
 			if new[i]["name"] == org[j]["name"] {
 				new[i]["id"] = org[j]["id"]
 				new[i]["size"] = org[j]["size"]
+
 				break
 			}
 		}
