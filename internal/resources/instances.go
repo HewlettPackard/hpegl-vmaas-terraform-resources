@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
 	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/client"
 )
@@ -114,6 +115,33 @@ func Instances() *schema.Resource {
 					Type: schema.TypeString,
 				},
 			},
+			"port": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "Provide port",
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"name": {
+							Type:        schema.TypeString,
+							Required:    true,
+							Description: "Name of the port",
+						},
+						"port": {
+							Type:        schema.TypeString,
+							Required:    true,
+							Description: "Port value in string",
+						},
+						"lb": {
+							Type:        schema.TypeString,
+							Required:    true,
+							Description: "LB type",
+							ValidateFunc: validation.StringInSlice([]string{
+								"No LB", "HTTP", "HTTPS", "TCP",
+							}, false),
+						},
+					},
+				},
+			},
 			"tags": {
 				Type:        schema.TypeMap,
 				Optional:    true,
@@ -181,6 +209,11 @@ func Instances() *schema.Resource {
 					Type: schema.TypeString,
 				},
 				Description: "Environment Variables to be added to the provisioned instance.",
+			},
+			"env_prefix": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Environment prefix",
 			},
 			"status": {
 				Type:     schema.TypeString,

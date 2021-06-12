@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
@@ -54,8 +55,10 @@ func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 			Layout: &models.CreateInstanceBodyInstanceLayout{
 				Id: d.GetJSONNumber("layout_id"),
 			},
-			HostName: d.GetString("hostname"),
+			HostName:          d.GetString("hostname"),
+			EnvironmentPrefix: d.GetString("env_prefix"),
 		},
+		Ports:             getPorts(d.GetListMap("port")),
 		Evars:             getEvars(d.GetMap("evars")),
 		Labels:            d.GetStringList("labels"),
 		Volumes:           getVolume(d.GetListMap("volume")),
@@ -65,7 +68,9 @@ func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 		LayoutSize:        d.GetInt("scale"),
 		PowerScheduleType: utils.JSONNumber(d.GetInt("power_schedule_id")),
 	}
-	if req.Instance.InstanceType.Code == vmware {
+
+	// Get template id instance type is vmware
+	if strings.ToLower(req.Instance.InstanceType.Code) == vmware {
 		templateID := c["template_id"]
 		if templateID == nil {
 			return errors.New("error, template id is required for vmware instance type")
@@ -77,7 +82,6 @@ func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 	if err := d.Error(); err != nil {
 		return err
 	}
-	// Get template id
 
 	var getInstanceBody models.GetInstanceResponseInstance
 	// check whether vm to be cloned?
@@ -112,6 +116,7 @@ func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 				}
 
 				instancesList := resp.(models.Instances)
+
 				return len(instancesList.Instances) == 1
 			},
 		}
@@ -293,4 +298,17 @@ func getEvars(evars map[string]interface{}) []models.GetInstanceResponseInstance
 	}
 
 	return evarModel
+}
+
+func getPorts(ports []map[string]interface{}) []models.CreateInstancePorts {
+	pModels := make([]models.CreateInstancePorts, 0, len(ports))
+	for _, p := range ports {
+		pModels = append(pModels, models.CreateInstancePorts{
+			Name: p["name"].(string),
+			Port: p["port"].(string),
+			Lb:   p["lb"].(string),
+		})
+	}
+
+	return pModels
 }

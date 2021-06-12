@@ -8,10 +8,6 @@ import (
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/logger"
 )
 
-const (
-
-)
-
 type CondFunc func(interface{}, error) bool
 
 func defaultCond(resp interface{}, err error) bool {
