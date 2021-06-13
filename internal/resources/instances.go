@@ -34,6 +34,7 @@ func Instances() *schema.Resource {
 			},
 			"cloud_id": {
 				Type:        schema.TypeInt,
+				ForceNew:    true,
 				Required:    true,
 				Description: f(generalDDesc, "cloud"),
 			},
@@ -45,20 +46,24 @@ func Instances() *schema.Resource {
 			"plan_id": {
 				Type:        schema.TypeInt,
 				Required:    true,
+				ForceNew:    true,
 				Description: f(generalDDesc, "plan"),
 			},
 			"layout_id": {
 				Type:        schema.TypeInt,
+				ForceNew:    true,
 				Required:    true,
 				Description: f(generalDDesc, "layout"),
 			},
 			"instance_type_code": {
 				Type:        schema.TypeString,
+				ForceNew:    true,
 				Required:    true,
 				Description: "Unique code used to identify the instance type.",
 			},
 			"network": {
 				Type:        schema.TypeList,
+				ForceNew:    true,
 				Required:    true,
 				Description: "Details of the network to which the instance should belong.",
 				Elem: &schema.Resource{
@@ -117,6 +122,7 @@ func Instances() *schema.Resource {
 			},
 			"port": {
 				Type:        schema.TypeList,
+				ForceNew:    true,
 				Optional:    true,
 				Description: "Provide port",
 				Elem: &schema.Resource{
@@ -152,11 +158,13 @@ func Instances() *schema.Resource {
 			},
 			"hostname": {
 				Type:        schema.TypeString,
+				ForceNew:    true,
 				Optional:    true,
 				Description: "Hostname for the instance",
 			},
 			"config": {
 				Type:        schema.TypeSet,
+				ForceNew:    true,
 				Required:    true,
 				Description: "Configuration details for the instance to be provisioned.",
 				Elem: &schema.Resource{
@@ -198,11 +206,13 @@ func Instances() *schema.Resource {
 			},
 			"scale": {
 				Type:        schema.TypeInt,
+				ForceNew:    true,
 				Optional:    true,
 				Default:     1,
 				Description: "Number of nodes within an instance.",
 			},
 			"evars": {
+				ForceNew: true,
 				Type:     schema.TypeMap,
 				Optional: true,
 				Elem: &schema.Schema{
@@ -211,6 +221,7 @@ func Instances() *schema.Resource {
 				Description: "Environment Variables to be added to the provisioned instance.",
 			},
 			"env_prefix": {
+				ForceNew:    true,
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "Environment prefix",
@@ -224,6 +235,7 @@ func Instances() *schema.Resource {
 			"clone": {
 				Type:        schema.TypeSet,
 				Optional:    true,
+				ForceNew:    true,
 				Description: "If Clone is provided, this instance will created from cloning an existing instance",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
