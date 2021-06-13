@@ -6,4 +6,3 @@
 go.mod
 go.sum
 Dockerfile.circleci
-examples

@@ -137,7 +137,6 @@ func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 		// get status of parent instance
 		sourceResp, err := utils.Retry(func() (interface{}, error) {
 			return i.iClient.GetASpecificInstance(ctx, sourceID)
-
 		})
 		if err == nil {
 			sourceInst := sourceResp.(models.GetInstanceResponse)

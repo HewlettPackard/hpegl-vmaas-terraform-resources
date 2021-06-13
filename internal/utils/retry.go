@@ -13,6 +13,7 @@ type CondFunc func(interface{}, error) bool
 func defaultCond(resp interface{}, err error) bool {
 	return err == nil
 }
+
 func retry(count int, timeout time.Duration, fn func() (interface{}, error), cond CondFunc) (interface{}, error) {
 	var err error
 	var resp interface{}
