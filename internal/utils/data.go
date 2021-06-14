@@ -260,6 +260,7 @@ func (d *Data) GetJSONNumber(key string, ignore ...bool) json.Number {
 	if !ok {
 		return "0"
 	}
+
 	return JSONNumber(in)
 }
 
