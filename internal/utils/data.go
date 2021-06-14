@@ -47,16 +47,7 @@ func (d *Data) err(key, msg string) {
 	d.errors[key] = append(d.errors[key], msg)
 }
 
-// GetListMap take key as parameter and returns []map[string]interfac{}.
-// This function can be used for retrieving list of map or list of set
-func (d *Data) GetListMap(key string, ignore ...bool) []map[string]interface{} {
-	src, ok := d.getOk(key, ignore)
-	if !ok {
-		return nil
-	}
-	if src == nil {
-		return nil
-	}
+func (d *Data) getlistMap(key string, src interface{}) []map[string]interface{} {
 	list, ok := src.([]interface{})
 	if !ok {
 		d.err(key, ErrInvalidType)
@@ -74,7 +65,55 @@ func (d *Data) GetListMap(key string, ignore ...bool) []map[string]interface{} {
 	return dst
 }
 
-// GetID returns ID as int
+// GetListMap take key as parameter and returns []map[string]interfac{}.
+// This function can be used for retrieving list of map or list of set
+func (d *Data) GetListMap(key string) []map[string]interface{} {
+	src := d.get(key)
+	if src == nil {
+		return nil
+	}
+
+	return d.getlistMap(key, src)
+}
+
+func (d *Data) GetChangedListMap(key string) ([]map[string]interface{}, []map[string]interface{}) {
+	org, new := d.d.GetChange(key)
+	var orgmap, newmap []map[string]interface{}
+	if org != nil {
+		orgmap = d.getlistMap(key, org)
+	}
+	if new != nil {
+		newmap = d.getlistMap(key, new)
+	}
+
+	return orgmap, newmap
+}
+
+func (d *Data) HasChangedElement(key string) bool {
+	src := d.d.HasChange(key)
+
+	return src
+}
+
+func (d *Data) GetChangedMap(key string) (map[string]interface{}, map[string]interface{}) {
+	org, new := d.d.GetChange(key)
+
+	orgmap, ok := org.(map[string]interface{})
+	if !ok {
+		return nil, nil
+	}
+	newmap, ok := new.(map[string]interface{})
+	if !ok {
+		return nil, nil
+	}
+
+	return orgmap, newmap
+}
+
+func (d *Data) get(key string) interface{} {
+	return d.d.Get(key)
+}
+
 func (d *Data) GetID() int {
 	id, err := ParseInt(d.d.Id())
 	if err != nil {
@@ -221,8 +260,17 @@ func (d *Data) GetJSONNumber(key string, ignore ...bool) json.Number {
 	if !ok {
 		return "0"
 	}
-
 	return JSONNumber(in)
+}
+
+func (d *Data) GetBool(key string) bool {
+	val := d.get(key)
+	if val != nil {
+		return val.(bool)
+	}
+	d.err(key, ErrInvalidType)
+
+	return false
 }
 
 func (d *Data) SetString(key string, value string) {

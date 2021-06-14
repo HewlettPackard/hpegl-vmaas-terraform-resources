@@ -167,12 +167,61 @@ func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 }
 
 // Update instance including poweroff, powerOn, restart, suspend
-// changing network, volumes and instance properties such as labels
+// changing volumes and instance properties such as labels
 // groups and tags
 func (i *instance) Update(ctx context.Context, d *utils.Data) error {
 	logger.Debug("Updating the instance")
+	id := d.GetID()
+	if d.HasChangedElement("name") || d.HasChangedElement("group_id") || d.HasChangedElement(
+		"tags") || d.HasChangedElement("labels") {
+		addTags, removeTags := compareTags(d.GetChangedMap("tags"))
+		updateReq := &models.UpdateInstanceBody{
+			Instance: &models.UpdateInstanceBodyInstance{
+				Name: d.GetString("name"),
+				Site: &models.CreateInstanceBodyInstanceSite{
+					Id: d.GetInt("group_id"),
+				},
+				AddTags:           addTags,
+				RemoveTags:        removeTags,
+				Labels:            d.GetStringList("labels"),
+				PowerScheduleType: utils.JSONNumber(d.GetInt("power_schedule_id")),
+			},
+		}
 
-	return nil
+		if err := d.Error(); err != nil {
+			return err
+		}
+		// update instance
+		_, err := utils.Retry(func() (interface{}, error) {
+			return i.iClient.UpdatingAnInstance(ctx, id, updateReq)
+		})
+		if err != nil {
+			return err
+		}
+	}
+
+	if d.HasChangedElement("volume") || d.HasChangedElement("plan_id") {
+		volumes := compareVolumes(d.GetChangedListMap("volume"))
+		resizeReq := &models.ResizeInstanceBody{
+			Instance: &models.ResizeInstanceBodyInstance{
+				Plan: &models.ResizeInstanceBodyInstancePlan{
+					Id: d.GetInt("plan_id"),
+				},
+			},
+			Volumes: resizeVolume(volumes),
+		}
+		if err := d.Error(); err != nil {
+			return err
+		}
+		_, err := utils.Retry(func() (interface{}, error) {
+			return i.iClient.ResizeAnInstance(ctx, id, resizeReq)
+		})
+		if err != nil {
+			return err
+		}
+	}
+
+	return d.Error()
 }
 
 // Delete instance and set ID as ""
@@ -248,6 +297,23 @@ func getVolume(volumes []map[string]interface{}) []models.CreateInstanceBodyVolu
 	return volumesModel
 }
 
+// Mapping volume data to model
+func resizeVolume(volumes []map[string]interface{}) []models.ResizeInstanceBodyInstanceVolumes {
+	volumesModel := make([]models.ResizeInstanceBodyInstanceVolumes, 0, len(volumes))
+	logger.Debug(volumes)
+	for i := range volumes {
+		volumesModel = append(volumesModel, models.ResizeInstanceBodyInstanceVolumes{
+			Id:          utils.JSONNumber(volumes[i]["id"]),
+			Name:        volumes[i]["name"].(string),
+			Size:        volumes[i]["size"].(int),
+			DatastoreId: volumes[i]["datastore_id"],
+			RootVolume:  volumes[i]["root"].(bool),
+		})
+	}
+
+	return volumesModel
+}
+
 func getNetwork(networksMap []map[string]interface{}) []models.CreateInstanceBodyNetworkInterfaces {
 	networks := make([]models.CreateInstanceBodyNetworkInterfaces, 0, len(networksMap))
 	for _, n := range networksMap {
@@ -310,4 +376,45 @@ func getPorts(ports []map[string]interface{}) []models.CreateInstancePorts {
 	}
 
 	return pModels
+}
+
+// Function to compare tags and based on new and old data assign to AddTags or Removetags
+func compareTags(org, new map[string]interface{}) ([]models.CreateInstanceBodyTag, []models.CreateInstanceBodyTag) {
+	addTags := make([]models.CreateInstanceBodyTag, 0, len(new))
+	removeTags := make([]models.CreateInstanceBodyTag, 0, len(new))
+	for k, v := range new {
+		addTags = append(addTags, models.CreateInstanceBodyTag{
+			Name:  k,
+			Value: v.(string),
+		})
+	}
+
+	for k, v := range org {
+		if _, ok := new[k]; !ok {
+			removeTags = append(removeTags, models.CreateInstanceBodyTag{
+				Name:  k,
+				Value: v.(string),
+			})
+		}
+	}
+
+	return addTags, removeTags
+}
+
+// Function to compare previous and new(from terraform) volume data and assign proper ids based on name.
+// Volume name should be unique
+func compareVolumes(org, new []map[string]interface{}) []map[string]interface{} {
+	for i := range new {
+		new[i]["id"] = -1
+		for j := range org {
+			if new[i]["name"] == org[j]["name"] {
+				new[i]["id"] = org[j]["id"]
+				new[i]["size"] = org[j]["size"]
+
+				break
+			}
+		}
+	}
+
+	return new
 }
