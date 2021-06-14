@@ -22,7 +22,7 @@ The hpegl_vmaas_datastore data source can be used to discover the ID of a hpegl 
 ### Required
 
 - **cloud_id** (String) Unique ID to identify a cloud.
-- **name** (String) Name of the datastore as it appears on GLPC Portal. If no datastore is found with this name standard not found error returns will return.
+- **name** (String) Name of the datastore as it appears on GLPC Portal. If no datastore is found with this name 'NOT FOUND' error will returns.
 
 ### Optional
 

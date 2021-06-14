@@ -17,6 +17,8 @@ The hpegl_vmaas_cloud data source can be used to discover the ID of a hpegl vmaa
 ## Example Usage
 
 ```terraform
+# (C) Copyright 2021 Hewlett Packard Enterprise Development LP
+
 data "hpegl_vmaas_cloud" "cloud" {
   name = "HPE GreenLake VMaaS Cloud"
 }
@@ -27,7 +29,7 @@ data "hpegl_vmaas_cloud" "cloud" {
 
 ### Required
 
-- **name** (String) Name of the cloud as it appears on GLPC Portal. If no cloud is found with this name standard not found error returns will return.
+- **name** (String) Name of the cloud as it appears on GLPC Portal. If no cloud is found with this name 'NOT FOUND' error will returns.
 
 ### Optional
 

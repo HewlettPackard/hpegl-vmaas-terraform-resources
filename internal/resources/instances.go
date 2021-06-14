@@ -138,9 +138,10 @@ func Instances() *schema.Resource {
 							Description: "Port value in string",
 						},
 						"lb": {
-							Type:        schema.TypeString,
-							Required:    true,
-							Description: "LB type",
+							Type:     schema.TypeString,
+							Required: true,
+							Description: `Load balancing configuration for ports.
+							 Supported values are "No LB", "HTTP", "HTTPS", "TCP"`,
 							ValidateFunc: validation.StringInSlice([]string{
 								"No LB", "HTTP", "HTTPS", "TCP",
 							}, false),
@@ -254,8 +255,8 @@ func Instances() *schema.Resource {
 			},
 			"environment_code": {
 				Type: schema.TypeString,
-				Description: `Environment code, this value can be obtained via
-				hpegl_vmaas_environment`,
+				Description: `Environment code, which can be obtained via
+				hpegl_vmaas_environment.code`,
 				Optional: true,
 				ForceNew: true,
 			},

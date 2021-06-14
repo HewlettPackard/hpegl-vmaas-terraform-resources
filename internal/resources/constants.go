@@ -19,6 +19,6 @@ const (
 
 	// documentation related constants
 	generalNamedesc = "Name of the %s as it appears on GLPC Portal. " +
-		"If no %s is found with this name standard not found error returns will return."
+		"If no %s is found with this name 'NOT FOUND' error will returns."
 	generalDDesc = "Unique ID to identify a %s."
 )

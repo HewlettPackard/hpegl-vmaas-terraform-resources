@@ -17,6 +17,8 @@ The hpegl_vmaas_template data source can be used to discover the ID of a hpegl v
 ## Example Usage
 
 ```terraform
+# (C) Copyright 2021 Hewlett Packard Enterprise Development LP
+
 data "hpegl_vmaas_template" "vanilla" {
   name = "vanilla-centos7-x86_64-09072020"
 }
@@ -27,7 +29,7 @@ data "hpegl_vmaas_template" "vanilla" {
 
 ### Required
 
-- **name** (String) Name of the Template as it appears on GLPC Portal. If no Template is found with this name standard not found error returns will return.
+- **name** (String) Name of the Template as it appears on GLPC Portal. If no Template is found with this name 'NOT FOUND' error will returns.
 
 ### Optional
 

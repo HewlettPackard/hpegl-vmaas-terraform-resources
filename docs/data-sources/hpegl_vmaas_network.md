@@ -17,6 +17,8 @@ The hpegl_vmaas_network data source can be used to discover the ID of a hpegl vm
 ## Example Usage
 
 ```terraform
+# (C) Copyright 2021 Hewlett Packard Enterprise Development LP
+
 data "hpegl_vmaas_network" "blue_net" {
   name = "Blue-Net"
 }
@@ -27,7 +29,7 @@ data "hpegl_vmaas_network" "blue_net" {
 
 ### Required
 
-- **name** (String) Name of the network as it appears on GLPC Portal. If no network is found with this name standard not found error returns will return.
+- **name** (String) Name of the network as it appears on GLPC Portal. If no network is found with this name 'NOT FOUND' error will returns.
 
 ### Optional
 
