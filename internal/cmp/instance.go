@@ -58,6 +58,7 @@ func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 			HostName:          d.GetString("hostname"),
 			EnvironmentPrefix: d.GetString("env_prefix"),
 		},
+		Environment:       d.GetString("environment_code"),
 		Ports:             getPorts(d.GetListMap("port")),
 		Evars:             getEvars(d.GetMap("evars")),
 		Labels:            d.GetStringList("labels"),

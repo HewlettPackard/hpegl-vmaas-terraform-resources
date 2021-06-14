@@ -39,8 +39,9 @@ func (c *environment) Read(ctx context.Context, d *utils.Data) error {
 	}
 	environment := resp.(models.GetAllEnvironment)
 	if len(environment.Environments) != 1 {
-		return fmt.Errorf(errExactMatch, "templates")
+		return fmt.Errorf(errExactMatch, "environments")
 	}
+	d.SetString("code", environment.Environments[0].Code)
 	d.SetID(environment.Environments[0].ID)
 
 	// post check
