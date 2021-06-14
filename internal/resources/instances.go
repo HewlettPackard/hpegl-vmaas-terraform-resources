@@ -258,7 +258,6 @@ func Instances() *schema.Resource {
 				Description: `Environment code, which can be obtained via
 				hpegl_vmaas_environment.code`,
 				Optional: true,
-				ForceNew: true,
 			},
 		},
 		SchemaVersion:  0,
