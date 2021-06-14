@@ -63,24 +63,25 @@ resource "hpegl_vmaas_instance" "tf_instance" {
 - **instance_code** (String) Unique code used to identify the instance type.
 - **layout_id** (Number) Unique ID to identify a layout.
 - **name** (String) Name of the instance to be provisioned.
-- **networks** (Block List, Min: 1) Details of the network to which the instance should belong. (see [below for nested schema](#nestedblock--networks))
+- **network** (Block List, Min: 1) Details of the network to which the instance should belong. (see [below for nested schema](#nestedblock--network))
 - **plan_id** (Number) Unique ID to identify a plan.
-- **volumes** (Block List, Min: 1) A list of volumes to be created inside a provisioned instance.
-				It can have a root volume and other secondary volumes. (see [below for nested schema](#nestedblock--volumes))
+- **volume** (Block List, Min: 1) A list of volumes to be created inside a provisioned instance.
+				It can have a root volume and other secondary volumes. (see [below for nested schema](#nestedblock--volume))
 
 ### Optional
 
-- **copies** (Number) Number of instance copies to be provisioned.
+- **clone** (Block Set) If Clone is provided, this instance will created from cloning an existing instance (see [below for nested schema](#nestedblock--clone))
 - **evars** (Map of String) Environment Variables to be added to the provisioned instance.
+- **hostname** (String) Hostname for the instance
 - **id** (String) The ID of this resource.
-- **labels** (List of String) A list of strings used for labelling instances.
+- **labels** (List of String) A string used for labelling instances.
+- **power_schedule_id** (Number) Scheduled power operations
+- **scale** (Number) Number of nodes within an instance.
 - **tags** (Map of String) A list of key and value pairs used to tag instances of similar type.
 - **timeouts** (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
 
 ### Read-Only
 
-- **instance_type** (String) Type of the instance. This should be 'vmware' for vmaas resource.
-- **state** (String) State of the instance provisioned. This can be powerOn/powerOff/Suspended
 - **status** (String) Status of the instance .It can be one among these:
 				 Provisioning/Failed/Unknown/Running.
 
@@ -90,29 +91,49 @@ resource "hpegl_vmaas_instance" "tf_instance" {
 Required:
 
 - **resource_pool_id** (Number) Unique ID to identify a resource pool.
-- **template** (String) Name of the virtual image as it appears on GLPC Portal. If no template is found with this name standard not found error returns will return.
 
 Optional:
 
-- **public_key** (String) Public key to be configured for the VM.
+- **asset_tag** (String) Asset tag
+- **create_user** (Boolean) If true new user will be created
+- **no_agent** (Boolean) If true agent will not be installed on the instance.
+- **template** (Number) Unique ID for the template
+- **vm_folder** (String) Folder name where will be stored.
 
 
-<a id="nestedblock--networks"></a>
-### Nested Schema for `networks`
+<a id="nestedblock--network"></a>
+### Nested Schema for `network`
 
 Required:
 
 - **id** (Number) Unique ID to identify a network.
 
 
-<a id="nestedblock--volumes"></a>
-### Nested Schema for `volumes`
+<a id="nestedblock--volume"></a>
+### Nested Schema for `volume`
 
 Required:
 
 - **datastore_id** (String) Unique ID to identify a datastore.
 - **name** (String) Unique name for the volume.
 - **size** (Number) Size of the volume in GB.
+
+Optional:
+
+- **persist_volume_on_update** (Boolean)
+- **root** (Boolean) If true then the given volume as considered as root volume.
+
+Read-Only:
+
+- **id** (Number) ID for the volume
+
+
+<a id="nestedblock--clone"></a>
+### Nested Schema for `clone`
+
+Required:
+
+- **source_instance_id** (String) Instance ID of the source.
 
 
 <a id="nestedblock--timeouts"></a>
