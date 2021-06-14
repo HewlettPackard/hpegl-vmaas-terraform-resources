@@ -24,7 +24,7 @@ linters-settings:
     statements: 60
   nestif:
     # minimal complexity of if statements to report
-    min-complexity: 10
+    min-complexity: 20
 
 linters:
   enable-all: true

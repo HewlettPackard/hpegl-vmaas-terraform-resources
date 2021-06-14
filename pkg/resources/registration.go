@@ -30,6 +30,7 @@ func (r Registration) SupportedDataSources() map[string]*schema.Resource {
 		resources.DSDatastore:     resources.DatastoreData(),
 		resources.DSPowerSchedule: resources.PowerScheduleData(),
 		resources.DSTemplate:      resources.TemplateData(),
+		resources.DSEnvironment:   resources.EnvironmentData(),
 	}
 }
 

@@ -11,13 +11,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-const (
-	ErrInvalidType   = "error : Invalid Type"
-	ErrKeyNotDefined = "error : Key is not defined"
-	ErrSet           = "error : Failed to set"
-	NAN              = -999999
-)
-
 type Data struct {
 	d *schema.ResourceData
 	// errors will hold list of errors for each attrib
@@ -132,6 +125,7 @@ func (d *Data) GetID() int {
 	return int(id)
 }
 
+// GetIDString returns ID as string
 func (d *Data) GetIDString() string {
 	return d.d.Id()
 }
@@ -155,8 +149,12 @@ func (d *Data) set(key string, value interface{}) error {
 	return d.d.Set(key, value)
 }
 
-func (d *Data) GetStringList(key string) []string {
-	src := d.get(key)
+// GetStringList returns list of string
+func (d *Data) GetStringList(key string, ignore ...bool) []string {
+	src, ok := d.getOk(key, ignore)
+	if !ok {
+		return nil
+	}
 	list, ok := src.([]interface{})
 	if !ok {
 		return nil
@@ -175,8 +173,6 @@ func (d *Data) GetStringList(key string) []string {
 func (d *Data) GetInt(key string, ignore ...bool) int {
 	valInter, ok := d.getOk(key, ignore)
 	if !ok {
-		d.err(key, ErrKeyNotDefined)
-
 		return NAN
 	}
 	valInt, ok := valInter.(int)
@@ -246,14 +242,26 @@ func (d *Data) GetMap(key string, ignore ...bool) map[string]interface{} {
 	return dst
 }
 
-func (d *Data) GetString(key string) string {
-	val := d.get(key)
+func (d *Data) GetString(key string, ignore ...bool) string {
+	val, ok := d.getOk(key, ignore)
+	if !ok {
+		return ""
+	}
 	if val != nil {
 		return val.(string)
 	}
 	d.err(key, ErrInvalidType)
 
 	return ""
+}
+
+func (d *Data) GetJSONNumber(key string, ignore ...bool) json.Number {
+	in, ok := d.getOk(key, ignore)
+	if !ok {
+		return "0"
+	}
+
+	return JSONNumber(in)
 }
 
 func (d *Data) GetBool(key string) bool {
@@ -266,20 +274,17 @@ func (d *Data) GetBool(key string) bool {
 	return false
 }
 
-func (d *Data) GetJSONNumber(key string) json.Number {
-	in := d.get(key)
-
-	return JSONNumber(in)
-}
-
 func (d *Data) SetString(key string, value string) {
 	if err := d.set(key, value); err != nil {
 		d.err(key, ErrSet+" : "+err.Error())
 	}
 }
 
-func (d *Data) ListToIntSlice(key string) []int {
-	src := d.get(key)
+func (d *Data) ListToIntSlice(key string, ignore ...bool) []int {
+	src, ok := d.getOk(key, ignore)
+	if !ok {
+		return nil
+	}
 	list, ok := src.([]interface{})
 	if !ok {
 		return nil
