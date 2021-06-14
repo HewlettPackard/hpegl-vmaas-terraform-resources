@@ -174,7 +174,7 @@ func (i *instance) Update(ctx context.Context, d *utils.Data) error {
 	logger.Debug("Updating the instance")
 	id := d.GetID()
 	if d.HasChangedElement("name") || d.HasChangedElement("group_id") || d.HasChangedElement(
-		"tags") || d.HasChangedElement("labels") {
+		"tags") || d.HasChangedElement("labels") || d.HasChangedElement("environment_code") {
 		addTags, removeTags := compareTags(d.GetChangedMap("tags"))
 		updateReq := &models.UpdateInstanceBody{
 			Instance: &models.UpdateInstanceBodyInstance{
@@ -186,6 +186,7 @@ func (i *instance) Update(ctx context.Context, d *utils.Data) error {
 				RemoveTags:        removeTags,
 				Labels:            d.GetStringList("labels"),
 				PowerScheduleType: utils.JSONNumber(d.GetInt("power_schedule_id")),
+				InstanceContext:   d.GetString("environment_code"),
 			},
 		}
 
