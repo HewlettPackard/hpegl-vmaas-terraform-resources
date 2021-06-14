@@ -252,6 +252,13 @@ func Instances() *schema.Resource {
 				Optional:    true,
 				Description: "Scheduled power operations",
 			},
+			"environment": {
+				Type: schema.TypeInt,
+				Description: `Environment ID, this value can be obtained via
+				hpegl_vmaas_environment`,
+				Optional: true,
+				ForceNew: true,
+			},
 		},
 		SchemaVersion:  0,
 		StateUpgraders: nil,
