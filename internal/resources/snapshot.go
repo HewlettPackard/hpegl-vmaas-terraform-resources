@@ -16,9 +16,9 @@ import (
 const (
 	snapshotAvailableTimeout = 1 * time.Minute
 	snapshotReadTimeout      = 2 * time.Minute
-	snapshotRetryTimeout    = 10 * time.Minute
-	snapshotRetryDelay      = 10 * time.Second
-	snapshotRetryMinTimeout = 30 * time.Second
+	snapshotRetryTimeout     = 10 * time.Minute
+	snapshotRetryDelay       = 10 * time.Second
+	snapshotRetryMinTimeout  = 30 * time.Second
 )
 
 func Snapshots() *schema.Resource {
@@ -67,7 +67,7 @@ func Snapshots() *schema.Resource {
 			Read:   schema.DefaultTimeout(snapshotReadTimeout),
 		},
 		Description: `Snapshot resource facilitates creating,
-			VMware snapshot of insatnce.For creating an VMware snapshot of instance, 
+			VMware snapshot of insatnce.For creating an VMware snapshot of instance,
 			provide a unique name and all the Mandatory(Required) parameters.`,
 	}
 }
@@ -137,10 +137,11 @@ func snapshotDeleteContext(ctx context.Context, d *schema.ResourceData, meta int
 	d.SetId("")
 	diags = append(diags, diag.Diagnostic{
 		Severity: diag.Warning,
-		Summary: "Delete of snapshot is not supported",
+		Summary:  "Delete of snapshot is not supported",
 		Detail: `Deletion of snapshot from terraform is not supported.
 			Records from Terraform state file is removed
 			Please perform the operation from UI`,
 	})
+
 	return diags
 }

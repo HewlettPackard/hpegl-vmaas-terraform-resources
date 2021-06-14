@@ -4,7 +4,7 @@ package cmp
 
 import (
 	"context"
-	"fmt"
+	"errors"
 	"strconv"
 
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
@@ -49,8 +49,7 @@ func (s *snapshot) Create(ctx context.Context, d *utils.Data) error {
 	}
 	snapshotResp := resp.(models.Instances)
 	if !snapshotResp.Success {
-		return fmt.Errorf("Failed to create snapshot, Please try again",
-		 "If issue persists contact your administrator")
+		return errors.New("failed to create snapshot, Please try again If issue persists or contact your administrator")
 	}
 
 	// post check
