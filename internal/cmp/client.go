@@ -18,6 +18,7 @@ type Client struct {
 	Datastore     DataSource
 	PowerSchedule DataSource
 	Template      DataSource
+	Environment   DataSource
 }
 
 // NewClient returns configured client
@@ -34,5 +35,6 @@ func NewClient(client *apiClient.APIClient, cfg apiClient.Configuration) *Client
 		Datastore:     newDatastore(&apiClient.CloudsApiService{Client: client, Cfg: cfg}),
 		PowerSchedule: newPowerSchedule(&apiClient.PowerSchedulesApiService{Client: client, Cfg: cfg}),
 		Template:      newTemplate(&apiClient.VirtualImagesApiService{Client: client, Cfg: cfg}),
+		Environment:   newEnvironment(&apiClient.EnvironmentApiService{Client: client, Cfg: cfg}),
 	}
 }

@@ -11,13 +11,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-const (
-	ErrInvalidType   = "error : Invalid Type"
-	ErrKeyNotDefined = "error : Key is not defined"
-	ErrSet           = "error : Failed to set"
-	NAN              = -999999
-)
-
 type Data struct {
 	d *schema.ResourceData
 	// errors will hold list of errors for each attrib
@@ -54,13 +47,7 @@ func (d *Data) err(key, msg string) {
 	d.errors[key] = append(d.errors[key], msg)
 }
 
-// GetListMap take key as parameter and returns []map[string]interfac{}.
-// This function can be used for retrieving list of map or list of set
-func (d *Data) GetListMap(key string) []map[string]interface{} {
-	src := d.get(key)
-	if src == nil {
-		return nil
-	}
+func (d *Data) getlistMap(key string, src interface{}) []map[string]interface{} {
 	list, ok := src.([]interface{})
 	if !ok {
 		d.err(key, ErrInvalidType)
@@ -78,6 +65,51 @@ func (d *Data) GetListMap(key string) []map[string]interface{} {
 	return dst
 }
 
+// GetListMap take key as parameter and returns []map[string]interfac{}.
+// This function can be used for retrieving list of map or list of set
+func (d *Data) GetListMap(key string) []map[string]interface{} {
+	src := d.get(key)
+	if src == nil {
+		return nil
+	}
+
+	return d.getlistMap(key, src)
+}
+
+func (d *Data) GetChangedListMap(key string) ([]map[string]interface{}, []map[string]interface{}) {
+	org, new := d.d.GetChange(key)
+	var orgmap, newmap []map[string]interface{}
+	if org != nil {
+		orgmap = d.getlistMap(key, org)
+	}
+	if new != nil {
+		newmap = d.getlistMap(key, new)
+	}
+
+	return orgmap, newmap
+}
+
+func (d *Data) HasChangedElement(key string) bool {
+	src := d.d.HasChange(key)
+
+	return src
+}
+
+func (d *Data) GetChangedMap(key string) (map[string]interface{}, map[string]interface{}) {
+	org, new := d.d.GetChange(key)
+
+	orgmap, ok := org.(map[string]interface{})
+	if !ok {
+		return nil, nil
+	}
+	newmap, ok := new.(map[string]interface{})
+	if !ok {
+		return nil, nil
+	}
+
+	return orgmap, newmap
+}
+
 func (d *Data) get(key string) interface{} {
 	return d.d.Get(key)
 }
@@ -93,6 +125,7 @@ func (d *Data) GetID() int {
 	return int(id)
 }
 
+// GetIDString returns ID as string
 func (d *Data) GetIDString() string {
 	return d.d.Id()
 }
@@ -116,8 +149,12 @@ func (d *Data) set(key string, value interface{}) error {
 	return d.d.Set(key, value)
 }
 
-func (d *Data) GetStringList(key string) []string {
-	src := d.get(key)
+// GetStringList returns list of string
+func (d *Data) GetStringList(key string, ignore ...bool) []string {
+	src, ok := d.getOk(key, ignore)
+	if !ok {
+		return nil
+	}
 	list, ok := src.([]interface{})
 	if !ok {
 		return nil
@@ -136,8 +173,6 @@ func (d *Data) GetStringList(key string) []string {
 func (d *Data) GetInt(key string, ignore ...bool) int {
 	valInter, ok := d.getOk(key, ignore)
 	if !ok {
-		d.err(key, ErrKeyNotDefined)
-
 		return NAN
 	}
 	valInt, ok := valInter.(int)
@@ -207,8 +242,11 @@ func (d *Data) GetMap(key string, ignore ...bool) map[string]interface{} {
 	return dst
 }
 
-func (d *Data) GetString(key string) string {
-	val := d.get(key)
+func (d *Data) GetString(key string, ignore ...bool) string {
+	val, ok := d.getOk(key, ignore)
+	if !ok {
+		return ""
+	}
 	if val != nil {
 		return val.(string)
 	}
@@ -217,10 +255,23 @@ func (d *Data) GetString(key string) string {
 	return ""
 }
 
-func (d *Data) GetJSONNumber(key string) json.Number {
-	in := d.get(key)
+func (d *Data) GetJSONNumber(key string, ignore ...bool) json.Number {
+	in, ok := d.getOk(key, ignore)
+	if !ok {
+		return "0"
+	}
 
 	return JSONNumber(in)
+}
+
+func (d *Data) GetBool(key string) bool {
+	val := d.get(key)
+	if val != nil {
+		return val.(bool)
+	}
+	d.err(key, ErrInvalidType)
+
+	return false
 }
 
 func (d *Data) SetString(key string, value string) {
@@ -229,8 +280,11 @@ func (d *Data) SetString(key string, value string) {
 	}
 }
 
-func (d *Data) ListToIntSlice(key string) []int {
-	src := d.get(key)
+func (d *Data) ListToIntSlice(key string, ignore ...bool) []int {
+	src, ok := d.getOk(key, ignore)
+	if !ok {
+		return nil
+	}
 	list, ok := src.([]interface{})
 	if !ok {
 		return nil
