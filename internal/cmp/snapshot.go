@@ -6,7 +6,6 @@ import (
 	"context"
 	"fmt"
 	"strconv"
-	"time"
 
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/models"
@@ -50,7 +49,8 @@ func (s *snapshot) Create(ctx context.Context, d *utils.Data) error {
 	}
 	snapshotResp := resp.(models.Instances)
 	if !snapshotResp.Success {
-		return fmt.Errorf("%t", snapshotResp.Success)
+		return fmt.Errorf("Failed to create snapshot, Please try again",
+		 "If issue persists contact your administrator")
 	}
 
 	// post check
@@ -75,7 +75,7 @@ func (s *snapshot) Read(ctx context.Context, d *utils.Data) error {
 	snapshots := resp.(models.ListSnapshotResponse)
 	d.SetID(strconv.Itoa(snapshots.Snapshots[0].ID))
 	d.SetString("status", snapshots.Snapshots[0].Status)
-	d.SetString("timestamp", time.Time.String(snapshots.Snapshots[0].DateCreated))
+	d.SetString("timestamp", snapshots.Snapshots[0].DateCreated.String())
 
 	// post check
 	return d.Error()

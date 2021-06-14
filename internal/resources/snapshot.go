@@ -16,7 +16,6 @@ import (
 const (
 	snapshotAvailableTimeout = 1 * time.Minute
 	snapshotReadTimeout      = 2 * time.Minute
-	// snapshotDeleteTimeout    = 20 * time.Second
 	snapshotRetryTimeout    = 10 * time.Minute
 	snapshotRetryDelay      = 10 * time.Second
 	snapshotRetryMinTimeout = 30 * time.Second
@@ -123,5 +122,25 @@ func snapshotReadContext(ctx context.Context, d *schema.ResourceData, meta inter
 }
 
 func snapshotDeleteContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	return diag.Errorf("Delete of Snapshot is not supported from terraform")
+	c, err := client.GetClientFromMetaMap(meta)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	data := utils.NewData(d)
+	err = c.CmpClient.Snapshot.Delete(ctx, data)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	var diags diag.Diagnostics
+	d.SetId("")
+	diags = append(diags, diag.Diagnostic{
+		Severity: diag.Warning,
+		Summary: "Delete of snapshot is not supported",
+		Detail: `Deletion of snapshot from terraform is not supported.
+			Records from Terraform state file is removed
+			Please perform the operation from UI`,
+	})
+	return diags
 }
