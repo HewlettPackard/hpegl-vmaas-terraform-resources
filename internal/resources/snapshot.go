@@ -123,5 +123,5 @@ func snapshotReadContext(ctx context.Context, d *schema.ResourceData, meta inter
 }
 
 func snapshotDeleteContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	return nil
+	return diag.Errorf("Delete of Snapshot is not supported from terraform")
 }

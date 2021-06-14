@@ -17,12 +17,12 @@ import (
 // snapshot implements functions related to cmp instance snapshot
 type snapshot struct {
 	// expose Instance API service to instances related operations
-	iClient *client.InstancesApiService
+	sClient *client.InstancesApiService
 }
 
-func newSnapshot(iClient *client.InstancesApiService) *snapshot {
+func newSnapshot(sClient *client.InstancesApiService) *snapshot {
 	return &snapshot{
-		iClient: iClient,
+		sClient: sClient,
 	}
 }
 
@@ -43,7 +43,7 @@ func (s *snapshot) Create(ctx context.Context, d *utils.Data) error {
 	}
 	// create snapshot
 	resp, err := utils.Retry(func() (interface{}, error) {
-		return s.iClient.SnapshotAnInstance(ctx, instanceID, req)
+		return s.sClient.SnapshotAnInstance(ctx, instanceID, req)
 	})
 	if err != nil {
 		return err
@@ -67,7 +67,7 @@ func (s *snapshot) Read(ctx context.Context, d *utils.Data) error {
 	}
 
 	resp, err := utils.Retry(func() (interface{}, error) {
-		return s.iClient.GetListOfSnapshotsForAnInstance(ctx, instanceID)
+		return s.sClient.GetListOfSnapshotsForAnInstance(ctx, instanceID)
 	})
 	if err != nil {
 		return err

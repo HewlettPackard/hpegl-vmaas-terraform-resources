@@ -29,9 +29,3 @@ resource "hpegl_vmaas_instance" "tf_instance" {
 
   copies = 1
 }
-
-resource "hpegl_vmaas_snapshot" "tf_instance_snapshot" { 
-  instance_id = 1382
-  name = "snapshot1"
-  description = "Example snapshot resource"
-}
