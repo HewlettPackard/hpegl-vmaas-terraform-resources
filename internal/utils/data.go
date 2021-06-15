@@ -89,7 +89,7 @@ func (d *Data) GetChangedListMap(key string) ([]map[string]interface{}, []map[st
 	return orgmap, newmap
 }
 
-func (d *Data) HasChangedElement(key string) bool {
+func (d *Data) HasChanged(key string) bool {
 	src := d.d.HasChange(key)
 
 	return src

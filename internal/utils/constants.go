@@ -18,4 +18,8 @@ const (
 	// retry constants
 	defaultTimeout    = time.Second * 5
 	defaultRetryCount = 3
+	PowerOn           = "poweron"
+	PowerOff          = "poweroff"
+	Restart           = "restart"
+	Suspend           = "suspend"
 )

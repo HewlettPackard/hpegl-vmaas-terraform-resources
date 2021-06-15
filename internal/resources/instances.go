@@ -16,12 +16,12 @@ import (
 )
 
 const (
-	instanceAvailableTimeout = 60 * time.Minute
-	instanceReadTimeout      = 2 * time.Minute
-	instanceDeleteTimeout    = 60 * time.Minute
-	instanceRetryTimeout     = 10 * time.Minute
-	instanceRetryDelay       = 60 * time.Second
-	instanceRetryMinTimeout  = 30 * time.Second
+	instanceCreateRetryTimeout    = 10 * time.Minute
+	instanceCreateRetryDelay      = 60 * time.Second
+	instanceCreateRetryMinTimeout = 30 * time.Second
+	instanceUpdateRetryTimeout    = 10 * time.Minute
+	instanceUpdateRetryDelay      = 15 * time.Second
+	instanceUpdateRetryMinTimeout = 15 * time.Second
 )
 
 func Instances() *schema.Resource {
@@ -228,10 +228,9 @@ func Instances() *schema.Resource {
 				Description: "Environment prefix",
 			},
 			"status": {
-				Type:     schema.TypeString,
-				Computed: true,
-				Description: `Status of the instance .It can be one among these:
-				 Provisioning/Failed/Unknown/Running.`,
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: `Status of the instance.`,
 			},
 			"clone": {
 				Type:        schema.TypeSet,
@@ -259,6 +258,15 @@ func Instances() *schema.Resource {
 				hpegl_vmaas_environment.code`,
 				Optional: true,
 			},
+			"power": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Description: `Power operation for an instance. Allower values are
+				'poweroff','poweron','restart' and 'suspend'.`,
+				ValidateFunc: validation.StringInSlice([]string{
+					utils.PowerOn, utils.PowerOff, utils.Restart, utils.Suspend,
+				}, false),
+			},
 		},
 		SchemaVersion:  0,
 		StateUpgraders: nil,
@@ -269,12 +277,6 @@ func Instances() *schema.Resource {
 		CustomizeDiff:  nil,
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
-		},
-		Timeouts: &schema.ResourceTimeout{
-			Create: schema.DefaultTimeout(instanceAvailableTimeout),
-			Update: schema.DefaultTimeout(instanceAvailableTimeout),
-			Delete: schema.DefaultTimeout(instanceDeleteTimeout),
-			Read:   schema.DefaultTimeout(instanceReadTimeout),
 		},
 		Description: `Instance resource facilitates creating,
 		updating and deleting virtual machines.
@@ -296,11 +298,11 @@ func instanceCreateContext(ctx context.Context, d *schema.ResourceData, meta int
 
 	// Wait for the status to be running
 	createStateConf := resource.StateChangeConf{
-		Delay:      instanceRetryDelay,
+		Delay:      instanceCreateRetryDelay,
 		Pending:    []string{"provisioning"},
 		Target:     []string{"running"},
-		Timeout:    instanceRetryTimeout,
-		MinTimeout: instanceRetryMinTimeout,
+		Timeout:    instanceCreateRetryTimeout,
+		MinTimeout: instanceCreateRetryMinTimeout,
 		Refresh: func() (result interface{}, state string, err error) {
 			if err := c.CmpClient.Instance.Read(ctx, data); err != nil {
 				return nil, "", err
@@ -358,11 +360,11 @@ func instanceUpdateContext(ctx context.Context, d *schema.ResourceData, meta int
 	}
 	// Wait for the status to be running
 	createStateConf := resource.StateChangeConf{
-		Delay:      instanceRetryDelay,
+		Delay:      instanceUpdateRetryDelay,
 		Pending:    []string{"resizing"},
-		Target:     []string{"running"},
-		Timeout:    instanceRetryTimeout,
-		MinTimeout: instanceRetryMinTimeout,
+		Target:     []string{"running", "stopped", "suspended"},
+		Timeout:    instanceUpdateRetryTimeout,
+		MinTimeout: instanceUpdateRetryMinTimeout,
 		Refresh: func() (result interface{}, state string, err error) {
 			if err := c.CmpClient.Instance.Read(ctx, data); err != nil {
 				return nil, "", err
