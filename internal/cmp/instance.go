@@ -283,9 +283,7 @@ func (i *instance) Read(ctx context.Context, d *utils.Data) error {
 
 	volumes := d.GetListMap("volume")
 	for i := range volumes {
-		if volumes[i]["id"] == -1 {
-			volumes[i]["id"] = instance.Instance.Volumes[i].Id
-		}
+		volumes[i]["id"] = instance.Instance.Volumes[i].Id
 	}
 	d.Set("volume", volumes)
 	d.SetID(instance.Instance.Id)
