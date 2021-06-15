@@ -10,6 +10,9 @@ const (
 	StateRunning      = "running"
 	StateFailed       = "failed"
 	StateProvisioning = "provisioning"
+	StateStopped      = "stopped"
+	StateSuspended    = "suspended"
+	StateResizing     = "resizing"
 	// data constants
 	ErrInvalidType   = "invalid Type"
 	ErrKeyNotDefined = "key is not defined"

@@ -23,6 +23,11 @@ func ParsePowerState(state string) string {
 	switch state {
 	case StateRunning:
 		return PowerOn
+	case StateStopped:
+		return PowerOff
+	case StateSuspended:
+		return Suspend
 	}
+
 	return state
 }

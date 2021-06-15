@@ -153,6 +153,9 @@ resource "hpegl_vmaas_instance" "tf_instance" {
     lb   = "No LB"
   }
   environment_code = data.hpegl_vmaas_environment.dev.code
+  # On creating only poweron operation is supported. Upon updation all other
+  # lifecycle operations are permitted.
+  power= "poweron"
 }
 
 # Clone a instance from an existing instance

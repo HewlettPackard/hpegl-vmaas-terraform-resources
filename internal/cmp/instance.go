@@ -433,7 +433,7 @@ func compareVolumes(org, new []map[string]interface{}) []map[string]interface{} 
 	return new
 }
 
-func (i *instance) powerOperation(ctx context.Context, instanceId int, oldOp, operation string) error {
+func (i *instance) powerOperation(ctx context.Context, instanceID int, oldOp, operation string) error {
 	var err error
 	err = validatePowerTransition(oldOp, operation)
 	if err != nil {
@@ -442,23 +442,24 @@ func (i *instance) powerOperation(ctx context.Context, instanceId int, oldOp, op
 	switch operation {
 	case utils.PowerOn:
 		_, err = utils.Retry(func() (interface{}, error) {
-			return i.iClient.StartAnInstance(ctx, instanceId)
+			return i.iClient.StartAnInstance(ctx, instanceID)
 		})
 	case utils.PowerOff:
 		_, err = utils.Retry(func() (interface{}, error) {
-			return i.iClient.StopAnInstance(ctx, instanceId)
+			return i.iClient.StopAnInstance(ctx, instanceID)
 		})
 	case utils.Suspend:
 		_, err = utils.Retry(func() (interface{}, error) {
-			return i.iClient.SuspendAnInstance(ctx, instanceId)
+			return i.iClient.SuspendAnInstance(ctx, instanceID)
 		})
 	case utils.Restart:
 		_, err = utils.Retry(func() (interface{}, error) {
-			return i.iClient.RestartAnInstance(ctx, instanceId)
+			return i.iClient.RestartAnInstance(ctx, instanceID)
 		})
 	default:
 		return fmt.Errorf("power operation not allowed from %s state", operation)
 	}
+
 	return err
 }
 
@@ -472,5 +473,6 @@ func validatePowerTransition(oldPower, newPower string) error {
 			return nil
 		}
 	}
+
 	return fmt.Errorf("power operation not allowed from %s state to %s state", oldPower, newPower)
 }

@@ -262,7 +262,7 @@ func Instances() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 				Description: `Power operation for an instance. Allower values are
-				'poweroff','poweron','restart' and 'suspend'.`,
+				'poweroff','poweron','restart' and 'suspend'. On creating an instance only 'poweron' operation is allowed.`,
 				ValidateFunc: validation.StringInSlice([]string{
 					utils.PowerOn, utils.PowerOff, utils.Restart, utils.Suspend,
 				}, false),
@@ -299,8 +299,8 @@ func instanceCreateContext(ctx context.Context, d *schema.ResourceData, meta int
 	// Wait for the status to be running
 	createStateConf := resource.StateChangeConf{
 		Delay:      instanceCreateRetryDelay,
-		Pending:    []string{"provisioning"},
-		Target:     []string{"running"},
+		Pending:    []string{utils.StateProvisioning},
+		Target:     []string{utils.StateRunning},
 		Timeout:    instanceCreateRetryTimeout,
 		MinTimeout: instanceCreateRetryMinTimeout,
 		Refresh: func() (result interface{}, state string, err error) {
@@ -361,8 +361,8 @@ func instanceUpdateContext(ctx context.Context, d *schema.ResourceData, meta int
 	// Wait for the status to be running
 	createStateConf := resource.StateChangeConf{
 		Delay:      instanceUpdateRetryDelay,
-		Pending:    []string{"resizing"},
-		Target:     []string{"running", "stopped", "suspended"},
+		Pending:    []string{utils.StateResizing},
+		Target:     []string{utils.StateRunning, utils.StateStopped, utils.StateSuspended},
 		Timeout:    instanceUpdateRetryTimeout,
 		MinTimeout: instanceUpdateRetryMinTimeout,
 		Refresh: func() (result interface{}, state string, err error) {
