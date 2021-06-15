@@ -8,6 +8,9 @@ import (
 )
 
 func JSONNumber(in interface{}) json.Number {
+	if in == nil {
+		return json.Number("")
+	}
 	if a, ok := in.(int); ok {
 		return json.Number(strconv.Itoa(a))
 	}

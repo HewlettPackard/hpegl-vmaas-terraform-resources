@@ -4,16 +4,17 @@ package resources
 
 const (
 	// datasource key
-	DSNetwork       = "hpegl_vmaas_network"
-	DSLayout        = "hpegl_vmaas_layout"
-	DSGroup         = "hpegl_vmaas_group"
-	DSPlan          = "hpegl_vmaas_plan"
-	DSCloud         = "hpegl_vmaas_cloud"
-	DSResourcePool  = "hpegl_vmaas_resource_pool"
-	DSDatastore     = "hpegl_vmaas_datastore"
-	DSPowerSchedule = "hpegl_vmaas_power_schedule"
-	DSTemplate      = "hpegl_vmaas_template"
-	DSEnvironment   = "hpegl_vmaas_environment"
+	DSNetwork          = "hpegl_vmaas_network"
+	DSLayout           = "hpegl_vmaas_layout"
+	DSGroup            = "hpegl_vmaas_group"
+	DSPlan             = "hpegl_vmaas_plan"
+	DSCloud            = "hpegl_vmaas_cloud"
+	DSResourcePool     = "hpegl_vmaas_resource_pool"
+	DSDatastore        = "hpegl_vmaas_datastore"
+	DSPowerSchedule    = "hpegl_vmaas_power_schedule"
+	DSTemplate         = "hpegl_vmaas_template"
+	DSEnvironment      = "hpegl_vmaas_environment"
+	DSNetworkInterface = "hpegl_vmaas_network_interface"
 	// resource key
 	ResInstance = "hpegl_vmaas_instance"
 

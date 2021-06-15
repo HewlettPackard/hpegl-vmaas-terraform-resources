@@ -76,7 +76,7 @@ func (i InitialiseClient) NewClient(r *schema.ResourceData) (interface{}, error)
 			"space":         spaceName,
 		},
 	}
-	apiClient := api_client.NewAPIClient(&cfg)
+	apiClient := api_client.NewAPIClient(&cfg, false)
 	client.CmpClient = cmp_client.NewClient(apiClient, cfg)
 
 	return client, nil

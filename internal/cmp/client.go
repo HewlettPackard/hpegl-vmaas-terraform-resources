@@ -7,18 +7,19 @@ import apiClient "github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
 // Client is the cmp client which will implements all the
 // functions in interface.go
 type Client struct {
-	Instance      Resource
-	Snapshot      Resource
-	Network       DataSource
-	Plan          DataSource
-	Group         DataSource
-	Cloud         DataSource
-	ResourcePool  DataSource
-	Layout        DataSource
-	Datastore     DataSource
-	PowerSchedule DataSource
-	Template      DataSource
-	Environment   DataSource
+	Instance         Resource
+	Snapshot         Resource
+	Network          DataSource
+	Plan             DataSource
+	Group            DataSource
+	Cloud            DataSource
+	ResourcePool     DataSource
+	Layout           DataSource
+	Datastore        DataSource
+	PowerSchedule    DataSource
+	Template         DataSource
+	Environment      DataSource
+	NetworkInterface DataSource
 }
 
 // NewClient returns configured client
@@ -36,5 +37,7 @@ func NewClient(client *apiClient.APIClient, cfg apiClient.Configuration) *Client
 		PowerSchedule: newPowerSchedule(&apiClient.PowerSchedulesApiService{Client: client, Cfg: cfg}),
 		Template:      newTemplate(&apiClient.VirtualImagesApiService{Client: client, Cfg: cfg}),
 		Environment:   newEnvironment(&apiClient.EnvironmentApiService{Client: client, Cfg: cfg}),
+		NetworkInterface: newNetworkInterface(&apiClient.CloudsApiService{Client: client, Cfg: cfg},
+			&apiClient.ProvisioningApiService{Client: client, Cfg: cfg}),
 	}
 }
