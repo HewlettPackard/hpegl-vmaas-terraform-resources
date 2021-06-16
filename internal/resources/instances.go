@@ -62,14 +62,10 @@ func Instances() *schema.Resource {
 				Description: "Unique code used to identify the instance type.",
 			},
 			"network": {
-				Type:     schema.TypeSet,
-				ForceNew: true,
-				Required: true,
-				Set: func(in interface{}) int {
-					netMap := in.(map[string]interface{})
-
-					return netMap["id"].(int)
-				},
+				Type:        schema.TypeSet,
+				ForceNew:    true,
+				Required:    true,
+				MinItems:    1,
 				Description: "Details of the network to which the instance should belong.",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
