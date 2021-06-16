@@ -45,7 +45,7 @@ func (c *networkInterface) Read(ctx context.Context, d *utils.Data) error {
 	}
 	provision := provisionResp.(models.GetAllProvisioningTypes)
 	if len(provision.ProvisionTypes) != 1 {
-		return errors.New("could not find vmware provision type. Please contact administrator to resolve the issue.")
+		return errors.New("could not find vmware provision type. Please contact administrator to resolve the issue")
 	}
 
 	networkResp, err := utils.Retry(func() (interface{}, error) {

@@ -67,6 +67,7 @@ func Instances() *schema.Resource {
 				Required: true,
 				Set: func(in interface{}) int {
 					netMap := in.(map[string]interface{})
+
 					return netMap["id"].(int)
 				},
 				Description: "Details of the network to which the instance should belong.",

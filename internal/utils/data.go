@@ -230,6 +230,7 @@ func (d *Data) GetSMap(key string, ignore ...bool) []map[string]interface{} {
 		val := l.(map[string]interface{})
 		mapList[i] = val
 	}
+
 	return mapList
 }
 
