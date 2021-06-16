@@ -10,6 +10,9 @@ const (
 	StateRunning      = "running"
 	StateFailed       = "failed"
 	StateProvisioning = "provisioning"
+	StateStopped      = "stopped"
+	StateSuspended    = "suspended"
+	StateResizing     = "resizing"
 	// data constants
 	ErrInvalidType   = "invalid Type"
 	ErrKeyNotDefined = "key is not defined"
@@ -18,4 +21,8 @@ const (
 	// retry constants
 	defaultTimeout    = time.Second * 5
 	defaultRetryCount = 3
+	PowerOn           = "poweron"
+	PowerOff          = "poweroff"
+	Restart           = "restart"
+	Suspend           = "suspend"
 )

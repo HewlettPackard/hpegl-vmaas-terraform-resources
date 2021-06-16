@@ -135,21 +135,7 @@ func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 		if len(instancesList.Instances) != 1 {
 			return errors.New("get cloned instance is failed")
 		}
-		// get status of parent instance
-		sourceResp, err := utils.Retry(func() (interface{}, error) {
-			return i.iClient.GetASpecificInstance(ctx, sourceID)
-		})
-		if err == nil {
-			sourceInst := sourceResp.(models.GetInstanceResponse)
-			if sourceInst.Instance.Status != "running" {
-				_, err := utils.Retry(func() (interface{}, error) {
-					return i.iClient.StartAnInstance(ctx, sourceID)
-				})
-				if err != nil {
-					logger.Error("Failed to start the instance: ", sourceInst.Instance.Name)
-				}
-			}
-		}
+
 		getInstanceBody = instancesList.Instances[0]
 	} else {
 		// create instance
@@ -160,6 +146,12 @@ func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 			return err
 		}
 		getInstanceBody = *respVM.(models.GetInstanceResponse).Instance
+	}
+	// Upon creation instance will be in poweron state. Check any other
+	// power state provided and do accordingly
+	powerOp := d.GetString("power")
+	if powerOp != "" && powerOp != utils.PowerOn {
+		return fmt.Errorf("power operation %s is not permitted while creating an instance", powerOp)
 	}
 	d.SetID(getInstanceBody.Id)
 
@@ -173,8 +165,8 @@ func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 func (i *instance) Update(ctx context.Context, d *utils.Data) error {
 	logger.Debug("Updating the instance")
 	id := d.GetID()
-	if d.HasChangedElement("name") || d.HasChangedElement("group_id") || d.HasChangedElement(
-		"tags") || d.HasChangedElement("labels") || d.HasChangedElement("environment_code") {
+	if d.HasChanged("name") || d.HasChanged("group_id") || d.HasChanged(
+		"tags") || d.HasChanged("labels") || d.HasChanged("environment_code") {
 		addTags, removeTags := compareTags(d.GetChangedMap("tags"))
 		updateReq := &models.UpdateInstanceBody{
 			Instance: &models.UpdateInstanceBodyInstance{
@@ -202,7 +194,7 @@ func (i *instance) Update(ctx context.Context, d *utils.Data) error {
 		}
 	}
 
-	if d.HasChangedElement("volume") || d.HasChangedElement("plan_id") {
+	if d.HasChanged("volume") || d.HasChanged("plan_id") {
 		volumes := compareVolumes(d.GetChangedListMap("volume"))
 		resizeReq := &models.ResizeInstanceBody{
 			Instance: &models.ResizeInstanceBodyInstance{
@@ -220,6 +212,24 @@ func (i *instance) Update(ctx context.Context, d *utils.Data) error {
 		})
 		if err != nil {
 			return err
+		}
+	}
+
+	if d.HasChanged("power") {
+		// Do power operation only if backend is in different state
+		resp, err := utils.Retry(func() (interface{}, error) {
+			return i.iClient.GetASpecificInstance(ctx, id)
+		})
+		if err != nil {
+			return err
+		}
+		getInstance := resp.(models.GetInstanceResponse)
+		status := utils.ParsePowerState(getInstance.Instance.Status)
+		powerOp := d.GetString("power")
+		if powerOp != status {
+			if err := i.powerOperation(ctx, id, status, d.GetString("power")); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -419,4 +429,48 @@ func compareVolumes(org, new []map[string]interface{}) []map[string]interface{} 
 	}
 
 	return new
+}
+
+func (i *instance) powerOperation(ctx context.Context, instanceID int, oldOp, operation string) error {
+	var err error
+	err = validatePowerTransition(oldOp, operation)
+	if err != nil {
+		return err
+	}
+	switch operation {
+	case utils.PowerOn:
+		_, err = utils.Retry(func() (interface{}, error) {
+			return i.iClient.StartAnInstance(ctx, instanceID)
+		})
+	case utils.PowerOff:
+		_, err = utils.Retry(func() (interface{}, error) {
+			return i.iClient.StopAnInstance(ctx, instanceID)
+		})
+	case utils.Suspend:
+		_, err = utils.Retry(func() (interface{}, error) {
+			return i.iClient.SuspendAnInstance(ctx, instanceID)
+		})
+	case utils.Restart:
+		_, err = utils.Retry(func() (interface{}, error) {
+			return i.iClient.RestartAnInstance(ctx, instanceID)
+		})
+	default:
+		return fmt.Errorf("power operation not allowed from %s state", operation)
+	}
+
+	return err
+}
+
+func validatePowerTransition(oldPower, newPower string) error {
+	if oldPower == utils.PowerOn || oldPower == utils.Restart {
+		if newPower == utils.PowerOff || newPower == utils.Suspend || newPower == utils.Restart {
+			return nil
+		}
+	} else {
+		if newPower == utils.PowerOn {
+			return nil
+		}
+	}
+
+	return fmt.Errorf("power operation not allowed from %s state to %s state", oldPower, newPower)
 }

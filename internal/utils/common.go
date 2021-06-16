@@ -18,3 +18,16 @@ func JSONNumber(in interface{}) json.Number {
 func ParseInt(str string) (int64, error) {
 	return strconv.ParseInt(str, 10, 64)
 }
+
+func ParsePowerState(state string) string {
+	switch state {
+	case StateRunning:
+		return PowerOn
+	case StateStopped:
+		return PowerOff
+	case StateSuspended:
+		return Suspend
+	}
+
+	return state
+}
