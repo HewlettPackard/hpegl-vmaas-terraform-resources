@@ -21,16 +21,17 @@ func (r Registration) Name() string {
 
 func (r Registration) SupportedDataSources() map[string]*schema.Resource {
 	return map[string]*schema.Resource{
-		resources.DSNetwork:       resources.NetworkData(),
-		resources.DSLayout:        resources.LayoutData(),
-		resources.DSGroup:         resources.GroupData(),
-		resources.DSPlan:          resources.PlanData(),
-		resources.DSCloud:         resources.CloudData(),
-		resources.DSResourcePool:  resources.ResourcePoolData(),
-		resources.DSDatastore:     resources.DatastoreData(),
-		resources.DSPowerSchedule: resources.PowerScheduleData(),
-		resources.DSTemplate:      resources.TemplateData(),
-		resources.DSEnvironment:   resources.EnvironmentData(),
+		resources.DSNetwork:          resources.NetworkData(),
+		resources.DSLayout:           resources.LayoutData(),
+		resources.DSGroup:            resources.GroupData(),
+		resources.DSPlan:             resources.PlanData(),
+		resources.DSCloud:            resources.CloudData(),
+		resources.DSResourcePool:     resources.ResourcePoolData(),
+		resources.DSDatastore:        resources.DatastoreData(),
+		resources.DSPowerSchedule:    resources.PowerScheduleData(),
+		resources.DSTemplate:         resources.TemplateData(),
+		resources.DSEnvironment:      resources.EnvironmentData(),
+		resources.DSNetworkInterface: resources.NetworkInterfaceData(),
 	}
 }
 

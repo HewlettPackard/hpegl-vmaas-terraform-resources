@@ -38,7 +38,7 @@ func newInstance(iClient *client.InstancesApiService) *instance {
 func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 	logger.Debug("Creating new instance")
 
-	c := d.GetSMap("config")
+	c := d.GetSMap("config")[0]
 	req := &models.CreateInstanceBody{
 		ZoneId: d.GetJSONNumber("cloud_id"),
 		Instance: &models.CreateInstanceBodyInstance{
@@ -63,7 +63,7 @@ func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 		Evars:             getEvars(d.GetMap("evars")),
 		Labels:            d.GetStringList("labels"),
 		Volumes:           getVolume(d.GetListMap("volume")),
-		NetworkInterfaces: getNetwork(d.GetListMap("network")),
+		NetworkInterfaces: getNetwork(d.GetSMap("network")),
 		Config:            getConfig(c),
 		Tags:              getTags(d.GetMap("tags")),
 		LayoutSize:        d.GetInt("scale"),
@@ -78,7 +78,7 @@ func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 		}
 		req.Config.Template = templateID.(int)
 	}
-	cloneData := d.GetSMap("clone", true)
+	cData := d.GetSMap("clone", true)
 	// Pre check
 	if err := d.Error(); err != nil {
 		return err
@@ -86,7 +86,8 @@ func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 
 	var getInstanceBody models.GetInstanceResponseInstance
 	// check whether vm to be cloned?
-	if cloneData != nil {
+	if len(cData) > 0 {
+		cloneData := cData[0]
 		req.CloneName = req.Instance.Name
 		req.Instance.Name = ""
 		sourceID, _ := strconv.Atoi(cloneData["source_instance_id"].(string))
@@ -282,6 +283,7 @@ func (i *instance) Read(ctx context.Context, d *utils.Data) error {
 	instance := resp.(models.GetInstanceResponse)
 
 	volumes := d.GetListMap("volume")
+	d.GetSMap("network")
 	for i := range volumes {
 		volumes[i]["id"] = instance.Instance.Volumes[i].Id
 	}
@@ -333,6 +335,7 @@ func getNetwork(networksMap []map[string]interface{}) []models.CreateInstanceBod
 			Network: &models.CreateInstanceBodyNetwork{
 				Id: n["id"].(int),
 			},
+			NetworkInterfaceTypeId: utils.JSONNumber(n["interface_id"]),
 		})
 	}
 

@@ -62,16 +62,22 @@ func Instances() *schema.Resource {
 				Description: "Unique code used to identify the instance type.",
 			},
 			"network": {
-				Type:        schema.TypeList,
+				Type:        schema.TypeSet,
 				ForceNew:    true,
 				Required:    true,
+				MinItems:    1,
 				Description: "Details of the network to which the instance should belong.",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"id": {
 							Type:        schema.TypeInt,
 							Required:    true,
-							Description: f(generalDDesc, "network"),
+							Description: f(generalDDesc, "network ID"),
+						},
+						"interface_id": {
+							Type:        schema.TypeInt,
+							Optional:    true,
+							Description: f(generalDDesc, "network interface type"),
 						},
 					},
 				},

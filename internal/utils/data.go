@@ -209,7 +209,7 @@ func (d *Data) getOk(key string, ignore []bool) (interface{}, bool) {
 }
 
 // GetSMap for get map for a Set
-func (d *Data) GetSMap(key string, ignore ...bool) map[string]interface{} {
+func (d *Data) GetSMap(key string, ignore ...bool) []map[string]interface{} {
 	src, ok := d.getOk(key, ignore)
 	if !ok {
 		return nil
@@ -225,8 +225,13 @@ func (d *Data) GetSMap(key string, ignore ...bool) map[string]interface{} {
 	if len(list) == 0 {
 		return nil
 	}
+	mapList := make([]map[string]interface{}, len(list))
+	for i, l := range list {
+		val := l.(map[string]interface{})
+		mapList[i] = val
+	}
 
-	return list[0].(map[string]interface{})
+	return mapList
 }
 
 func (d *Data) GetMap(key string, ignore ...bool) map[string]interface{} {
