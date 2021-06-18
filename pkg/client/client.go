@@ -6,6 +6,7 @@ import (
 	"crypto/tls"
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/hpe-hcss/hpegl-provider-lib/pkg/gltform"
 
@@ -25,10 +26,22 @@ var _ client.Initialisation = (*InitialiseClient)(nil)
 
 // Client is the client struct that is used by the provider code
 type Client struct {
-	IAMToken  string
-	Location  string
-	SpaceName string
 	CmpClient *cmp_client.Client
+}
+
+var defaultHeaders map[string]string
+
+// Get env configurations for VmaaS services
+func init() {
+	defaultHeaders = make(map[string]string)
+
+	// for acceptance test. This will be removed in near future
+	cmpUserHeader := os.Getenv("CMP_USER_HEADER")
+	cmpPasswordHeader := os.Getenv("CMP_PASS_HEADER")
+	if cmpUserHeader != "" && cmpPasswordHeader != "" {
+		defaultHeaders[cmpUserHeader] = os.Getenv("CMP_USERNAME")
+		defaultHeaders[cmpPasswordHeader] = os.Getenv("CMP_PASSWORD")
+	}
 }
 
 // InitialiseClient is imported by hpegl from each service repo
@@ -50,6 +63,7 @@ func (i InitialiseClient) NewClient(r *schema.ResourceData) (interface{}, error)
 	// Read the value supplied in the tf file
 	location := vmaasProviderSettings[constants.LOCATION].(string)
 	spaceName := vmaasProviderSettings[constants.SPACENAME].(string)
+	allowInsecure := vmaasProviderSettings[constants.INSECURE].(bool)
 
 	// Create VMaas Client
 	client := new(Client)
@@ -62,21 +76,16 @@ func (i InitialiseClient) NewClient(r *schema.ResourceData) (interface{}, error)
 		}
 		token = gltoken.Token
 	}
-	client.IAMToken = token
 
-	// location and space_naem supplied from the terraform tf file
-	client.Location = location
-	client.SpaceName = spaceName
+	defaultHeaders["Authorization"] = token
+	defaultHeaders["location"] = location
+	defaultHeaders["space"] = spaceName
 
 	cfg := api_client.Configuration{
-		Host: constants.ServiceURL,
-		DefaultHeader: map[string]string{
-			"Authorization": token,
-			"location":      location,
-			"space":         spaceName,
-		},
+		Host:          constants.ServiceURL,
+		DefaultHeader: defaultHeaders,
 	}
-	apiClient := api_client.NewAPIClient(&cfg, false)
+	apiClient := api_client.NewAPIClient(&cfg, !allowInsecure)
 	client.CmpClient = cmp_client.NewClient(apiClient, cfg)
 
 	return client, nil

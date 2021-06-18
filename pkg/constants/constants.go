@@ -10,4 +10,5 @@ const (
 
 	LOCATION  = "location"
 	SPACENAME = "space_name"
+	INSECURE  = "allow_insecure"
 )

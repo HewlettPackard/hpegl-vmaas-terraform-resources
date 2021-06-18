@@ -3,6 +3,7 @@
 package acceptancetest
 
 import (
+	"os"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -23,6 +24,14 @@ func init() {
 }
 
 func testAccPreCheck(t *testing.T) {
+	// validate all required envs are present, if not then throws error
+	requiredenvs := []string{"CMP_USER_HEADER", "CMP_USERNAME", "CMP_PASS_HEADER", "CMP_PASSWORD"}
+	for _, r := range requiredenvs {
+		if os.Getenv(r) == "" {
+			panic(r + " env is required, but not found")
+		}
+	}
+
 	t.Helper()
 	// this fails c is a nil interface....
 	// c := testAccProvider.Meta().(*Config)
