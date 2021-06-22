@@ -6,6 +6,7 @@ import (
 	"crypto/tls"
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/hpe-hcss/hpegl-provider-lib/pkg/gltform"
 
@@ -20,15 +21,30 @@ import (
 // This must be unique, hpegl will error-out if it isn't
 const keyForGLClientMap = "vmaasClient"
 
+var serviceURL string
+
 // Assert that InitialiseClient satisfies the client.Initialisation interface
 var _ client.Initialisation = (*InitialiseClient)(nil)
 
 // Client is the client struct that is used by the provider code
 type Client struct {
-	IAMToken  string
-	Location  string
-	SpaceName string
 	CmpClient *cmp_client.Client
+}
+
+// Get env configurations for VmaaS services
+func getHeaders(token, location, spaceName string) map[string]string {
+	header := make(map[string]string)
+	if os.Getenv("TF_ACC") == "true" {
+		serviceURL = "https://iac-vmaas.dev.hpehcss.net"
+		header["subject"] = os.Getenv("CMP_SUBJECT")
+	} else {
+		serviceURL = "https://iac-vmaas.intg.hpedevops.net"
+	}
+	header["Authorization"] = token
+	header["location"] = location
+	header["space"] = spaceName
+
+	return header
 }
 
 // InitialiseClient is imported by hpegl from each service repo
@@ -50,6 +66,7 @@ func (i InitialiseClient) NewClient(r *schema.ResourceData) (interface{}, error)
 	// Read the value supplied in the tf file
 	location := vmaasProviderSettings[constants.LOCATION].(string)
 	spaceName := vmaasProviderSettings[constants.SPACENAME].(string)
+	allowInsecure := vmaasProviderSettings[constants.INSECURE].(bool)
 
 	// Create VMaas Client
 	client := new(Client)
@@ -62,21 +79,12 @@ func (i InitialiseClient) NewClient(r *schema.ResourceData) (interface{}, error)
 		}
 		token = gltoken.Token
 	}
-	client.IAMToken = token
-
-	// location and space_naem supplied from the terraform tf file
-	client.Location = location
-	client.SpaceName = spaceName
 
 	cfg := api_client.Configuration{
-		Host: constants.ServiceURL,
-		DefaultHeader: map[string]string{
-			"Authorization": token,
-			"location":      location,
-			"space":         spaceName,
-		},
+		Host:          serviceURL,
+		DefaultHeader: getHeaders(token, location, spaceName),
 	}
-	apiClient := api_client.NewAPIClient(&cfg, false)
+	apiClient := api_client.NewAPIClient(&cfg, !allowInsecure)
 	client.CmpClient = cmp_client.NewClient(apiClient, cfg)
 
 	return client, nil

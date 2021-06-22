@@ -3,6 +3,7 @@
 package acceptancetest
 
 import (
+	"os"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -23,12 +24,15 @@ func init() {
 }
 
 func testAccPreCheck(t *testing.T) {
+	// validate all required envs are present, if not then throws error
+	requiredenvs := []string{"CMP_SUBJECT"}
+	for _, r := range requiredenvs {
+		if os.Getenv(r) == "" {
+			panic(r + " env is required, but not found")
+		}
+	}
+
 	t.Helper()
-	// this fails c is a nil interface....
-	// c := testAccProvider.Meta().(*Config)
-	// if c.member.GetHosterID() == "" {
-	// 	t.Fatalf("Acceptance tests must be run with hoster-scope %+v", c.member)
-	// }
 }
 
 func TestProvider(t *testing.T) {
