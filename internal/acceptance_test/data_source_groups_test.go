@@ -17,7 +17,7 @@ func TestAccDataSourceGroup(t *testing.T) {
 			{
 				Config: testAccDataSourceGroup,
 				Check: resource.ComposeTestCheckFunc(
-					validateDataSourceID("data.hpegl_vmaas_group.default_group"),
+					validateDataSourceID("data.hpegl_vmaas_group.dev_group"),
 				),
 			},
 		},
@@ -25,7 +25,7 @@ func TestAccDataSourceGroup(t *testing.T) {
 }
 
 const testAccDataSourceGroup = providerStanza + `
-data "hpegl_vmaas_group" "default_group" {
+data "hpegl_vmaas_group" "dev_group" {
 	name = "test_dev_group"
 }
 `
