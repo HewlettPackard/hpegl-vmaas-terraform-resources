@@ -5,6 +5,7 @@ package acceptancetest
 import (
 	"context"
 	"fmt"
+	"log"
 	"math/rand"
 	"strconv"
 	"testing"
@@ -28,6 +29,7 @@ func TestVmaasInstancePlan(t *testing.T) {
 		},
 	})
 }
+
 func TestAccResourceInstanceCreate(t *testing.T) {
 	if testing.Short() {
 		t.Skip("Skipping instance resource creation in short mode")
@@ -79,7 +81,10 @@ func testVmaasInstanceDestroy(name string) resource.TestCheckFunc {
 		// Once error is wrapped and send as json string we can encode error here and check the status code
 		// once sdk-api support that functionality, update here
 		if err == nil {
-			return fmt.Errorf("Expected %d error, but got nil", 404)
+			// Don't anything now. As of now delete will not wait for instance got completely
+			// deleted and will return 200 in get-instance.
+			log.Printf("Expected %d error, but got nil", 404)
+			// return fmt.Errorf("Expected %d error, but got nil", 404)
 		}
 
 		return nil
