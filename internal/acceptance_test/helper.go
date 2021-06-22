@@ -4,10 +4,24 @@ package acceptancetest
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	api_client "github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
+	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/constants"
 )
+
+const providerStanza = `
+	provider hpegl {
+		vmaas {
+			allow_insecure = true
+			space_name = "` + constants.AccSpace + `"
+			location = "` + constants.AccLocation + `"
+		}
+	}
+
+`
 
 type validators func(*terraform.ResourceState) error
 
@@ -48,13 +62,18 @@ func validateResource(name string, v ...validators) resource.TestCheckFunc {
 	}
 }
 
-const providerStanza = `
-	provider hpegl {
-		vmaas {
-			allow_insecure = true
-			space_name = "tf_acceptance"
-			location = "tf_acc_location"
-		}
-	}
+func getApiClient() (*api_client.APIClient, api_client.Configuration) {
+	headers := make(map[string]string)
+	headers["Authorization"] = os.Getenv("IAM_TOKEN")
+	headers["location"] = constants.AccLocation
+	headers["space"] = constants.AccSpace
+	headers["subject"] = os.Getenv("CMP_SUBJECT")
 
-`
+	cfg := api_client.Configuration{
+		Host:          constants.AccServiceUrl,
+		DefaultHeader: headers,
+	}
+	apiClient := api_client.NewAPIClient(&cfg, false)
+
+	return apiClient, cfg
+}

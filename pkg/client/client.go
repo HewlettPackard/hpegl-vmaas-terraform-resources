@@ -3,9 +3,7 @@
 package client
 
 import (
-	"crypto/tls"
 	"fmt"
-	"net/http"
 	"os"
 
 	"github.com/hpe-hcss/hpegl-provider-lib/pkg/gltform"
@@ -35,10 +33,10 @@ type Client struct {
 func getHeaders(token, location, spaceName string) map[string]string {
 	header := make(map[string]string)
 	if os.Getenv("TF_ACC") == "true" {
-		serviceURL = "https://iac-vmaas.dev.hpehcss.net"
+		serviceURL = constants.AccServiceUrl
 		header["subject"] = os.Getenv("CMP_SUBJECT")
 	} else {
-		serviceURL = "https://iac-vmaas.intg.hpedevops.net"
+		serviceURL = constants.ServiceUrl
 	}
 	header["Authorization"] = token
 	header["location"] = location
@@ -55,8 +53,6 @@ type InitialiseClient struct{}
 // The hpegl provider will put *Client at the value of keyForGLClientMap (returned by ServiceName) in
 // the map of clients that it creates and passes down to provider code.  hpegl executes NewClient for each service.
 func (i InitialiseClient) NewClient(r *schema.ResourceData) (interface{}, error) {
-	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-
 	token := r.Get("iam_token").(string)
 	vmaasProviderSettings, err := client.GetServiceSettingsMap(constants.ServiceName, r)
 	if err != nil {
