@@ -33,10 +33,10 @@ type Client struct {
 func getHeaders(token, location, spaceName string) map[string]string {
 	header := make(map[string]string)
 	if os.Getenv("TF_ACC") == "true" {
-		serviceURL = constants.AccServiceUrl
+		serviceURL = constants.AccServiceURL
 		header["subject"] = os.Getenv("CMP_SUBJECT")
 	} else {
-		serviceURL = constants.ServiceUrl
+		serviceURL = constants.ServiceURL
 	}
 	header["Authorization"] = token
 	header["location"] = location

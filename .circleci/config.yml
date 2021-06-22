@@ -54,7 +54,7 @@ workflows:
     jobs:
       - checkout-workspace:
           <<: *filters
-      - acc-run:
+      - acceptance-run:
           <<: *common
           requires:
             - checkout-workspace
@@ -134,13 +134,13 @@ jobs:
           command: |
             make build
 
-  acc-run:
+  acceptance-run:
     <<: *defaults
     steps:
       - attach_workspace:
           at: ~/project
       - <<: *restore_cache
       - run:
-          name: acc-run
+          name: acceptance-run
           command: |
             make acceptance

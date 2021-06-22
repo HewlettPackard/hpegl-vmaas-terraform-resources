@@ -69,7 +69,7 @@ func testVmaasInstanceDestroy(name string) resource.TestCheckFunc {
 			return fmt.Errorf("error while converting id into int, %v", err)
 		}
 
-		apiClient, cfg := getApiClient()
+		apiClient, cfg := getAPIClient()
 		iClient := api_client.InstancesApiService{
 			Client: apiClient,
 			Cfg:    cfg,

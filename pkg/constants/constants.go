@@ -6,13 +6,13 @@ package constants
 const (
 	// ServiceName - the service mnemonic
 	ServiceName   = "vmaas"
-	AccServiceUrl = "https://iac-vmaas.dev.hpehcss.net"
-	ServiceUrl    = "https://iac-vmaas.intg.hpedevops.net"
+	AccServiceURL = "https://iac-vmaas.dev.hpehcss.net"
+	ServiceURL    = "https://iac-vmaas.intg.hpedevops.net"
 
 	LOCATION  = "location"
 	SPACENAME = "space_name"
 	INSECURE  = "allow_insecure"
 
 	AccLocation = "mock_location"
-	AccSpace = "mock_space"
+	AccSpace    = "mock_space"
 )
