@@ -17,7 +17,7 @@ func TestAccDataSourceResourcePool(t *testing.T) {
 			{
 				Config: testAccDataSourceResourcePool,
 				Check: resource.ComposeTestCheckFunc(
-					validateDataSourceID("data.hpegl_vmaas_resource_pool.cl_resource_pool"),
+					validateDataSourceID("data.hpegl_vmaas_resource_pool.compute"),
 				),
 			},
 		},
@@ -25,8 +25,8 @@ func TestAccDataSourceResourcePool(t *testing.T) {
 }
 
 const testAccDataSourceResourcePool = providerStanza + `
-data "hpegl_vmaas_resource_pool" "cl_resource_pool" {
-	cloud_id = data.hpegl_vmaas_cloud.cloud.id
-	name     = "Cluster"
+data "hpegl_vmaas_resource_pool" "compute" {
+	cloud_id = 1
+	name     = "ComputeResourcePool"
 }
 `

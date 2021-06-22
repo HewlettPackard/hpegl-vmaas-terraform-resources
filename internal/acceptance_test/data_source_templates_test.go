@@ -26,6 +26,6 @@ func TestAccDataSourceTemplate(t *testing.T) {
 
 const testAccDataSourceTemplate = providerStanza + `
 data "hpegl_vmaas_template" "vanilla" {
-	name = "vanilla-centos7-x86_64-09072020"
+	name = "apache-centos7-x86_64-09072020"
 }
 `

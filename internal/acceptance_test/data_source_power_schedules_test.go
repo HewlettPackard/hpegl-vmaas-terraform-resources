@@ -26,6 +26,6 @@ func TestAccDataSourcePowerSchedule(t *testing.T) {
 
 const testAccDataSourcePowerSchedule = providerStanza + `
 data "hpegl_vmaas_power_schedule" "weekday" {
-	name = "DEMO_WEEKDAY"
+	name = "TF_Weekday"
 }
 `
