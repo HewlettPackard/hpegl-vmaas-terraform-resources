@@ -25,7 +25,7 @@ func init() {
 
 func testAccPreCheck(t *testing.T) {
 	// validate all required envs are present, if not then throws error
-	requiredenvs := []string{"CMP_USER_HEADER", "CMP_USERNAME", "CMP_PASS_HEADER", "CMP_PASSWORD"}
+	requiredenvs := []string{"CMP_SUBJECT"}
 	for _, r := range requiredenvs {
 		if os.Getenv(r) == "" {
 			panic(r + " env is required, but not found")
@@ -46,3 +46,14 @@ func TestProvider(t *testing.T) {
 	}
 	testAccPreCheck(t)
 }
+
+const providerStanza = `
+	provider hpegl {
+		vmaas {
+			allow_insecure = true
+			space_name = "tf_acceptance"
+			location = "tf_acc_location"
+		}
+	}
+
+`

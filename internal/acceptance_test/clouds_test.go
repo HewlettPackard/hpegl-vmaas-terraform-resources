@@ -19,14 +19,14 @@ func TestAccDataSourceCloud(t *testing.T) {
 			{
 				Config: testAccDataSourceCloud,
 				Check: resource.ComposeTestCheckFunc(
-					checkVmaasCloud("hpegl_vmaas_cloud.test_cloud"),
+					checkVmaasCloud("data.hpegl_vmaas_cloud.test_cloud"),
 				),
 			},
 		},
 	})
 }
 
-const testAccDataSourceCloud = `
+const testAccDataSourceCloud = providerStanza + `
 	data "hpegl_vmaas_cloud" "test_cloud" {
 		name = "HPE GreenLake VMaaS Cloud"
 	}

@@ -21,6 +21,8 @@ import (
 // This must be unique, hpegl will error-out if it isn't
 const keyForGLClientMap = "vmaasClient"
 
+var serviceURL string
+
 // Assert that InitialiseClient satisfies the client.Initialisation interface
 var _ client.Initialisation = (*InitialiseClient)(nil)
 
@@ -29,19 +31,19 @@ type Client struct {
 	CmpClient *cmp_client.Client
 }
 
-var defaultHeaders map[string]string
-
 // Get env configurations for VmaaS services
-func init() {
-	defaultHeaders = make(map[string]string)
-
-	// for acceptance test. This will be removed in near future
-	cmpUserHeader := os.Getenv("CMP_USER_HEADER")
-	cmpPasswordHeader := os.Getenv("CMP_PASS_HEADER")
-	if cmpUserHeader != "" && cmpPasswordHeader != "" {
-		defaultHeaders[cmpUserHeader] = os.Getenv("CMP_USERNAME")
-		defaultHeaders[cmpPasswordHeader] = os.Getenv("CMP_PASSWORD")
+func getHeaders(token, location, spaceName string) map[string]string {
+	header := make(map[string]string)
+	if os.Getenv("TF_ACC") == "true" {
+		serviceURL = "https://iac-vmaas.dev.hpehcss.net"
+		header["subject"] = os.Getenv("CMP_SUBJECT")
+	} else {
+		serviceURL = "https://iac-vmaas.intg.hpedevops.net"
 	}
+	header["Authorization"] = token
+	header["location"] = location
+	header["space"] = spaceName
+	return header
 }
 
 // InitialiseClient is imported by hpegl from each service repo
@@ -77,13 +79,9 @@ func (i InitialiseClient) NewClient(r *schema.ResourceData) (interface{}, error)
 		token = gltoken.Token
 	}
 
-	defaultHeaders["Authorization"] = token
-	defaultHeaders["location"] = location
-	defaultHeaders["space"] = spaceName
-
 	cfg := api_client.Configuration{
-		Host:          constants.ServiceURL,
-		DefaultHeader: defaultHeaders,
+		Host:          serviceURL,
+		DefaultHeader: getHeaders(token, location, spaceName),
 	}
 	apiClient := api_client.NewAPIClient(&cfg, !allowInsecure)
 	client.CmpClient = cmp_client.NewClient(apiClient, cfg)
