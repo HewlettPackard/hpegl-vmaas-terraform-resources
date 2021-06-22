@@ -49,7 +49,16 @@ workflows:
           <<: *common
           requires:
             - go-lint
-          
+
+  acceptance:
+    jobs:
+      - checkout-workspace:
+          <<: *filters
+      - acc-run:
+          <<: *common
+          requires:
+            - checkout-workspace
+
 jobs:
   secret-scanning:
     docker:
@@ -124,3 +133,14 @@ jobs:
           name: go-build
           command: |
             make build
+
+  acc-run:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/project
+      - <<: *restore_cache
+      - run:
+          name: acc-run
+          command: |
+            make acceptance

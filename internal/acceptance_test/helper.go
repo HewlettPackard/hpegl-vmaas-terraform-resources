@@ -43,6 +43,7 @@ func validateResource(name string, v ...validators) resource.TestCheckFunc {
 				return fmt.Errorf("resource %s validation failed with error %v", name, err)
 			}
 		}
+
 		return nil
 	}
 }
