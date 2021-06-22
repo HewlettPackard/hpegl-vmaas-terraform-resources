@@ -33,11 +33,6 @@ func testAccPreCheck(t *testing.T) {
 	}
 
 	t.Helper()
-	// this fails c is a nil interface....
-	// c := testAccProvider.Meta().(*Config)
-	// if c.member.GetHosterID() == "" {
-	// 	t.Fatalf("Acceptance tests must be run with hoster-scope %+v", c.member)
-	// }
 }
 
 func TestProvider(t *testing.T) {
@@ -46,14 +41,3 @@ func TestProvider(t *testing.T) {
 	}
 	testAccPreCheck(t)
 }
-
-const providerStanza = `
-	provider hpegl {
-		vmaas {
-			allow_insecure = true
-			space_name = "tf_acceptance"
-			location = "tf_acc_location"
-		}
-	}
-
-`

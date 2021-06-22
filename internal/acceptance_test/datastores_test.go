@@ -8,24 +8,25 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
-func TestAccDataSourceCloud(t *testing.T) {
+func TestAccDataSourceDataStore(t *testing.T) {
 	resource.ParallelTest(t, resource.TestCase{
 		IsUnitTest: false,
 		PreCheck:   func() { testAccPreCheck(t) },
 		Providers:  testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceCloud,
+				Config: testAccDataSourceDataStore,
 				Check: resource.ComposeTestCheckFunc(
-					validateDataSourceID("data.hpegl_vmaas_cloud.test_cloud"),
+					validateDataSourceID("data.hpegl_vmaas_datastore.glhc_vol10"),
 				),
 			},
 		},
 	})
 }
 
-const testAccDataSourceCloud = providerStanza + `
-	data "hpegl_vmaas_cloud" "test_cloud" {
-		name = "HPE GreenLake VMaaS Cloud"
+const testAccDataSourceDataStore = providerStanza + `
+	data "hpegl_vmaas_datastore" "glhc_vol10" {
+		cloud_id = 1
+		name = "GLHC-Vol10"
 	}
 `
