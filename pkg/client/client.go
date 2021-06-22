@@ -43,6 +43,7 @@ func getHeaders(token, location, spaceName string) map[string]string {
 	header["Authorization"] = token
 	header["location"] = location
 	header["space"] = spaceName
+
 	return header
 }
 
