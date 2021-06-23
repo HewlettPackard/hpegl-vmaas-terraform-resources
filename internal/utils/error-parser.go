@@ -10,6 +10,9 @@ import (
 
 func parseError(err error) api_client.CustomError {
 	customErr := api_client.CustomError{}
+	if err == nil {
+		return customErr
+	}
 	jsonErr := json.Unmarshal([]byte(err.Error()), &customErr)
 	if err != nil {
 		customErr.Errors = jsonErr.Error()
