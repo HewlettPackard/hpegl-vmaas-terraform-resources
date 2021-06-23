@@ -135,12 +135,27 @@ jobs:
             make build
 
   acceptance-run:
-    <<: *defaults
+    machine:
+      image: ubuntu-1604:201903-01
     steps:
+      - run:
+          name: Install dependencies
+          command: |
+            sudo apt-get install -y wget
+            wget https://golang.org/dl/go1.16.5.linux-amd64.tar.gz
+            sudo rm -rf /usr/local/go
+            sudo tar -C /usr/local -xzf go1.16.5.linux-amd64.tar.gz
+            echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.bashrc
+
+            wget https://releases.hashicorp.com/terraform/1.0.0/terraform_1.0.0_linux_amd64.zip
+            sudo unzip terraform_1.0.0_linux_amd64.zip -d /usr/local/bin
+
       - attach_workspace:
           at: ~/project
-      - <<: *restore_cache
+      - go-vendor:
+          at: ~/project
       - run:
-          name: acceptance-run
+          name: Run acceptance test
           command: |
             make acceptance
+

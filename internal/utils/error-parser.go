@@ -14,6 +14,7 @@ func parseError(err error) api_client.CustomError {
 	if err != nil {
 		customErr.Errors = jsonErr.Error()
 	}
+
 	return customErr
 }
 
