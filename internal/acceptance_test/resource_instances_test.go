@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"math/rand"
+	"net/http"
 	"strconv"
 	"testing"
 	"time"
@@ -14,6 +15,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	api_client "github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
+	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
 )
 
 func TestVmaasInstancePlan(t *testing.T) {
@@ -78,12 +80,11 @@ func testVmaasInstanceDestroy(name string) resource.TestCheckFunc {
 		}
 		_, err = iClient.GetASpecificInstance(context.Background(), id)
 
-		// Once error is wrapped and send as json string we can encode error here and check the status code
-		// once sdk-api support that functionality, update here
-		if err == nil {
-			// Don't anything now. As of now delete will not wait for instance got completely
+		statusCode := utils.GetStatusCode(err)
+		if statusCode != http.StatusNotFound {
+			// Don't do anything now. As of now delete will not wait for instance got completely
 			// deleted and will return 200 in get-instance.
-			log.Printf("Expected %d error, but got nil", 404)
+			log.Printf("Expected %d status code, but got %d", http.StatusNotFound, statusCode)
 			// return fmt.Errorf("Expected %d error, but got nil", 404)
 		}
 
@@ -116,7 +117,6 @@ func testAccResourceInstance() string {
 			config {
 			  resource_pool_id = 3
 			  no_agent         = true
-			  vm_folder        = "group-v284"
 			  template_id	   = 580
 			}
 		}
