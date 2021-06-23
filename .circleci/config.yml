@@ -52,6 +52,8 @@ workflows:
 
   acceptance:
     jobs:
+      - checkout-workspace:
+          <<: *filters
       - acceptance-run:
           requires:
             - checkout-workspace
