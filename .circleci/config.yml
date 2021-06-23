@@ -52,12 +52,10 @@ workflows:
 
   acceptance:
     jobs:
-      - checkout-workspace:
-          <<: *filters
+      - acceptance-build:
       - acceptance-run:
-          <<: *common
           requires:
-            - checkout-workspace
+            - go-vendor
 
 jobs:
   secret-scanning:
@@ -134,10 +132,12 @@ jobs:
           command: |
             make build
 
-  acceptance-run:
+  acceptance-build:
     machine:
       image: ubuntu-1604:201903-01
     steps:
+      - attach_workspace:
+          at: ~/project
       - run:
           name: Install dependencies
           command: |
@@ -149,13 +149,18 @@ jobs:
 
             wget https://releases.hashicorp.com/terraform/1.0.0/terraform_1.0.0_linux_amd64.zip
             sudo unzip terraform_1.0.0_linux_amd64.zip -d /usr/local/bin
-
-      - attach_workspace:
-          at: ~/project
-      - go-vendor:
-          at: ~/project
       - run:
-          name: Run acceptance test
+          name: go-vendor
           command: |
-            make acceptance
-
+            git config --global url.https://$GITHUB_TOKEN@github.com/.insteadOf https://github.com/
+            make vendor
+      - persist_to_workspace:
+          root: ~/project
+          paths:
+            - vendor
+            - go.mod
+            - go.sum
+      - save_cache:
+          key: gopkg-v1-{{ checksum "go.mod" }}-{{ checksum "go.sum" }}
+          paths:
+            - /go/pkg
