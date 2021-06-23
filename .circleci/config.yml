@@ -52,11 +52,8 @@ workflows:
 
   acceptance:
     jobs:
-      - checkout-workspace:
-          <<: *filters
       - acceptance-run:
-          requires:
-            - checkout-workspace
+          <<: *filters
 
 jobs:
   secret-scanning:
@@ -149,6 +146,9 @@ jobs:
             wget https://releases.hashicorp.com/terraform/1.0.0/terraform_1.0.0_linux_amd64.zip
             sudo unzip terraform_1.0.0_linux_amd64.zip -d /usr/local/bin
       - checkout
+      - persist_to_workspace:
+          root: ~/project
+          paths: ['.']
       - attach_workspace:
           at: ~/project
       - run:
