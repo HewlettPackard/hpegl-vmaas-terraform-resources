@@ -166,3 +166,7 @@ jobs:
           key: gopkg-v1-{{ checksum "go.mod" }}-{{ checksum "go.sum" }}
           paths:
             - /go/pkg
+      - run:
+          name: Run acceptance test
+          command:
+            make acceptance
