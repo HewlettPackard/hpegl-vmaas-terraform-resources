@@ -54,6 +54,9 @@ workflows:
     jobs:
       - acceptance-run:
           <<: *filters
+          filters:
+            branches:
+              only: master
 
 jobs:
   secret-scanning:
