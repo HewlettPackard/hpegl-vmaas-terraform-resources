@@ -159,11 +159,10 @@ jobs:
           name: Set environment values
           command:
             |
-            CMP_TOKEN=`curl --location -g --request POST "${CMP_SUBJECT}/oauth/token?grant_type=password&scope=write&client_id=morph-customer" \
+            export HPEGL_IAM_TOKEN=`curl --location -g --request POST "${CMP_SUBJECT}/oauth/token?grant_type=password&scope=write&client_id=morph-customer" \
             --header 'Content-Type: application/x-www-form-urlencoded' \
             --data-urlencode "username=${CMP_USERNAME}" \
             --data-urlencode "password=${CMP_PASSWORD}" | jq -r ."access_token"`
-            echo 'export HEGL_IAM_TOKEN=$(echo CMP_TOKEN)' >> $BASH_ENV
 
       - run:
           name: go-vendor
