@@ -153,17 +153,18 @@ jobs:
             wget https://releases.hashicorp.com/terraform/1.0.0/terraform_1.0.0_linux_amd64.zip
             sudo unzip terraform_1.0.0_linux_amd64.zip -d /usr/local/bin
 
+      - attach_workspace:
+          at: ~/project
       - run:
           name: Set environment values
           command:
             |
-            export HPEGL_IAM_TOKEN=`curl --location -g --request POST "${CMP_SUBJECT}/oauth/token?grant_type=password&scope=write&client_id=morph-customer" \
+            CMP_TOKEN=`curl --location -g --request POST "${CMP_SUBJECT}/oauth/token?grant_type=password&scope=write&client_id=morph-customer" \
             --header 'Content-Type: application/x-www-form-urlencoded' \
             --data-urlencode "username=${CMP_USERNAME}" \
             --data-urlencode "password=${CMP_PASSWORD}" | jq -r ."access_token"`
+            echo 'export HEGL_IAM_TOKEN=$(echo CMP_TOKEN)' >> $BASH_ENV
 
-      - attach_workspace:
-          at: ~/project
       - run:
           name: go-vendor
           command: |
@@ -181,5 +182,6 @@ jobs:
             - /go/pkg
       - run:
           name: Run acceptance test
-          command:
+          command: |
+            source $BASH_ENV
             make acceptance
