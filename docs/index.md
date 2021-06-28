@@ -48,5 +48,6 @@ provider "hpegl" {
 
 Optional:
 
+- **allow_insecure** (Boolean) Skip verification of TLS certificates of API requests. You may want set this as `true` if you are using local API without signing certificate. Can also be set with the HPEGL_VMAAS_INSECURE env var.
 - **location** (String) Location of GL VMaaS Service, can also be set with the HPEGL_VMAAS_LOCATION env var.
 - **space_name** (String) IAM Space name of the GL VMaaS Service, can also be set with the HPEGL_VMAAS_SPACE_NAME env var.
