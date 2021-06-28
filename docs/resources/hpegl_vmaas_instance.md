@@ -174,6 +174,9 @@ resource "hpegl_vmaas_instance" "tf_instance" {
     lb   = "No LB"
   }
   environment_code = data.hpegl_vmaas_environment.dev.code
+  # On creating only poweron operation is supported. Upon updation all other
+  # lifecycle operations are permitted.
+  power = "poweron"
 }
 
 # Clone a instance from an existing instance
@@ -236,7 +239,7 @@ resource "hpegl_vmaas_instance" "tf_instance_clone" {
 - **instance_type_code** (String) Unique code used to identify the instance type.
 - **layout_id** (Number) Unique ID to identify a layout.
 - **name** (String) Name of the instance to be provisioned.
-- **network** (Block List, Min: 1) Details of the network to which the instance should belong. (see [below for nested schema](#nestedblock--network))
+- **network** (Block Set, Min: 1) Details of the network to which the instance should belong. (see [below for nested schema](#nestedblock--network))
 - **plan_id** (Number) Unique ID to identify a plan.
 - **volume** (Block List, Min: 1) A list of volumes to be created inside a provisioned instance.
 				It can have a root volume and other secondary volumes. (see [below for nested schema](#nestedblock--volume))
@@ -252,15 +255,15 @@ resource "hpegl_vmaas_instance" "tf_instance_clone" {
 - **id** (String) The ID of this resource.
 - **labels** (List of String) An array of strings used for labelling instance.
 - **port** (Block List) Provide port (see [below for nested schema](#nestedblock--port))
+- **power** (String) Power operation for an instance. Allower values are
+				'poweroff','poweron','restart' and 'suspend'. On creating an instance only 'poweron' operation is allowed.
 - **power_schedule_id** (Number) Scheduled power operations
 - **scale** (Number) Number of nodes within an instance.
 - **tags** (Map of String) A list of key and value pairs used to tag instances of similar type.
-- **timeouts** (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
 
 ### Read-Only
 
-- **status** (String) Status of the instance .It can be one among these:
-				 Provisioning/Failed/Unknown/Running.
+- **status** (String) Status of the instance.
 
 <a id="nestedblock--config"></a>
 ### Nested Schema for `config`
@@ -283,7 +286,11 @@ Optional:
 
 Required:
 
-- **id** (Number) Unique ID to identify a network.
+- **id** (Number) Unique ID to identify a network ID.
+
+Optional:
+
+- **interface_id** (Number) Unique ID to identify a network interface type.
 
 
 <a id="nestedblock--volume"></a>
@@ -321,16 +328,5 @@ Required:
 							 Supported values are "No LB", "HTTP", "HTTPS", "TCP"
 - **name** (String) Name of the port
 - **port** (String) Port value in string
-
-
-<a id="nestedblock--timeouts"></a>
-### Nested Schema for `timeouts`
-
-Optional:
-
-- **create** (String)
-- **delete** (String)
-- **read** (String)
-- **update** (String)
 
 

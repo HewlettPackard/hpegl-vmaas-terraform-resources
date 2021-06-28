@@ -1,7 +1,7 @@
 // (C) Copyright 2021 Hewlett Packard Enterprise Development LP
 
 //go:generate terraform fmt -recursive ./examples/
-//go:generate tfplugindocs
+//go:generate go run github.com/hashicorp/terraform-plugin-docs/cmd/tfplugindocs
 
 package main
 
