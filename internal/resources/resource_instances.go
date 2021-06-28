@@ -4,7 +4,6 @@ package resources
 
 import (
 	"context"
-	"log"
 	"net/http"
 	"time"
 
@@ -333,7 +332,6 @@ func instanceCreateContext(ctx context.Context, d *schema.ResourceData, meta int
 }
 
 func instanceReadContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	log.Print("[INFO] this a log")
 	c, err := client.GetClientFromMetaMap(meta)
 	if err != nil {
 		return diag.FromErr(err)
@@ -362,7 +360,7 @@ func instanceDeleteContext(ctx context.Context, d *schema.ResourceData, meta int
 	deleteStateConf := resource.StateChangeConf{
 		Delay:      instancedeleteRetryDelay,
 		Pending:    []string{"deleting"},
-		Target:     []string{"deleted"},
+		Target:     []string{"deleted", "Failed"},
 		Timeout:    instancedeleteRetryTimeout,
 		MinTimeout: instancedeleteRetryMinTimeout,
 		Refresh: func() (result interface{}, state string, err error) {
@@ -370,9 +368,9 @@ func instanceDeleteContext(ctx context.Context, d *schema.ResourceData, meta int
 				// Check for status 404
 				statusCode := utils.GetStatusCode(err)
 				if statusCode == http.StatusNotFound {
-					return nil, "deleted", nil
+					return d.Get("name"), "deleted", nil
 				}
-				return nil, "deleting", err
+				return nil, "Failed", err
 			}
 
 			return d.Get("name"), "deleting", nil
