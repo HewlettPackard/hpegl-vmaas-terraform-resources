@@ -370,6 +370,7 @@ func instanceDeleteContext(ctx context.Context, d *schema.ResourceData, meta int
 				if statusCode == http.StatusNotFound {
 					return d.Get("name"), "deleted", nil
 				}
+
 				return nil, "Failed", err
 			}
 
@@ -381,6 +382,7 @@ func instanceDeleteContext(ctx context.Context, d *schema.ResourceData, meta int
 		return diag.FromErr(err)
 	}
 	data.SetID("")
+
 	return nil
 }
 
