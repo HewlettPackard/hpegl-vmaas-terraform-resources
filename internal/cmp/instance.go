@@ -257,7 +257,6 @@ func (i *instance) Delete(ctx context.Context, d *utils.Data) error {
 	if !deleResp.Success {
 		return fmt.Errorf("%s", deleResp.Message)
 	}
-	// d.SetID("")
 
 	// post check
 	return d.Error()
