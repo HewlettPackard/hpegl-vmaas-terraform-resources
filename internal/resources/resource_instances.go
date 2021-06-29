@@ -4,7 +4,7 @@ package resources
 
 import (
 	"context"
-	"log"
+	"net/http"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -16,12 +16,18 @@ import (
 )
 
 const (
+	// create
 	instanceCreateRetryTimeout    = 10 * time.Minute
 	instanceCreateRetryDelay      = 60 * time.Second
 	instanceCreateRetryMinTimeout = 30 * time.Second
+	// update
 	instanceUpdateRetryTimeout    = 10 * time.Minute
 	instanceUpdateRetryDelay      = 15 * time.Second
 	instanceUpdateRetryMinTimeout = 15 * time.Second
+	// delete
+	instancedeleteRetryDelay      = 15 * time.Second
+	instancedeleteRetryTimeout    = 60 * time.Second
+	instancedeleteRetryMinTimeout = 15 * time.Second
 )
 
 func Instances() *schema.Resource {
@@ -329,7 +335,6 @@ func instanceCreateContext(ctx context.Context, d *schema.ResourceData, meta int
 }
 
 func instanceReadContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	log.Print("[INFO] this a log")
 	c, err := client.GetClientFromMetaMap(meta)
 	if err != nil {
 		return diag.FromErr(err)
@@ -357,6 +362,32 @@ func instanceDeleteContext(ctx context.Context, d *schema.ResourceData, meta int
 		return diag.FromErr(err)
 	}
 
+	deleteStateConf := resource.StateChangeConf{
+		Delay:      instancedeleteRetryDelay,
+		Pending:    []string{"deleting"},
+		Target:     []string{"deleted", "Failed"},
+		Timeout:    instancedeleteRetryTimeout,
+		MinTimeout: instancedeleteRetryMinTimeout,
+		Refresh: func() (result interface{}, state string, err error) {
+			if err := c.CmpClient.Instance.Read(ctx, data); err != nil {
+				// Check for status 404
+				statusCode := utils.GetStatusCode(err)
+				if statusCode == http.StatusNotFound {
+					return d.Get("name"), "deleted", nil
+				}
+
+				return nil, "Failed", err
+			}
+
+			return d.Get("name"), "deleting", nil
+		},
+	}
+	_, err = deleteStateConf.WaitForStateContext(ctx)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	data.SetID("")
+
 	return nil
 }
 
@@ -372,7 +403,7 @@ func instanceUpdateContext(ctx context.Context, d *schema.ResourceData, meta int
 		return diag.FromErr(err)
 	}
 	// Wait for the status to be running
-	createStateConf := resource.StateChangeConf{
+	updateStateConf := resource.StateChangeConf{
 		Delay:      instanceUpdateRetryDelay,
 		Pending:    []string{utils.StateResizing},
 		Target:     []string{utils.StateRunning, utils.StateStopped, utils.StateSuspended},
@@ -387,7 +418,7 @@ func instanceUpdateContext(ctx context.Context, d *schema.ResourceData, meta int
 			return d.Get("name"), data.GetString("status"), nil
 		},
 	}
-	_, err = createStateConf.WaitForStateContext(ctx)
+	_, err = updateStateConf.WaitForStateContext(ctx)
 	if err != nil {
 		return diag.FromErr(err)
 	}
