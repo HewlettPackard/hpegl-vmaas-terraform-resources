@@ -5,7 +5,6 @@ package acceptancetest
 import (
 	"context"
 	"fmt"
-	"log"
 	"math/rand"
 	"net/http"
 	"strconv"
@@ -82,10 +81,7 @@ func testVmaasInstanceDestroy(name string) resource.TestCheckFunc {
 
 		statusCode := utils.GetStatusCode(err)
 		if statusCode != http.StatusNotFound {
-			// Don't do anything now. As of now delete will not wait for instance got completely
-			// deleted and will return 200 in get-instance.
-			log.Printf("Expected %d status code, but got %d", http.StatusNotFound, statusCode)
-			// return fmt.Errorf("Expected %d error, but got nil", 404)
+			return fmt.Errorf("Expected %d statuscode, but got %d", 404, statusCode)
 		}
 
 		return nil
