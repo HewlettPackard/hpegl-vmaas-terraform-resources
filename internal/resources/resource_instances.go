@@ -317,7 +317,6 @@ func instanceCreateContext(ctx context.Context, d *schema.ResourceData, meta int
 		Timeout:    instanceCreateRetryTimeout,
 		MinTimeout: instanceCreateRetryMinTimeout,
 		Refresh: func() (result interface{}, state string, err error) {
-
 			client.SetScmClientToken(&ctx, meta)
 			if err := c.CmpClient.Instance.Read(ctx, data); err != nil {
 				return nil, "", err

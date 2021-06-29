@@ -100,6 +100,7 @@ func GetClientFromMetaMap(meta interface{}) (*Client, error) {
 // the meta argument passed-in by terraform and execute it with the context ctx
 func GetToken(ctx context.Context, meta interface{}) (string, error) {
 	trf := meta.(map[string]interface{})[common.TokenRetrieveFunctionKey].(retrieve.TokenRetrieveFuncCtx)
+
 	return trf(ctx)
 }
 
@@ -110,7 +111,6 @@ func SetScmClientToken(ctx *context.Context, meta interface{}) {
 	if err != nil {
 		log.Printf("[WARN] Unable to fetch token for SCM client: %s", err)
 	} else {
- 		*ctx = context.WithValue(*ctx, api_client.ContextAccessToken, token)
+		*ctx = context.WithValue(*ctx, api_client.ContextAccessToken, token)
 	}
 }
-
