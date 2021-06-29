@@ -5,6 +5,7 @@ package client
 import (
 	"context"
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/hpe-hcss/hpegl-provider-lib/pkg/token/common"
@@ -100,4 +101,15 @@ func GetClientFromMetaMap(meta interface{}) (*Client, error) {
 func GetToken(ctx context.Context, meta interface{}) (string, error) {
 	trf := meta.(map[string]interface{})[common.TokenRetrieveFunctionKey].(retrieve.TokenRetrieveFuncCtx)
 	return trf(ctx)
+}
+
+// SetScmClientToken fetches and sets the token  in context for scm client.
+// Provided the client id and secret in provider
+func SetScmClientToken(ctx context.Context, meta interface{}) {
+	token, err := GetToken(ctx, meta)
+	if err != nil {
+		log.Printf("[WARN] Error in getting token using SCM client: %s", err)
+	} else {
+ 		ctx = context.WithValue(ctx, api_client.ContextAccessToken, token)
+	}
 }

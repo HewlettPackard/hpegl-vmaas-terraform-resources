@@ -46,7 +46,7 @@ func datastoreReadContext(ctx context.Context, d *schema.ResourceData, meta inte
 		return diag.FromErr(err)
 	}
 
-	utils.SetScmClientToken(ctx, meta)
+	client.SetScmClientToken(ctx, meta)
 	data := utils.NewData(d)
 	err = c.CmpClient.Datastore.Read(ctx, data)
 	if err != nil {
