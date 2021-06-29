@@ -51,7 +51,7 @@ func networkInterfaceReadContext(ctx context.Context, d *schema.ResourceData, me
 		return diag.FromErr(err)
 	}
 
-	client.SetScmClientToken(ctx, meta)
+	client.SetScmClientToken(&ctx, meta)
 	data := utils.NewData(d)
 	err = c.CmpClient.NetworkInterface.Read(ctx, data)
 	if err != nil {

@@ -78,7 +78,7 @@ func snapshotCreateContext(ctx context.Context, d *schema.ResourceData, meta int
 		return diag.FromErr(err)
 	}
 
-	client.SetScmClientToken(ctx, meta)
+	client.SetScmClientToken(&ctx, meta)
 	data := utils.NewData(d)
 	if err := c.CmpClient.Snapshot.Create(ctx, data); err != nil {
 		return diag.FromErr(err)
@@ -92,7 +92,7 @@ func snapshotCreateContext(ctx context.Context, d *schema.ResourceData, meta int
 		Timeout:    snapshotRetryTimeout,
 		MinTimeout: snapshotRetryMinTimeout,
 		Refresh: func() (result interface{}, state string, err error) {
-			client.SetScmClientToken(ctx, meta)
+			client.SetScmClientToken(&ctx, meta)
 			if err := c.CmpClient.Snapshot.Read(ctx, data); err != nil {
 				return nil, "", err
 			}
@@ -114,7 +114,7 @@ func snapshotReadContext(ctx context.Context, d *schema.ResourceData, meta inter
 		return diag.FromErr(err)
 	}
 
-	client.SetScmClientToken(ctx, meta)
+	client.SetScmClientToken(&ctx, meta)
 	data := utils.NewData(d)
 	err = c.CmpClient.Snapshot.Read(ctx, data)
 	if err != nil {
@@ -130,7 +130,7 @@ func snapshotDeleteContext(ctx context.Context, d *schema.ResourceData, meta int
 		return diag.FromErr(err)
 	}
 
-	client.SetScmClientToken(ctx, meta)
+	client.SetScmClientToken(&ctx, meta)
 	data := utils.NewData(d)
 	err = c.CmpClient.Snapshot.Delete(ctx, data)
 	if err != nil {
