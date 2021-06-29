@@ -45,6 +45,8 @@ func resourcePoolReadContext(ctx context.Context, d *schema.ResourceData, meta i
 	if err != nil {
 		return diag.FromErr(err)
 	}
+
+	utils.SetScmClientToken(ctx, meta)
 	data := utils.NewData(d)
 	err = c.CmpClient.ResourcePool.Read(ctx, data)
 	if err != nil {

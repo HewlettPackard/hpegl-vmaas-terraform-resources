@@ -45,6 +45,8 @@ func environmentReadContext(ctx context.Context, d *schema.ResourceData, meta in
 	if err != nil {
 		return diag.FromErr(err)
 	}
+
+	utils.SetScmClientToken(ctx, meta)
 	data := utils.NewData(d)
 	err = c.CmpClient.Environment.Read(ctx, data)
 	if err != nil {
