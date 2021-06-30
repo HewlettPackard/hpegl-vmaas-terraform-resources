@@ -36,13 +36,13 @@ type Client struct {
 // Get env configurations for VmaaS services
 func getHeaders(token, location, spaceName string) map[string]string {
 	header := make(map[string]string)
+	serviceURL = constants.ServiceURL
 	if strings.ToLower(os.Getenv("TF_ACC")) == "true" {
 		serviceURL = constants.AccServiceURL
 		header["subject"] = os.Getenv("CMP_SUBJECT")
-	} else if strings.ToLower(os.Getenv("SERVICE_ACCOUNT")) == "intg" {
+	}
+	if strings.ToLower(os.Getenv("SERVICE_ACCOUNT")) == "intg" {
 		serviceURL = constants.IntgServiceURL
-	} else {
-		serviceURL = constants.ServiceURL
 	}
 	header["Authorization"] = token
 	header["location"] = location
