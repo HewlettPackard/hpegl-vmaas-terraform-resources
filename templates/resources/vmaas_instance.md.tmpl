@@ -1,0 +1,50 @@
+---
+layout: ""
+page_title: "hpegl_vmaas_instance Resource - vmaas-terraform-resources"
+description: |-
+  {{ .Description | plainmarkdown | trimspace | prefixlines "  " }}
+---
+
+# Resource `hpegl_vmaas_instance`
+
+{{ .Description | trimspace }}
+
+`hpegl_vmaas_instance` resource support instance creation as well cloning an existing
+instance.
+
+-> Upon creating an instance if you are choosing instance type as `vmware` then
+  `template_id` is required. If not provided terraform will return error on runtime
+
+For creating an instance please refer following examples.
+
+~> Volume name should be unique. But terraform will not throw any error if same
+  volume name is provided but unexpected behavior can be expected upon update operations.
+
+
+## Example usage for creating new instance with only required attributes
+
+{{tffile "examples/resources/hpegl_vmaas_instance/minimal.tf"}}
+
+-> `power` attribute is supported upon creating an instance. But only `poweron`  operation is supported
+    while creating an instance.
+
+## Example usage for creating new instance with all possible attributes
+
+{{tffile "examples/resources/hpegl_vmaas_instance/all_options.tf"}}
+
+You can also create instance by cloning from an existing instance. To do so use `clone` attribute
+and provide `source_instance_id` along with it
+
+~> While cloning an instance you need to make sure that the Primary volume and Primary Network should
+  be the same as the **parent instance**. Terraform will not return any error but cloning an instance with
+  updated Primary volume/Network may result parent instance goes into failed state
+
+Cloned instance can have all the possible attributes (same as create new instance). The only difference will be
+the additional `clone` attribute.
+
+## Example usage for creating cloned instance
+
+{{tffile "examples/resources/hpegl_vmaas_instance/clone.tf"}}
+
+
+{{ .SchemaMarkdown | trimspace }}
