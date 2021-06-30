@@ -8,9 +8,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/plugin"
-
 	"github.com/hpe-hcss/hpegl-provider-lib/pkg/provider"
-
+	"github.com/hpe-hcss/hpegl-provider-lib/pkg/token/common"
+	"github.com/hpe-hcss/hpegl-provider-lib/pkg/token/retrieve"
+	"github.com/hpe-hcss/hpegl-provider-lib/pkg/token/serviceclient"
 	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/client"
 	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/resources"
 )
@@ -26,9 +27,18 @@ func providerConfigure(p *schema.Provider) schema.ConfigureContextFunc { // noli
 			return nil, diag.Errorf("error in creating client: %s", err)
 		}
 
+		// Initialise token handler
+		h, err := serviceclient.NewHandler(d)
+		if err != nil {
+			return nil, diag.FromErr(err)
+		}
+
 		// Returning a map[string]interface{} with the Client from pkg.client at the
 		// key specified in that repo to ensure compatibility with the hpegl terraform
 		// provider
-		return map[string]interface{}{client.InitialiseClient{}.ServiceName(): cli}, nil
+		return map[string]interface{}{
+			client.InitialiseClient{}.ServiceName(): cli,
+			common.TokenRetrieveFunctionKey:         retrieve.NewTokenRetrieveFunc(h),
+		}, nil
 	}
 }
