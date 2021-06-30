@@ -3,10 +3,13 @@
 package client
 
 import (
+	"context"
 	"fmt"
+	"log"
 	"os"
 
-	"github.com/hpe-hcss/hpegl-provider-lib/pkg/gltform"
+	"github.com/hpe-hcss/hpegl-provider-lib/pkg/token/common"
+	"github.com/hpe-hcss/hpegl-provider-lib/pkg/token/retrieve"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hpe-hcss/hpegl-provider-lib/pkg/client"
@@ -67,15 +70,6 @@ func (i InitialiseClient) NewClient(r *schema.ResourceData) (interface{}, error)
 	// Create VMaas Client
 	client := new(Client)
 
-	// Token to read from gltform from hpegl-lib
-	if token == "" {
-		gltoken, err := gltform.GetGLConfig()
-		if err != nil {
-			return nil, fmt.Errorf("error reading GL token file:  %w", err)
-		}
-		token = gltoken.Token
-	}
-
 	cfg := api_client.Configuration{
 		Host:          serviceURL,
 		DefaultHeader: getHeaders(token, location, spaceName),
@@ -100,4 +94,23 @@ func GetClientFromMetaMap(meta interface{}) (*Client, error) {
 	}
 
 	return cli.(*Client), nil
+}
+
+// GetToken is a convenience function used by provider code to extract retrieve.TokenRetrieveFuncCtx from
+// the meta argument passed-in by terraform and execute it with the context ctx
+func GetToken(ctx context.Context, meta interface{}) (string, error) {
+	trf := meta.(map[string]interface{})[common.TokenRetrieveFunctionKey].(retrieve.TokenRetrieveFuncCtx)
+
+	return trf(ctx)
+}
+
+// SetScmClientToken fetches and sets the token  in context for scm client.
+// Provided the client id and secret in provider
+func SetScmClientToken(ctx *context.Context, meta interface{}) {
+	token, err := GetToken(*ctx, meta)
+	if err != nil {
+		log.Printf("[WARN] Unable to fetch token for SCM client: %s", err)
+	} else {
+		*ctx = context.WithValue(*ctx, api_client.ContextAccessToken, token)
+	}
 }
