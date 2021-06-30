@@ -7,12 +7,13 @@ import (
 	"fmt"
 	"log"
 	"os"
-
-	"github.com/hewlettpackard/hpegl-provider-lib/pkg/token/common"
-	"github.com/hewlettpackard/hpegl-provider-lib/pkg/token/retrieve"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hewlettpackard/hpegl-provider-lib/pkg/client"
+	"github.com/hewlettpackard/hpegl-provider-lib/pkg/token/common"
+	"github.com/hewlettpackard/hpegl-provider-lib/pkg/token/retrieve"
+
 	api_client "github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
 	cmp_client "github.com/hpe-hcss/vmaas-terraform-resources/internal/cmp"
 	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/constants"
@@ -35,11 +36,13 @@ type Client struct {
 // Get env configurations for VmaaS services
 func getHeaders(token, location, spaceName string) map[string]string {
 	header := make(map[string]string)
-	if os.Getenv("TF_ACC") == "true" {
+	serviceURL = constants.ServiceURL
+	if strings.ToLower(os.Getenv("TF_ACC")) == "true" {
 		serviceURL = constants.AccServiceURL
 		header["subject"] = os.Getenv("CMP_SUBJECT")
-	} else {
-		serviceURL = constants.ServiceURL
+	}
+	if strings.ToLower(os.Getenv("SERVICE_ACCOUNT")) == "intg" {
+		serviceURL = constants.IntgServiceURL
 	}
 	header["Authorization"] = token
 	header["location"] = location
