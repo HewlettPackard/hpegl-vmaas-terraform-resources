@@ -4,3 +4,4 @@ vendor/
 .vscode
 build
 doc
+templates/
