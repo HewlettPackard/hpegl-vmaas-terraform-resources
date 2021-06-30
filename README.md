@@ -75,14 +75,14 @@ The repo follows golang standards:
 ## pkg directory
 
 The pkg directory contains implementations of the following interfaces from
-[hpegl-provider-lib](https://github.com/hpe-hcss/hpegl-provider-lib):
+[hpegl-provider-lib](https://github.com/hewlettpackard/hpegl-provider-lib):
 * pkg/client: <br>
-    [client.Initialisation](https://github.com/hpe-hcss/hpegl-provider-lib/blob/bcedebfa36825c4e78b4df73ecaa0e2ed77b92e2/pkg/client/client.go#L9)
+    [client.Initialisation](https://github.com/hewlettpackard/hpegl-provider-lib/blob/bcedebfa36825c4e78b4df73ecaa0e2ed77b92e2/pkg/client/client.go#L9)
     which is <br>
     ```go
     package client
     
-    import "github.com/hpe-hcss/hpegl-provider-lib/pkg/provider"
+    import "github.com/hewlettpackard/hpegl-provider-lib/pkg/provider"
     
     // Initialisation interface, service Client creation code will have to satisfy this interface
     // The hpegl provider will iterate over a slice of these to initialise service clients
@@ -97,7 +97,7 @@ The pkg directory contains implementations of the following interfaces from
     ```
 
 * pkg/resources: <br>
-    [registration.ServiceRegistration](https://github.com/hpe-hcss/hpegl-provider-lib/blob/bcedebfa36825c4e78b4df73ecaa0e2ed77b92e2/pkg/registration/service_registration.go#L9)
+    [registration.ServiceRegistration](https://github.com/hewlettpackard/hpegl-provider-lib/blob/bcedebfa36825c4e78b4df73ecaa0e2ed77b92e2/pkg/registration/service_registration.go#L9)
     which is: <br>
     ```go
     package registration
@@ -129,7 +129,7 @@ This is the slice that is created in the hpegl provider:
 package clients
 
 import (
-	"github.com/hpe-hcss/hpegl-provider-lib/pkg/client"
+	"github.com/hewlettpackard/hpegl-provider-lib/pkg/client"
 
 	clicaas "github.com/hpe-hcss/poc-caas-terraform-resources/pkg/client"
 )
@@ -149,7 +149,7 @@ package client
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 
-	"github.com/hpe-hcss/hpegl-provider-lib/pkg/provider"
+	"github.com/hewlettpackard/hpegl-provider-lib/pkg/provider"
 
 	quake "github.com/quattronetworks/quake-client/pkg/terraform/configuration"
 
@@ -199,7 +199,7 @@ Note the following features of pkg/client:
     down as part of the provider.ConfigData struct
   
 * The provider.ConfigData struct is defined in
-    [hpegl-provider-lib](https://github.com/hpe-hcss/hpegl-provider-lib/blob/bcedebfa36825c4e78b4df73ecaa0e2ed77b92e2/pkg/provider/provider.go#L15).
+    [hpegl-provider-lib](https://github.com/hewlettpackard/hpegl-provider-lib/blob/bcedebfa36825c4e78b4df73ecaa0e2ed77b92e2/pkg/provider/provider.go#L15).
     This struct is passed into NewClient() and contains all of the hpegl provider configuration
     information, which can be used as necessary in NewClient()
   
@@ -230,7 +230,7 @@ This is the slice that is created in the hpegl provider:
 package resources
 
 import (
-	"github.com/hpe-hcss/hpegl-provider-lib/pkg/registration"
+	"github.com/hewlettpackard/hpegl-provider-lib/pkg/registration"
 
 	resquake "github.com/quattronetworks/quake-client/pkg/terraform/registration"
 
@@ -246,7 +246,7 @@ func SupportedServices() []registration.ServiceRegistration {
 ```
 
 The code that iterates over the slice is contained in
-[hpe-provider-lib NewProviderFunc](https://github.com/hpe-hcss/hpegl-provider-lib/blob/bcedebfa36825c4e78b4df73ecaa0e2ed77b92e2/pkg/provider/provider.go#L34):
+[hpe-provider-lib NewProviderFunc](https://github.com/hewlettpackard/hpegl-provider-lib/blob/bcedebfa36825c4e78b4df73ecaa0e2ed77b92e2/pkg/provider/provider.go#L34):
 
 ```go
 // NewProviderFunc is called from hpegl and service-repos to create a plugin.ProviderFunc which is used
@@ -388,7 +388,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/plugin"
 
-	"github.com/hpe-hcss/hpegl-provider-lib/pkg/provider"
+	"github.com/hewlettpackard/hpegl-provider-lib/pkg/provider"
 
 	"github.com/hpe-hcss/poc-caas-terraform-resources/pkg/client"
 	"github.com/hpe-hcss/poc-caas-terraform-resources/pkg/resources"
