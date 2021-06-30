@@ -8,11 +8,11 @@ import (
 	"log"
 	"os"
 
-	"github.com/hpe-hcss/hpegl-provider-lib/pkg/token/common"
-	"github.com/hpe-hcss/hpegl-provider-lib/pkg/token/retrieve"
+	"github.com/hewlettpackard/hpegl-provider-lib/pkg/token/common"
+	"github.com/hewlettpackard/hpegl-provider-lib/pkg/token/retrieve"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/hpe-hcss/hpegl-provider-lib/pkg/client"
+	"github.com/hewlettpackard/hpegl-provider-lib/pkg/client"
 	api_client "github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
 	cmp_client "github.com/hpe-hcss/vmaas-terraform-resources/internal/cmp"
 	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/constants"
