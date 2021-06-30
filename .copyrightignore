@@ -3,7 +3,7 @@
 *.json
 *.toml
 *.crt
+*.tmpl
 go.mod
 go.sum
 Dockerfile.circleci
-templates/
