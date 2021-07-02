@@ -13,10 +13,10 @@ import (
 )
 
 type template struct {
-	tClient *client.VirtualImagesApiService
+	tClient *client.VirtualImagesAPIService
 }
 
-func newTemplate(tClient *client.VirtualImagesApiService) *template {
+func newTemplate(tClient *client.VirtualImagesAPIService) *template {
 	return &template{
 		tClient: tClient,
 	}

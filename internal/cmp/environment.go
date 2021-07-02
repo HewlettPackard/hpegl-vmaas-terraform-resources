@@ -13,10 +13,10 @@ import (
 )
 
 type environment struct {
-	eClient *client.EnvironmentApiService
+	eClient *client.EnvironmentAPIService
 }
 
-func newEnvironment(eClient *client.EnvironmentApiService) *environment {
+func newEnvironment(eClient *client.EnvironmentAPIService) *environment {
 	return &environment{
 		eClient: eClient,
 	}

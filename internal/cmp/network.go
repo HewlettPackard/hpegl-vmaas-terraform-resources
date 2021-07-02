@@ -13,10 +13,10 @@ import (
 )
 
 type network struct {
-	nClient *client.NetworksApiService
+	nClient *client.NetworksAPIService
 }
 
-func newNetwork(nClient *client.NetworksApiService) *network {
+func newNetwork(nClient *client.NetworksAPIService) *network {
 	return &network{nClient: nClient}
 }
 
@@ -40,7 +40,7 @@ func (n *network) Read(ctx context.Context, d *utils.Data) error {
 	for i, n := range networks.Networks {
 		if n.DisplayName == name {
 			isMatch = true
-			d.SetID(networks.Networks[i].Id)
+			d.SetID(networks.Networks[i].ID)
 
 			break
 		}

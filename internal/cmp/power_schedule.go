@@ -13,10 +13,10 @@ import (
 )
 
 type powerSchedule struct {
-	powerScheduleClient *client.PowerSchedulesApiService
+	powerScheduleClient *client.PowerSchedulesAPIService
 }
 
-func newPowerSchedule(powerScheduleClient *client.PowerSchedulesApiService) *powerSchedule {
+func newPowerSchedule(powerScheduleClient *client.PowerSchedulesAPIService) *powerSchedule {
 	return &powerSchedule{
 		powerScheduleClient: powerScheduleClient,
 	}
