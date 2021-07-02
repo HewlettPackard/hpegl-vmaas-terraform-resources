@@ -25,19 +25,19 @@ type Client struct {
 // NewClient returns configured client
 func NewClient(client *apiClient.APIClient, cfg apiClient.Configuration) *Client {
 	return &Client{
-		Instance:      newInstance(&apiClient.InstancesApiService{Client: client, Cfg: cfg}),
-		Snapshot:      newSnapshot(&apiClient.InstancesApiService{Client: client, Cfg: cfg}),
-		Network:       newNetwork(&apiClient.NetworksApiService{Client: client, Cfg: cfg}),
-		Plan:          newPlan(&apiClient.PlansApiService{Client: client, Cfg: cfg}),
-		Group:         newGroup(&apiClient.GroupsApiService{Client: client, Cfg: cfg}),
-		Layout:        newLayout(&apiClient.LibraryApiService{Client: client, Cfg: cfg}),
-		Cloud:         newCloud(&apiClient.CloudsApiService{Client: client, Cfg: cfg}),
-		ResourcePool:  newResourcePool(&apiClient.CloudsApiService{Client: client, Cfg: cfg}),
-		Datastore:     newDatastore(&apiClient.CloudsApiService{Client: client, Cfg: cfg}),
-		PowerSchedule: newPowerSchedule(&apiClient.PowerSchedulesApiService{Client: client, Cfg: cfg}),
-		Template:      newTemplate(&apiClient.VirtualImagesApiService{Client: client, Cfg: cfg}),
-		Environment:   newEnvironment(&apiClient.EnvironmentApiService{Client: client, Cfg: cfg}),
-		NetworkInterface: newNetworkInterface(&apiClient.CloudsApiService{Client: client, Cfg: cfg},
-			&apiClient.ProvisioningApiService{Client: client, Cfg: cfg}),
+		Instance:      newInstance(&apiClient.InstancesAPIService{Client: client, Cfg: cfg}),
+		Snapshot:      newSnapshot(&apiClient.InstancesAPIService{Client: client, Cfg: cfg}),
+		Network:       newNetwork(&apiClient.NetworksAPIService{Client: client, Cfg: cfg}),
+		Plan:          newPlan(&apiClient.PlansAPIService{Client: client, Cfg: cfg}),
+		Group:         newGroup(&apiClient.GroupsAPIService{Client: client, Cfg: cfg}),
+		Layout:        newLayout(&apiClient.LibraryAPIService{Client: client, Cfg: cfg}),
+		Cloud:         newCloud(&apiClient.CloudsAPIService{Client: client, Cfg: cfg}),
+		ResourcePool:  newResourcePool(&apiClient.CloudsAPIService{Client: client, Cfg: cfg}),
+		Datastore:     newDatastore(&apiClient.CloudsAPIService{Client: client, Cfg: cfg}),
+		PowerSchedule: newPowerSchedule(&apiClient.PowerSchedulesAPIService{Client: client, Cfg: cfg}),
+		Template:      newTemplate(&apiClient.VirtualImagesAPIService{Client: client, Cfg: cfg}),
+		Environment:   newEnvironment(&apiClient.EnvironmentAPIService{Client: client, Cfg: cfg}),
+		NetworkInterface: newNetworkInterface(&apiClient.CloudsAPIService{Client: client, Cfg: cfg},
+			&apiClient.ProvisioningAPIService{Client: client, Cfg: cfg}),
 	}
 }

@@ -13,10 +13,10 @@ import (
 )
 
 type cloud struct {
-	cloudClient *client.CloudsApiService
+	cloudClient *client.CloudsAPIService
 }
 
-func newCloud(cloudClient *client.CloudsApiService) *cloud {
+func newCloud(cloudClient *client.CloudsAPIService) *cloud {
 	return &cloud{
 		cloudClient: cloudClient,
 	}

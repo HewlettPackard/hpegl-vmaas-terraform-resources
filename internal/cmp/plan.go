@@ -13,10 +13,10 @@ import (
 )
 
 type plan struct {
-	pClient *client.PlansApiService
+	pClient *client.PlansAPIService
 }
 
-func newPlan(pClient *client.PlansApiService) *plan {
+func newPlan(pClient *client.PlansAPIService) *plan {
 	return &plan{pClient: pClient}
 }
 

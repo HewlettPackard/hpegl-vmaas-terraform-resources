@@ -25,10 +25,10 @@ const (
 // instance implements functions related to cmp instances
 type instance struct {
 	// expose Instance API service to instances related operations
-	iClient *client.InstancesApiService
+	iClient *client.InstancesAPIService
 }
 
-func newInstance(iClient *client.InstancesApiService) *instance {
+func newInstance(iClient *client.InstancesAPIService) *instance {
 	return &instance{
 		iClient: iClient,
 	}
@@ -40,20 +40,20 @@ func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 
 	c := d.GetSMap("config")[0]
 	req := &models.CreateInstanceBody{
-		ZoneId: d.GetJSONNumber("cloud_id"),
+		ZoneID: d.GetJSONNumber("cloud_id"),
 		Instance: &models.CreateInstanceBodyInstance{
 			Name: d.GetString("name"),
 			InstanceType: &models.CreateInstanceBodyInstanceInstanceType{
 				Code: d.GetString("instance_type_code"),
 			},
 			Plan: &models.CreateInstanceBodyInstancePlan{
-				Id: d.GetJSONNumber("plan_id"),
+				ID: d.GetJSONNumber("plan_id"),
 			},
 			Site: &models.CreateInstanceBodyInstanceSite{
-				Id: d.GetInt("group_id"),
+				ID: d.GetInt("group_id"),
 			},
 			Layout: &models.CreateInstanceBodyInstanceLayout{
-				Id: d.GetJSONNumber("layout_id"),
+				ID: d.GetJSONNumber("layout_id"),
 			},
 			HostName:          d.GetString("hostname"),
 			EnvironmentPrefix: d.GetString("env_prefix"),
@@ -154,7 +154,7 @@ func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 	if powerOp != "" && powerOp != utils.PowerOn {
 		return fmt.Errorf("power operation %s is not permitted while creating an instance", powerOp)
 	}
-	d.SetID(getInstanceBody.Id)
+	d.SetID(getInstanceBody.ID)
 
 	// post check
 	return d.Error()
@@ -173,7 +173,7 @@ func (i *instance) Update(ctx context.Context, d *utils.Data) error {
 			Instance: &models.UpdateInstanceBodyInstance{
 				Name: d.GetString("name"),
 				Site: &models.CreateInstanceBodyInstanceSite{
-					Id: d.GetInt("group_id"),
+					ID: d.GetInt("group_id"),
 				},
 				AddTags:           addTags,
 				RemoveTags:        removeTags,
@@ -200,7 +200,7 @@ func (i *instance) Update(ctx context.Context, d *utils.Data) error {
 		resizeReq := &models.ResizeInstanceBody{
 			Instance: &models.ResizeInstanceBodyInstance{
 				Plan: &models.ResizeInstanceBodyInstancePlan{
-					Id: d.GetInt("plan_id"),
+					ID: d.GetInt("plan_id"),
 				},
 			},
 			Volumes: resizeVolume(volumes),
@@ -284,10 +284,10 @@ func (i *instance) Read(ctx context.Context, d *utils.Data) error {
 	volumes := d.GetListMap("volume")
 	d.GetSMap("network")
 	for i := range volumes {
-		volumes[i]["id"] = instance.Instance.Volumes[i].Id
+		volumes[i]["id"] = instance.Instance.Volumes[i].ID
 	}
 	d.Set("volume", volumes)
-	d.SetID(instance.Instance.Id)
+	d.SetID(instance.Instance.ID)
 	d.SetString("status", instance.Instance.Status)
 
 	// post check
@@ -299,10 +299,10 @@ func getVolume(volumes []map[string]interface{}) []models.CreateInstanceBodyVolu
 	logger.Debug(volumes)
 	for i := range volumes {
 		volumesModel = append(volumesModel, models.CreateInstanceBodyVolumes{
-			Id:          -1,
+			ID:          -1,
 			Name:        volumes[i]["name"].(string),
 			Size:        volumes[i]["size"].(int),
-			DatastoreId: volumes[i]["datastore_id"],
+			DatastoreID: volumes[i]["datastore_id"],
 			RootVolume:  volumes[i]["root"].(bool),
 		})
 	}
@@ -316,10 +316,10 @@ func resizeVolume(volumes []map[string]interface{}) []models.ResizeInstanceBodyI
 	logger.Debug(volumes)
 	for i := range volumes {
 		volumesModel = append(volumesModel, models.ResizeInstanceBodyInstanceVolumes{
-			Id:          utils.JSONNumber(volumes[i]["id"]),
+			ID:          utils.JSONNumber(volumes[i]["id"]),
 			Name:        volumes[i]["name"].(string),
 			Size:        volumes[i]["size"].(int),
-			DatastoreId: volumes[i]["datastore_id"],
+			DatastoreID: volumes[i]["datastore_id"],
 			RootVolume:  volumes[i]["root"].(bool),
 		})
 	}
@@ -332,9 +332,9 @@ func getNetwork(networksMap []map[string]interface{}) []models.CreateInstanceBod
 	for _, n := range networksMap {
 		networks = append(networks, models.CreateInstanceBodyNetworkInterfaces{
 			Network: &models.CreateInstanceBodyNetwork{
-				Id: n["id"].(int),
+				ID: n["id"].(int),
 			},
-			NetworkInterfaceTypeId: utils.JSONNumber(n["interface_id"]),
+			NetworkInterfaceTypeID: utils.JSONNumber(n["interface_id"]),
 		})
 	}
 
@@ -343,9 +343,9 @@ func getNetwork(networksMap []map[string]interface{}) []models.CreateInstanceBod
 
 func getConfig(c map[string]interface{}) *models.CreateInstanceBodyConfig {
 	config := &models.CreateInstanceBodyConfig{
-		ResourcePoolId: utils.JSONNumber(c["resource_pool_id"]),
+		ResourcePoolID: utils.JSONNumber(c["resource_pool_id"]),
 		NoAgent:        strconv.FormatBool(c["no_agent"].(bool)),
-		VMwareFolderId: c["vm_folder"].(string),
+		VMwareFolderID: c["vm_folder"].(string),
 		CreateUser:     c["create_user"].(bool),
 		SmbiosAssetTag: c["asset_tag"].(string),
 	}

@@ -13,10 +13,10 @@ import (
 )
 
 type group struct {
-	gClient *client.GroupsApiService
+	gClient *client.GroupsAPIService
 }
 
-func newGroup(gClient *client.GroupsApiService) *group {
+func newGroup(gClient *client.GroupsAPIService) *group {
 	return &group{
 		gClient: gClient,
 	}
@@ -41,7 +41,7 @@ func (g *group) Read(ctx context.Context, d *utils.Data) error {
 	for i, g := range *groups.Groups {
 		if g.Name == name {
 			isMatched = true
-			d.SetID((*groups.Groups)[i].Id)
+			d.SetID((*groups.Groups)[i].ID)
 
 			break
 		}

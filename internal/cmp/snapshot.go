@@ -16,10 +16,10 @@ import (
 // snapshot implements functions related to cmp instance snapshot
 type snapshot struct {
 	// expose Instance API service to instances related operations
-	sClient *client.InstancesApiService
+	sClient *client.InstancesAPIService
 }
 
-func newSnapshot(sClient *client.InstancesApiService) *snapshot {
+func newSnapshot(sClient *client.InstancesAPIService) *snapshot {
 	return &snapshot{
 		sClient: sClient,
 	}

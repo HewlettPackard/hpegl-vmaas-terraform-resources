@@ -13,10 +13,10 @@ import (
 )
 
 type resourcePool struct {
-	rClient *client.CloudsApiService
+	rClient *client.CloudsAPIService
 }
 
-func newResourcePool(rClient *client.CloudsApiService) *resourcePool {
+func newResourcePool(rClient *client.CloudsAPIService) *resourcePool {
 	return &resourcePool{rClient: rClient}
 }
 
