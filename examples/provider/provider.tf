@@ -15,5 +15,8 @@ provider "hpegl" {
     location   = "location"
     space_name = "space_name"
   }
-  iam_token = "iam-token"
+    iam_service_url = "https://iam.us1.greenlake-hpe.com"
+    tenant_id = "<GLC-Tenant-ID>"
+    user_id = "<SCM-Client-ID>"
+    user_secret = "<SCM-Client-Secret>"
 }
