@@ -47,12 +47,10 @@ func (d *Data) err(key, msg string) {
 	d.errors[key] = append(d.errors[key], msg)
 }
 
-func (d *Data) getlistMap(key string, src interface{}) []map[string]interface{} {
+func (d *Data) getlistMap(src interface{}) []map[string]interface{} {
 	list, ok := src.([]interface{})
 	if !ok {
-		d.err(key, ErrInvalidType)
-
-		return nil
+		return d.getSMap(src)
 	}
 	dst := make([]map[string]interface{}, 0, len(list))
 	for _, s := range list {
@@ -73,17 +71,17 @@ func (d *Data) GetListMap(key string) []map[string]interface{} {
 		return nil
 	}
 
-	return d.getlistMap(key, src)
+	return d.getlistMap(src)
 }
 
 func (d *Data) GetChangedListMap(key string) ([]map[string]interface{}, []map[string]interface{}) {
 	org, new := d.d.GetChange(key)
 	var orgmap, newmap []map[string]interface{}
 	if org != nil {
-		orgmap = d.getlistMap(key, org)
+		orgmap = d.getlistMap(org)
 	}
 	if new != nil {
-		newmap = d.getlistMap(key, new)
+		newmap = d.getlistMap(new)
 	}
 
 	return orgmap, newmap
@@ -209,11 +207,7 @@ func (d *Data) getOk(key string, ignore []bool) (interface{}, bool) {
 }
 
 // GetSMap for get map for a Set
-func (d *Data) GetSMap(key string, ignore ...bool) []map[string]interface{} {
-	src, ok := d.getOk(key, ignore)
-	if !ok {
-		return nil
-	}
+func (d *Data) getSMap(src interface{}) []map[string]interface{} {
 	set, ok := src.(*schema.Set)
 	if !ok {
 		return nil

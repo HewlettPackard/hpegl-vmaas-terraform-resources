@@ -38,7 +38,7 @@ func newInstance(iClient *client.InstancesAPIService) *instance {
 func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 	logger.Debug("Creating new instance")
 
-	c := d.GetSMap("config")[0]
+	c := d.GetListMap("config")[0]
 	req := &models.CreateInstanceBody{
 		ZoneID: d.GetJSONNumber("cloud_id"),
 		Instance: &models.CreateInstanceBodyInstance{
@@ -63,7 +63,7 @@ func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 		Evars:             getEvars(d.GetMap("evars")),
 		Labels:            d.GetStringList("labels"),
 		Volumes:           getVolume(d.GetListMap("volume")),
-		NetworkInterfaces: getNetwork(d.GetSMap("network")),
+		NetworkInterfaces: getNetwork(d.GetListMap("network")),
 		Config:            getConfig(c),
 		Tags:              getTags(d.GetMap("tags")),
 		LayoutSize:        d.GetInt("scale"),
@@ -78,7 +78,7 @@ func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 		}
 		req.Config.Template = templateID.(int)
 	}
-	cData := d.GetSMap("clone", true)
+	cData := d.GetListMap("clone")
 	// Pre check
 	if err := d.Error(); err != nil {
 		return err
@@ -282,7 +282,6 @@ func (i *instance) Read(ctx context.Context, d *utils.Data) error {
 	instance := resp.(models.GetInstanceResponse)
 
 	volumes := d.GetListMap("volume")
-	d.GetSMap("network")
 	for i := range volumes {
 		volumes[i]["id"] = instance.Instance.Volumes[i].ID
 	}
