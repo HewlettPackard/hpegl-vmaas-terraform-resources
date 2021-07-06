@@ -9,12 +9,12 @@ description: |-
 
 {{ .Description | trimspace }}
 
-~> Snapshot for an instance created cannot be deleted via terraform. End user
-    need to login into GLC portal and clear the snapshot. Once deleted you also
-    need to delete the snapshot entry from you `tf` file.
+~> Snapshot deletion from terraform is not supported (yet). End user need to login into GLC portal
+  to delete the snapshot. Once deleted, the snapshot entry should be removed from corresponding `tf` file.
 
-~> Snapshot will be deleted in case of any reconfigure happens in morpheus. such as
-    volumes/Network update etc. Once snapshot is deleted entry should be removed from
-    tf file
+~> Snapshot will be deleted in if there is any modification to instance (such as
+    volumes and/or Network update).Also snapshot will be deleted if the corresponding
+    instance gets deleted. Once snapshot is deleted (through above cases mentioned)
+    corresponding snapshot entry should be removed from `tf` file.
 
 {{ .SchemaMarkdown | trimspace }}

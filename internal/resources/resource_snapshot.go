@@ -66,7 +66,7 @@ func Snapshots() *schema.Resource {
 			Create: schema.DefaultTimeout(snapshotAvailableTimeout),
 			Read:   schema.DefaultTimeout(snapshotReadTimeout),
 		},
-		Description: `Snapshot resource facilitates creating,
+		Description: `Snapshot resource facilitates creating
 			VMware snapshot of insatnce.For creating an VMware snapshot of instance,
 			provide a unique name and all the Mandatory(Required) parameters.`,
 	}

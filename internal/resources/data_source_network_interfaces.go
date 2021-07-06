@@ -33,7 +33,7 @@ func NetworkInterfaceData() *schema.Resource {
 		ReadContext: networkInterfaceReadContext,
 		Description: `The ` + DSNetworkInterface + ` data source can be used to discover the ID of a hpegl vmaas NetworkInterface.
 		This can then be used with resources or data sources that require a ` + DSNetworkInterface + `,
-		such as the ` + ResInstance + ` resources etc.`,
+		such as the ` + ResInstance + ` resource.`,
 		Timeouts: &schema.ResourceTimeout{
 			Read: schema.DefaultTimeout(readTimeout),
 		},

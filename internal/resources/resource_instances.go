@@ -273,8 +273,9 @@ func Instances() *schema.Resource {
 			"power": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Description: `Power operation for an instance. Allower values are
-				'poweroff','poweron','restart' and 'suspend'. On creating an instance only 'poweron' operation is allowed.`,
+				Description: `Power operation for an instance. Power attribute can be
+				use to update power state of an existing instance. Allowed power operations are
+				'poweroff','poweron','restart' and 'suspend'. Upon creating an instance only 'poweron' operation is allowed.`,
 				ValidateFunc: validation.StringInSlice([]string{
 					utils.PowerOn, utils.PowerOff, utils.Restart, utils.Suspend,
 				}, false),

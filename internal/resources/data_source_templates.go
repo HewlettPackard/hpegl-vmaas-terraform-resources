@@ -23,7 +23,7 @@ func TemplateData() *schema.Resource {
 		ReadContext: templateReadContext,
 		Description: `The ` + DSTemplate + ` data source can be used to discover the ID of a hpegl vmaas template.
 		This can then be used with resources or data sources that require a ` + DSTemplate + `,
-		such as the ` + ResInstance + ` resources etc.`,
+		such as the ` + ResInstance + ` resource.`,
 		Timeouts: &schema.ResourceTimeout{
 			Read: schema.DefaultTimeout(readTimeout),
 		},

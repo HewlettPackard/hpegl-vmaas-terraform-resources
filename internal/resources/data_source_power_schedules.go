@@ -23,7 +23,7 @@ func PowerScheduleData() *schema.Resource {
 		ReadContext: powerScheduleReadContext,
 		Description: `The ` + DSPowerSchedule + ` data source can be used to discover the ID of a hpegl vmaas powerSchedule.
 		This can then be used with resources or data sources that require a ` + DSPowerSchedule + `,
-		such as the ` + ResInstance + ` resources etc.`,
+		such as the ` + ResInstance + ` resource.`,
 		Timeouts: &schema.ResourceTimeout{
 			Read: schema.DefaultTimeout(readTimeout),
 		},
