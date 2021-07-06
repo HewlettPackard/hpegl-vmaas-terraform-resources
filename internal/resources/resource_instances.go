@@ -68,7 +68,7 @@ func Instances() *schema.Resource {
 				Description: "Unique code used to identify the instance type.",
 			},
 			"network": {
-				Type:        schema.TypeSet,
+				Type:        schema.TypeList,
 				ForceNew:    true,
 				Required:    true,
 				MinItems:    1,
@@ -106,15 +106,16 @@ func Instances() *schema.Resource {
 							Description: "Size of the volume in GB.",
 						},
 						"datastore_id": {
-							Type:        schema.TypeString,
-							Required:    true,
-							Description: f(generalDDesc, "datastore"),
+							Type:             schema.TypeString,
+							Required:         true,
+							Description:      f(generalDDesc, "datastore"),
+							DiffSuppressFunc: utils.SkipField(),
 						},
 						"root": {
-							Type:        schema.TypeBool,
-							Default:     true,
-							Optional:    true,
-							Description: "If true then the given volume as considered as root volume.",
+							Type:             schema.TypeBool,
+							Optional:         true,
+							DiffSuppressFunc: utils.SkipField(),
+							Description:      "If true then the given volume as considered as root volume.",
 						},
 						"id": {
 							Computed:    true,
@@ -195,7 +196,6 @@ func Instances() *schema.Resource {
 						"no_agent": {
 							Type:        schema.TypeBool,
 							Optional:    true,
-							Default:     true,
 							Description: "If true agent will not be installed on the instance.",
 						},
 						"vm_folder": {
@@ -206,7 +206,6 @@ func Instances() *schema.Resource {
 						"create_user": {
 							Type:        schema.TypeBool,
 							Optional:    true,
-							Default:     false,
 							Description: "If true new user will be created",
 						},
 						"asset_tag": {
@@ -221,7 +220,6 @@ func Instances() *schema.Resource {
 				Type:        schema.TypeInt,
 				ForceNew:    true,
 				Optional:    true,
-				Default:     1,
 				Description: "Number of nodes within an instance.",
 			},
 			"evars": {
