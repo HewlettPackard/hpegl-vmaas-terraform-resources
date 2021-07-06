@@ -14,11 +14,11 @@ import (
 )
 
 type networkInterface struct {
-	cClient *client.CloudsApiService
-	pClient *client.ProvisioningApiService
+	cClient *client.CloudsAPIService
+	pClient *client.ProvisioningAPIService
 }
 
-func newNetworkInterface(cClient *client.CloudsApiService, pClient *client.ProvisioningApiService) *networkInterface {
+func newNetworkInterface(cClient *client.CloudsAPIService, pClient *client.ProvisioningAPIService) *networkInterface {
 	return &networkInterface{
 		cClient: cClient,
 		pClient: pClient,

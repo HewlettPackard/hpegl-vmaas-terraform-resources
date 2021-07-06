@@ -73,7 +73,7 @@ func testVmaasInstanceDestroy(name string) resource.TestCheckFunc {
 		}
 
 		apiClient, cfg := getAPIClient()
-		iClient := api_client.InstancesApiService{
+		iClient := api_client.InstancesAPIService{
 			Client: apiClient,
 			Cfg:    cfg,
 		}

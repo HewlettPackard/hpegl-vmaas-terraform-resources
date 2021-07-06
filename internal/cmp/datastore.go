@@ -13,10 +13,10 @@ import (
 )
 
 type datastore struct {
-	nClient *client.CloudsApiService
+	nClient *client.CloudsAPIService
 }
 
-func newDatastore(nClient *client.CloudsApiService) *datastore {
+func newDatastore(nClient *client.CloudsAPIService) *datastore {
 	return &datastore{nClient: nClient}
 }
 

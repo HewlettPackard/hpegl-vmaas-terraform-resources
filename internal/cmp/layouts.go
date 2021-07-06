@@ -13,10 +13,10 @@ import (
 )
 
 type layout struct {
-	gClient *client.LibraryApiService
+	gClient *client.LibraryAPIService
 }
 
-func newLayout(gClient *client.LibraryApiService) *layout {
+func newLayout(gClient *client.LibraryAPIService) *layout {
 	return &layout{
 		gClient: gClient,
 	}
