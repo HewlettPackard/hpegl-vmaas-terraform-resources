@@ -5,6 +5,7 @@ package cmp
 import (
 	"context"
 	"errors"
+	"fmt"
 	"strconv"
 
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
@@ -72,6 +73,9 @@ func (s *snapshot) Read(ctx context.Context, d *utils.Data) error {
 		return err
 	}
 	snapshots := resp.(models.ListSnapshotResponse)
+	if len(snapshots.Snapshots) == 0 {
+		return fmt.Errorf("empty snapshot list, is the ID correct")
+	}
 	d.SetID(strconv.Itoa(snapshots.Snapshots[0].ID))
 	d.SetString("status", snapshots.Snapshots[0].Status)
 	d.SetString("timestamp", snapshots.Snapshots[0].DateCreated.String())
