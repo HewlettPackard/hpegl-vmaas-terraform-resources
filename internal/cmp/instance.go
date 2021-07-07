@@ -520,10 +520,12 @@ func validateVolumeNameIsUnique(vol []map[string]interface{}) error {
 	for _, v := range vol {
 		if _, ok := volumes[v["name"].(string)]; !ok {
 			volumes[v["name"].(string)] = true
+
 			continue
 		}
 
 		return fmt.Errorf("volume names should be unique")
 	}
+
 	return nil
 }
