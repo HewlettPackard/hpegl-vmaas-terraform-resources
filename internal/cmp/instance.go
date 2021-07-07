@@ -291,7 +291,7 @@ func (i *instance) Read(ctx context.Context, d *utils.Data, meta interface{}) er
 	instance := resp.(models.GetInstanceResponse)
 
 	volumes := d.GetListMap("volume")
-	if len(volumes) == 0 || len(volumes) != len(instance.Instance.Volumes) {
+	if len(volumes) == 0 {
 		return fmt.Errorf("volumes are either empty or does not match with the actual instance")
 	}
 	for i := range volumes {
