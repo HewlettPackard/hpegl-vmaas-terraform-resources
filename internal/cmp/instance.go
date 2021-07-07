@@ -39,6 +39,11 @@ func newInstance(iClient *client.InstancesAPIService) *instance {
 func (i *instance) Create(ctx context.Context, d *utils.Data, meta interface{}) error {
 	logger.Debug("Creating new instance")
 
+	err := validateVolumeNameIsUnique(d.GetListMap("volume"))
+	if err != nil{
+		return err
+	}
+
 	c := d.GetListMap("config")[0]
 	req := &models.CreateInstanceBody{
 		ZoneID: d.GetJSONNumber("cloud_id"),
@@ -169,6 +174,12 @@ func (i *instance) Create(ctx context.Context, d *utils.Data, meta interface{}) 
 // groups and tags
 func (i *instance) Update(ctx context.Context, d *utils.Data, meta interface{}) error {
 	logger.Debug("Updating the instance")
+
+	err := validateVolumeNameIsUnique(d.GetListMap("volume"))
+	if err != nil{
+		return err
+	}
+
 	id := d.GetID()
 	if d.HasChanged("name") || d.HasChanged("group_id") || d.HasChanged(
 		"tags") || d.HasChanged("labels") || d.HasChanged("environment_code") {
@@ -291,8 +302,8 @@ func (i *instance) Read(ctx context.Context, d *utils.Data, meta interface{}) er
 	instance := resp.(models.GetInstanceResponse)
 
 	volumes := d.GetListMap("volume")
-	if len(volumes) == 0 {
-		return fmt.Errorf("volumes are either empty or does not match with the actual instance")
+	if len(volumes) != len(instance.Instance.Volumes){
+		return fmt.Errorf("volume name should be unique")
 	}
 	for i := range volumes {
 		volumes[i]["id"] = instance.Instance.Volumes[i].ID
@@ -490,4 +501,18 @@ func validatePowerTransition(oldPower, newPower string) error {
 	}
 
 	return fmt.Errorf("power operation not allowed from %s state to %s state", oldPower, newPower)
+}
+
+func validateVolumeNameIsUnique(vol []map[string]interface{}) error{
+	volumes  := make(map[string]bool)
+	for _, v := range vol{
+
+		if _, ok := volumes[v["name"].(string)]; !ok{
+			volumes[v["name"].(string)] = true
+			continue
+		}
+
+		return fmt.Errorf("volume names should be unique")
+	}
+	return nil
 }
