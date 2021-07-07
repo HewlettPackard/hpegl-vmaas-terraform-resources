@@ -31,6 +31,7 @@ func (n *network) Read(ctx context.Context, d *utils.Data, meta interface{}) err
 	}
 	resp, err := utils.Retry(func() (interface{}, error) {
 		auth.SetScmClientToken(&ctx, meta)
+
 		return n.nClient.GetAllNetworks(ctx, nil)
 	})
 	if err != nil {

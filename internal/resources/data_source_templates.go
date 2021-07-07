@@ -43,6 +43,7 @@ func templateReadContext(ctx context.Context, d *schema.ResourceData, meta inter
 	}
 
 	auth.SetScmClientToken(&ctx, meta)
+
 	data := utils.NewData(d)
 	err = c.CmpClient.Template.Read(ctx, data, meta)
 	if err != nil {

@@ -33,6 +33,7 @@ func (g *group) Read(ctx context.Context, d *utils.Data, meta interface{}) error
 	}
 	resp, err := utils.Retry(func() (interface{}, error) {
 		auth.SetScmClientToken(&ctx, meta)
+
 		return g.gClient.GetAllGroups(ctx, nil)
 	})
 	groups := resp.(models.Groups)

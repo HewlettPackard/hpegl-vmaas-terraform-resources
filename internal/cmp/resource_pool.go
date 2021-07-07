@@ -34,6 +34,7 @@ func (n *resourcePool) Read(ctx context.Context, d *utils.Data, meta interface{}
 	flag := false
 	resp, err := utils.Retry(func() (interface{}, error) {
 		auth.SetScmClientToken(&ctx, meta)
+
 		return n.rClient.GetAllCloudResourcePools(ctx, cloudID, map[string]string{
 			maxKey: "100",
 		})

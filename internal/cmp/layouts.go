@@ -34,6 +34,7 @@ func (g *layout) Read(ctx context.Context, d *utils.Data, meta interface{}) erro
 	}
 	resp, err := utils.Retry(func() (interface{}, error) {
 		auth.SetScmClientToken(&ctx, meta)
+
 		return g.gClient.GetAllInstanceTypes(ctx, map[string]string{
 			codeKey:          instanceTypeCode,
 			provisionTypeKey: vmware,

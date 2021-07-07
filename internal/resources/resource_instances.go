@@ -304,6 +304,7 @@ func instanceCreateContext(ctx context.Context, d *schema.ResourceData, meta int
 	}
 
 	auth.SetScmClientToken(&ctx, meta)
+
 	data := utils.NewData(d)
 	if err := c.CmpClient.Instance.Create(ctx, data, meta); err != nil {
 		return diag.FromErr(err)
@@ -318,6 +319,7 @@ func instanceCreateContext(ctx context.Context, d *schema.ResourceData, meta int
 		MinTimeout: instanceCreateRetryMinTimeout,
 		Refresh: func() (result interface{}, state string, err error) {
 			auth.SetScmClientToken(&ctx, meta)
+
 			if err := c.CmpClient.Instance.Read(ctx, data, meta); err != nil {
 				return nil, "", err
 			}
@@ -340,6 +342,7 @@ func instanceReadContext(ctx context.Context, d *schema.ResourceData, meta inter
 	}
 
 	auth.SetScmClientToken(&ctx, meta)
+
 	data := utils.NewData(d)
 	err = c.CmpClient.Instance.Read(ctx, data, meta)
 	if err != nil {
@@ -356,6 +359,7 @@ func instanceDeleteContext(ctx context.Context, d *schema.ResourceData, meta int
 	}
 
 	auth.SetScmClientToken(&ctx, meta)
+
 	data := utils.NewData(d)
 	if err := c.CmpClient.Instance.Delete(ctx, data, meta); err != nil {
 		return diag.FromErr(err)
@@ -397,6 +401,7 @@ func instanceUpdateContext(ctx context.Context, d *schema.ResourceData, meta int
 	}
 
 	auth.SetScmClientToken(&ctx, meta)
+
 	data := utils.NewData(d)
 	if err := c.CmpClient.Instance.Update(ctx, data, meta); err != nil {
 		return diag.FromErr(err)
@@ -410,6 +415,7 @@ func instanceUpdateContext(ctx context.Context, d *schema.ResourceData, meta int
 		MinTimeout: instanceUpdateRetryMinTimeout,
 		Refresh: func() (result interface{}, state string, err error) {
 			auth.SetScmClientToken(&ctx, meta)
+
 			if err := c.CmpClient.Instance.Read(ctx, data, meta); err != nil {
 				return nil, "", err
 			}

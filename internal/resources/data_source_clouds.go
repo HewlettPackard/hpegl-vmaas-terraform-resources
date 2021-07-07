@@ -43,6 +43,7 @@ func cloudReadContext(ctx context.Context, d *schema.ResourceData, meta interfac
 	}
 
 	auth.SetScmClientToken(&ctx, meta)
+
 	data := utils.NewData(d)
 	err = c.CmpClient.Cloud.Read(ctx, data, meta)
 	if err != nil {

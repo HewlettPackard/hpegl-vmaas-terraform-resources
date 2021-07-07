@@ -34,6 +34,7 @@ func (n *datastore) Read(ctx context.Context, d *utils.Data, meta interface{}) e
 	}
 	resp, err := utils.Retry(func() (interface{}, error) {
 		auth.SetScmClientToken(&ctx, meta)
+
 		return n.nClient.GetAllCloudDataStores(ctx, cloudID,
 			map[string]string{"name": name},
 		)

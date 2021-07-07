@@ -31,6 +31,7 @@ func (n *plan) Read(ctx context.Context, d *utils.Data, meta interface{}) error 
 	}
 	resp, err := utils.Retry(func() (interface{}, error) {
 		auth.SetScmClientToken(&ctx, meta)
+
 		return n.pClient.GetAllServicePlans(ctx, map[string]string{
 			provisionTypeKey: vmware,
 			nameKey:          name,

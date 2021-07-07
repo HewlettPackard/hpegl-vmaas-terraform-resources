@@ -43,6 +43,7 @@ func powerScheduleReadContext(ctx context.Context, d *schema.ResourceData, meta 
 	}
 
 	auth.SetScmClientToken(&ctx, meta)
+
 	data := utils.NewData(d)
 	err = c.CmpClient.PowerSchedule.Read(ctx, data, meta)
 	if err != nil {

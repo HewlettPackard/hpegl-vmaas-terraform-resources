@@ -49,6 +49,7 @@ func layoutReadContext(ctx context.Context, d *schema.ResourceData, meta interfa
 	}
 
 	auth.SetScmClientToken(&ctx, meta)
+
 	data := utils.NewData(d)
 	err = c.CmpClient.Layout.Read(ctx, data, meta)
 	if err != nil {

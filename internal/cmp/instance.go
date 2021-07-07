@@ -40,7 +40,7 @@ func (i *instance) Create(ctx context.Context, d *utils.Data, meta interface{}) 
 	logger.Debug("Creating new instance")
 
 	err := validateVolumeNameIsUnique(d.GetListMap("volume"))
-	if err != nil{
+	if err != nil {
 		return err
 	}
 
@@ -102,6 +102,7 @@ func (i *instance) Create(ctx context.Context, d *utils.Data, meta interface{}) 
 		logger.Info("Cloning the instance with ", sourceID)
 		respClone, err := utils.Retry(func() (interface{}, error) {
 			auth.SetScmClientToken(&ctx, meta)
+
 			return i.iClient.CloneAnInstance(ctx, sourceID, req)
 		})
 		if err != nil {
@@ -132,6 +133,7 @@ func (i *instance) Create(ctx context.Context, d *utils.Data, meta interface{}) 
 		// get cloned instance ID
 		instancesResp, err := customRetry.Retry(func() (interface{}, error) {
 			auth.SetScmClientToken(&ctx, meta)
+
 			return i.iClient.GetAllInstances(ctx, map[string]string{
 				nameKey: req.CloneName,
 			})
@@ -150,6 +152,7 @@ func (i *instance) Create(ctx context.Context, d *utils.Data, meta interface{}) 
 		// create instance
 		respVM, err := utils.Retry(func() (interface{}, error) {
 			auth.SetScmClientToken(&ctx, meta)
+
 			return i.iClient.CreateAnInstance(ctx, req)
 		})
 		if err != nil {
@@ -176,7 +179,7 @@ func (i *instance) Update(ctx context.Context, d *utils.Data, meta interface{}) 
 	logger.Debug("Updating the instance")
 
 	err := validateVolumeNameIsUnique(d.GetListMap("volume"))
-	if err != nil{
+	if err != nil {
 		return err
 	}
 
@@ -204,6 +207,7 @@ func (i *instance) Update(ctx context.Context, d *utils.Data, meta interface{}) 
 		// update instance
 		_, err := utils.Retry(func() (interface{}, error) {
 			auth.SetScmClientToken(&ctx, meta)
+
 			return i.iClient.UpdatingAnInstance(ctx, id, updateReq)
 		})
 		if err != nil {
@@ -226,6 +230,7 @@ func (i *instance) Update(ctx context.Context, d *utils.Data, meta interface{}) 
 		}
 		_, err := utils.Retry(func() (interface{}, error) {
 			auth.SetScmClientToken(&ctx, meta)
+
 			return i.iClient.ResizeAnInstance(ctx, id, resizeReq)
 		})
 		if err != nil {
@@ -237,6 +242,7 @@ func (i *instance) Update(ctx context.Context, d *utils.Data, meta interface{}) 
 		// Do power operation only if backend is in different state
 		resp, err := utils.Retry(func() (interface{}, error) {
 			auth.SetScmClientToken(&ctx, meta)
+
 			return i.iClient.GetASpecificInstance(ctx, id)
 		})
 		if err != nil {
@@ -267,6 +273,7 @@ func (i *instance) Delete(ctx context.Context, d *utils.Data, meta interface{}) 
 
 	resp, err := utils.Retry(func() (interface{}, error) {
 		auth.SetScmClientToken(&ctx, meta)
+
 		return i.iClient.DeleteAnInstance(ctx, id)
 	})
 	deleResp := resp.(models.SuccessOrErrorMessage)
@@ -294,6 +301,7 @@ func (i *instance) Read(ctx context.Context, d *utils.Data, meta interface{}) er
 
 	resp, err := utils.Retry(func() (interface{}, error) {
 		auth.SetScmClientToken(&ctx, meta)
+
 		return i.iClient.GetASpecificInstance(ctx, id)
 	})
 	if err != nil {
@@ -302,7 +310,7 @@ func (i *instance) Read(ctx context.Context, d *utils.Data, meta interface{}) er
 	instance := resp.(models.GetInstanceResponse)
 
 	volumes := d.GetListMap("volume")
-	if len(volumes) != len(instance.Instance.Volumes){
+	if len(volumes) != len(instance.Instance.Volumes) {
 		return fmt.Errorf("volume name should be unique")
 	}
 	for i := range volumes {
@@ -465,21 +473,25 @@ func (i *instance) powerOperation(ctx context.Context, instanceID int, meta inte
 	case utils.PowerOn:
 		_, err = utils.Retry(func() (interface{}, error) {
 			auth.SetScmClientToken(&ctx, meta)
+
 			return i.iClient.StartAnInstance(ctx, instanceID)
 		})
 	case utils.PowerOff:
 		_, err = utils.Retry(func() (interface{}, error) {
 			auth.SetScmClientToken(&ctx, meta)
+
 			return i.iClient.StopAnInstance(ctx, instanceID)
 		})
 	case utils.Suspend:
 		_, err = utils.Retry(func() (interface{}, error) {
 			auth.SetScmClientToken(&ctx, meta)
+
 			return i.iClient.SuspendAnInstance(ctx, instanceID)
 		})
 	case utils.Restart:
 		_, err = utils.Retry(func() (interface{}, error) {
 			auth.SetScmClientToken(&ctx, meta)
+
 			return i.iClient.RestartAnInstance(ctx, instanceID)
 		})
 	default:
@@ -503,11 +515,10 @@ func validatePowerTransition(oldPower, newPower string) error {
 	return fmt.Errorf("power operation not allowed from %s state to %s state", oldPower, newPower)
 }
 
-func validateVolumeNameIsUnique(vol []map[string]interface{}) error{
-	volumes  := make(map[string]bool)
-	for _, v := range vol{
-
-		if _, ok := volumes[v["name"].(string)]; !ok{
+func validateVolumeNameIsUnique(vol []map[string]interface{}) error {
+	volumes := make(map[string]bool)
+	for _, v := range vol {
+		if _, ok := volumes[v["name"].(string)]; !ok {
 			volumes[v["name"].(string)] = true
 			continue
 		}

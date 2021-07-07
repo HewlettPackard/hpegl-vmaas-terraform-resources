@@ -32,6 +32,7 @@ func (c *powerSchedule) Read(ctx context.Context, d *utils.Data, meta interface{
 	}
 	resp, err := utils.Retry(func() (interface{}, error) {
 		auth.SetScmClientToken(&ctx, meta)
+
 		return c.powerScheduleClient.GetAllPowerSchedules(ctx, map[string]string{
 			nameKey: name,
 		})

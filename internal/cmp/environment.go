@@ -32,6 +32,7 @@ func (c *environment) Read(ctx context.Context, d *utils.Data, meta interface{})
 	}
 	resp, err := utils.Retry(func() (interface{}, error) {
 		auth.SetScmClientToken(&ctx, meta)
+
 		return c.eClient.GetAllEnvironment(ctx, map[string]string{
 			nameKey: name,
 		})

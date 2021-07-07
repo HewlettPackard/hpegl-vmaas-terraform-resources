@@ -32,6 +32,7 @@ func (c *template) Read(ctx context.Context, d *utils.Data, meta interface{}) er
 	}
 	resp, err := utils.Retry(func() (interface{}, error) {
 		auth.SetScmClientToken(&ctx, meta)
+
 		return c.tClient.GetAllVirtualImages(ctx, map[string]string{
 			nameKey: name,
 		})

@@ -32,6 +32,7 @@ func (c *cloud) Read(ctx context.Context, d *utils.Data, meta interface{}) error
 	}
 	resp, err := utils.Retry(func() (interface{}, error) {
 		auth.SetScmClientToken(&ctx, meta)
+
 		return c.cloudClient.GetAllClouds(ctx, map[string]string{
 			nameKey: name,
 		})

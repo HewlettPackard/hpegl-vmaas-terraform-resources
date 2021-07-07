@@ -45,6 +45,7 @@ func (s *snapshot) Create(ctx context.Context, d *utils.Data, meta interface{}) 
 	// create snapshot
 	resp, err := utils.Retry(func() (interface{}, error) {
 		auth.SetScmClientToken(&ctx, meta)
+
 		return s.sClient.SnapshotAnInstance(ctx, instanceID, req)
 	})
 	if err != nil {
@@ -70,6 +71,7 @@ func (s *snapshot) Read(ctx context.Context, d *utils.Data, meta interface{}) er
 
 	resp, err := utils.Retry(func() (interface{}, error) {
 		auth.SetScmClientToken(&ctx, meta)
+
 		return s.sClient.GetListOfSnapshotsForAnInstance(ctx, instanceID)
 	})
 	if err != nil {

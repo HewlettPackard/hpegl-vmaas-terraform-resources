@@ -43,6 +43,7 @@ func planReadContext(ctx context.Context, d *schema.ResourceData, meta interface
 	}
 
 	auth.SetScmClientToken(&ctx, meta)
+
 	data := utils.NewData(d)
 	err = c.CmpClient.Plan.Read(ctx, data, meta)
 	if err != nil {

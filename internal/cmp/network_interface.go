@@ -38,6 +38,7 @@ func (c *networkInterface) Read(ctx context.Context, d *utils.Data, meta interfa
 	// Get vmware provision-type id
 	provisionResp, err := utils.Retry(func() (interface{}, error) {
 		auth.SetScmClientToken(&ctx, meta)
+
 		return c.pClient.GetAllProvisioningTypes(ctx, map[string]string{
 			nameKey: vmware,
 		})
@@ -52,6 +53,7 @@ func (c *networkInterface) Read(ctx context.Context, d *utils.Data, meta interfa
 
 	networkResp, err := utils.Retry(func() (interface{}, error) {
 		auth.SetScmClientToken(&ctx, meta)
+
 		return c.cClient.GetAllCloudNetworks(ctx, cloudID, provision.ProvisionTypes[0].ID)
 	})
 	if err != nil {

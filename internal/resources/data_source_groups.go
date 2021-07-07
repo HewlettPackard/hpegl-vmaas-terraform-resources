@@ -46,6 +46,7 @@ func groupReadContext(ctx context.Context, d *schema.ResourceData, meta interfac
 	}
 
 	auth.SetScmClientToken(&ctx, meta)
+
 	data := utils.NewData(d)
 	err = c.CmpClient.Group.Read(ctx, data, meta)
 	if err != nil {
