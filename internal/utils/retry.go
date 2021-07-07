@@ -42,7 +42,7 @@ type CustomRetry struct {
 	Cond         CondFunc
 }
 
-// Retry with custome count, timeout and delay
+// Retry with custom count, timeout and delay
 func (c *CustomRetry) Retry(fn func() (interface{}, error)) (interface{}, error) {
 	if c.RetryCount == 0 {
 		c.RetryCount = defaultRetryCount

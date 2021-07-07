@@ -19,7 +19,7 @@ import (
 const (
 	instanceCloneRetryDelay   = time.Second * 60
 	instanceCloneRetryTimeout = time.Second * 10
-	instanceCloneRetryCount   = 10
+	instanceCloneRetryCount   = 60
 )
 
 // instance implements functions related to cmp instances
