@@ -6,13 +6,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/auth"
 	"strconv"
 
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/models"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/logger"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
+	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/auth"
 )
 
 // snapshot implements functions related to cmp instance snapshot
@@ -87,10 +87,10 @@ func (s *snapshot) Read(ctx context.Context, d *utils.Data, meta interface{}) er
 	return d.Error()
 }
 
-func (s *snapshot) Delete(ctx context.Context, d *utils.Data) error {
+func (s *snapshot) Delete(ctx context.Context, d *utils.Data, meta interface{}) error {
 	return nil
 }
 
-func (s *snapshot) Update(ctx context.Context, d *utils.Data) error {
+func (s *snapshot) Update(ctx context.Context, d *utils.Data, meta interface{}) error {
 	return nil
 }

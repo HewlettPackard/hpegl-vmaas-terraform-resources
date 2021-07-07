@@ -6,7 +6,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/auth"
 	"strconv"
 	"strings"
 	"time"
@@ -15,6 +14,7 @@ import (
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/models"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/logger"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
+	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/auth"
 )
 
 const (
@@ -291,6 +291,9 @@ func (i *instance) Read(ctx context.Context, d *utils.Data, meta interface{}) er
 	instance := resp.(models.GetInstanceResponse)
 
 	volumes := d.GetListMap("volume")
+	if len(volumes) == 0 || len(volumes) != len(instance.Instance.Volumes) {
+		return fmt.Errorf("volumes are either empty or does not match with the actual instance")
+	}
 	for i := range volumes {
 		volumes[i]["id"] = instance.Instance.Volumes[i].ID
 	}

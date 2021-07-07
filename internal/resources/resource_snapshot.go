@@ -4,13 +4,13 @@ package resources
 
 import (
 	"context"
-	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/auth"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
+	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/auth"
 	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/client"
 )
 

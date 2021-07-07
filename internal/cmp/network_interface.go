@@ -6,12 +6,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/auth"
 
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/models"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/logger"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
+	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/auth"
 )
 
 type networkInterface struct {

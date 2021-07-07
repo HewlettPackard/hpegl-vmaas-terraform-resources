@@ -94,4 +94,3 @@ func GetClientFromMetaMap(meta interface{}) (*Client, error) {
 
 	return cli.(*Client), nil
 }
-

@@ -4,7 +4,6 @@ package resources
 
 import (
 	"context"
-	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/auth"
 	"net/http"
 	"time"
 
@@ -13,6 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
+	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/auth"
 	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/client"
 )
 
