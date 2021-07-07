@@ -4,6 +4,7 @@ package resources
 
 import (
 	"context"
+	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/auth"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -47,9 +48,9 @@ func layoutReadContext(ctx context.Context, d *schema.ResourceData, meta interfa
 		return diag.FromErr(err)
 	}
 
-	client.SetScmClientToken(&ctx, meta)
+	auth.SetScmClientToken(&ctx, meta)
 	data := utils.NewData(d)
-	err = c.CmpClient.Layout.Read(ctx, data)
+	err = c.CmpClient.Layout.Read(ctx, data, meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}

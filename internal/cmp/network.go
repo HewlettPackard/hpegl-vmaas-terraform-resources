@@ -5,6 +5,7 @@ package cmp
 import (
 	"context"
 	"fmt"
+	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/auth"
 
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/models"
@@ -20,7 +21,7 @@ func newNetwork(nClient *client.NetworksAPIService) *network {
 	return &network{nClient: nClient}
 }
 
-func (n *network) Read(ctx context.Context, d *utils.Data) error {
+func (n *network) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
 	logger.Debug("Get Network")
 
 	name := d.GetString("name")
@@ -29,6 +30,7 @@ func (n *network) Read(ctx context.Context, d *utils.Data) error {
 		return err
 	}
 	resp, err := utils.Retry(func() (interface{}, error) {
+		auth.SetScmClientToken(&ctx, meta)
 		return n.nClient.GetAllNetworks(ctx, nil)
 	})
 	if err != nil {

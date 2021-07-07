@@ -4,6 +4,7 @@ package resources
 
 import (
 	"context"
+	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/auth"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -41,9 +42,9 @@ func cloudReadContext(ctx context.Context, d *schema.ResourceData, meta interfac
 		return diag.FromErr(err)
 	}
 
-	client.SetScmClientToken(&ctx, meta)
+	auth.SetScmClientToken(&ctx, meta)
 	data := utils.NewData(d)
-	err = c.CmpClient.Cloud.Read(ctx, data)
+	err = c.CmpClient.Cloud.Read(ctx, data, meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}

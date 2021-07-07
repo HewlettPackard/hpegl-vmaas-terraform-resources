@@ -4,6 +4,7 @@ package resources
 
 import (
 	"context"
+	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/auth"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -44,9 +45,9 @@ func groupReadContext(ctx context.Context, d *schema.ResourceData, meta interfac
 		return diag.FromErr(err)
 	}
 
-	client.SetScmClientToken(&ctx, meta)
+	auth.SetScmClientToken(&ctx, meta)
 	data := utils.NewData(d)
-	err = c.CmpClient.Group.Read(ctx, data)
+	err = c.CmpClient.Group.Read(ctx, data, meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}

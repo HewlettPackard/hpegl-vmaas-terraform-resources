@@ -5,6 +5,7 @@ package cmp
 import (
 	"context"
 	"fmt"
+	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/auth"
 
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/models"
@@ -22,7 +23,7 @@ func newEnvironment(eClient *client.EnvironmentAPIService) *environment {
 	}
 }
 
-func (c *environment) Read(ctx context.Context, d *utils.Data) error {
+func (c *environment) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
 	logger.Debug("Get Environments")
 
 	name := d.GetString("name")
@@ -30,6 +31,7 @@ func (c *environment) Read(ctx context.Context, d *utils.Data) error {
 		return err
 	}
 	resp, err := utils.Retry(func() (interface{}, error) {
+		auth.SetScmClientToken(&ctx, meta)
 		return c.eClient.GetAllEnvironment(ctx, map[string]string{
 			nameKey: name,
 		})
