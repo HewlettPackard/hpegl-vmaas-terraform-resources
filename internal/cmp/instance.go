@@ -310,9 +310,6 @@ func (i *instance) Read(ctx context.Context, d *utils.Data, meta interface{}) er
 	instance := resp.(models.GetInstanceResponse)
 
 	volumes := d.GetListMap("volume")
-	if len(volumes) != len(instance.Instance.Volumes) {
-		return fmt.Errorf("volume name should be unique")
-	}
 	for i := range volumes {
 		volumes[i]["id"] = instance.Instance.Volumes[i].ID
 	}
