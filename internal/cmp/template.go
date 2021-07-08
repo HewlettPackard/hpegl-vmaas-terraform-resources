@@ -10,6 +10,7 @@ import (
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/models"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/logger"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
+	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/auth"
 )
 
 type template struct {
@@ -22,7 +23,7 @@ func newTemplate(tClient *client.VirtualImagesAPIService) *template {
 	}
 }
 
-func (c *template) Read(ctx context.Context, d *utils.Data) error {
+func (c *template) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
 	logger.Debug("Get Templates")
 
 	name := d.GetString("name")
@@ -30,6 +31,8 @@ func (c *template) Read(ctx context.Context, d *utils.Data) error {
 		return err
 	}
 	resp, err := utils.Retry(func() (interface{}, error) {
+		auth.SetScmClientToken(&ctx, meta)
+
 		return c.tClient.GetAllVirtualImages(ctx, map[string]string{
 			nameKey: name,
 		})

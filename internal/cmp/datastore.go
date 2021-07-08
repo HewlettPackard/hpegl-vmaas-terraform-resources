@@ -10,6 +10,7 @@ import (
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/models"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/logger"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
+	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/auth"
 )
 
 type datastore struct {
@@ -20,7 +21,7 @@ func newDatastore(nClient *client.CloudsAPIService) *datastore {
 	return &datastore{nClient: nClient}
 }
 
-func (n *datastore) Read(ctx context.Context, d *utils.Data) error {
+func (n *datastore) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
 	logger.Debug("Get Datastore")
 
 	// name := d.GetString("name")
@@ -32,6 +33,8 @@ func (n *datastore) Read(ctx context.Context, d *utils.Data) error {
 		return err
 	}
 	resp, err := utils.Retry(func() (interface{}, error) {
+		auth.SetScmClientToken(&ctx, meta)
+
 		return n.nClient.GetAllCloudDataStores(ctx, cloudID,
 			map[string]string{"name": name},
 		)

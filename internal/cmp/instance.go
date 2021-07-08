@@ -14,6 +14,7 @@ import (
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/models"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/logger"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
+	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/auth"
 )
 
 const (
@@ -35,8 +36,13 @@ func newInstance(iClient *client.InstancesAPIService) *instance {
 }
 
 // Create instance
-func (i *instance) Create(ctx context.Context, d *utils.Data) error {
+func (i *instance) Create(ctx context.Context, d *utils.Data, meta interface{}) error {
 	logger.Debug("Creating new instance")
+
+	err := validateVolumeNameIsUnique(d.GetListMap("volume"))
+	if err != nil {
+		return err
+	}
 
 	c := d.GetListMap("config")[0]
 	req := &models.CreateInstanceBody{
@@ -95,6 +101,8 @@ func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 		// clone the instance
 		logger.Info("Cloning the instance with ", sourceID)
 		respClone, err := utils.Retry(func() (interface{}, error) {
+			auth.SetScmClientToken(&ctx, meta)
+
 			return i.iClient.CloneAnInstance(ctx, sourceID, req)
 		})
 		if err != nil {
@@ -124,6 +132,8 @@ func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 		}
 		// get cloned instance ID
 		instancesResp, err := customRetry.Retry(func() (interface{}, error) {
+			auth.SetScmClientToken(&ctx, meta)
+
 			return i.iClient.GetAllInstances(ctx, map[string]string{
 				nameKey: req.CloneName,
 			})
@@ -141,6 +151,8 @@ func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 	} else {
 		// create instance
 		respVM, err := utils.Retry(func() (interface{}, error) {
+			auth.SetScmClientToken(&ctx, meta)
+
 			return i.iClient.CreateAnInstance(ctx, req)
 		})
 		if err != nil {
@@ -163,8 +175,14 @@ func (i *instance) Create(ctx context.Context, d *utils.Data) error {
 // Update instance including poweroff, powerOn, restart, suspend
 // changing volumes and instance properties such as labels
 // groups and tags
-func (i *instance) Update(ctx context.Context, d *utils.Data) error {
+func (i *instance) Update(ctx context.Context, d *utils.Data, meta interface{}) error {
 	logger.Debug("Updating the instance")
+
+	err := validateVolumeNameIsUnique(d.GetListMap("volume"))
+	if err != nil {
+		return err
+	}
+
 	id := d.GetID()
 	if d.HasChanged("name") || d.HasChanged("group_id") || d.HasChanged(
 		"tags") || d.HasChanged("labels") || d.HasChanged("environment_code") {
@@ -188,6 +206,8 @@ func (i *instance) Update(ctx context.Context, d *utils.Data) error {
 		}
 		// update instance
 		_, err := utils.Retry(func() (interface{}, error) {
+			auth.SetScmClientToken(&ctx, meta)
+
 			return i.iClient.UpdatingAnInstance(ctx, id, updateReq)
 		})
 		if err != nil {
@@ -209,6 +229,8 @@ func (i *instance) Update(ctx context.Context, d *utils.Data) error {
 			return err
 		}
 		_, err := utils.Retry(func() (interface{}, error) {
+			auth.SetScmClientToken(&ctx, meta)
+
 			return i.iClient.ResizeAnInstance(ctx, id, resizeReq)
 		})
 		if err != nil {
@@ -219,6 +241,8 @@ func (i *instance) Update(ctx context.Context, d *utils.Data) error {
 	if d.HasChanged("power") {
 		// Do power operation only if backend is in different state
 		resp, err := utils.Retry(func() (interface{}, error) {
+			auth.SetScmClientToken(&ctx, meta)
+
 			return i.iClient.GetASpecificInstance(ctx, id)
 		})
 		if err != nil {
@@ -228,7 +252,7 @@ func (i *instance) Update(ctx context.Context, d *utils.Data) error {
 		status := utils.ParsePowerState(getInstance.Instance.Status)
 		powerOp := d.GetString("power")
 		if powerOp != status {
-			if err := i.powerOperation(ctx, id, status, d.GetString("power")); err != nil {
+			if err := i.powerOperation(ctx, id, meta, status, d.GetString("power")); err != nil {
 				return err
 			}
 		}
@@ -238,7 +262,7 @@ func (i *instance) Update(ctx context.Context, d *utils.Data) error {
 }
 
 // Delete instance and set ID as ""
-func (i *instance) Delete(ctx context.Context, d *utils.Data) error {
+func (i *instance) Delete(ctx context.Context, d *utils.Data, meta interface{}) error {
 	id := d.GetID()
 	logger.Debugf("Deleting instance with ID : %d", id)
 
@@ -248,6 +272,8 @@ func (i *instance) Delete(ctx context.Context, d *utils.Data) error {
 	}
 
 	resp, err := utils.Retry(func() (interface{}, error) {
+		auth.SetScmClientToken(&ctx, meta)
+
 		return i.iClient.DeleteAnInstance(ctx, id)
 	})
 	deleResp := resp.(models.SuccessOrErrorMessage)
@@ -263,7 +289,7 @@ func (i *instance) Delete(ctx context.Context, d *utils.Data) error {
 }
 
 // Read instance and set state values accordingly
-func (i *instance) Read(ctx context.Context, d *utils.Data) error {
+func (i *instance) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
 	id := d.GetID()
 
 	logger.Debug("Get instance with ID %d", id)
@@ -274,6 +300,8 @@ func (i *instance) Read(ctx context.Context, d *utils.Data) error {
 	}
 
 	resp, err := utils.Retry(func() (interface{}, error) {
+		auth.SetScmClientToken(&ctx, meta)
+
 		return i.iClient.GetASpecificInstance(ctx, id)
 	})
 	if err != nil {
@@ -432,7 +460,7 @@ func compareVolumes(org, new []map[string]interface{}) []map[string]interface{} 
 	return new
 }
 
-func (i *instance) powerOperation(ctx context.Context, instanceID int, oldOp, operation string) error {
+func (i *instance) powerOperation(ctx context.Context, instanceID int, meta interface{}, oldOp, operation string) error {
 	var err error
 	err = validatePowerTransition(oldOp, operation)
 	if err != nil {
@@ -441,18 +469,26 @@ func (i *instance) powerOperation(ctx context.Context, instanceID int, oldOp, op
 	switch operation {
 	case utils.PowerOn:
 		_, err = utils.Retry(func() (interface{}, error) {
+			auth.SetScmClientToken(&ctx, meta)
+
 			return i.iClient.StartAnInstance(ctx, instanceID)
 		})
 	case utils.PowerOff:
 		_, err = utils.Retry(func() (interface{}, error) {
+			auth.SetScmClientToken(&ctx, meta)
+
 			return i.iClient.StopAnInstance(ctx, instanceID)
 		})
 	case utils.Suspend:
 		_, err = utils.Retry(func() (interface{}, error) {
+			auth.SetScmClientToken(&ctx, meta)
+
 			return i.iClient.SuspendAnInstance(ctx, instanceID)
 		})
 	case utils.Restart:
 		_, err = utils.Retry(func() (interface{}, error) {
+			auth.SetScmClientToken(&ctx, meta)
+
 			return i.iClient.RestartAnInstance(ctx, instanceID)
 		})
 	default:
@@ -474,4 +510,19 @@ func validatePowerTransition(oldPower, newPower string) error {
 	}
 
 	return fmt.Errorf("power operation not allowed from %s state to %s state", oldPower, newPower)
+}
+
+func validateVolumeNameIsUnique(vol []map[string]interface{}) error {
+	volumes := make(map[string]bool)
+	for _, v := range vol {
+		if _, ok := volumes[v["name"].(string)]; !ok {
+			volumes[v["name"].(string)] = true
+
+			continue
+		}
+
+		return fmt.Errorf("volume names should be unique")
+	}
+
+	return nil
 }
