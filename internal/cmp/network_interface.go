@@ -11,6 +11,7 @@ import (
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/models"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/logger"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
+	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/auth"
 )
 
 type networkInterface struct {
@@ -25,7 +26,7 @@ func newNetworkInterface(cClient *client.CloudsAPIService, pClient *client.Provi
 	}
 }
 
-func (c *networkInterface) Read(ctx context.Context, d *utils.Data) error {
+func (c *networkInterface) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
 	logger.Debug("Get Network interface")
 
 	cloudID := d.GetInt("cloud_id")
@@ -36,6 +37,8 @@ func (c *networkInterface) Read(ctx context.Context, d *utils.Data) error {
 
 	// Get vmware provision-type id
 	provisionResp, err := utils.Retry(func() (interface{}, error) {
+		auth.SetScmClientToken(&ctx, meta)
+
 		return c.pClient.GetAllProvisioningTypes(ctx, map[string]string{
 			nameKey: vmware,
 		})
@@ -49,6 +52,8 @@ func (c *networkInterface) Read(ctx context.Context, d *utils.Data) error {
 	}
 
 	networkResp, err := utils.Retry(func() (interface{}, error) {
+		auth.SetScmClientToken(&ctx, meta)
+
 		return c.cClient.GetAllCloudNetworks(ctx, cloudID, provision.ProvisionTypes[0].ID)
 	})
 	if err != nil {

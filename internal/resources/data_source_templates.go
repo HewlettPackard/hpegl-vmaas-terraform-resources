@@ -8,6 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
+	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/auth"
 	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/client"
 )
 
@@ -41,9 +42,10 @@ func templateReadContext(ctx context.Context, d *schema.ResourceData, meta inter
 		return diag.FromErr(err)
 	}
 
-	client.SetScmClientToken(&ctx, meta)
+	auth.SetScmClientToken(&ctx, meta)
+
 	data := utils.NewData(d)
-	err = c.CmpClient.Template.Read(ctx, data)
+	err = c.CmpClient.Template.Read(ctx, data, meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}

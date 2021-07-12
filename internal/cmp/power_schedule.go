@@ -10,6 +10,7 @@ import (
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/models"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/logger"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
+	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/auth"
 )
 
 type powerSchedule struct {
@@ -22,7 +23,7 @@ func newPowerSchedule(powerScheduleClient *client.PowerSchedulesAPIService) *pow
 	}
 }
 
-func (c *powerSchedule) Read(ctx context.Context, d *utils.Data) error {
+func (c *powerSchedule) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
 	logger.Debug("Get Power Schedule")
 
 	name := d.GetString("name")
@@ -30,6 +31,8 @@ func (c *powerSchedule) Read(ctx context.Context, d *utils.Data) error {
 		return err
 	}
 	resp, err := utils.Retry(func() (interface{}, error) {
+		auth.SetScmClientToken(&ctx, meta)
+
 		return c.powerScheduleClient.GetAllPowerSchedules(ctx, map[string]string{
 			nameKey: name,
 		})

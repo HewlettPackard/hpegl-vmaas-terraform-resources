@@ -12,6 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
+	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/auth"
 	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/client"
 )
 
@@ -302,9 +303,10 @@ func instanceCreateContext(ctx context.Context, d *schema.ResourceData, meta int
 		return diag.FromErr(err)
 	}
 
-	client.SetScmClientToken(&ctx, meta)
+	auth.SetScmClientToken(&ctx, meta)
+
 	data := utils.NewData(d)
-	if err := c.CmpClient.Instance.Create(ctx, data); err != nil {
+	if err := c.CmpClient.Instance.Create(ctx, data, meta); err != nil {
 		return diag.FromErr(err)
 	}
 
@@ -316,8 +318,9 @@ func instanceCreateContext(ctx context.Context, d *schema.ResourceData, meta int
 		Timeout:    instanceCreateRetryTimeout,
 		MinTimeout: instanceCreateRetryMinTimeout,
 		Refresh: func() (result interface{}, state string, err error) {
-			client.SetScmClientToken(&ctx, meta)
-			if err := c.CmpClient.Instance.Read(ctx, data); err != nil {
+			auth.SetScmClientToken(&ctx, meta)
+
+			if err := c.CmpClient.Instance.Read(ctx, data, meta); err != nil {
 				return nil, "", err
 			}
 
@@ -338,9 +341,10 @@ func instanceReadContext(ctx context.Context, d *schema.ResourceData, meta inter
 		return diag.FromErr(err)
 	}
 
-	client.SetScmClientToken(&ctx, meta)
+	auth.SetScmClientToken(&ctx, meta)
+
 	data := utils.NewData(d)
-	err = c.CmpClient.Instance.Read(ctx, data)
+	err = c.CmpClient.Instance.Read(ctx, data, meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -354,9 +358,10 @@ func instanceDeleteContext(ctx context.Context, d *schema.ResourceData, meta int
 		return diag.FromErr(err)
 	}
 
-	client.SetScmClientToken(&ctx, meta)
+	auth.SetScmClientToken(&ctx, meta)
+
 	data := utils.NewData(d)
-	if err := c.CmpClient.Instance.Delete(ctx, data); err != nil {
+	if err := c.CmpClient.Instance.Delete(ctx, data, meta); err != nil {
 		return diag.FromErr(err)
 	}
 
@@ -367,7 +372,7 @@ func instanceDeleteContext(ctx context.Context, d *schema.ResourceData, meta int
 		Timeout:    instancedeleteRetryTimeout,
 		MinTimeout: instancedeleteRetryMinTimeout,
 		Refresh: func() (result interface{}, state string, err error) {
-			if err := c.CmpClient.Instance.Read(ctx, data); err != nil {
+			if err := c.CmpClient.Instance.Read(ctx, data, meta); err != nil {
 				// Check for status 404
 				statusCode := utils.GetStatusCode(err)
 				if statusCode == http.StatusNotFound {
@@ -395,9 +400,10 @@ func instanceUpdateContext(ctx context.Context, d *schema.ResourceData, meta int
 		return diag.FromErr(err)
 	}
 
-	client.SetScmClientToken(&ctx, meta)
+	auth.SetScmClientToken(&ctx, meta)
+
 	data := utils.NewData(d)
-	if err := c.CmpClient.Instance.Update(ctx, data); err != nil {
+	if err := c.CmpClient.Instance.Update(ctx, data, meta); err != nil {
 		return diag.FromErr(err)
 	}
 	// Wait for the status to be running
@@ -408,8 +414,9 @@ func instanceUpdateContext(ctx context.Context, d *schema.ResourceData, meta int
 		Timeout:    instanceUpdateRetryTimeout,
 		MinTimeout: instanceUpdateRetryMinTimeout,
 		Refresh: func() (result interface{}, state string, err error) {
-			client.SetScmClientToken(&ctx, meta)
-			if err := c.CmpClient.Instance.Read(ctx, data); err != nil {
+			auth.SetScmClientToken(&ctx, meta)
+
+			if err := c.CmpClient.Instance.Read(ctx, data, meta); err != nil {
 				return nil, "", err
 			}
 

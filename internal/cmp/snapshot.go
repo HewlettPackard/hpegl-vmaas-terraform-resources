@@ -12,6 +12,7 @@ import (
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/models"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/logger"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
+	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/auth"
 )
 
 // snapshot implements functions related to cmp instance snapshot
@@ -27,7 +28,7 @@ func newSnapshot(sClient *client.InstancesAPIService) *snapshot {
 }
 
 // Create snapshot
-func (s *snapshot) Create(ctx context.Context, d *utils.Data) error {
+func (s *snapshot) Create(ctx context.Context, d *utils.Data, meta interface{}) error {
 	logger.Debug("Creating VMware snapshot of instance")
 	instanceID := d.GetInt("instance_id")
 	req := &models.SnapshotBody{
@@ -43,6 +44,8 @@ func (s *snapshot) Create(ctx context.Context, d *utils.Data) error {
 	}
 	// create snapshot
 	resp, err := utils.Retry(func() (interface{}, error) {
+		auth.SetScmClientToken(&ctx, meta)
+
 		return s.sClient.SnapshotAnInstance(ctx, instanceID, req)
 	})
 	if err != nil {
@@ -58,7 +61,7 @@ func (s *snapshot) Create(ctx context.Context, d *utils.Data) error {
 }
 
 // Read snapshot and set state values accordingly
-func (s *snapshot) Read(ctx context.Context, d *utils.Data) error {
+func (s *snapshot) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
 	instanceID := d.GetInt("instance_id")
 
 	// Precheck
@@ -67,6 +70,8 @@ func (s *snapshot) Read(ctx context.Context, d *utils.Data) error {
 	}
 
 	resp, err := utils.Retry(func() (interface{}, error) {
+		auth.SetScmClientToken(&ctx, meta)
+
 		return s.sClient.GetListOfSnapshotsForAnInstance(ctx, instanceID)
 	})
 	if err != nil {
@@ -84,10 +89,10 @@ func (s *snapshot) Read(ctx context.Context, d *utils.Data) error {
 	return d.Error()
 }
 
-func (s *snapshot) Delete(ctx context.Context, d *utils.Data) error {
+func (s *snapshot) Delete(ctx context.Context, d *utils.Data, meta interface{}) error {
 	return nil
 }
 
-func (s *snapshot) Update(ctx context.Context, d *utils.Data) error {
+func (s *snapshot) Update(ctx context.Context, d *utils.Data, meta interface{}) error {
 	return nil
 }
