@@ -29,7 +29,7 @@ type Client struct {
 }
 
 // Get env configurations for VmaaS services
-func getHeaders(token, location, spaceName string) map[string]string {
+func getHeaders(token string) map[string]string {
 	header := make(map[string]string)
 	serviceURL = constants.ServiceURL
 	if strings.ToLower(os.Getenv("TF_ACC")) == "true" {
@@ -40,8 +40,6 @@ func getHeaders(token, location, spaceName string) map[string]string {
 		serviceURL = constants.IntgServiceURL
 	}
 	header["Authorization"] = token
-	header["location"] = location
-	header["space"] = spaceName
 
 	return header
 }
@@ -71,7 +69,11 @@ func (i InitialiseClient) NewClient(r *schema.ResourceData) (interface{}, error)
 
 	cfg := api_client.Configuration{
 		Host:          serviceURL,
-		DefaultHeader: getHeaders(token, location, spaceName),
+		DefaultHeader: getHeaders(token),
+		DefaultQueryParams: map[string]string{
+			"space":    spaceName,
+			"location": location,
+		},
 	}
 	apiClient := api_client.NewAPIClient(&cfg, !allowInsecure)
 	client.CmpClient = cmp_client.NewClient(apiClient, cfg)
