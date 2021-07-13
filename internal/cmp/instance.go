@@ -184,8 +184,9 @@ func (i *instance) Update(ctx context.Context, d *utils.Data, meta interface{}) 
 	}
 
 	id := d.GetID()
-	if d.HasChanged("name") || d.HasChanged("group_id") || d.HasChanged(
-		"tags") || d.HasChanged("labels") || d.HasChanged("environment_code") {
+	if d.HasChanged("name") || d.HasChanged("group_id") || d.HasChanged("tags") ||
+		d.HasChanged("labels") || d.HasChanged("environment_code") ||
+		d.HasChanged("power_schedule_id") {
 		addTags, removeTags := compareTags(d.GetChangedMap("tags"))
 		updateReq := &models.UpdateInstanceBody{
 			Instance: &models.UpdateInstanceBodyInstance{
