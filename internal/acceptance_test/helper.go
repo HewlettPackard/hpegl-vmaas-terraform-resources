@@ -71,10 +71,11 @@ func getAPIClient() (*api_client.APIClient, api_client.Configuration) {
 		Host:          constants.AccServiceURL,
 		DefaultHeader: headers,
 		DefaultQueryParams: map[string]string{
-			constants.SPACE_KEY:    constants.AccSpace,
-			constants.LOCATION_KEY: constants.AccLocation,
+			constants.SpaceKey:    constants.AccSpace,
+			constants.LocationKey: constants.AccLocation,
 		},
 	}
 	apiClient := api_client.NewAPIClient(&cfg, false)
+
 	return apiClient, cfg
 }
