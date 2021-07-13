@@ -100,7 +100,8 @@ func testAccResourceInstance() string {
 			plan_id            = 407
 			instance_type_code = "vmware"
 			network {
-			  id = 6
+				id = 6
+				interface_id = 9
 			}
 
 			volume {

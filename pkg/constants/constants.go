@@ -10,9 +10,11 @@ const (
 	IntgServiceURL = "https://iac-vmaas.intg.hpedevops.net"
 	ServiceURL     = "https://iac-vmaas.us1.greenlake-hpe.com"
 
-	LOCATION  = "location"
-	SPACENAME = "space_name"
-	INSECURE  = "allow_insecure"
+	LOCATION     = "location"
+	SPACENAME    = "space_name"
+	INSECURE     = "allow_insecure"
+	SPACE_KEY    = "space"
+	LOCATION_KEY = "location"
 
 	AccLocation = "mock_location"
 	AccSpace    = "mock_space"
