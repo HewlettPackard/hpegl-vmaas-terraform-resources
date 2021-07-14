@@ -65,13 +65,15 @@ func validateResource(name string, v ...validators) resource.TestCheckFunc {
 func getAPIClient() (*api_client.APIClient, api_client.Configuration) {
 	headers := make(map[string]string)
 	headers["Authorization"] = os.Getenv("HPEGL_IAM_TOKEN")
-	headers["location"] = constants.AccLocation
-	headers["space"] = constants.AccSpace
 	headers["subject"] = os.Getenv("CMP_SUBJECT")
 
 	cfg := api_client.Configuration{
 		Host:          constants.AccServiceURL,
 		DefaultHeader: headers,
+		DefaultQueryParams: map[string]string{
+			constants.SpaceKey:    constants.AccSpace,
+			constants.LocationKey: constants.AccLocation,
+		},
 	}
 	apiClient := api_client.NewAPIClient(&cfg, false)
 
