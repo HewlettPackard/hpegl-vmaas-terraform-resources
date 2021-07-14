@@ -39,7 +39,8 @@ and provide `source_instance_id`.
 Cloned instance can have all the possible attributes (same as create new instance). The only difference will be
 the additional `clone` attribute.
 
-~> On cloning an instance `port` attribute will not be presented while cloning an instance.
+~> `port` attribute will conflicts on `clone`, so upon cloning instance user should not provide
+  `port`.
 
 ## Example usage for creating cloned instance
 
