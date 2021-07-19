@@ -42,7 +42,6 @@ default: all
 
 vendor: go.mod go.sum
 	go mod download
-	go mod vendor
 
 update up: really-clean vendor
 .PHONY: update up
