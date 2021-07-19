@@ -264,6 +264,7 @@ func Instances() *schema.Resource {
 				Optional: true,
 				Description: `Restarts the instance if set to any positive integer.
 				Restart works only on pre-created instance.`,
+				ValidateFunc: validation.IntAtLeast(0),
 			},
 		},
 		SchemaVersion:  0,
