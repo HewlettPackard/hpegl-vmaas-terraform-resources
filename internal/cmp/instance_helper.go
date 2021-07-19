@@ -5,7 +5,6 @@ package cmp
 import (
 	"context"
 	"fmt"
-	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/auth"
 	"strconv"
 
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
