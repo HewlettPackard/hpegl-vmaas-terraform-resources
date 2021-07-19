@@ -10,7 +10,6 @@ import (
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/models"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/logger"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
-	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/auth"
 )
 
 type resourcePool struct {
@@ -32,9 +31,7 @@ func (n *resourcePool) Read(ctx context.Context, d *utils.Data, meta interface{}
 	}
 
 	flag := false
-	resp, err := utils.Retry(func() (interface{}, error) {
-		auth.SetScmClientToken(&ctx, meta)
-
+	resp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
 		return n.rClient.GetAllCloudResourcePools(ctx, cloudID, map[string]string{
 			maxKey: "100",
 		})

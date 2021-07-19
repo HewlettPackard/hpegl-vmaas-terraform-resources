@@ -10,7 +10,6 @@ import (
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/models"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/logger"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
-	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/auth"
 )
 
 type plan struct {
@@ -29,9 +28,7 @@ func (n *plan) Read(ctx context.Context, d *utils.Data, meta interface{}) error 
 	if err := d.Error(); err != nil {
 		return err
 	}
-	resp, err := utils.Retry(func() (interface{}, error) {
-		auth.SetScmClientToken(&ctx, meta)
-
+	resp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
 		return n.pClient.GetAllServicePlans(ctx, map[string]string{
 			provisionTypeKey: vmware,
 			nameKey:          name,

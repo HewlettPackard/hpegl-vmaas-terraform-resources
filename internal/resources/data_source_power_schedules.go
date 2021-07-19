@@ -8,7 +8,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
-	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/auth"
 	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/client"
 )
 
@@ -41,8 +40,6 @@ func powerScheduleReadContext(ctx context.Context, d *schema.ResourceData, meta 
 	if err != nil {
 		return diag.FromErr(err)
 	}
-
-	auth.SetScmClientToken(&ctx, meta)
 
 	data := utils.NewData(d)
 	err = c.CmpClient.PowerSchedule.Read(ctx, data, meta)

@@ -264,8 +264,7 @@ func (d *Data) GetJSONNumber(key string, ignore ...bool) json.Number {
 }
 
 func (d *Data) GetBool(key string) bool {
-	val := d.get(key)
-	if val != nil {
+	if val := d.get(key); val != nil {
 		return val.(bool)
 	}
 	d.err(key, ErrInvalidType)
@@ -303,8 +302,7 @@ func (d *Data) ListToIntSlice(key string, ignore ...bool) []int {
 }
 
 func (d *Data) Set(key string, val interface{}) {
-	err := d.d.Set(key, val)
-	if err != nil {
+	if err := d.d.Set(key, val); err != nil {
 		d.err(key, ErrSet+", "+err.Error())
 	}
 }

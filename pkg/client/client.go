@@ -35,11 +35,11 @@ func getHeaders(token string) map[string]string {
 	if strings.ToLower(os.Getenv("TF_ACC")) == "true" {
 		serviceURL = constants.AccServiceURL
 		header["subject"] = os.Getenv("CMP_SUBJECT")
+		header["Authorization"] = token
 	}
 	if strings.ToLower(os.Getenv("SERVICE_ACCOUNT")) == "intg" {
 		serviceURL = constants.IntgServiceURL
 	}
-	header["Authorization"] = token
 
 	return header
 }

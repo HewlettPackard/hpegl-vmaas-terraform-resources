@@ -54,7 +54,7 @@ func validateResource(name string, v ...validators) resource.TestCheckFunc {
 		}
 		for _, vs := range v {
 			if err := vs(rs); err != nil {
-				return fmt.Errorf("resource %s validation failed with error %v", name, err)
+				return fmt.Errorf("resource %s validation failed with error %w", name, err)
 			}
 		}
 

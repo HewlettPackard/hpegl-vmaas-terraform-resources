@@ -19,14 +19,12 @@ resource "hpegl_vmaas_instance" "tf_instance" {
     name         = "root_vol"
     size         = 5
     datastore_id = data.hpegl_vmaas_datastore.c_3par.id
-    root         = true
   }
 
   volume {
     name         = "Local_vol"
     size         = 5
     datastore_id = data.hpegl_vmaas_datastore.c_3par.id
-    root         = false
   }
 
   labels = ["test_label"]
@@ -59,7 +57,7 @@ resource "hpegl_vmaas_instance" "tf_instance" {
   # On creating only poweron operation is supported. Upon updation all other
   # lifecycle operations are permitted.
   power = "poweron"
-  # Restarts the instance if set to true.
-  # Restart works only on pre-created instance.
-  restart_instance
+  # Restarts the instance if set to any positive integer.
+  # Restart works only on pre-created instance.`,
+  restart_instance = 1
 }

@@ -17,13 +17,13 @@ import (
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
 )
 
-func TestVmaasInstancePlan(t *testing.T) {
+func TestVmaasInstanceClonePlan(t *testing.T) {
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config:             testAccResourceInstance(),
+				Config:             testAccResourceInstanceClone(),
 				PlanOnly:           true,
 				ExpectNonEmptyPlan: true,
 			},
@@ -31,21 +31,21 @@ func TestVmaasInstancePlan(t *testing.T) {
 	})
 }
 
-func TestAccResourceInstanceCreate(t *testing.T) {
+func TestAccResourceInstanceCloneCreate(t *testing.T) {
 	if testing.Short() {
 		t.Skip("Skipping instance resource creation in short mode")
 	}
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: resource.ComposeTestCheckFunc(testVmaasInstanceDestroy("hpegl_vmaas_instance.tf_acc_instance")),
+		CheckDestroy: resource.ComposeTestCheckFunc(testVmaasInstanceCloneDestroy("hpegl_vmaas_instance.tf_acc_instance")),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccResourceInstance(),
+				Config: testAccResourceInstanceClone(),
 				Check: resource.ComposeTestCheckFunc(
 					validateResource(
 						"hpegl_vmaas_instance.tf_acc_instance",
-						validateVmaasInstanceStatus,
+						validateVmaasInstanceCloneStatus,
 					),
 				),
 			},
@@ -53,7 +53,7 @@ func TestAccResourceInstanceCreate(t *testing.T) {
 	})
 }
 
-func validateVmaasInstanceStatus(rs *terraform.ResourceState) error {
+func validateVmaasInstanceCloneStatus(rs *terraform.ResourceState) error {
 	if rs.Primary.Attributes["status"] != "running" {
 		return fmt.Errorf("expected %s but got %s", "running", rs.Primary.Attributes["status"])
 	}
@@ -61,7 +61,7 @@ func validateVmaasInstanceStatus(rs *terraform.ResourceState) error {
 	return nil
 }
 
-func testVmaasInstanceDestroy(name string) resource.TestCheckFunc {
+func testVmaasInstanceCloneDestroy(name string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[name]
 		if !ok {
@@ -88,17 +88,13 @@ func testVmaasInstanceDestroy(name string) resource.TestCheckFunc {
 	}
 }
 
-func testAccResourceInstance() string {
+func testAccResourceInstanceClone() string {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 
 	return fmt.Sprintf(`%s
-		resource "hpegl_vmaas_instance" "tf_acc_instance" {
-			name               = "tf_acc_%d"
-			cloud_id           = 1
-			group_id           = 1
-			layout_id          = 113
-			plan_id            = 407
-			instance_type_code = "vmware"
+		resource "hpegl_vmaas_instance_clone" "tf_acc_instance_clone" {
+			name               = "tf_acc_clone_%d"
+			source_instance_id = 95
 			network {
 			  id = 6
 			  interface_id = 9
@@ -107,18 +103,6 @@ func testAccResourceInstance() string {
 			  id = 6
 			  interface_id = 4
 			}
-
-			volume {
-			  name         = "root_vol"
-			  size         = %d
-			  datastore_id = 13
-			}
-
-			config {
-			  resource_pool_id = 3
-			  no_agent         = true
-			  template_id	   = 580
-			}
 		}
-	`, providerStanza, r.Int63n(999999), r.Intn(5)+5)
+	`, providerStanza, r.Int63n(999999))
 }

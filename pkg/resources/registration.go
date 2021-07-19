@@ -37,8 +37,9 @@ func (r Registration) SupportedDataSources() map[string]*schema.Resource {
 
 func (r Registration) SupportedResources() map[string]*schema.Resource {
 	return map[string]*schema.Resource{
-		"hpegl_vmaas_instance": resources.Instances(),
-		"hpegl_vmaas_snapshot": resources.Snapshots(),
+		"hpegl_vmaas_instance":       resources.Instances(),
+		"hpegl_vmaas_instance_clone": resources.InstancesClone(),
+		"hpegl_vmaas_snapshot":       resources.Snapshots(),
 	}
 }
 

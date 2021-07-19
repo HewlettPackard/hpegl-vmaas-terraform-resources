@@ -24,5 +24,6 @@ const (
 	PowerOn           = "poweron"
 	PowerOff          = "poweroff"
 	Restart           = "restart"
+	Restarting        = "restarting"
 	Suspend           = "suspend"
 )

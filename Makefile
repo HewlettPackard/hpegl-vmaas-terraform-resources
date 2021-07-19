@@ -76,7 +76,7 @@ coverage: vendor
 .PHONY: coverage
 
 acceptance:
-	TF_ACC=true go test -v -timeout=600s -cover ./...
+	TF_ACC=true go test -v -timeout=1200s -cover ./...
 
 build: vendor $(NAME)
 .PHONY: build
