@@ -259,6 +259,26 @@ func (i *instance) Update(ctx context.Context, d *utils.Data, meta interface{}) 
 		}
 	}
 
+	if d.HasChanged("restart_instance") {
+		if !d.GetBool("restart_instance") {
+			return d.Error()
+		}
+		// Do power operation only if backend is in different state
+		resp, err := utils.Retry(func() (interface{}, error) {
+			auth.SetScmClientToken(&ctx, meta)
+
+			return i.iClient.GetASpecificInstance(ctx, id)
+		})
+		if err != nil {
+			return err
+		}
+		getInstance := resp.(models.GetInstanceResponse)
+		status := utils.ParsePowerState(getInstance.Instance.Status)
+		if err := i.powerOperation(ctx, id, meta, status, utils.Restart); err != nil {
+			return err
+		}
+	}
+
 	return d.Error()
 }
 
