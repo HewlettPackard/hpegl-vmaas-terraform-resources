@@ -11,7 +11,6 @@ import (
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/models"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/logger"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
-	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/auth"
 )
 
 type networkInterface struct {
@@ -36,9 +35,7 @@ func (c *networkInterface) Read(ctx context.Context, d *utils.Data, meta interfa
 	}
 
 	// Get vmware provision-type id
-	provisionResp, err := utils.Retry(func() (interface{}, error) {
-		auth.SetScmClientToken(&ctx, meta)
-
+	provisionResp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
 		return c.pClient.GetAllProvisioningTypes(ctx, map[string]string{
 			nameKey: vmware,
 		})
@@ -51,9 +48,7 @@ func (c *networkInterface) Read(ctx context.Context, d *utils.Data, meta interfa
 		return errors.New("could not find vmware provision type. Please contact administrator to resolve the issue")
 	}
 
-	networkResp, err := utils.Retry(func() (interface{}, error) {
-		auth.SetScmClientToken(&ctx, meta)
-
+	networkResp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
 		return c.cClient.GetAllCloudNetworks(ctx, cloudID, provision.ProvisionTypes[0].ID)
 	})
 	if err != nil {

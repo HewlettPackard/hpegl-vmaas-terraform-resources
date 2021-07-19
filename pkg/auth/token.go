@@ -5,6 +5,7 @@ package auth
 import (
 	"context"
 	"log"
+	"os"
 
 	"github.com/hewlettpackard/hpegl-provider-lib/pkg/token/common"
 	"github.com/hewlettpackard/hpegl-provider-lib/pkg/token/retrieve"
@@ -22,6 +23,10 @@ func GetToken(ctx context.Context, meta interface{}) (string, error) {
 // SetScmClientToken fetches and sets the token  in context for scm client.
 // Provided the client id and secret in provider
 func SetScmClientToken(ctx *context.Context, meta interface{}) {
+	if os.Getenv("TF_ACC") == "true" {
+		return
+	}
+
 	token, err := GetToken(*ctx, meta)
 	if err != nil {
 		log.Printf("[WARN] Unable to fetch token for SCM client: %s", err)

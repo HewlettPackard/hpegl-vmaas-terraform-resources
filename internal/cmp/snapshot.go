@@ -12,7 +12,6 @@ import (
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/models"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/logger"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
-	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/auth"
 )
 
 // snapshot implements functions related to cmp instance snapshot
@@ -43,9 +42,7 @@ func (s *snapshot) Create(ctx context.Context, d *utils.Data, meta interface{}) 
 		return err
 	}
 	// create snapshot
-	resp, err := utils.Retry(func() (interface{}, error) {
-		auth.SetScmClientToken(&ctx, meta)
-
+	resp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
 		return s.sClient.SnapshotAnInstance(ctx, instanceID, req)
 	})
 	if err != nil {
@@ -69,9 +66,7 @@ func (s *snapshot) Read(ctx context.Context, d *utils.Data, meta interface{}) er
 		return err
 	}
 
-	resp, err := utils.Retry(func() (interface{}, error) {
-		auth.SetScmClientToken(&ctx, meta)
-
+	resp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
 		return s.sClient.GetListOfSnapshotsForAnInstance(ctx, instanceID)
 	})
 	if err != nil {

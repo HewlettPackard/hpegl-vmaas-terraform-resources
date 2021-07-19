@@ -17,22 +17,29 @@ import (
 
 const (
 	// create
-	instanceCreateRetryTimeout    = 10 * time.Minute
-	instanceCreateRetryDelay      = 60 * time.Second
-	instanceCreateRetryMinTimeout = 30 * time.Second
+	instanceCloneCreateRetryTimeout    = 15 * time.Minute
+	instanceCloneCreateRetryDelay      = 60 * time.Second
+	instanceCloneCreateRetryMinTimeout = 30 * time.Second
 	// update
-	instanceUpdateRetryTimeout    = 10 * time.Minute
-	instanceUpdateRetryDelay      = 15 * time.Second
-	instanceUpdateRetryMinTimeout = 15 * time.Second
+	instanceCloneUpdateRetryTimeout    = 10 * time.Minute
+	instanceCloneUpdateRetryDelay      = 15 * time.Second
+	instanceCloneUpdateRetryMinTimeout = 15 * time.Second
 	// delete
-	instancedeleteRetryDelay      = 15 * time.Second
-	instancedeleteRetryTimeout    = 60 * time.Second
-	instancedeleteRetryMinTimeout = 15 * time.Second
+	instanceClonedeleteRetryDelay      = 15 * time.Second
+	instanceClonedeleteRetryTimeout    = 5 * time.Minute
+	instanceClonedeleteRetryMinTimeout = 15 * time.Second
 )
 
-func Instances() *schema.Resource {
+func InstancesClone() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
+			"source_instance_id": {
+				Type:     schema.TypeInt,
+				Required: true,
+				ForceNew: true,
+				Description: `Instance ID of the source instance. For getting source instance ID
+				use 'hpeg_vmaas_instance' resource.`,
+			},
 			"name": {
 				Type:        schema.TypeString,
 				Required:    true,
@@ -40,31 +47,31 @@ func Instances() *schema.Resource {
 			},
 			"cloud_id": {
 				Type:        schema.TypeInt,
+				Optional:    true,
 				ForceNew:    true,
-				Required:    true,
 				Description: f(generalDDesc, "cloud"),
 			},
 			"group_id": {
 				Type:        schema.TypeInt,
-				Required:    true,
-				Description: f(generalDDesc, "group"),
-			},
-			"plan_id": {
-				Type:        schema.TypeInt,
-				Required:    true,
+				Optional:    true,
 				ForceNew:    true,
-				Description: f(generalDDesc, "plan"),
+				Description: f(generalDDesc, "group"),
 			},
 			"layout_id": {
 				Type:        schema.TypeInt,
-				ForceNew:    true,
-				Required:    true,
+				Computed:    true,
 				Description: f(generalDDesc, "layout"),
+			},
+			"plan_id": {
+				Type:        schema.TypeInt,
+				Optional:    true,
+				ForceNew:    true,
+				Description: f(generalDDesc, "plan"),
 			},
 			"instance_type_code": {
 				Type:        schema.TypeString,
 				ForceNew:    true,
-				Required:    true,
+				Optional:    true,
 				Description: "Unique code used to identify the instance type.",
 			},
 			"network": {
@@ -90,8 +97,7 @@ func Instances() *schema.Resource {
 			},
 			"volume": {
 				Type:     schema.TypeList,
-				MinItems: 1,
-				Required: true,
+				Optional: true,
 				Description: `A list of volumes to be created inside a provisioned instance.
 				It can have a root volume and other secondary volumes.`,
 				Elem: &schema.Resource{
@@ -129,35 +135,6 @@ func Instances() *schema.Resource {
 					Type: schema.TypeString,
 				},
 			},
-			"port": {
-				Type:        schema.TypeList,
-				ForceNew:    true,
-				Optional:    true,
-				Description: "Provide port for the instance",
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"name": {
-							Type:        schema.TypeString,
-							Required:    true,
-							Description: "Name of the port",
-						},
-						"port": {
-							Type:        schema.TypeString,
-							Required:    true,
-							Description: "Port value in string",
-						},
-						"lb": {
-							Type:     schema.TypeString,
-							Required: true,
-							Description: `Load balancing configuration for ports.
-							 Supported values are "No LB", "HTTP", "HTTPS", "TCP"`,
-							ValidateFunc: validation.StringInSlice([]string{
-								"No LB", "HTTP", "HTTPS", "TCP",
-							}, false),
-						},
-					},
-				},
-			},
 			"tags": {
 				Type:        schema.TypeMap,
 				Optional:    true,
@@ -175,13 +152,13 @@ func Instances() *schema.Resource {
 			"config": {
 				Type:        schema.TypeSet,
 				ForceNew:    true,
-				Required:    true,
+				Optional:    true,
 				Description: "Configuration details for the instance to be provisioned.",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"resource_pool_id": {
 							Type:        schema.TypeInt,
-							Required:    true,
+							Optional:    true,
 							Description: f(generalDDesc, "resource pool"),
 						},
 						"template_id": {
@@ -262,41 +239,41 @@ func Instances() *schema.Resource {
 		},
 		SchemaVersion:  0,
 		StateUpgraders: nil,
-		CreateContext:  instanceCreateContext,
-		ReadContext:    instanceReadContext,
-		UpdateContext:  instanceUpdateContext,
-		DeleteContext:  instanceDeleteContext,
+		CreateContext:  instanceCloneCreateContext,
+		ReadContext:    instanceCloneReadContext,
+		UpdateContext:  instanceCloneUpdateContext,
+		DeleteContext:  instanceCloneDeleteContext,
 		CustomizeDiff:  nil,
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
 		Description: `Instance resource facilitates creating,
 		updating and deleting virtual machines.
-		For creating an instance, provide a unique name and all the mandatory(Required) parameters.
-		It is recommend to use vmware type for provisioning.`,
+		For creating an instance clone, provide a unique name and all the Mandatory(Required) parameters.
+		It is recommend to use the Vmware type for provisioning.`,
 	}
 }
 
-func instanceCreateContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func instanceCloneCreateContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, err := client.GetClientFromMetaMap(meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
 	data := utils.NewData(d)
-	if err := c.CmpClient.Instance.Create(ctx, data, meta); err != nil {
+	if err := c.CmpClient.InstanceClone.Create(ctx, data, meta); err != nil {
 		return diag.FromErr(err)
 	}
 
 	// Wait for the status to be running
 	createStateConf := resource.StateChangeConf{
-		Delay:      instanceCreateRetryDelay,
+		Delay:      instanceCloneCreateRetryDelay,
 		Pending:    []string{utils.StateProvisioning},
 		Target:     []string{utils.StateRunning},
-		Timeout:    instanceCreateRetryTimeout,
-		MinTimeout: instanceCreateRetryMinTimeout,
+		Timeout:    instanceCloneCreateRetryTimeout,
+		MinTimeout: instanceCloneCreateRetryMinTimeout,
 		Refresh: func() (result interface{}, state string, err error) {
-			if err := c.CmpClient.Instance.Read(ctx, data, meta); err != nil {
+			if err := c.CmpClient.InstanceClone.Read(ctx, data, meta); err != nil {
 				return nil, "", err
 			}
 
@@ -311,14 +288,14 @@ func instanceCreateContext(ctx context.Context, d *schema.ResourceData, meta int
 	return nil
 }
 
-func instanceReadContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func instanceCloneReadContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, err := client.GetClientFromMetaMap(meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
 	data := utils.NewData(d)
-	err = c.CmpClient.Instance.Read(ctx, data, meta)
+	err = c.CmpClient.InstanceClone.Read(ctx, data, meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -326,25 +303,25 @@ func instanceReadContext(ctx context.Context, d *schema.ResourceData, meta inter
 	return nil
 }
 
-func instanceDeleteContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func instanceCloneDeleteContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, err := client.GetClientFromMetaMap(meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
 	data := utils.NewData(d)
-	if err := c.CmpClient.Instance.Delete(ctx, data, meta); err != nil {
+	if err := c.CmpClient.InstanceClone.Delete(ctx, data, meta); err != nil {
 		return diag.FromErr(err)
 	}
 
 	deleteStateConf := resource.StateChangeConf{
-		Delay:      instancedeleteRetryDelay,
+		Delay:      instanceClonedeleteRetryDelay,
 		Pending:    []string{"deleting"},
 		Target:     []string{"deleted", "Failed"},
-		Timeout:    instancedeleteRetryTimeout,
-		MinTimeout: instancedeleteRetryMinTimeout,
+		Timeout:    instanceClonedeleteRetryTimeout,
+		MinTimeout: instanceClonedeleteRetryMinTimeout,
 		Refresh: func() (result interface{}, state string, err error) {
-			if err := c.CmpClient.Instance.Read(ctx, data, meta); err != nil {
+			if err := c.CmpClient.InstanceClone.Read(ctx, data, meta); err != nil {
 				// Check for status 404
 				statusCode := utils.GetStatusCode(err)
 				if statusCode == http.StatusNotFound {
@@ -366,25 +343,25 @@ func instanceDeleteContext(ctx context.Context, d *schema.ResourceData, meta int
 	return nil
 }
 
-func instanceUpdateContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func instanceCloneUpdateContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, err := client.GetClientFromMetaMap(meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
 	data := utils.NewData(d)
-	if err := c.CmpClient.Instance.Update(ctx, data, meta); err != nil {
+	if err := c.CmpClient.InstanceClone.Update(ctx, data, meta); err != nil {
 		return diag.FromErr(err)
 	}
 	// Wait for the status to be running
 	updateStateConf := resource.StateChangeConf{
-		Delay:      instanceUpdateRetryDelay,
+		Delay:      instanceCloneUpdateRetryDelay,
 		Pending:    []string{utils.StateResizing},
 		Target:     []string{utils.StateRunning, utils.StateStopped, utils.StateSuspended},
-		Timeout:    instanceUpdateRetryTimeout,
-		MinTimeout: instanceUpdateRetryMinTimeout,
+		Timeout:    instanceCloneUpdateRetryTimeout,
+		MinTimeout: instanceCloneUpdateRetryMinTimeout,
 		Refresh: func() (result interface{}, state string, err error) {
-			if err := c.CmpClient.Instance.Read(ctx, data, meta); err != nil {
+			if err := c.CmpClient.InstanceClone.Read(ctx, data, meta); err != nil {
 				return nil, "", err
 			}
 
@@ -396,5 +373,5 @@ func instanceUpdateContext(ctx context.Context, d *schema.ResourceData, meta int
 		return diag.FromErr(err)
 	}
 
-	return instanceReadContext(ctx, d, meta)
+	return instanceCloneReadContext(ctx, d, meta)
 }

@@ -10,7 +10,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
-	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/auth"
 	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/client"
 )
 
@@ -79,8 +78,6 @@ func snapshotCreateContext(ctx context.Context, d *schema.ResourceData, meta int
 		return diag.FromErr(err)
 	}
 
-	auth.SetScmClientToken(&ctx, meta)
-
 	data := utils.NewData(d)
 	if err := c.CmpClient.Snapshot.Create(ctx, data, meta); err != nil {
 		return diag.FromErr(err)
@@ -94,8 +91,6 @@ func snapshotCreateContext(ctx context.Context, d *schema.ResourceData, meta int
 		Timeout:    snapshotRetryTimeout,
 		MinTimeout: snapshotRetryMinTimeout,
 		Refresh: func() (result interface{}, state string, err error) {
-			auth.SetScmClientToken(&ctx, meta)
-
 			if err := c.CmpClient.Snapshot.Read(ctx, data, meta); err != nil {
 				return nil, "", err
 			}
@@ -117,8 +112,6 @@ func snapshotReadContext(ctx context.Context, d *schema.ResourceData, meta inter
 		return diag.FromErr(err)
 	}
 
-	auth.SetScmClientToken(&ctx, meta)
-
 	data := utils.NewData(d)
 	err = c.CmpClient.Snapshot.Read(ctx, data, meta)
 	if err != nil {
@@ -133,8 +126,6 @@ func snapshotDeleteContext(ctx context.Context, d *schema.ResourceData, meta int
 	if err != nil {
 		return diag.FromErr(err)
 	}
-
-	auth.SetScmClientToken(&ctx, meta)
 
 	data := utils.NewData(d)
 	err = c.CmpClient.Snapshot.Delete(ctx, data, meta)

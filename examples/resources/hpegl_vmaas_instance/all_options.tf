@@ -19,14 +19,12 @@ resource "hpegl_vmaas_instance" "tf_instance" {
     name         = "root_vol"
     size         = 5
     datastore_id = data.hpegl_vmaas_datastore.c_3par.id
-    root         = true
   }
 
   volume {
     name         = "Local_vol"
     size         = 5
     datastore_id = data.hpegl_vmaas_datastore.c_3par.id
-    root         = false
   }
 
   labels = ["test_label"]

@@ -3,10 +3,10 @@
 
 # Clone a instance from an existing instance
 resource "hpegl_vmaas_instance" "tf_instance_clone" {
+  source_instance_id = hpegl_vmaas_instance.tf_instance.id
   name               = "tf_clone"
   cloud_id           = data.hpegl_vmaas_cloud.cloud.id
   group_id           = data.hpegl_vmaas_group.default_group.id
-  layout_id          = data.hpegl_vmaas_layout.vmware.id
   plan_id            = data.hpegl_vmaas_plan.g1_small.id
   instance_type_code = data.hpegl_vmaas_layout.vmware.instance_type_code
   network {
@@ -20,14 +20,12 @@ resource "hpegl_vmaas_instance" "tf_instance_clone" {
     name         = "root_vol"
     size         = 5
     datastore_id = data.hpegl_vmaas_datastore.c_3par.id
-    root         = true
   }
 
   volume {
     name         = "Local_vol"
     size         = 5
     datastore_id = data.hpegl_vmaas_datastore.c_3par.id
-    root         = false
   }
 
   config {
@@ -43,7 +41,4 @@ resource "hpegl_vmaas_instance" "tf_instance_clone" {
     proxy = "http://some:proxy"
   }
   power_schedule_id = data.hpegl_vmaas_powerSchedule.weekday.id
-  clone {
-    source_instance_id = hpegl_vmaas_instance.tf_instance.id
-  }
 }

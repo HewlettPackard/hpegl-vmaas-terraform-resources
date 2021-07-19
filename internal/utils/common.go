@@ -18,6 +18,10 @@ func JSONNumber(in interface{}) json.Number {
 	return json.Number(in.(string))
 }
 
+func IsEmpty(n json.Number) bool {
+	return n == "0" || n == ""
+}
+
 func ParseInt(str string) (int64, error) {
 	return strconv.ParseInt(str, 10, 64)
 }

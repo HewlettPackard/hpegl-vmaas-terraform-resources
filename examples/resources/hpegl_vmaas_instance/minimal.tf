@@ -16,7 +16,6 @@ resource "hpegl_vmaas_instance" "minimal_instance" {
     name         = "root_vol"
     size         = 5
     datastore_id = data.hpegl_vmaas_datastore.c_3par.id
-    root         = true
   }
 
   config {

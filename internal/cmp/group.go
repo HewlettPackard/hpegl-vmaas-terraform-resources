@@ -10,7 +10,6 @@ import (
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/models"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/logger"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
-	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/auth"
 )
 
 type group struct {
@@ -31,9 +30,7 @@ func (g *group) Read(ctx context.Context, d *utils.Data, meta interface{}) error
 	if err := d.Error(); err != nil {
 		return err
 	}
-	resp, err := utils.Retry(func() (interface{}, error) {
-		auth.SetScmClientToken(&ctx, meta)
-
+	resp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
 		return g.gClient.GetAllGroups(ctx, nil)
 	})
 	groups := resp.(models.Groups)

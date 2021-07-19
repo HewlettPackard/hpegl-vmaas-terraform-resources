@@ -299,6 +299,12 @@ github.com/hpe-hcss/vmaas-cmp-go-sdk v0.0.0-20210712053907-861870b0bb72 h1:q0Eet
 github.com/hpe-hcss/vmaas-cmp-go-sdk v0.0.0-20210712053907-861870b0bb72/go.mod h1:wRJXgNiRp3VQmKudLmNnNFD/9jTiQhyx0tT8eEpRyBk=
 github.com/hpe-hcss/vmaas-cmp-go-sdk v0.0.0-20210713093934-674f2c0bfcfe h1:jzXV9c1Owo7FANG6Sur5zrUHR2CEjr4J4qmz7G4/cHk=
 github.com/hpe-hcss/vmaas-cmp-go-sdk v0.0.0-20210713093934-674f2c0bfcfe/go.mod h1:wRJXgNiRp3VQmKudLmNnNFD/9jTiQhyx0tT8eEpRyBk=
+github.com/hpe-hcss/vmaas-cmp-go-sdk v0.0.0-20210716120440-10797f3db067 h1:YhrjVwijJG9p3R6+DN84aB7hInF3OjJRv9if3qU7OSg=
+github.com/hpe-hcss/vmaas-cmp-go-sdk v0.0.0-20210716120440-10797f3db067/go.mod h1:wRJXgNiRp3VQmKudLmNnNFD/9jTiQhyx0tT8eEpRyBk=
+github.com/hpe-hcss/vmaas-cmp-go-sdk v0.0.0-20210716140253-a86f34d2efab h1:NFsMYtf5J4XHFtbFsj3mGTbOrtTvYYh1e/rDAmhFZUU=
+github.com/hpe-hcss/vmaas-cmp-go-sdk v0.0.0-20210716140253-a86f34d2efab/go.mod h1:wRJXgNiRp3VQmKudLmNnNFD/9jTiQhyx0tT8eEpRyBk=
+github.com/hpe-hcss/vmaas-cmp-go-sdk v0.0.0-20210719064552-7b766c7eaac8 h1:S4DSAwQ+l6y9iTNWiVma8PvzM+/5rFbGUMWqQePMqyg=
+github.com/hpe-hcss/vmaas-cmp-go-sdk v0.0.0-20210719064552-7b766c7eaac8/go.mod h1:wRJXgNiRp3VQmKudLmNnNFD/9jTiQhyx0tT8eEpRyBk=
 github.com/huandu/xstrings v1.3.2 h1:L18LIDzqlW6xN2rEkpdV8+oL/IXWJ1APd+vsdYy4Wdw=
 github.com/huandu/xstrings v1.3.2/go.mod h1:y5/lhBue+AyNmUVz9RLU9xbLR0o4KIIExikq4ovT0aE=
 github.com/ianlancetaylor/demangle v0.0.0-20181102032728-5e5cf60278f6 h1:UDMh68UUwekSh5iP2OMhRRZJiiBccgV7axzUG8vi56c=
