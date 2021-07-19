@@ -315,7 +315,6 @@ func instanceDoPowerTask(
 
 			return nil, err
 		})
-
 	}
 
 	return err
