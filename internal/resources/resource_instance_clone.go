@@ -4,30 +4,13 @@ package resources
 
 import (
 	"context"
-	"net/http"
-	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+	"github.com/hpe-hcss/vmaas-terraform-resources/internal/cmp"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
 	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/client"
-)
-
-const (
-	// create
-	instanceCloneCreateRetryTimeout    = 15 * time.Minute
-	instanceCloneCreateRetryDelay      = 60 * time.Second
-	instanceCloneCreateRetryMinTimeout = 30 * time.Second
-	// update
-	instanceCloneUpdateRetryTimeout    = 10 * time.Minute
-	instanceCloneUpdateRetryDelay      = 15 * time.Second
-	instanceCloneUpdateRetryMinTimeout = 15 * time.Second
-	// delete
-	instanceClonedeleteRetryDelay      = 15 * time.Second
-	instanceClonedeleteRetryTimeout    = 5 * time.Minute
-	instanceClonedeleteRetryMinTimeout = 15 * time.Second
 )
 
 func InstancesClone() *schema.Resource {
@@ -254,124 +237,23 @@ func InstancesClone() *schema.Resource {
 	}
 }
 
+type instanceCloneResourceObj struct{}
+
+func (*instanceCloneResourceObj) getResourceObject(c *client.Client) cmp.Resource {
+	return c.CmpClient.InstanceClone
+}
 func instanceCloneCreateContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c, err := client.GetClientFromMetaMap(meta)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-
-	data := utils.NewData(d)
-	if err := c.CmpClient.InstanceClone.Create(ctx, data, meta); err != nil {
-		return diag.FromErr(err)
-	}
-
-	// Wait for the status to be running
-	createStateConf := resource.StateChangeConf{
-		Delay:      instanceCloneCreateRetryDelay,
-		Pending:    []string{utils.StateProvisioning},
-		Target:     []string{utils.StateRunning},
-		Timeout:    instanceCloneCreateRetryTimeout,
-		MinTimeout: instanceCloneCreateRetryMinTimeout,
-		Refresh: func() (result interface{}, state string, err error) {
-			if err := c.CmpClient.InstanceClone.Read(ctx, data, meta); err != nil {
-				return nil, "", err
-			}
-
-			return d.Get("name"), data.GetString("status"), nil
-		},
-	}
-	_, err = createStateConf.WaitForStateContext(ctx)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-
-	return nil
+	return instanceHelperCreateContext(ctx, &instanceCloneResourceObj{}, d, meta)
 }
 
 func instanceCloneReadContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c, err := client.GetClientFromMetaMap(meta)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-
-	data := utils.NewData(d)
-	err = c.CmpClient.InstanceClone.Read(ctx, data, meta)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-
-	return nil
+	return instanceHelperReadContext(ctx, &instanceCloneResourceObj{}, d, meta)
 }
 
 func instanceCloneDeleteContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c, err := client.GetClientFromMetaMap(meta)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-
-	data := utils.NewData(d)
-	if err := c.CmpClient.InstanceClone.Delete(ctx, data, meta); err != nil {
-		return diag.FromErr(err)
-	}
-
-	deleteStateConf := resource.StateChangeConf{
-		Delay:      instanceClonedeleteRetryDelay,
-		Pending:    []string{"deleting"},
-		Target:     []string{"deleted", "Failed"},
-		Timeout:    instanceClonedeleteRetryTimeout,
-		MinTimeout: instanceClonedeleteRetryMinTimeout,
-		Refresh: func() (result interface{}, state string, err error) {
-			if err := c.CmpClient.InstanceClone.Read(ctx, data, meta); err != nil {
-				// Check for status 404
-				statusCode := utils.GetStatusCode(err)
-				if statusCode == http.StatusNotFound {
-					return d.Get("name"), "deleted", nil
-				}
-
-				return nil, "Failed", err
-			}
-
-			return d.Get("name"), "deleting", nil
-		},
-	}
-	_, err = deleteStateConf.WaitForStateContext(ctx)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-	data.SetID("")
-
-	return nil
+	return instanceHelperDeleteContext(ctx, &instanceCloneResourceObj{}, d, meta)
 }
 
 func instanceCloneUpdateContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c, err := client.GetClientFromMetaMap(meta)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-
-	data := utils.NewData(d)
-	if err := c.CmpClient.InstanceClone.Update(ctx, data, meta); err != nil {
-		return diag.FromErr(err)
-	}
-	// Wait for the status to be running
-	updateStateConf := resource.StateChangeConf{
-		Delay:      instanceCloneUpdateRetryDelay,
-		Pending:    []string{utils.StateResizing},
-		Target:     []string{utils.StateRunning, utils.StateStopped, utils.StateSuspended},
-		Timeout:    instanceCloneUpdateRetryTimeout,
-		MinTimeout: instanceCloneUpdateRetryMinTimeout,
-		Refresh: func() (result interface{}, state string, err error) {
-			if err := c.CmpClient.InstanceClone.Read(ctx, data, meta); err != nil {
-				return nil, "", err
-			}
-
-			return d.Get("name"), data.GetString("status"), nil
-		},
-	}
-	_, err = updateStateConf.WaitForStateContext(ctx)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-
-	return instanceCloneReadContext(ctx, d, meta)
+	return instanceHelperUpdateContext(ctx, &instanceCloneResourceObj{}, d, meta)
 }
