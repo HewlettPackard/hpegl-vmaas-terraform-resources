@@ -82,8 +82,9 @@ func updateInstance(ctx context.Context, iclient iClient, d *utils.Data, meta in
 		}
 	}
 
-	if d.HasChanged("power") {
+	if d.HasChanged("power") || d.HasChanged("restart_instance") {
 		// Do power operation only if backend is in different state
+		// restart only if instance in actual is in power-on state
 		resp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
 			return iclient.getIClient().GetASpecificInstance(ctx, id)
 		})
@@ -95,6 +96,10 @@ func updateInstance(ctx context.Context, iclient iClient, d *utils.Data, meta in
 		powerOp := d.GetString("power")
 		if powerOp != status {
 			if err := instanceDoPowerTask(ctx, iclient, id, meta, status, d.GetString("power")); err != nil {
+				return err
+			}
+		} else if d.HasChanged("restart_instance") {
+			if err := instanceDoPowerTask(ctx, iclient, id, meta, status, utils.Restart); err != nil {
 				return err
 			}
 		}
@@ -269,14 +274,14 @@ func instanceDoPowerTask(
 	iclient iClient,
 	instanceID int,
 	meta interface{},
-	oldOp,
-	operation string) error {
+	currState,
+	newOp string) error {
 	var err error
-	err = instanceValidatePowerTransition(oldOp, operation)
+	err = instanceValidatePowerTransition(currState, newOp)
 	if err != nil {
 		return err
 	}
-	switch operation {
+	switch newOp {
 	case utils.PowerOn:
 		_, err = utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
 			_, err := iclient.getIClient().StartAnInstance(ctx, instanceID)
@@ -301,15 +306,13 @@ func instanceDoPowerTask(
 
 			return nil, err
 		})
-	default:
-		return fmt.Errorf("power operation not allowed from %s state", operation)
 	}
 
 	return err
 }
 
 func instanceValidatePowerTransition(oldPower, newPower string) error {
-	if oldPower == utils.PowerOn || oldPower == utils.Restart {
+	if oldPower == utils.PowerOn {
 		if newPower == utils.PowerOff || newPower == utils.Suspend || newPower == utils.Restart {
 			return nil
 		}
