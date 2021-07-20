@@ -243,10 +243,20 @@ func getSharedInstanceSchema(isClone bool) *schema.Resource {
 				Optional: true,
 				Description: `Power operation for an instance. Power attribute can be
 				use to update power state of an existing instance. Allowed power operations are
-				'poweroff','poweron','restart' and 'suspend'. Upon creating an instance only 'poweron' operation is allowed.`,
+				'poweroff', 'poweron' and 'suspend'. Upon creating an instance only 'poweron' operation is allowed.`,
 				ValidateFunc: validation.StringInSlice([]string{
-					utils.PowerOn, utils.PowerOff, utils.Restart, utils.Suspend,
+					utils.PowerOn, utils.PowerOff, utils.Suspend,
 				}, false),
+			},
+			"restart_instance": {
+				Type:     schema.TypeInt,
+				Optional: true,
+				Description: `Restarts the instance if set to any positive integer.
+				Restart works only on pre-created instance.`,
+				ValidateFunc: validation.IntAtLeast(1),
+				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+					return d.HasChange("power")
+				},
 			},
 		},
 		SchemaVersion:  0,
@@ -384,7 +394,7 @@ func instanceHelperUpdateContext(
 	// Wait for the status to be running
 	updateStateConf := resource.StateChangeConf{
 		Delay:      instanceUpdateRetryDelay,
-		Pending:    []string{utils.StateResizing, utils.StateStopping, utils.StateSuspending},
+		Pending:    []string{utils.StateResizing, utils.StateStopping, utils.StateSuspending, utils.StateRestarting},
 		Target:     []string{utils.StateRunning, utils.StateStopped, utils.StateSuspended},
 		Timeout:    instanceUpdateRetryTimeout,
 		MinTimeout: instanceUpdateRetryMinTimeout,
