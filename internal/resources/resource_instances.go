@@ -266,10 +266,8 @@ func Instances() *schema.Resource {
 				Restart works only on pre-created instance.`,
 				ValidateFunc: validation.IntAtLeast(1),
 				DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
-					if d.HasChange("power") {
-						return true
-					}
-					return false
+
+					return d.HasChange("power")
 				},
 			},
 		},
