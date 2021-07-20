@@ -82,8 +82,9 @@ func updateInstance(ctx context.Context, iclient iClient, d *utils.Data, meta in
 		}
 	}
 
-	if d.HasChanged("power") {
+	if d.HasChanged("power") || d.HasChanged("restart_instance") {
 		// Do power operation only if backend is in different state
+		// restart only if instance in actual is in power-on state
 		resp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
 			return iclient.getIClient().GetASpecificInstance(ctx, id)
 		})
@@ -97,20 +98,10 @@ func updateInstance(ctx context.Context, iclient iClient, d *utils.Data, meta in
 			if err := instanceDoPowerTask(ctx, iclient, id, meta, status, d.GetString("power")); err != nil {
 				return err
 			}
-		}
-	}
-	if d.HasChanged("restart_instance") {
-		// restart only if instance in actual is in power-on state
-		resp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-			return iclient.getIClient().GetASpecificInstance(ctx, id)
-		})
-		if err != nil {
-			return err
-		}
-		getInstance := resp.(models.GetInstanceResponse)
-		status := utils.ParsePowerState(getInstance.Instance.Status)
-		if err := instanceDoPowerTask(ctx, iclient, id, meta, status, utils.Restart); err != nil {
-			return err
+		} else if d.HasChanged("restart_instance") {
+			if err := instanceDoPowerTask(ctx, iclient, id, meta, status, utils.Restart); err != nil {
+				return err
+			}
 		}
 	}
 
