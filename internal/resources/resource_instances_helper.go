@@ -46,6 +46,7 @@ func getSharedInstanceSchema(isClone bool) *schema.Resource {
 	} else {
 		layoutID.Required = true
 	}
+
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"name": {
