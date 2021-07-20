@@ -12,7 +12,14 @@ import (
 )
 
 func InstancesClone() *schema.Resource {
-	return getSharedInstanceSchema(true)
+	instanceCloneSchema := getSharedInstanceSchema(true)
+
+	instanceCloneSchema.CreateContext = instanceCloneCreateContext
+	instanceCloneSchema.ReadContext = instanceCloneReadContext
+	instanceCloneSchema.UpdateContext = instanceCloneUpdateContext
+	instanceCloneSchema.DeleteContext = instanceCloneDeleteContext
+
+	return instanceCloneSchema
 }
 
 type instanceCloneResourceObj struct{}

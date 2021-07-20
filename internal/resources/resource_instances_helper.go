@@ -251,10 +251,6 @@ func getSharedInstanceSchema(isClone bool) *schema.Resource {
 		},
 		SchemaVersion:  0,
 		StateUpgraders: nil,
-		CreateContext:  instanceCloneCreateContext,
-		ReadContext:    instanceCloneReadContext,
-		UpdateContext:  instanceCloneUpdateContext,
-		DeleteContext:  instanceCloneDeleteContext,
 		CustomizeDiff:  nil,
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
@@ -388,7 +384,7 @@ func instanceHelperUpdateContext(
 	// Wait for the status to be running
 	updateStateConf := resource.StateChangeConf{
 		Delay:      instanceUpdateRetryDelay,
-		Pending:    []string{utils.StateResizing},
+		Pending:    []string{utils.StateResizing, utils.StateStopping, utils.StateSuspending},
 		Target:     []string{utils.StateRunning, utils.StateStopped, utils.StateSuspended},
 		Timeout:    instanceUpdateRetryTimeout,
 		MinTimeout: instanceUpdateRetryMinTimeout,

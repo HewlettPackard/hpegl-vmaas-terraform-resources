@@ -43,6 +43,10 @@ func Instances() *schema.Resource {
 			},
 		},
 	}
+	instanceSchema.CreateContext = instanceCreateContext
+	instanceSchema.ReadContext = instanceReadContext
+	instanceSchema.DeleteContext = instanceDeleteContext
+	instanceSchema.UpdateContext = instanceUpdateContext
 
 	return instanceSchema
 }

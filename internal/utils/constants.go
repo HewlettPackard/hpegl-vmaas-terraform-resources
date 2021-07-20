@@ -11,7 +11,9 @@ const (
 	StateFailed       = "failed"
 	StateProvisioning = "provisioning"
 	StateStopped      = "stopped"
+	StateStopping     = "stopping"
 	StateSuspended    = "suspended"
+	StateSuspending   = "suspending"
 	StateResizing     = "resizing"
 	// data constants
 	ErrInvalidType   = "invalid Type"
