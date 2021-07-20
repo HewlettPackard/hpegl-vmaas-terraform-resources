@@ -14,6 +14,13 @@ import (
 func InstancesClone() *schema.Resource {
 	instanceCloneSchema := getSharedInstanceSchema(true)
 
+	instanceCloneSchema.Schema["source_instance_id"] = &schema.Schema{
+		Type:     schema.TypeInt,
+		Required: true,
+		ForceNew: true,
+		Description: `Instance ID of the source instance. For getting source instance ID
+		use 'hpeg_vmaas_instance' resource.`,
+	}
 	instanceCloneSchema.CreateContext = instanceCloneCreateContext
 	instanceCloneSchema.ReadContext = instanceCloneReadContext
 	instanceCloneSchema.UpdateContext = instanceCloneUpdateContext

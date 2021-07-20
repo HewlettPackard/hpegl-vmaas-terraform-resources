@@ -33,18 +33,20 @@ func TestVmaasInstanceClonePlan(t *testing.T) {
 
 func TestAccResourceInstanceCloneCreate(t *testing.T) {
 	if testing.Short() {
-		t.Skip("Skipping instance resource creation in short mode")
+		t.Skip("Skipping instance clone resource creation in short mode")
 	}
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: resource.ComposeTestCheckFunc(testVmaasInstanceCloneDestroy("hpegl_vmaas_instance.tf_acc_instance")),
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		CheckDestroy: resource.ComposeTestCheckFunc(
+			testVmaasInstanceCloneDestroy("hpegl_vmaas_instance_clone.tf_acc_instance_clone"),
+		),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceInstanceClone(),
 				Check: resource.ComposeTestCheckFunc(
 					validateResource(
-						"hpegl_vmaas_instance.tf_acc_instance",
+						"hpegl_vmaas_instance_clone.tf_acc_instance_clone",
 						validateVmaasInstanceCloneStatus,
 					),
 				),
