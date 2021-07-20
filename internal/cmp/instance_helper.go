@@ -99,7 +99,7 @@ func updateInstance(ctx context.Context, iclient iClient, d *utils.Data, meta in
 			}
 		}
 	}
-	if d.HasChanged("restart_instance") && d.GetInt("restart_instance") > 0 {
+	if d.HasChanged("restart_instance") {
 		// restart only if instance in actual is in power-on state
 		resp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
 			return iclient.getIClient().GetASpecificInstance(ctx, id)
