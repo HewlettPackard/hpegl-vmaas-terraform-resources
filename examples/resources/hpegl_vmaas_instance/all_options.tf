@@ -57,4 +57,7 @@ resource "hpegl_vmaas_instance" "tf_instance" {
   # On creating only poweron operation is supported. Upon updation all other
   # lifecycle operations are permitted.
   power = "poweron"
+  # Restarts the instance if set to any positive integer.
+  # Restart works only on pre-created instance.`,
+  restart_instance = 1
 }
