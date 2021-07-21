@@ -220,12 +220,13 @@ func (i *instanceClone) Read(ctx context.Context, d *utils.Data, meta interface{
 
 	d.Set("volume", volumes)
 
-	// Write connection info in to state file
-	connectionInfo := d.GetListMap(params.ConnectionInfo)
-	for index, connection := range instance.Instance.ConnectionInfo {
-		connectionInfo[index][params.IP] = connection.IP
+	// Write IPs in to state file
+	connLen := len(instance.Instance.ConnectionInfo)
+	IP := make([]string, connLen)
+	for i := 0; i < connLen; i++ {
+		IP[i] = instance.Instance.ConnectionInfo[i].IP
 	}
-	d.Set(params.ConnectionInfo, connectionInfo)
+	d.Set(params.IP, IP)
 
 	d.Set("layout_id", instance.Instance.Layout.ID)
 	d.SetString("status", instance.Instance.Status)

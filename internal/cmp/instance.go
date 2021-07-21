@@ -143,11 +143,12 @@ func (i *instance) Read(ctx context.Context, d *utils.Data, meta interface{}) er
 	d.Set("volume", volumes)
 
 	// Write connection info in to state file
-	connectionInfo := d.GetListMap(params.ConnectionInfo)
-	for index, connection := range instance.Instance.ConnectionInfo {
-		connectionInfo[index][params.IP] = connection.IP
+	connLen := len(instance.Instance.ConnectionInfo)
+	IP := make([]string, connLen)
+	for i := 0; i < connLen; i++ {
+		IP[i] = instance.Instance.ConnectionInfo[i].IP
 	}
-	d.Set(params.ConnectionInfo, connectionInfo)
+	d.Set(params.IP, IP)
 
 	d.SetID(instance.Instance.ID)
 	d.SetString("status", instance.Instance.Status)
