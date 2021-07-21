@@ -243,7 +243,7 @@ func InstancesClone() *schema.Resource {
 		ReadContext:    instanceCloneReadContext,
 		UpdateContext:  instanceCloneUpdateContext,
 		DeleteContext:  instanceCloneDeleteContext,
-		CustomizeDiff:  nil,
+		CustomizeDiff:  instanceCustomizeDiff,
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},

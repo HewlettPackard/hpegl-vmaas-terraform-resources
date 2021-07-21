@@ -11,6 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+	"github.com/hpe-hcss/vmaas-terraform-resources/internal/resources/diffValidation"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
 	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/client"
 )
@@ -117,6 +118,11 @@ func Instances() *schema.Resource {
 							Computed:    true,
 							Type:        schema.TypeInt,
 							Description: "ID for the volume",
+						},
+						"root": {
+							Computed:    true,
+							Type:        schema.TypeBool,
+							Description: "Is volume the root volume",
 						},
 					},
 				},
@@ -276,7 +282,7 @@ func Instances() *schema.Resource {
 		ReadContext:    instanceReadContext,
 		UpdateContext:  instanceUpdateContext,
 		DeleteContext:  instanceDeleteContext,
-		CustomizeDiff:  nil,
+		CustomizeDiff:  instanceCustomizeDiff,
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
@@ -285,6 +291,10 @@ func Instances() *schema.Resource {
 		For creating an instance, provide a unique name and all the mandatory(Required) parameters.
 		It is recommend to use vmware type for provisioning.`,
 	}
+}
+
+func instanceCustomizeDiff(ctx context.Context, diff *schema.ResourceDiff, meta interface{}) error {
+	return diffValidation.Instance(diff)
 }
 
 func instanceCreateContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {

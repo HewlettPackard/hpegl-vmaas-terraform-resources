@@ -138,6 +138,7 @@ func (i *instance) Read(ctx context.Context, d *utils.Data, meta interface{}) er
 	}
 	for i := 0; i < volumeLen; i++ {
 		volumes[i]["id"] = instance.Instance.Volumes[i].ID
+		volumes[i]["root"] = instance.Instance.Volumes[i].RootVolume
 	}
 	d.Set("volume", volumes)
 	d.SetID(instance.Instance.ID)
