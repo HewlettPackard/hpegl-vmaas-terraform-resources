@@ -22,10 +22,6 @@ type iClient interface {
 // groups and tags
 func updateInstance(ctx context.Context, iclient iClient, d *utils.Data, meta interface{}) error {
 	logger.Debug("Updating the instance")
-	err := instanceValidateVolumeNameIsUnique(d.GetListMap("volume"))
-	if err != nil {
-		return err
-	}
 
 	id := d.GetID()
 	if d.HasChanged("name") || d.HasChanged("group_id") || d.HasChanged("tags") ||
@@ -323,21 +319,6 @@ func instanceValidatePowerTransition(oldPower, newPower string) error {
 	}
 
 	return fmt.Errorf("power operation not allowed from %s state to %s state", oldPower, newPower)
-}
-
-func instanceValidateVolumeNameIsUnique(vol []map[string]interface{}) error {
-	volumes := make(map[string]bool)
-	for _, v := range vol {
-		if _, ok := volumes[v["name"].(string)]; !ok {
-			volumes[v["name"].(string)] = true
-
-			continue
-		}
-
-		return fmt.Errorf("volume names should be unique")
-	}
-
-	return nil
 }
 
 func instanceValidatePower(powerOp string) error {

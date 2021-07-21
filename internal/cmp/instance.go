@@ -33,11 +33,6 @@ func newInstance(iClient *client.InstancesAPIService) *instance {
 func (i *instance) Create(ctx context.Context, d *utils.Data, meta interface{}) error {
 	logger.Debug("Creating new instance")
 
-	err := instanceValidateVolumeNameIsUnique(d.GetListMap("volume"))
-	if err != nil {
-		return err
-	}
-
 	c := d.GetListMap("config")[0]
 	req := &models.CreateInstanceBody{
 		ZoneID: d.GetJSONNumber("cloud_id"),

@@ -29,10 +29,11 @@ func instanceVolumeDiffValidate(diff *schema.ResourceDiff) error {
 	if !diff.HasChange("volume") {
 		return nil
 	}
-	oldVol, newVol := diff.GetChange("volume")
 
+	oldVol, newVol := diff.GetChange("volume")
 	newVolMap := make(map[string]bool)
 
+	// Validate if the primary volume is being modified
 	for _, vol := range newVol.([]interface{}) {
 		tVol := vol.(map[string]interface{})
 		newVolMap[tVol["name"].(string)] = tVol["root"].(bool)
@@ -51,6 +52,23 @@ func instanceVolumeDiffValidate(diff *schema.ResourceDiff) error {
 					"Please fix your configuration and retry", tVol["name"].(string))
 			}
 		}
+	}
+
+	// Validate if the volume names are not unique
+	return instanceValidateVolumeNameIsUnique(newVol.([]interface{}))
+}
+
+func instanceValidateVolumeNameIsUnique(vol []interface{}) error {
+	volumes := make(map[string]bool)
+	for _, v := range vol {
+		tVol := v.(map[string]interface{})
+		if _, ok := tVol["name"].(string); !ok {
+			volumes[tVol["name"].(string)] = true
+
+			continue
+		}
+
+		return fmt.Errorf("volume names should be unique")
 	}
 
 	return nil

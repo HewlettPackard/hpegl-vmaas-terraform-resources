@@ -42,11 +42,6 @@ func (i *instanceClone) Create(ctx context.Context, d *utils.Data, meta interfac
 	logger.Debug("Cloning instance")
 
 	volumes := d.GetListMap("volume")
-	err := instanceValidateVolumeNameIsUnique(volumes)
-	if err != nil {
-		return err
-	}
-
 	req := &models.CreateInstanceBody{
 		CloneName: d.GetString("name"),
 		ZoneID:    d.GetJSONNumber("cloud_id"),
