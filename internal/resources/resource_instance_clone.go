@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/hpe-hcss/vmaas-terraform-resources/internal/params"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -73,6 +75,15 @@ func InstancesClone() *schema.Resource {
 				ForceNew:    true,
 				Optional:    true,
 				Description: "Unique code used to identify the instance type.",
+			},
+			params.IP: {
+				Type:        schema.TypeList,
+				Computed:    true,
+				Optional:    true,
+				Description: "IP assigned to instance",
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
 			},
 			"network": {
 				Type:        schema.TypeList,
