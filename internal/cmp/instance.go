@@ -144,11 +144,11 @@ func (i *instance) Read(ctx context.Context, d *utils.Data, meta interface{}) er
 
 	// Write connection info in to state file
 	connLen := len(instance.Instance.ConnectionInfo)
-	IP := make([]string, connLen)
+	ip := make([]string, connLen)
 	for i := 0; i < connLen; i++ {
-		IP[i] = instance.Instance.ConnectionInfo[i].IP
+		ip[i] = instance.Instance.ConnectionInfo[i].IP
 	}
-	d.Set(params.IP, IP)
+	d.Set(params.IP, ip)
 
 	d.SetID(instance.Instance.ID)
 	d.SetString("status", instance.Instance.Status)
