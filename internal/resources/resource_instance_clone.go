@@ -11,6 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+	"github.com/hpe-hcss/vmaas-terraform-resources/internal/params"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
 	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/client"
 )
@@ -50,6 +51,21 @@ func InstancesClone() *schema.Resource {
 				Optional:    true,
 				ForceNew:    true,
 				Description: f(generalDDesc, "cloud"),
+			},
+			params.ConnectionInfo: {
+				Type:        schema.TypeList,
+				Computed:    true,
+				Optional:    true,
+				Description: "A list of info about connection which has details of IP and port",
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						params.IP: {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "IP of the instance",
+						},
+					},
+				},
 			},
 			"group_id": {
 				Type:        schema.TypeInt,

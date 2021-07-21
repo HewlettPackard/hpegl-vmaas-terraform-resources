@@ -12,6 +12,7 @@ import (
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/models"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/logger"
+	"github.com/hpe-hcss/vmaas-terraform-resources/internal/params"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
 )
 
@@ -218,6 +219,14 @@ func (i *instanceClone) Read(ctx context.Context, d *utils.Data, meta interface{
 	}
 
 	d.Set("volume", volumes)
+
+	// Write connection info in to state file
+	connectionInfo := d.GetListMap(params.ConnectionInfo)
+	for index, connection := range instance.Instance.ConnectionInfo {
+		connectionInfo[index][params.IP] = connection.IP
+	}
+	d.Set(params.ConnectionInfo, connectionInfo)
+
 	d.Set("layout_id", instance.Instance.Layout.ID)
 	d.SetString("status", instance.Instance.Status)
 	d.SetID(instance.Instance.ID)
