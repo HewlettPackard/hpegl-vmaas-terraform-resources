@@ -20,7 +20,8 @@ func retry(
 	ctx context.Context,
 	meta interface{},
 	count int, timeout time.Duration,
-	fn func(context.Context) (interface{}, error), cond CondFunc) (interface{}, error) {
+	fn func(context.Context) (interface{}, error), cond CondFunc,
+) (interface{}, error) {
 	var err error
 	var resp interface{}
 	for i := 0; i < count; i++ {
@@ -53,7 +54,8 @@ type CustomRetry struct {
 func (c *CustomRetry) Retry(
 	ctx context.Context,
 	meta interface{},
-	fn func(context.Context) (interface{}, error)) (interface{}, error) {
+	fn func(context.Context) (interface{}, error),
+) (interface{}, error) {
 	if c.RetryCount == 0 {
 		c.RetryCount = defaultRetryCount
 	}

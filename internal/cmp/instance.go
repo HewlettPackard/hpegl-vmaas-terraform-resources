@@ -10,7 +10,6 @@ import (
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/models"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/logger"
-	"github.com/hpe-hcss/vmaas-terraform-resources/internal/params"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
 )
 
@@ -141,15 +140,7 @@ func (i *instance) Read(ctx context.Context, d *utils.Data, meta interface{}) er
 		volumes[i]["id"] = instance.Instance.Volumes[i].ID
 	}
 	d.Set("volume", volumes)
-
-	// Write connection info in to state file
-	connLen := len(instance.Instance.ConnectionInfo)
-	ip := make([]string, connLen)
-	for i := 0; i < connLen; i++ {
-		ip[i] = instance.Instance.ConnectionInfo[i].IP
-	}
-	d.Set(params.IP, ip)
-
+	instanceSetIP(d, instance)
 	d.SetID(instance.Instance.ID)
 	d.SetString("status", instance.Instance.Status)
 
