@@ -67,14 +67,14 @@ func (i *Instance) instanceVolumeDiffValidate() error {
 	oldVol, newVol := i.diff.GetChange("volume")
 	newVolMap := make(map[string]bool)
 
-	// If create operation validation should be skipped
-	if i.isEmpty(oldVol) {
-		return nil
-	}
-
 	// Validate is the volume names are unique
 	if err := i.instanceValidateVolumeNameIsUnique(newVol.([]interface{})); err != nil {
 		return err
+	}
+
+	// If create operation validation should be skipped
+	if i.isEmpty(oldVol) {
+		return nil
 	}
 
 	// Validate if the primary volume is being modified
