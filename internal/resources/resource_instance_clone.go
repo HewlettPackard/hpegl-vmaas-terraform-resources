@@ -12,7 +12,7 @@ import (
 )
 
 func InstancesClone() *schema.Resource {
-	instanceCloneSchema := getSharedInstanceSchema(true)
+	instanceCloneSchema := getInstanceDefaultSchema(true)
 
 	instanceCloneSchema.Schema["source_instance_id"] = &schema.Schema{
 		Type:     schema.TypeInt,
@@ -21,6 +21,11 @@ func InstancesClone() *schema.Resource {
 		Description: `Instance ID of the source instance. For getting source instance ID
 		use 'hpeg_vmaas_instance' resource.`,
 	}
+	instanceCloneSchema.Description = `Instance clone resource facilitates creating,
+	updating and deleting cloned virtual machines.
+	For creating an instance clone, provide a unique name and all the Mandatory(Required) parameters.
+	All optional parameters will be inherits from parent resource if not provided.`
+
 	instanceCloneSchema.CreateContext = instanceCloneCreateContext
 	instanceCloneSchema.ReadContext = instanceCloneReadContext
 	instanceCloneSchema.UpdateContext = instanceCloneUpdateContext

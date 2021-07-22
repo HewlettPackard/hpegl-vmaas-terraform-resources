@@ -35,7 +35,7 @@ type resourceObject interface {
 	getClient(*client.Client) cmp.Resource
 }
 
-func getSharedInstanceSchema(isClone bool) *schema.Resource {
+func getInstanceDefaultSchema(isClone bool) *schema.Resource {
 	layoutID := &schema.Schema{
 		Type:        schema.TypeInt,
 		Description: f(generalDDesc, "layout"),
@@ -160,6 +160,15 @@ func getSharedInstanceSchema(isClone bool) *schema.Resource {
 				Optional:    true,
 				Description: "Hostname for the instance",
 			},
+			"ip": {
+				Type:        schema.TypeList,
+				Computed:    true,
+				Optional:    true,
+				Description: "IP assigned to instance",
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
 			"config": {
 				Type:        schema.TypeSet,
 				ForceNew:    true,
@@ -266,10 +275,6 @@ func getSharedInstanceSchema(isClone bool) *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
-		Description: `Instance resource facilitates creating,
-		updating and deleting virtual machines.
-		For creating an instance clone, provide a unique name and all the Mandatory(Required) parameters.
-		It is recommend to use the Vmware type for provisioning.`,
 	}
 }
 
