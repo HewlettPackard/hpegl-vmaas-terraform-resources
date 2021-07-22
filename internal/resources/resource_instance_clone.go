@@ -30,6 +30,7 @@ func InstancesClone() *schema.Resource {
 	instanceCloneSchema.ReadContext = instanceCloneReadContext
 	instanceCloneSchema.UpdateContext = instanceCloneUpdateContext
 	instanceCloneSchema.DeleteContext = instanceCloneDeleteContext
+	instanceCloneSchema.CustomizeDiff = instanceCustomizeDiff
 
 	return instanceCloneSchema
 }

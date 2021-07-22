@@ -42,11 +42,6 @@ func (i *instanceClone) Create(ctx context.Context, d *utils.Data, meta interfac
 	logger.Debug("Cloning instance")
 
 	volumes := d.GetListMap("volume")
-	err := instanceValidateVolumeNameIsUnique(volumes)
-	if err != nil {
-		return err
-	}
-
 	req := &models.CreateInstanceBody{
 		CloneName: d.GetString("name"),
 		ZoneID:    d.GetJSONNumber("cloud_id"),
@@ -160,13 +155,6 @@ func (i *instanceClone) Create(ctx context.Context, d *utils.Data, meta interfac
 	instancesList := instancesResp.(models.Instances)
 	if len(instancesList.Instances) != 1 {
 		return errors.New("get cloned instance is failed")
-	}
-
-	// Upon creation instance will be in poweron state. Check any other
-	// power state provided and do accordingly
-	err = instanceValidatePower(d.GetString("power"))
-	if err != nil {
-		return err
 	}
 
 	d.SetID(instancesList.Instances[0].ID)

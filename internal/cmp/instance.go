@@ -33,11 +33,6 @@ func newInstance(iClient *client.InstancesAPIService) *instance {
 func (i *instance) Create(ctx context.Context, d *utils.Data, meta interface{}) error {
 	logger.Debug("Creating new instance")
 
-	err := instanceValidateVolumeNameIsUnique(d.GetListMap("volume"))
-	if err != nil {
-		return err
-	}
-
 	c := d.GetListMap("config")[0]
 	req := &models.CreateInstanceBody{
 		ZoneID: d.GetJSONNumber("cloud_id"),
@@ -92,13 +87,6 @@ func (i *instance) Create(ctx context.Context, d *utils.Data, meta interface{}) 
 	}
 	getInstanceBody := *respVM.(models.GetInstanceResponse).Instance
 
-	// Upon creation instance will be in poweron state. Check any other
-	// power state provided and do accordingly
-	err = instanceValidatePower(d.GetString("power"))
-	if err != nil {
-		return err
-	}
-
 	d.SetID(getInstanceBody.ID)
 
 	// post check
@@ -138,6 +126,7 @@ func (i *instance) Read(ctx context.Context, d *utils.Data, meta interface{}) er
 	}
 	for i := 0; i < volumeLen; i++ {
 		volumes[i]["id"] = instance.Instance.Volumes[i].ID
+		volumes[i]["root"] = instance.Instance.Volumes[i].RootVolume
 	}
 	d.Set("volume", volumes)
 	instanceSetIP(d, instance)
