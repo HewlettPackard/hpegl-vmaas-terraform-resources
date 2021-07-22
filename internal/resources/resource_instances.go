@@ -305,6 +305,7 @@ func Instances() *schema.Resource {
 
 func instanceCustomizeDiff(ctx context.Context, diff *schema.ResourceDiff, meta interface{}) error {
 	instance := diffvalidation.NewInstanceValidate(diff)
+
 	return instance.DiffValidate()
 }
 

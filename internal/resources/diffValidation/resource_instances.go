@@ -28,6 +28,7 @@ func (i *Instance) DiffValidate() error {
 			if i.isEmpty(oldParam) {
 				continue
 			}
+
 			return fmt.Errorf("modifying %q is not allowed. "+
 				"Please fix the configuration and re try", param)
 		}
@@ -45,14 +46,14 @@ func (i *Instance) DiffValidate() error {
 	return nil
 }
 
-func (i *Instance) isEmpty(oldParam interface{}) bool {
-	switch oldParam.(type) {
+func (i *Instance) isEmpty(param interface{}) bool {
+	switch paramVal := param.(type) {
 	case []interface{}:
-		return len(oldParam.([]interface{})) == 0
+		return len(paramVal) == 0
 	case string:
-		return oldParam.(string) == ""
+		return paramVal == ""
 	case int:
-		return oldParam.(int) == 0
+		return paramVal == 0
 	default:
 		return false
 	}

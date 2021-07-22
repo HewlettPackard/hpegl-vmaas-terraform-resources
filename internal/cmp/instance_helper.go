@@ -270,7 +270,6 @@ func instanceDoPowerTask(
 	iclient iClient,
 	instanceID int,
 	meta interface{},
-	currState,
 	newOp string) error {
 	var err error
 
