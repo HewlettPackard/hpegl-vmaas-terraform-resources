@@ -53,5 +53,5 @@ func (g *layout) Read(ctx context.Context, d *utils.Data, meta interface{}) erro
 		}
 	}
 
-	return fmt.Errorf(errExactMatch, "layout name")
+	return fmt.Errorf(errExactMatch, "layout")
 }

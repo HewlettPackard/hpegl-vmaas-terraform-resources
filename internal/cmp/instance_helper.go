@@ -341,3 +341,11 @@ func instanceCloneCompareVolume(
 
 	return newVolumes
 }
+
+func instanceSetIP(d *utils.Data, instance models.GetInstanceResponse) {
+	ip := make([]string, len(instance.Instance.ConnectionInfo))
+	for i := range instance.Instance.ConnectionInfo {
+		ip[i] = instance.Instance.ConnectionInfo[i].IP
+	}
+	d.Set("ip", ip)
+}
