@@ -13,7 +13,7 @@ import (
 )
 
 func Instances() *schema.Resource {
-	instanceSchema := getSharedInstanceSchema(false)
+	instanceSchema := getInstanceDefaultSchema(false)
 	instanceSchema.Schema["port"] = &schema.Schema{
 		Type:        schema.TypeList,
 		ForceNew:    true,
@@ -43,6 +43,9 @@ func Instances() *schema.Resource {
 			},
 		},
 	}
+	instanceSchema.Description = `Instance resource facilitates creating,
+		updating and deleting virtual machines. It is recommend to use the Vmware type for provisioning.`
+
 	instanceSchema.CreateContext = instanceCreateContext
 	instanceSchema.ReadContext = instanceReadContext
 	instanceSchema.DeleteContext = instanceDeleteContext
