@@ -91,11 +91,11 @@ func updateInstance(ctx context.Context, iclient iClient, d *utils.Data, meta in
 		status := utils.ParsePowerState(getInstance.Instance.Status)
 		powerOp := d.GetString("power")
 		if powerOp != status {
-			if err := instanceDoPowerTask(ctx, iclient, id, meta, status, d.GetString("power")); err != nil {
+			if err := instanceDoPowerTask(ctx, iclient, id, meta, d.GetString("power")); err != nil {
 				return err
 			}
 		} else if d.HasChanged("restart_instance") {
-			if err := instanceDoPowerTask(ctx, iclient, id, meta, status, utils.Restart); err != nil {
+			if err := instanceDoPowerTask(ctx, iclient, id, meta, utils.Restart); err != nil {
 				return err
 			}
 		}
