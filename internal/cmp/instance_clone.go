@@ -208,7 +208,7 @@ func (i *instanceClone) Read(ctx context.Context, d *utils.Data, meta interface{
 
 	volumes := d.GetListMap("volume")
 	// Assign proper ID for the volume, since response may contains more
-	// volumes than schema, check the name and assign IP
+	// volumes than schema, check the name and assign ip
 	for i := range volumes {
 		for _, vModel := range instance.Instance.Volumes {
 			if vModel.Name == volumes[i]["name"].(string) {
@@ -218,6 +218,10 @@ func (i *instanceClone) Read(ctx context.Context, d *utils.Data, meta interface{
 	}
 
 	d.Set("volume", volumes)
+
+	// Write IPs in to state file
+	instanceSetIP(ctx, d, instance)
+
 	d.Set("layout_id", instance.Instance.Layout.ID)
 	d.SetString("status", instance.Instance.Status)
 	d.SetID(instance.Instance.ID)

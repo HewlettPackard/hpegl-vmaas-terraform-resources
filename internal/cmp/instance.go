@@ -140,6 +140,7 @@ func (i *instance) Read(ctx context.Context, d *utils.Data, meta interface{}) er
 		volumes[i]["id"] = instance.Instance.Volumes[i].ID
 	}
 	d.Set("volume", volumes)
+	instanceSetIP(ctx, d, instance)
 	d.SetID(instance.Instance.ID)
 	d.SetString("status", instance.Instance.Status)
 
