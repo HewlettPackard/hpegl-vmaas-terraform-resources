@@ -88,13 +88,6 @@ func (i *instance) Create(ctx context.Context, d *utils.Data, meta interface{}) 
 	}
 	getInstanceBody := *respVM.(models.GetInstanceResponse).Instance
 
-	// Upon creation instance will be in poweron state. Check any other
-	// power state provided and do accordingly
-	err = instanceValidatePower(d.GetString("power"))
-	if err != nil {
-		return err
-	}
-
 	d.SetID(getInstanceBody.ID)
 
 	// post check

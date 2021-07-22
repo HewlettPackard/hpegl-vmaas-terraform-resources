@@ -158,13 +158,6 @@ func (i *instanceClone) Create(ctx context.Context, d *utils.Data, meta interfac
 		return errors.New("get cloned instance is failed")
 	}
 
-	// Upon creation instance will be in poweron state. Check any other
-	// power state provided and do accordingly
-	err = instanceValidatePower(d.GetString("power"))
-	if err != nil {
-		return err
-	}
-
 	d.SetID(instancesList.Instances[0].ID)
 
 	// post check

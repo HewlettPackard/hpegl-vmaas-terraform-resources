@@ -273,10 +273,7 @@ func instanceDoPowerTask(
 	currState,
 	newOp string) error {
 	var err error
-	err = instanceValidatePowerTransition(currState, newOp)
-	if err != nil {
-		return err
-	}
+
 	switch newOp {
 	case utils.PowerOn:
 		_, err = utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
@@ -305,28 +302,6 @@ func instanceDoPowerTask(
 	}
 
 	return err
-}
-
-func instanceValidatePowerTransition(oldPower, newPower string) error {
-	if oldPower == utils.PowerOn {
-		if newPower == utils.PowerOff || newPower == utils.Suspend || newPower == utils.Restart {
-			return nil
-		}
-	} else {
-		if newPower == utils.PowerOn {
-			return nil
-		}
-	}
-
-	return fmt.Errorf("power operation not allowed from %s state to %s state", oldPower, newPower)
-}
-
-func instanceValidatePower(powerOp string) error {
-	if powerOp != "" && powerOp != utils.PowerOn {
-		return fmt.Errorf("power operation %s is not permitted while creating an instance", powerOp)
-	}
-
-	return nil
 }
 
 func instanceCloneCompareVolume(
