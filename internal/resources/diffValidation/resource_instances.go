@@ -92,7 +92,7 @@ func (i *Instance) instanceVolumeDiffValidate() error {
 				return fmt.Errorf("deleting root/primary volume '%s' is not allowed. "+
 					"Please fix your configuration and retry", tVol["name"].(string))
 			} else if !isRoot {
-				return fmt.Errorf("renaming the root/primary volume '%s' is not allowed. "+
+				return fmt.Errorf("interchanging the root/primary volume '%s' is not allowed. "+
 					"Please fix your configuration and retry", tVol["name"].(string))
 			}
 		}
