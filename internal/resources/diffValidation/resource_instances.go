@@ -105,7 +105,7 @@ func (i *Instance) instanceValidateVolumeNameIsUnique(vol []interface{}) error {
 	volumes := make(map[string]bool)
 	for _, v := range vol {
 		tVol := v.(map[string]interface{})
-		if _, ok := tVol["name"].(string); !ok {
+		if _, ok := volumes[tVol["name"].(string)]; !ok {
 			volumes[tVol["name"].(string)] = true
 
 			continue
