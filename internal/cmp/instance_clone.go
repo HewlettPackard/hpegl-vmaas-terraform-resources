@@ -169,6 +169,14 @@ func (i *instanceClone) Create(ctx context.Context, d *utils.Data, meta interfac
 		return err
 	}
 
+	if snapshotName := d.GetString("snapshot"); snapshotName != "" {
+		createInstanceSnapshot(ctx, i, meta, instancesList.Instances[0].ID, models.SnapshotBody{
+			Snapshot: &models.SnapshotBodySnapshot{
+				Name: snapshotName,
+			},
+		})
+	}
+
 	d.SetID(instancesList.Instances[0].ID)
 
 	// post check

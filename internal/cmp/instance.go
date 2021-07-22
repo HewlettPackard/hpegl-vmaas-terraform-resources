@@ -92,6 +92,14 @@ func (i *instance) Create(ctx context.Context, d *utils.Data, meta interface{}) 
 	}
 	getInstanceBody := *respVM.(models.GetInstanceResponse).Instance
 
+	if snapshotName := d.GetString("snapshot"); snapshotName != "" {
+		createInstanceSnapshot(ctx, i, meta, getInstanceBody.ID, models.SnapshotBody{
+			Snapshot: &models.SnapshotBodySnapshot{
+				Name: snapshotName,
+			},
+		})
+	}
+
 	// Upon creation instance will be in poweron state. Check any other
 	// power state provided and do accordingly
 	err = instanceValidatePower(d.GetString("power"))

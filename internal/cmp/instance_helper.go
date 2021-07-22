@@ -386,3 +386,18 @@ func instanceCloneCompareVolume(
 
 	return newVolumes
 }
+
+func createInstanceSnapshot(ctx context.Context, iclient iClient, meta interface{}, instanceID int, snapshot models.SnapshotBody) error {
+	snapshotResponse, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
+		return iclient.getIClient().SnapshotAnInstance(ctx, instanceID, &snapshot)
+	})
+	if err != nil {
+		return err
+	}
+	instanceModel := snapshotResponse.(models.Instances)
+	if instanceModel.Success {
+		return fmt.Errorf("%s", "failed to create snapshot with status as false")
+	}
+
+	return nil
+}
