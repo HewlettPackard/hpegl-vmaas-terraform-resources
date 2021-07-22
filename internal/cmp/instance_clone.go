@@ -220,6 +220,7 @@ func (i *instanceClone) Read(ctx context.Context, d *utils.Data, meta interface{
 	ip := make([]string, connLen)
 	for i := 0; i < connLen; i++ {
 		ip[i] = instance.Instance.ConnectionInfo[i].IP
+		volumes[i]["root"] = instance.Instance.Volumes[i].RootVolume
 	}
 	d.Set(params.IP, ip)
 
