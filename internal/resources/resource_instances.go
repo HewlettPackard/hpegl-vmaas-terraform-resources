@@ -8,9 +8,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
-	"github.com/hpe-hcss/vmaas-terraform-resources/internal/params"
-	diffvalidation "github.com/hpe-hcss/vmaas-terraform-resources/internal/resources/diffValidation"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/cmp"
+	diffvalidation "github.com/hpe-hcss/vmaas-terraform-resources/internal/resources/diffValidation"
 	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/client"
 )
 
