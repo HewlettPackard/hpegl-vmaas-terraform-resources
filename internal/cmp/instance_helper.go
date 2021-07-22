@@ -387,9 +387,7 @@ func instanceCloneCompareVolume(
 	return newVolumes
 }
 
-func instanceSetIP(ctx context.Context, d *utils.Data, instance models.GetInstanceResponse) {
-
-	// Write connection info in to state file
+func instanceSetIP(d *utils.Data, instance models.GetInstanceResponse) {
 	ip := make([]string, len(instance.Instance.ConnectionInfo))
 	for i := range instance.Instance.ConnectionInfo {
 		ip[i] = instance.Instance.ConnectionInfo[i].IP

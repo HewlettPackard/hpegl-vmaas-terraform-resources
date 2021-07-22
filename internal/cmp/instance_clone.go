@@ -220,7 +220,7 @@ func (i *instanceClone) Read(ctx context.Context, d *utils.Data, meta interface{
 	d.Set("volume", volumes)
 
 	// Write IPs in to state file
-	instanceSetIP(ctx, d, instance)
+	instanceSetIP(d, instance)
 
 	d.Set("layout_id", instance.Instance.Layout.ID)
 	d.SetString("status", instance.Instance.Status)
