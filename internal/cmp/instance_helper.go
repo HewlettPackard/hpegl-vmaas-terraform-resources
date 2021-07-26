@@ -5,7 +5,9 @@ package cmp
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/models"
@@ -396,14 +398,70 @@ func createInstanceSnapshot(ctx context.Context, iclient iClient, meta interface
 	}
 	instanceModel := snapshotResponse.(models.Instances)
 	if instanceModel.Success {
-		return fmt.Errorf("%s", "failed to create snapshot with status as false")
+		return fmt.Errorf("%s", "failed to create snapshot, API returns status as false")
 	}
 
 	return nil
+}
+
 func instanceSetIP(d *utils.Data, instance models.GetInstanceResponse) {
 	ip := make([]string, len(instance.Instance.ConnectionInfo))
 	for i := range instance.Instance.ConnectionInfo {
 		ip[i] = instance.Instance.ConnectionInfo[i].IP
 	}
 	d.Set("ip", ip)
+}
+
+func instanceSetSnaphot(ctx context.Context, iclient iClient, meta interface{}, d *utils.Data, instanceID int) {
+	snaphotSchema := d.GetListMap("snapshot")
+	if len(snaphotSchema) == 0 {
+		return
+	}
+
+	snaphostResp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
+		return iclient.getIClient().GetListOfSnapshotsForAnInstance(ctx, instanceID)
+	})
+
+	if err != nil {
+		if utils.GetStatusCode(err) != http.StatusNotFound {
+			return
+		}
+		snaphotSchema[0]["is_snapshot_exists"] = false
+		return
+	}
+	id := instanceCheckSnaphotByName(snaphotSchema[0]["name"].(string), snaphostResp)
+	snaphotSchema[0]["id"] = id
+	snaphotSchema[0]["is_snapshot_exists"] = !(id == -1)
+
+	d.Set("snapshot", snaphotSchema)
+}
+
+func instanceCheckSnaphotByName(name string, snapshotResp interface{}) int {
+	snapshots := snapshotResp.(models.ListSnapshotResponse)
+	for _, snapshot := range snapshots.Snapshots {
+		if snapshot.Name == name {
+			return snapshot.ID
+		}
+	}
+
+	return -1
+}
+
+func instanceWaitUntilCreated(ctx context.Context, iclient iClient, meta interface{}, instanceID int) error {
+	cRetry := utils.CustomRetry{
+		RetryCount:   240,
+		RetryTimeout: time.Second * 15,
+		Delay:        time.Minute,
+		Cond: func(response interface{}, err error) bool {
+			return true
+		},
+	}
+	_, err := cRetry.Retry(ctx, meta, func(context.Context) (interface{}, error) {
+		return iclient.getIClient().GetASpecificInstance(ctx, instanceID)
+	})
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

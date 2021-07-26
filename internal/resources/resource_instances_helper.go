@@ -268,6 +268,41 @@ func getInstanceDefaultSchema(isClone bool) *schema.Resource {
 					return d.HasChange("power")
 				},
 			},
+			"snapshot": {
+				Type:     schema.TypeSet,
+				MaxItems: 1,
+				Description: `Snapshot details to be created. Snapshot name and description
+				 should be unique. Any change in those will results into creation of new snapshot,
+				 with preserving previous snapshot(s).`,
+				Optional: true,
+				Elem: schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"id": {
+							Type:        schema.TypeInt,
+							Description: `ID of the snapshot.`,
+							Optional:    true,
+							Computed:    true,
+						},
+						"name": {
+							Type:        schema.TypeString,
+							Description: `Name of the snapshot.`,
+							Required:    true,
+						},
+						"description": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "Description of the snapshot",
+						},
+						"is_snapshot_exists": {
+							Type: schema.TypeBool,
+							Description: `Flag which will be set to be true if the snapshot with the name
+							exists.`,
+							Optional: true,
+							Computed: true,
+						},
+					},
+				},
+			},
 		},
 		SchemaVersion:  0,
 		StateUpgraders: nil,

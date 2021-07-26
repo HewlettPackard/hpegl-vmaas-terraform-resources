@@ -92,12 +92,16 @@ func (i *instance) Create(ctx context.Context, d *utils.Data, meta interface{}) 
 	}
 	getInstanceBody := *respVM.(models.GetInstanceResponse).Instance
 
-	if snapshotName := d.GetString("snapshot"); snapshotName != "" {
-		createInstanceSnapshot(ctx, i, meta, getInstanceBody.ID, models.SnapshotBody{
+	if snapshot := d.GetListMap("snapshot"); len(snapshot) > 0 {
+		err := createInstanceSnapshot(ctx, i, meta, getInstanceBody.ID, models.SnapshotBody{
 			Snapshot: &models.SnapshotBodySnapshot{
-				Name: snapshotName,
+				Name:        snapshot[0]["name"].(string),
+				Description: snapshot[0]["description"].(string),
 			},
 		})
+		if err != nil {
+			return err
+		}
 	}
 
 	// Upon creation instance will be in poweron state. Check any other
@@ -147,8 +151,10 @@ func (i *instance) Read(ctx context.Context, d *utils.Data, meta interface{}) er
 	for i := 0; i < volumeLen; i++ {
 		volumes[i]["id"] = instance.Instance.Volumes[i].ID
 	}
-	d.Set("volume", volumes)
+	instanceSetSnaphot(ctx, i, meta, d, instance.Instance.ID)
 	instanceSetIP(d, instance)
+
+	d.Set("volume", volumes)
 	d.SetID(instance.Instance.ID)
 	d.SetString("status", instance.Instance.Status)
 
