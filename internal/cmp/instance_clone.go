@@ -133,13 +133,13 @@ func (i *instanceClone) Create(ctx context.Context, d *utils.Data, meta interfac
 		Delay:        instanceCloneRetryDelay,
 		RetryTimeout: instanceCloneRetryTimeout,
 		RetryCount:   instanceCloneRetryCount,
-		Cond: func(resp interface{}, err error) bool {
+		Cond: func(resp interface{}, err error) (bool, error) {
 			if err != nil {
-				return false
+				return false, nil
 			}
 			instancesList := resp.(models.Instances)
 
-			return len(instancesList.Instances) == 1
+			return len(instancesList.Instances) == 1, nil
 		},
 	}
 	// get cloned instance ID
@@ -155,6 +155,22 @@ func (i *instanceClone) Create(ctx context.Context, d *utils.Data, meta interfac
 	instancesList := instancesResp.(models.Instances)
 	if len(instancesList.Instances) != 1 {
 		return errors.New("get cloned instance is failed")
+	}
+
+	if err := instanceWaitUntilCreated(ctx, i, meta, instancesList.Instances[0].ID); err != nil {
+		return err
+	}
+
+	if snapshot := d.GetListMap("snapshot"); len(snapshot) == 1 {
+		err := createInstanceSnapshot(ctx, i, meta, instancesList.Instances[0].ID, models.SnapshotBody{
+			Snapshot: &models.SnapshotBodySnapshot{
+				Name:        snapshot[0]["name"].(string),
+				Description: snapshot[0]["description"].(string),
+			},
+		})
+		if err != nil {
+			return err
+		}
 	}
 
 	d.SetID(instancesList.Instances[0].ID)

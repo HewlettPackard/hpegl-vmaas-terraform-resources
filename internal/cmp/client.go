@@ -9,7 +9,6 @@ import apiClient "github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
 type Client struct {
 	Instance         Resource
 	InstanceClone    Resource
-	Snapshot         Resource
 	Network          DataSource
 	Plan             DataSource
 	Group            DataSource
@@ -28,7 +27,6 @@ func NewClient(client *apiClient.APIClient, cfg apiClient.Configuration) *Client
 	return &Client{
 		Instance:      newInstance(&apiClient.InstancesAPIService{Client: client, Cfg: cfg}),
 		InstanceClone: newInstanceClone(&apiClient.InstancesAPIService{Client: client, Cfg: cfg}),
-		Snapshot:      newSnapshot(&apiClient.InstancesAPIService{Client: client, Cfg: cfg}),
 		Network:       newNetwork(&apiClient.NetworksAPIService{Client: client, Cfg: cfg}),
 		Plan:          newPlan(&apiClient.PlansAPIService{Client: client, Cfg: cfg}),
 		Group:         newGroup(&apiClient.GroupsAPIService{Client: client, Cfg: cfg}),

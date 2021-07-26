@@ -87,6 +87,22 @@ func (i *instance) Create(ctx context.Context, d *utils.Data, meta interface{}) 
 	}
 	getInstanceBody := *respVM.(models.GetInstanceResponse).Instance
 
+	if err := instanceWaitUntilCreated(ctx, i, meta, getInstanceBody.ID); err != nil {
+		return err
+	}
+
+	if snapshot := d.GetListMap("snapshot"); len(snapshot) == 1 {
+		err := createInstanceSnapshot(ctx, i, meta, getInstanceBody.ID, models.SnapshotBody{
+			Snapshot: &models.SnapshotBodySnapshot{
+				Name:        snapshot[0]["name"].(string),
+				Description: snapshot[0]["description"].(string),
+			},
+		})
+		if err != nil {
+			return err
+		}
+	}
+
 	d.SetID(getInstanceBody.ID)
 
 	// post check
@@ -128,8 +144,10 @@ func (i *instance) Read(ctx context.Context, d *utils.Data, meta interface{}) er
 		volumes[i]["id"] = instance.Instance.Volumes[i].ID
 		volumes[i]["root"] = instance.Instance.Volumes[i].RootVolume
 	}
-	d.Set("volume", volumes)
+	instanceSetSnaphot(ctx, i, meta, d, instance.Instance.ID)
 	instanceSetIP(d, instance)
+
+	d.Set("volume", volumes)
 	d.SetID(instance.Instance.ID)
 	d.SetString("status", instance.Instance.Status)
 

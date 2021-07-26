@@ -4,7 +4,6 @@ package resources
 
 import (
 	"context"
-	"net/http"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -17,18 +16,10 @@ import (
 )
 
 const (
-	// create
-	instanceCreateRetryTimeout    = 10 * time.Minute
-	instanceCreateRetryDelay      = 60 * time.Second
-	instanceCreateRetryMinTimeout = 30 * time.Second
 	// update
 	instanceUpdateRetryTimeout    = 10 * time.Minute
 	instanceUpdateRetryDelay      = 15 * time.Second
 	instanceUpdateRetryMinTimeout = 15 * time.Second
-	// delete
-	instancedeleteRetryDelay      = 15 * time.Second
-	instancedeleteRetryTimeout    = 60 * time.Second
-	instancedeleteRetryMinTimeout = 15 * time.Second
 )
 
 type resourceObject interface {
@@ -134,6 +125,12 @@ func getInstanceDefaultSchema(isClone bool) *schema.Resource {
 							Computed:    true,
 							Type:        schema.TypeInt,
 							Description: "ID for the volume",
+						},
+						"root": {
+							Type:        schema.TypeBool,
+							Computed:    true,
+							Description: "true if volume is root",
+							Optional:    true,
 						},
 					},
 				},
@@ -268,10 +265,46 @@ func getInstanceDefaultSchema(isClone bool) *schema.Resource {
 					return d.HasChange("power")
 				},
 			},
+			"snapshot": {
+				Type:     schema.TypeSet,
+				MaxItems: 1,
+				Description: `Snapshot details to be created. Snapshot name and description
+				 should be unique. Any change in those will results into creation of new snapshot,
+				 with preserving previous snapshot(s).`,
+				Optional: true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"id": {
+							Type:        schema.TypeInt,
+							Description: `ID of the snapshot.`,
+							Optional:    true,
+							Computed:    true,
+						},
+						"name": {
+							Type:        schema.TypeString,
+							Description: `Name of the snapshot.`,
+							Required:    true,
+						},
+						"description": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "Description of the snapshot",
+						},
+						"is_snapshot_exists": {
+							Type: schema.TypeBool,
+							Description: `Flag which will be set to be true if the snapshot with the name
+							exists.`,
+							Optional: true,
+							Computed: true,
+						},
+					},
+				},
+			},
 		},
 		SchemaVersion:  0,
 		StateUpgraders: nil,
 		CustomizeDiff:  nil,
+		Timeouts:       &schema.ResourceTimeout{},
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
@@ -294,27 +327,7 @@ func instanceHelperCreateContext(
 		return diag.FromErr(err)
 	}
 
-	// Wait for the status to be running
-	createStateConf := resource.StateChangeConf{
-		Delay:      instanceCreateRetryDelay,
-		Pending:    []string{utils.StateProvisioning},
-		Target:     []string{utils.StateRunning},
-		Timeout:    instanceCreateRetryTimeout,
-		MinTimeout: instanceCreateRetryMinTimeout,
-		Refresh: func() (result interface{}, state string, err error) {
-			if err := ro.getClient(c).Read(ctx, data, meta); err != nil {
-				return nil, "", err
-			}
-
-			return d.Get("name"), data.GetString("status"), nil
-		},
-	}
-	_, err = createStateConf.WaitForStateContext(ctx)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-
-	return nil
+	return instanceHelperReadContext(ctx, ro, d, meta)
 }
 
 func instanceHelperReadContext(
@@ -350,31 +363,6 @@ func instanceHelperDeleteContext(
 
 	data := utils.NewData(d)
 	if err := ro.getClient(c).Delete(ctx, data, meta); err != nil {
-		return diag.FromErr(err)
-	}
-
-	deleteStateConf := resource.StateChangeConf{
-		Delay:      instancedeleteRetryDelay,
-		Pending:    []string{utils.Deleting},
-		Target:     []string{utils.Deleted, utils.Failed},
-		Timeout:    instancedeleteRetryTimeout,
-		MinTimeout: instancedeleteRetryMinTimeout,
-		Refresh: func() (result interface{}, state string, err error) {
-			if err := ro.getClient(c).Read(ctx, data, meta); err != nil {
-				// Check for status 404
-				statusCode := utils.GetStatusCode(err)
-				if statusCode == http.StatusNotFound {
-					return d.Get("name"), utils.Deleted, nil
-				}
-
-				return nil, utils.Failed, err
-			}
-
-			return d.Get("name"), utils.Deleting, nil
-		},
-	}
-	_, err = deleteStateConf.WaitForStateContext(ctx)
-	if err != nil {
 		return diag.FromErr(err)
 	}
 	data.SetID("")

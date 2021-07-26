@@ -1,6 +1,6 @@
 ---
 layout: ""
-page_title: "hpegl_vmaas_instance_clone Resource - vmaas-terraform-resources"
+page_title: "hpegl_vmaas_instance_clone Resource - vmaas-terraform-resources-clone"
 description: |-
   {{ .Description | plainmarkdown | trimspace | prefixlines "  " }}
 ---
@@ -10,14 +10,13 @@ description: |-
 {{ .Description | trimspace }}
 
 
-You can also create instance by cloning from an existing instance.
+Create instance by cloning from an existing instance.
 
 -> While cloning only source_instance_id, name and network is required. All other attributes are optional.
     if not provided, those attributes will inherits from source instance.
 
 
-Cloned instance can have all the possible attributes (same as `hpegl_vmaas_instance`). The only difference will be `port` attribute.
-will not be available on cloning.
+Cloned instance can have all the possible attributes (same as `hpegl_vmaas_instance`) apart `port`.
 
 ## Example usage for creating cloned instance with minimal attributes.
 

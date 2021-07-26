@@ -5,7 +5,9 @@ package cmp
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/models"
@@ -78,16 +80,16 @@ func updateInstance(ctx context.Context, iclient iClient, d *utils.Data, meta in
 		}
 	}
 
+	resp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
+		return iclient.getIClient().GetASpecificInstance(ctx, id)
+	})
+	if err != nil {
+		return err
+	}
+	getInstance := resp.(models.GetInstanceResponse)
 	if d.HasChanged("power") || d.HasChanged("restart_instance") {
 		// Do power operation only if backend is in different state
 		// restart only if instance in actual is in power-on state
-		resp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-			return iclient.getIClient().GetASpecificInstance(ctx, id)
-		})
-		if err != nil {
-			return err
-		}
-		getInstance := resp.(models.GetInstanceResponse)
 		status := utils.ParsePowerState(getInstance.Instance.Status)
 		powerOp := d.GetString("power")
 		if powerOp != status {
@@ -98,6 +100,19 @@ func updateInstance(ctx context.Context, iclient iClient, d *utils.Data, meta in
 			if err := instanceDoPowerTask(ctx, iclient, id, meta, utils.Restart); err != nil {
 				return err
 			}
+		}
+	}
+
+	if d.HasChanged("snapshot") {
+		snapshot := d.GetListMap("snapshot")
+		err := createInstanceSnapshot(ctx, iclient, meta, getInstance.Instance.ID, models.SnapshotBody{
+			Snapshot: &models.SnapshotBodySnapshot{
+				Name:        snapshot[0]["name"].(string),
+				Description: snapshot[0]["description"].(string),
+			},
+		})
+		if err != nil {
+			return err
 		}
 	}
 
@@ -122,8 +137,30 @@ func deleteInstance(ctx context.Context, iclient iClient, d *utils.Data, meta in
 		return err
 	}
 	if !deleResp.Success {
-		return fmt.Errorf("%s", deleResp.Message)
+		return fmt.Errorf("failed to delete instance with error: %s", deleResp.Message)
 	}
+
+	errCount := 0
+	cRetry := utils.CustomRetry{
+		RetryCount:   240,
+		RetryTimeout: time.Second * 15,
+		Cond: func(response interface{}, ResponseErr error) (bool, error) {
+			if ResponseErr != nil {
+				if utils.GetStatusCode(ResponseErr) == http.StatusNotFound {
+					return true, nil
+				}
+				errCount++
+				if errCount == 3 {
+					return false, err
+				}
+			}
+
+			return false, nil
+		},
+	}
+	_, err = cRetry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
+		return iclient.getIClient().GetASpecificInstance(ctx, id)
+	})
 
 	// post check
 	return d.Error()
@@ -342,10 +379,113 @@ func instanceCloneCompareVolume(
 	return newVolumes
 }
 
+func createInstanceSnapshot(
+	ctx context.Context,
+	iclient iClient,
+	meta interface{},
+	instanceID int,
+	snapshot models.SnapshotBody,
+) error {
+	snapshotResponse, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
+		return iclient.getIClient().SnapshotAnInstance(ctx, instanceID, &snapshot)
+	})
+	if err != nil {
+		return err
+	}
+	instanceModel := snapshotResponse.(models.Instances)
+	if !instanceModel.Success {
+		return fmt.Errorf("%s", "failed to create snapshot, API returns status as false")
+	}
+
+	return nil
+}
+
 func instanceSetIP(d *utils.Data, instance models.GetInstanceResponse) {
 	ip := make([]string, len(instance.Instance.ConnectionInfo))
 	for i := range instance.Instance.ConnectionInfo {
 		ip[i] = instance.Instance.ConnectionInfo[i].IP
 	}
 	d.Set("ip", ip)
+}
+
+func instanceSetSnaphot(ctx context.Context, iclient iClient, meta interface{}, d *utils.Data, instanceID int) {
+	snaphotSchema := d.GetListMap("snapshot")
+	if len(snaphotSchema) == 0 {
+		return
+	}
+
+	snaphostResp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
+		return iclient.getIClient().GetListOfSnapshotsForAnInstance(ctx, instanceID)
+	})
+	if err != nil {
+		if utils.GetStatusCode(err) != http.StatusNotFound {
+			return
+		}
+		snaphotSchema[0]["is_snapshot_exists"] = false
+
+		return
+	}
+	id := instanceCheckSnaphotByName(snaphotSchema[0]["name"].(string), snaphostResp)
+	snaphotSchema[0]["id"] = id
+	snaphotSchema[0]["is_snapshot_exists"] = !(id == -1)
+
+	d.Set("snapshot", snaphotSchema)
+}
+
+func instanceCheckSnaphotByName(name string, snapshotResp interface{}) int {
+	snapshots := snapshotResp.(models.ListSnapshotResponse)
+	for _, snapshot := range snapshots.Snapshots {
+		if snapshot.Name == name {
+			return snapshot.ID
+		}
+	}
+
+	return -1
+}
+
+func instanceWaitUntilCreated(ctx context.Context, iclient iClient, meta interface{}, instanceID int) error {
+	errCount := 0
+	cRetry := utils.CustomRetry{
+		RetryCount:   240,
+		RetryTimeout: time.Second * 15,
+		Delay:        time.Minute,
+		Cond: func(response interface{}, err error) (bool, error) {
+			if err != nil {
+				errCount++
+				// return false as condition if same error returns 3 times.
+				if errCount == 3 {
+					return false, err
+				}
+
+				return false, nil
+			}
+
+			instance, ok := response.(models.GetInstanceResponse)
+			if !ok {
+				errCount++
+				if errCount == 3 {
+					return false, fmt.Errorf("%s", "error while getting instance")
+				}
+
+				return false, nil
+			}
+			errCount = 0
+
+			if instance.Instance.Status == utils.StateFailed ||
+				instance.Instance.Status == utils.StateRunning {
+				return true, nil
+			}
+
+			return false, nil
+		},
+	}
+
+	_, err := cRetry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
+		return iclient.getIClient().GetASpecificInstance(ctx, instanceID)
+	})
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
