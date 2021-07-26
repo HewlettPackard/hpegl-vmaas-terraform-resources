@@ -24,10 +24,6 @@ type iClient interface {
 // groups and tags
 func updateInstance(ctx context.Context, iclient iClient, d *utils.Data, meta interface{}) error {
 	logger.Debug("Updating the instance")
-	err := instanceValidateVolumeNameIsUnique(d.GetListMap("volume"))
-	if err != nil {
-		return err
-	}
 
 	id := d.GetID()
 	if d.HasChanged("name") || d.HasChanged("group_id") || d.HasChanged("tags") ||
@@ -97,11 +93,11 @@ func updateInstance(ctx context.Context, iclient iClient, d *utils.Data, meta in
 		status := utils.ParsePowerState(getInstance.Instance.Status)
 		powerOp := d.GetString("power")
 		if powerOp != status {
-			if err := instanceDoPowerTask(ctx, iclient, id, meta, status, d.GetString("power")); err != nil {
+			if err := instanceDoPowerTask(ctx, iclient, id, meta, d.GetString("power")); err != nil {
 				return err
 			}
 		} else if d.HasChanged("restart_instance") {
-			if err := instanceDoPowerTask(ctx, iclient, id, meta, status, utils.Restart); err != nil {
+			if err := instanceDoPowerTask(ctx, iclient, id, meta, utils.Restart); err != nil {
 				return err
 			}
 		}
@@ -276,13 +272,9 @@ func instanceDoPowerTask(
 	iclient iClient,
 	instanceID int,
 	meta interface{},
-	currState,
 	newOp string) error {
 	var err error
-	err = instanceValidatePowerTransition(currState, newOp)
-	if err != nil {
-		return err
-	}
+
 	switch newOp {
 	case utils.PowerOn:
 		_, err = utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
@@ -311,43 +303,6 @@ func instanceDoPowerTask(
 	}
 
 	return err
-}
-
-func instanceValidatePowerTransition(oldPower, newPower string) error {
-	if oldPower == utils.PowerOn {
-		if newPower == utils.PowerOff || newPower == utils.Suspend || newPower == utils.Restart {
-			return nil
-		}
-	} else {
-		if newPower == utils.PowerOn {
-			return nil
-		}
-	}
-
-	return fmt.Errorf("power operation not allowed from %s state to %s state", oldPower, newPower)
-}
-
-func instanceValidateVolumeNameIsUnique(vol []map[string]interface{}) error {
-	volumes := make(map[string]bool)
-	for _, v := range vol {
-		if _, ok := volumes[v["name"].(string)]; !ok {
-			volumes[v["name"].(string)] = true
-
-			continue
-		}
-
-		return fmt.Errorf("volume names should be unique")
-	}
-
-	return nil
-}
-
-func instanceValidatePower(powerOp string) error {
-	if powerOp != "" && powerOp != utils.PowerOn {
-		return fmt.Errorf("power operation %s is not permitted while creating an instance", powerOp)
-	}
-
-	return nil
 }
 
 func instanceCloneCompareVolume(

@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/cmp"
+	diffvalidation "github.com/hpe-hcss/vmaas-terraform-resources/internal/resources/diffValidation"
 	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/client"
 )
 
@@ -45,16 +46,22 @@ func Instances() *schema.Resource {
 	}
 	instanceSchema.Description = `Instance resource facilitates creating,
 		updating and deleting virtual machines. It is recommend to use the Vmware type for provisioning.`
-
 	instanceSchema.CreateContext = instanceCreateContext
 	instanceSchema.ReadContext = instanceReadContext
 	instanceSchema.DeleteContext = instanceDeleteContext
 	instanceSchema.UpdateContext = instanceUpdateContext
+	instanceSchema.CustomizeDiff = instanceCustomizeDiff
 
 	return instanceSchema
 }
 
 type instanceResourceObj struct{}
+
+func instanceCustomizeDiff(ctx context.Context, diff *schema.ResourceDiff, meta interface{}) error {
+	instance := diffvalidation.NewInstanceValidate(diff)
+
+	return instance.DiffValidate()
+}
 
 func (i *instanceResourceObj) getClient(c *client.Client) cmp.Resource {
 	return c.CmpClient.Instance
