@@ -20,6 +20,10 @@ For creating an instance please refer following examples.
 
 ~> Volume name should be unique. An error will be prompted if the volume name is repeated.
 
+Terraform will consider first volume as the primary volume. `root` attribute (computed field) will set to
+root volume.
+
+-> Deletion of root volume is also is not supported.
 
 ## Example usage for creating new instance with only required attributes
 
@@ -28,23 +32,20 @@ For creating an instance please refer following examples.
 -> `power` attribute is supported for `hpegl_vmaas_instance`, but only `poweron`  operation is supported
     while creating.
 
+For creating snapshot use `snapshot` attribute. Any update in snapshot's `name` or `description`
+will cause to create a new snapshot with preserving existing one.
+
+~> Instance reconfigure will cause snapshot to be deleted.
+
+`is_snapshot_exist` field in `snapshot` will be true if the snapshot exists under instance. Use
+this field to identify whether snapshot got deleted (because of reconfigure or anything else).
+
+-> Snapshot update, apply and delete is not supported yet.
+
 ## Example usage for creating new instance with all possible attributes
 
 {{tffile "examples/resources/hpegl_vmaas_instance/all_options.tf"}}
 
-You can also create instance by cloning from an existing instance. To do so use `clone` attribute
-and provide `source_instance_id`.
-
-
-Cloned instance can have all the possible attributes (same as create new instance). The only difference will be
-the additional `clone` attribute.
-
-~> `port` attribute will conflicts on `clone`, so upon cloning instance user should not provide
-  `port`.
-
-## Example usage for creating cloned instance
-
-{{tffile "examples/resources/hpegl_vmaas_instance/clone.tf"}}
 
 
 {{ .SchemaMarkdown | trimspace }}
