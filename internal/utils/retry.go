@@ -14,7 +14,7 @@ import (
 // retry will terminated and returns the error
 type CondFunc func(response interface{}, ResponseErr error) (bool, error)
 
-// RetryFunc accepts ctx as paramters and return response and error
+// RetryFunc accepts ctx as parameters and return response and error
 type RetryFunc func(ctx context.Context) (interface{}, error)
 
 func defaultCond(resp interface{}, err error) (bool, error) {

@@ -154,6 +154,7 @@ func deleteInstance(ctx context.Context, iclient iClient, d *utils.Data, meta in
 					return false, err
 				}
 			}
+
 			return false, nil
 		},
 	}
@@ -416,7 +417,6 @@ func instanceSetSnaphot(ctx context.Context, iclient iClient, meta interface{}, 
 	snaphostResp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
 		return iclient.getIClient().GetListOfSnapshotsForAnInstance(ctx, instanceID)
 	})
-
 	if err != nil {
 		if utils.GetStatusCode(err) != http.StatusNotFound {
 			return
