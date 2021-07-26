@@ -80,16 +80,16 @@ func updateInstance(ctx context.Context, iclient iClient, d *utils.Data, meta in
 		}
 	}
 
+	resp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
+		return iclient.getIClient().GetASpecificInstance(ctx, id)
+	})
+	if err != nil {
+		return err
+	}
+	getInstance := resp.(models.GetInstanceResponse)
 	if d.HasChanged("power") || d.HasChanged("restart_instance") {
 		// Do power operation only if backend is in different state
 		// restart only if instance in actual is in power-on state
-		resp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-			return iclient.getIClient().GetASpecificInstance(ctx, id)
-		})
-		if err != nil {
-			return err
-		}
-		getInstance := resp.(models.GetInstanceResponse)
 		status := utils.ParsePowerState(getInstance.Instance.Status)
 		powerOp := d.GetString("power")
 		if powerOp != status {
@@ -100,6 +100,19 @@ func updateInstance(ctx context.Context, iclient iClient, d *utils.Data, meta in
 			if err := instanceDoPowerTask(ctx, iclient, id, meta, utils.Restart); err != nil {
 				return err
 			}
+		}
+	}
+
+	if d.HasChanged("snapshot") {
+		snapshot := d.GetListMap("snapshot")
+		err := createInstanceSnapshot(ctx, iclient, meta, getInstance.Instance.ID, models.SnapshotBody{
+			Snapshot: &models.SnapshotBodySnapshot{
+				Name:        snapshot[0]["name"].(string),
+				Description: snapshot[0]["description"].(string),
+			},
+		})
+		if err != nil {
+			return err
 		}
 	}
 
@@ -124,8 +137,29 @@ func deleteInstance(ctx context.Context, iclient iClient, d *utils.Data, meta in
 		return err
 	}
 	if !deleResp.Success {
-		return fmt.Errorf("%s", deleResp.Message)
+		return fmt.Errorf("failed to delete instance with error: %s", deleResp.Message)
 	}
+
+	errCount := 0
+	cRetry := utils.CustomRetry{
+		RetryCount:   240,
+		RetryTimeout: time.Second * 15,
+		Cond: func(response interface{}, ResponseErr error) (bool, error) {
+			if ResponseErr != nil {
+				if utils.GetStatusCode(ResponseErr) == http.StatusNotFound {
+					return true, nil
+				}
+				errCount++
+				if errCount == 3 {
+					return false, err
+				}
+			}
+			return false, nil
+		},
+	}
+	_, err = cRetry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
+		return iclient.getIClient().GetASpecificInstance(ctx, id)
+	})
 
 	// post check
 	return d.Error()
@@ -344,7 +378,13 @@ func instanceCloneCompareVolume(
 	return newVolumes
 }
 
-func createInstanceSnapshot(ctx context.Context, iclient iClient, meta interface{}, instanceID int, snapshot models.SnapshotBody) error {
+func createInstanceSnapshot(
+	ctx context.Context,
+	iclient iClient,
+	meta interface{},
+	instanceID int,
+	snapshot models.SnapshotBody,
+) error {
 	snapshotResponse, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
 		return iclient.getIClient().SnapshotAnInstance(ctx, instanceID, &snapshot)
 	})
@@ -382,6 +422,7 @@ func instanceSetSnaphot(ctx context.Context, iclient iClient, meta interface{}, 
 			return
 		}
 		snaphotSchema[0]["is_snapshot_exists"] = false
+
 		return
 	}
 	id := instanceCheckSnaphotByName(snaphotSchema[0]["name"].(string), snaphostResp)
@@ -415,6 +456,7 @@ func instanceWaitUntilCreated(ctx context.Context, iclient iClient, meta interfa
 				if errCount == 3 {
 					return false, err
 				}
+
 				return false, nil
 			}
 
@@ -424,6 +466,7 @@ func instanceWaitUntilCreated(ctx context.Context, iclient iClient, meta interfa
 				if errCount == 3 {
 					return false, fmt.Errorf("%s", "error while getting instance")
 				}
+
 				return false, nil
 			}
 			errCount = 0

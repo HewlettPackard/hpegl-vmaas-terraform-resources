@@ -4,7 +4,6 @@ package resources
 
 import (
 	"context"
-	"net/http"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -17,18 +16,10 @@ import (
 )
 
 const (
-	// create
-	instanceCreateRetryTimeout    = 10 * time.Minute
-	instanceCreateRetryDelay      = 60 * time.Second
-	instanceCreateRetryMinTimeout = 30 * time.Second
 	// update
 	instanceUpdateRetryTimeout    = 10 * time.Minute
 	instanceUpdateRetryDelay      = 15 * time.Second
 	instanceUpdateRetryMinTimeout = 15 * time.Second
-	// delete
-	instancedeleteRetryDelay      = 15 * time.Second
-	instancedeleteRetryTimeout    = 60 * time.Second
-	instancedeleteRetryMinTimeout = 15 * time.Second
 )
 
 type resourceObject interface {
@@ -372,31 +363,6 @@ func instanceHelperDeleteContext(
 
 	data := utils.NewData(d)
 	if err := ro.getClient(c).Delete(ctx, data, meta); err != nil {
-		return diag.FromErr(err)
-	}
-
-	deleteStateConf := resource.StateChangeConf{
-		Delay:      instancedeleteRetryDelay,
-		Pending:    []string{utils.Deleting},
-		Target:     []string{utils.Deleted, utils.Failed},
-		Timeout:    instancedeleteRetryTimeout,
-		MinTimeout: instancedeleteRetryMinTimeout,
-		Refresh: func() (result interface{}, state string, err error) {
-			if err := ro.getClient(c).Read(ctx, data, meta); err != nil {
-				// Check for status 404
-				statusCode := utils.GetStatusCode(err)
-				if statusCode == http.StatusNotFound {
-					return d.Get("name"), utils.Deleted, nil
-				}
-
-				return nil, utils.Failed, err
-			}
-
-			return d.Get("name"), utils.Deleting, nil
-		},
-	}
-	_, err = deleteStateConf.WaitForStateContext(ctx)
-	if err != nil {
 		return diag.FromErr(err)
 	}
 	data.SetID("")

@@ -10,8 +10,12 @@ import (
 	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/auth"
 )
 
+// CondFunc function accepts response and error of the RetryFunc. If any error returns
+// retry will terminated and returns the error
 type CondFunc func(response interface{}, ResponseErr error) (bool, error)
-type RetryFunc func(context.Context) (interface{}, error)
+
+// RetryFunc accepts ctx as paramters and return response and error
+type RetryFunc func(ctx context.Context) (interface{}, error)
 
 func defaultCond(resp interface{}, err error) (bool, error) {
 	return err == nil, nil
