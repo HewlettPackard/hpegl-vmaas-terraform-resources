@@ -352,7 +352,7 @@ func createInstanceSnapshot(ctx context.Context, iclient iClient, meta interface
 		return err
 	}
 	instanceModel := snapshotResponse.(models.Instances)
-	if instanceModel.Success {
+	if !instanceModel.Success {
 		return fmt.Errorf("%s", "failed to create snapshot, API returns status as false")
 	}
 
@@ -403,15 +403,41 @@ func instanceCheckSnaphotByName(name string, snapshotResp interface{}) int {
 }
 
 func instanceWaitUntilCreated(ctx context.Context, iclient iClient, meta interface{}, instanceID int) error {
+	errCount := 0
 	cRetry := utils.CustomRetry{
 		RetryCount:   240,
 		RetryTimeout: time.Second * 15,
 		Delay:        time.Minute,
-		Cond: func(response interface{}, err error) bool {
-			return true
+		Cond: func(response interface{}, err error) (bool, error) {
+			if err != nil {
+				errCount++
+				// return false as condition if same error returns 3 times.
+				if errCount == 3 {
+					return false, err
+				}
+				return false, nil
+			}
+
+			instance, ok := response.(models.GetInstanceResponse)
+			if !ok {
+				errCount++
+				if errCount == 3 {
+					return false, fmt.Errorf("%s", "error while getting instance")
+				}
+				return false, nil
+			}
+			errCount = 0
+
+			if instance.Instance.Status == utils.StateFailed ||
+				instance.Instance.Status == utils.StateRunning {
+				return true, nil
+			}
+
+			return false, nil
 		},
 	}
-	_, err := cRetry.Retry(ctx, meta, func(context.Context) (interface{}, error) {
+
+	_, err := cRetry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
 		return iclient.getIClient().GetASpecificInstance(ctx, instanceID)
 	})
 	if err != nil {

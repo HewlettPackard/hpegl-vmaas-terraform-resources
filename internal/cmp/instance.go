@@ -87,7 +87,11 @@ func (i *instance) Create(ctx context.Context, d *utils.Data, meta interface{}) 
 	}
 	getInstanceBody := *respVM.(models.GetInstanceResponse).Instance
 
-	if snapshot := d.GetListMap("snapshot"); len(snapshot) > 0 {
+	if err := instanceWaitUntilCreated(ctx, i, meta, getInstanceBody.ID); err != nil {
+		return err
+	}
+
+	if snapshot := d.GetListMap("snapshot"); len(snapshot) == 1 {
 		err := createInstanceSnapshot(ctx, i, meta, getInstanceBody.ID, models.SnapshotBody{
 			Snapshot: &models.SnapshotBodySnapshot{
 				Name:        snapshot[0]["name"].(string),

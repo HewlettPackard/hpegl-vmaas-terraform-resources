@@ -10,26 +10,34 @@ import (
 	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/auth"
 )
 
-type CondFunc func(interface{}, error) bool
+type CondFunc func(response interface{}, ResponseErr error) (bool, error)
+type RetryFunc func(context.Context) (interface{}, error)
 
-func defaultCond(resp interface{}, err error) bool {
-	return err == nil
+func defaultCond(resp interface{}, err error) (bool, error) {
+	return err == nil, nil
 }
 
 func retry(
 	ctx context.Context,
 	meta interface{},
-	count int, timeout time.Duration,
-	fn func(context.Context) (interface{}, error), cond CondFunc,
+	count int,
+	timeout time.Duration,
+	fn RetryFunc,
+	cond CondFunc,
 ) (interface{}, error) {
 	var err error
 	var resp interface{}
 	for i := 0; i < count; i++ {
 		auth.SetScmClientToken(&ctx, meta)
 		resp, err = fn(ctx)
-		if cond(resp, err) {
+		c, err := cond(resp, err)
+		if err != nil {
+			return nil, err
+		}
+		if c {
 			break
 		}
+
 		logger.Error("warning: ", err, ". Response: ", resp, ". retrying")
 		time.Sleep(timeout)
 	}
@@ -38,7 +46,7 @@ func retry(
 }
 
 // Retry with default count and timeout
-func Retry(ctx context.Context, meta interface{}, fn func(context.Context) (interface{}, error)) (interface{}, error) {
+func Retry(ctx context.Context, meta interface{}, fn RetryFunc) (interface{}, error) {
 	return retry(ctx, meta, defaultRetryCount, defaultTimeout, fn, defaultCond)
 }
 
@@ -54,7 +62,7 @@ type CustomRetry struct {
 func (c *CustomRetry) Retry(
 	ctx context.Context,
 	meta interface{},
-	fn func(context.Context) (interface{}, error),
+	fn RetryFunc,
 ) (interface{}, error) {
 	if c.RetryCount == 0 {
 		c.RetryCount = defaultRetryCount

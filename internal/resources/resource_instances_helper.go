@@ -135,6 +135,12 @@ func getInstanceDefaultSchema(isClone bool) *schema.Resource {
 							Type:        schema.TypeInt,
 							Description: "ID for the volume",
 						},
+						"root": {
+							Type:        schema.TypeBool,
+							Computed:    true,
+							Description: "true if volume is root",
+							Optional:    true,
+						},
 					},
 				},
 			},
@@ -275,7 +281,7 @@ func getInstanceDefaultSchema(isClone bool) *schema.Resource {
 				 should be unique. Any change in those will results into creation of new snapshot,
 				 with preserving previous snapshot(s).`,
 				Optional: true,
-				Elem: schema.Resource{
+				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"id": {
 							Type:        schema.TypeInt,
@@ -307,6 +313,7 @@ func getInstanceDefaultSchema(isClone bool) *schema.Resource {
 		SchemaVersion:  0,
 		StateUpgraders: nil,
 		CustomizeDiff:  nil,
+		Timeouts:       &schema.ResourceTimeout{},
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
@@ -329,27 +336,7 @@ func instanceHelperCreateContext(
 		return diag.FromErr(err)
 	}
 
-	// Wait for the status to be running
-	createStateConf := resource.StateChangeConf{
-		Delay:      instanceCreateRetryDelay,
-		Pending:    []string{utils.StateProvisioning},
-		Target:     []string{utils.StateRunning},
-		Timeout:    instanceCreateRetryTimeout,
-		MinTimeout: instanceCreateRetryMinTimeout,
-		Refresh: func() (result interface{}, state string, err error) {
-			if err := ro.getClient(c).Read(ctx, data, meta); err != nil {
-				return nil, "", err
-			}
-
-			return d.Get("name"), data.GetString("status"), nil
-		},
-	}
-	_, err = createStateConf.WaitForStateContext(ctx)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-
-	return nil
+	return instanceHelperReadContext(ctx, ro, d, meta)
 }
 
 func instanceHelperReadContext(
