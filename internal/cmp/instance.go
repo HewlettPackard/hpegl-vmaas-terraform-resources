@@ -86,6 +86,8 @@ func (i *instance) Create(ctx context.Context, d *utils.Data, meta interface{}) 
 		return err
 	}
 	getInstanceBody := *respVM.(models.GetInstanceResponse).Instance
+	// Set id just after created the instnance
+	d.SetID(getInstanceBody.ID)
 
 	if err := instanceWaitUntilCreated(ctx, i, meta, getInstanceBody.ID); err != nil {
 		return err
@@ -102,8 +104,6 @@ func (i *instance) Create(ctx context.Context, d *utils.Data, meta interface{}) 
 			return err
 		}
 	}
-
-	d.SetID(getInstanceBody.ID)
 
 	// post check
 	return d.Error()
