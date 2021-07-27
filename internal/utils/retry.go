@@ -42,7 +42,7 @@ func retry(
 			break
 		}
 
-		log.Printf("[WARN] on API call got error: %+v, repsonse: %+v. Retrying", err, resp)
+		log.Printf("[WARN] on API call got error: %+v, response: %+v. Retrying", err, resp)
 		time.Sleep(timeout)
 	}
 
