@@ -4,9 +4,9 @@ package utils
 
 import (
 	"context"
+	"log"
 	"time"
 
-	"github.com/hpe-hcss/vmaas-terraform-resources/internal/logger"
 	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/auth"
 )
 
@@ -42,7 +42,7 @@ func retry(
 			break
 		}
 
-		logger.Error("warning: ", err, ". Response: ", resp, ". retrying")
+		log.Printf("[WARN] on API call got error: %+v, response: %+v. Retrying", err, resp)
 		time.Sleep(timeout)
 	}
 
