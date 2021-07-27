@@ -24,12 +24,27 @@ updates:
   schedule:
     interval: daily
 - package-ecosystem: terraform # https://github.com/hpe-hcss/terraform-dependabot
-  directory: /examples/data-sources/hpegl_vmaas_cloud
+  directory: /examples/data-sources/hpegl_vmaas_layout
   registries: []
   schedule:
     interval: daily
 - package-ecosystem: terraform
-  directory: /examples/resources/hpegl_vmaas_instance
+  directory: /examples/data-sources/hpegl_vmaas_network
+  registries: []
+  schedule:
+    interval: daily
+- package-ecosystem: terraform
+  directory: /examples/data-sources/hpegl_vmaas_network_interface
+  registries: []
+  schedule:
+    interval: daily
+- package-ecosystem: terraform
+  directory: /examples/resources/hpegl_vmaas_instance_clone
+  registries: []
+  schedule:
+    interval: daily
+- package-ecosystem: terraform
+  directory: /examples/data-sources/hpegl_vmaas_datastore
   registries: []
   schedule:
     interval: daily
@@ -44,7 +59,12 @@ updates:
   schedule:
     interval: daily
 - package-ecosystem: terraform
-  directory: /examples/data-sources/hpegl_vmaas_network_interface
+  directory: /examples/data-sources/hpegl_vmaas_template
+  registries: []
+  schedule:
+    interval: daily
+- package-ecosystem: terraform
+  directory: /examples/data-sources/hpegl_vmaas_cloud
   registries: []
   schedule:
     interval: daily
@@ -59,32 +79,12 @@ updates:
   schedule:
     interval: daily
 - package-ecosystem: terraform
-  directory: /examples/data-sources/hpegl_vmaas_template
-  registries: []
-  schedule:
-    interval: daily
-- package-ecosystem: terraform
-  directory: /examples/data-sources/hpegl_vmaas_datastore
-  registries: []
-  schedule:
-    interval: daily
-- package-ecosystem: terraform
-  directory: /examples/data-sources/hpegl_vmaas_layout
-  registries: []
-  schedule:
-    interval: daily
-- package-ecosystem: terraform
   directory: /examples/provider
   registries: []
   schedule:
     interval: daily
 - package-ecosystem: terraform
-  directory: /examples/resources/hpegl_vmaas_instance_clone
-  registries: []
-  schedule:
-    interval: daily
-- package-ecosystem: terraform
-  directory: /examples/data-sources/hpegl_vmaas_network
+  directory: /examples/resources/hpegl_vmaas_instance
   registries: []
   schedule:
     interval: daily
