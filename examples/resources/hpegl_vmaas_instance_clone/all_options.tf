@@ -41,4 +41,10 @@ resource "hpegl_vmaas_instance" "tf_instance_clone" {
     proxy = "http://some:proxy"
   }
   power_schedule_id = data.hpegl_vmaas_powerSchedule.weekday.id
+  # any update in snapshot will end up to creating new snapshot and existing
+  # snapshot will be still in backend.
+  snapshot {
+    description = "test snapshot"
+    name        = "test_snapshot_1"
+  }
 }
