@@ -2,7 +2,7 @@
 
 
 # Clone a instance from an existing instance
-resource "hpegl_vmaas_instance" "tf_instance_clone" {
+resource "hpegl_vmaas_instance_clone" "tf_instance_clone" {
   source_instance_id = hpegl_vmaas_instance.tf_instance.id
   name               = "tf_clone"
   cloud_id           = data.hpegl_vmaas_cloud.cloud.id
@@ -23,7 +23,7 @@ resource "hpegl_vmaas_instance" "tf_instance_clone" {
   }
 
   volume {
-    name         = "Local_vol"
+    name         = "local_vol"
     size         = 5
     datastore_id = data.hpegl_vmaas_datastore.c_3par.id
   }
@@ -35,16 +35,16 @@ resource "hpegl_vmaas_instance" "tf_instance_clone" {
     create_user      = false
     asset_tag        = "vm_tag"
   }
-  hostname = "hpegl_tf_host_clone"
+  hostname = "tf_host_1"
   scale    = 2
   evars = {
-    proxy = "http://some:proxy"
+    proxy = "http://address:port"
   }
   power_schedule_id = data.hpegl_vmaas_powerSchedule.weekday.id
   # any update in snapshot will end up to creating new snapshot and existing
   # snapshot will be still in backend.
   snapshot {
-    description = "test snapshot"
     name        = "test_snapshot_1"
+    description = "test snapshot description is optional"
   }
 }

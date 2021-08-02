@@ -22,7 +22,7 @@ resource "hpegl_vmaas_instance" "tf_instance" {
   }
 
   volume {
-    name         = "Local_vol"
+    name         = "local_vol"
     size         = 5
     datastore_id = data.hpegl_vmaas_datastore.c_3par.id
   }
@@ -31,7 +31,7 @@ resource "hpegl_vmaas_instance" "tf_instance" {
   tags = {
     key  = "value"
     name = "data"
-    some = "fdsfs"
+    some = "random"
   }
 
   config {
@@ -41,10 +41,10 @@ resource "hpegl_vmaas_instance" "tf_instance" {
     create_user      = true
     asset_tag        = "vm_tag"
   }
-  hostname = "hpegl_tf_host"
+  hostname = "tf_host_1"
   scale    = 2
   evars = {
-    proxy = "http://some:proxy"
+    proxy = "http://address:port"
   }
   env_prefix        = "tf_test"
   power_schedule_id = data.hpegl_vmaas_power_schedule.weekday.id
@@ -63,7 +63,7 @@ resource "hpegl_vmaas_instance" "tf_instance" {
   # any update in snapshot will end up to creating new snapshot and existing
   # snapshot will be still in backend.
   snapshot {
-    description = "test snapshot"
     name        = "test_snapshot_1"
+    description = "test snapshot description is optional"
   }
 }
