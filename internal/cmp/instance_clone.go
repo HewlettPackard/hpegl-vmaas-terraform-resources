@@ -225,6 +225,7 @@ func (i *instanceClone) Read(ctx context.Context, d *utils.Data, meta interface{
 
 	// Write IPs in to state file
 	instanceSetIP(d, instance)
+	instanceSetHostname(d, instance)
 
 	d.Set("layout_id", instance.Instance.Layout.ID)
 	d.SetString("status", instance.Instance.Status)

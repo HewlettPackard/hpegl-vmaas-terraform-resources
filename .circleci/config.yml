@@ -183,6 +183,7 @@ jobs:
             - /go/pkg
       - run:
           name: Run acceptance test
+          no_output_timeout: 20m
           command: |
             source ~/.bashrc
             make acceptance
