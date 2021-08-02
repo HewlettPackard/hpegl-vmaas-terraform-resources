@@ -489,3 +489,9 @@ func instanceWaitUntilCreated(ctx context.Context, iclient iClient, meta interfa
 
 	return nil
 }
+
+func instanceSetHostname(d *utils.Data, instance models.GetInstanceResponse) {
+	if d.GetString("hostname") == "" {
+		d.Set("hostname", instance.Instance.HostName)
+	}
+}
