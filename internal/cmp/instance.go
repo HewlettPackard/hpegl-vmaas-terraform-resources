@@ -146,6 +146,7 @@ func (i *instance) Read(ctx context.Context, d *utils.Data, meta interface{}) er
 	}
 	instanceSetSnaphot(ctx, i, meta, d, instance.Instance.ID)
 	instanceSetIP(d, instance)
+	instanceSetHostname(d, instance)
 
 	d.Set("volume", volumes)
 	d.SetID(instance.Instance.ID)

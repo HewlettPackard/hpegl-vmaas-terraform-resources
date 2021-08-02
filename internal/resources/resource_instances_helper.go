@@ -154,6 +154,7 @@ func getInstanceDefaultSchema(isClone bool) *schema.Resource {
 			"hostname": {
 				Type:        schema.TypeString,
 				ForceNew:    true,
+				Computed:    true,
 				Optional:    true,
 				Description: "Hostname for the instance",
 			},
