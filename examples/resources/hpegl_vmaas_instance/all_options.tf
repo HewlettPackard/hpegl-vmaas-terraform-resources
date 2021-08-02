@@ -60,4 +60,10 @@ resource "hpegl_vmaas_instance" "tf_instance" {
   # Restarts the instance if set to any positive integer.
   # Restart works only on pre-created instance.`,
   restart_instance = 1
+  # any update in snapshot will end up to creating new snapshot and existing
+  # snapshot will be still in backend.
+  snapshot {
+    description = "test snapshot"
+    name        = "test_snapshot_1"
+  }
 }
