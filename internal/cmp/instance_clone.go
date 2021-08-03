@@ -6,12 +6,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"strings"
 	"time"
 
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/models"
-	"github.com/hpe-hcss/vmaas-terraform-resources/internal/logger"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
 )
 
@@ -39,7 +39,7 @@ func newInstanceClone(iClient *client.InstancesAPIService) *instanceClone {
 
 // Create instanceClone
 func (i *instanceClone) Create(ctx context.Context, d *utils.Data, meta interface{}) error {
-	logger.Debug("Cloning instance")
+	log.Printf("[INFO] Cloning instance")
 
 	volumes := d.GetListMap("volume")
 	req := &models.CreateInstanceBody{
@@ -114,22 +114,69 @@ func (i *instanceClone) Create(ctx context.Context, d *utils.Data, meta interfac
 	}
 
 	// clone the instance
-	logger.Info("Cloning the instance with ", sourceID)
-	respClone, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
+	log.Printf("[INFO] Cloning the instance with %d", sourceID)
+	cloneRetry := &utils.CustomRetry{
+		Cond: func(response interface{}, ResponseErr error) (bool, error) {
+			if err != nil {
+				return false, nil
+			}
+			if !response.(models.SuccessOrErrorMessage).Success {
+				return false, fmt.Errorf("%s", "failed to clone instance.")
+			}
+
+			return true, nil
+		},
+	}
+	respClone, err := cloneRetry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
 		return i.iClient.CloneAnInstance(ctx, sourceID, req)
 	})
 	if err != nil {
 		return err
 	}
 
-	logger.Info("Check clone success")
+	log.Printf("[INFO] Check history")
+	errCount := 0
+	historyRetry := utils.CustomRetry{
+		Delay:        instanceCloneRetryDelay,
+		RetryTimeout: instanceCloneRetryTimeout,
+		RetryCount:   instanceCloneRetryCount,
+		Cond: func(response interface{}, ResponseErr error) (bool, error) {
+			if err != nil {
+				errCount++
+				if errCount == 3 {
+					return false, err
+				}
+				return false, nil
+			}
+			errCount = 0
+
+			instanceHistory := response.(models.GetInstanceHistory)
+			if len(instanceHistory.Processes) > 0 && instanceHistory.Processes[0].ProcessType.Code == "cloning" {
+				if instanceHistory.Processes[0].Status == "failed" {
+					return false, fmt.Errorf("failed to clone instance")
+				} else if instanceHistory.Processes[0].Status == "success" {
+					return true, nil
+				}
+			}
+
+			return false, nil
+		},
+	}
+	_, err = historyRetry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
+		return i.iClient.GetInstanceHistory(ctx, sourceID)
+	})
+	if err != nil {
+		return err
+	}
+
+	log.Printf("[INFO] Check clone success")
 	isCloneSuccess := respClone.(models.SuccessOrErrorMessage)
 	if !isCloneSuccess.Success {
 		return fmt.Errorf("failed to clone, error: %s", isCloneSuccess.Message)
 	}
 
-	logger.Info("Get all instances")
-	customRetry := &utils.CustomRetry{
+	log.Printf("[INFO] Get all instances")
+	getInstanceRetry := &utils.CustomRetry{
 		Delay:        instanceCloneRetryDelay,
 		RetryTimeout: instanceCloneRetryTimeout,
 		RetryCount:   instanceCloneRetryCount,
@@ -143,7 +190,7 @@ func (i *instanceClone) Create(ctx context.Context, d *utils.Data, meta interfac
 		},
 	}
 	// get cloned instance ID
-	instancesResp, err := customRetry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
+	instancesResp, err := getInstanceRetry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
 		return i.iClient.GetAllInstances(ctx, map[string]string{
 			nameKey: req.CloneName,
 		})
@@ -195,7 +242,7 @@ func (i *instanceClone) Delete(ctx context.Context, d *utils.Data, meta interfac
 func (i *instanceClone) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
 	id := d.GetID()
 
-	logger.Debug("Get instance with ID %d", id)
+	log.Printf("[INFO] Get instance with ID %d", id)
 
 	// Precheck
 	if err := d.Error(); err != nil {
