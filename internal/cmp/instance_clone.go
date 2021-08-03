@@ -269,6 +269,7 @@ func cloneInstance(
 	_, err := cloneRetry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
 		return i.iClient.CloneAnInstance(ctx, sourceID, req)
 	})
+
 	return err
 }
 
