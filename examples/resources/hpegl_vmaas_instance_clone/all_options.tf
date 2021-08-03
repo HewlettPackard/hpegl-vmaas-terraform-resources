@@ -32,7 +32,7 @@ resource "hpegl_vmaas_instance_clone" "tf_instance_clone" {
     resource_pool_id = data.hpegl_vmaas_resource_pool.cl_resource_pool.id
     template_id      = data.hpegl_vmaas_template.vanilla.id
     no_agent         = true
-    create_user      = false
+    folder_code      = data.hpegl_vmaas_cloud_folder.compute_folder.code
     asset_tag        = "vm_tag"
   }
   hostname = "tf_host_1"

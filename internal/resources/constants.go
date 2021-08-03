@@ -15,6 +15,7 @@ const (
 	DSTemplate         = "hpegl_vmaas_template"
 	DSEnvironment      = "hpegl_vmaas_environment"
 	DSNetworkInterface = "hpegl_vmaas_network_interface"
+	DSCloudFolder      = "hpegl_vmaas_cloud_folder"
 	// resource key
 	ResInstance = "hpegl_vmaas_instance"
 

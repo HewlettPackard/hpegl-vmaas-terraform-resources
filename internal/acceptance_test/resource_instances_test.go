@@ -119,6 +119,7 @@ func testAccResourceInstance() string {
 			  no_agent         = true
 			  template_id	   = 580
 			}
+			scale = 4
 		}
 	`, providerStanza, r.Int63n(999999), r.Intn(5)+5)
 }

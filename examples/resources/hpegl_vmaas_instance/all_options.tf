@@ -38,8 +38,8 @@ resource "hpegl_vmaas_instance" "tf_instance" {
     resource_pool_id = data.hpegl_vmaas_resource_pool.cl_resource_pool.id
     template_id      = data.hpegl_vmaas_template.vanilla.id
     no_agent         = true
-    create_user      = true
     asset_tag        = "vm_tag"
+    folder_code      = data.hpegl_vmaas_cloud_folder.compute_folder.code
   }
   hostname = "tf_host_1"
   scale    = 2
