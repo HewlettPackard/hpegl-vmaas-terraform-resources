@@ -32,6 +32,7 @@ func (r Registration) SupportedDataSources() map[string]*schema.Resource {
 		resources.DSTemplate:         resources.TemplateData(),
 		resources.DSEnvironment:      resources.EnvironmentData(),
 		resources.DSNetworkInterface: resources.NetworkInterfaceData(),
+		resources.DSCloudFolder:      resources.CloudFolderData(),
 	}
 }
 

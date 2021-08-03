@@ -215,9 +215,8 @@ func instanceGetConfig(c map[string]interface{}) *models.CreateInstanceBodyConfi
 	config := &models.CreateInstanceBodyConfig{
 		ResourcePoolID: utils.JSONNumber(c["resource_pool_id"]),
 		NoAgent:        strconv.FormatBool(c["no_agent"].(bool)),
-		VMwareFolderID: c["vm_folder"].(string),
-		CreateUser:     c["create_user"].(bool),
 		SmbiosAssetTag: c["asset_tag"].(string),
+		VMwareFolderID: c["folder_code"].(string),
 	}
 
 	return config

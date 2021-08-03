@@ -107,6 +107,15 @@ func (i *instanceClone) Create(ctx context.Context, d *utils.Data, meta interfac
 	if req.Instance.Site.ID == 0 {
 		req.Instance.Site.ID = sourceInstance.Instance.Group.ID
 	}
+	if req.LayoutSize == 0 {
+		req.LayoutSize = sourceInstance.Instance.Config.Layoutsize
+	}
+	if req.Labels == nil {
+		req.Labels = sourceInstance.Instance.Labels
+	}
+	if req.Tags == nil {
+		req.Tags = sourceInstance.Instance.Tags
+	}
 
 	req.Volumes = instanceCloneCompareVolume(volumes, sourceInstance.Instance.Volumes)
 	req.Instance.Layout = &models.CreateInstanceBodyInstanceLayout{

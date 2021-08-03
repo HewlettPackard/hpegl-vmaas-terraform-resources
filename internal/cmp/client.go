@@ -20,6 +20,7 @@ type Client struct {
 	Template         DataSource
 	Environment      DataSource
 	NetworkInterface DataSource
+	CloudFolder      DataSource
 }
 
 // NewClient returns configured client
@@ -39,5 +40,6 @@ func NewClient(client *apiClient.APIClient, cfg apiClient.Configuration) *Client
 		Environment:   newEnvironment(&apiClient.EnvironmentAPIService{Client: client, Cfg: cfg}),
 		NetworkInterface: newNetworkInterface(&apiClient.CloudsAPIService{Client: client, Cfg: cfg},
 			&apiClient.ProvisioningAPIService{Client: client, Cfg: cfg}),
+		CloudFolder: newCloudFolder(&apiClient.CloudsAPIService{Client: client, Cfg: cfg}),
 	}
 }

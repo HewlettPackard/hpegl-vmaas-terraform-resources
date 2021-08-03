@@ -96,7 +96,7 @@ func testAccResourceInstanceClone() string {
 	return fmt.Sprintf(`%s
 		resource "hpegl_vmaas_instance_clone" "tf_acc_instance_clone" {
 			name               = "tf_acc_clone_%d"
-			source_instance_id = 95
+			source_instance_id = 150
 			network {
 			  id = 6
 			  interface_id = 9

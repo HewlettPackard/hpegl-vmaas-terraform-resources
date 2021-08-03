@@ -191,15 +191,10 @@ func getInstanceDefaultSchema(isClone bool) *schema.Resource {
 							Optional:    true,
 							Description: "If true agent will not be installed on the instance.",
 						},
-						"vm_folder": {
+						"folder_code": {
 							Type:        schema.TypeString,
 							Optional:    true,
-							Description: "Folder name where will be stored.",
-						},
-						"create_user": {
-							Type:        schema.TypeBool,
-							Optional:    true,
-							Description: "If true new user will be created",
+							Description: "Folder in which all VMs to be spawned, use hpegl_vmaas_folder.code datasource",
 						},
 						"asset_tag": {
 							Type:        schema.TypeString,
