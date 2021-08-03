@@ -247,7 +247,13 @@ func checkInstanceCloneHistory(ctx context.Context, i *instanceClone, meta inter
 	return err
 }
 
-func cloneInstance(ctx context.Context, i *instanceClone, meta interface{}, req *models.CreateInstanceBody, sourceID int) error {
+func cloneInstance(
+	ctx context.Context,
+	i *instanceClone,
+	meta interface{},
+	req *models.CreateInstanceBody,
+	sourceID int,
+) error {
 	cloneRetry := &utils.CustomRetry{
 		Cond: func(response interface{}, ResponseErr error) (bool, error) {
 			if ResponseErr != nil {
