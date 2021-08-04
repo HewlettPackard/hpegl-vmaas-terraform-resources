@@ -11,6 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/cmp"
+	"github.com/hpe-hcss/vmaas-terraform-resources/internal/resources/schemas"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
 	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/client"
 )
@@ -296,6 +297,7 @@ func getInstanceDefaultSchema(isClone bool) *schema.Resource {
 					},
 				},
 			},
+			"history": schemas.GetInstanceHistorySchema(),
 		},
 		SchemaVersion:  0,
 		StateUpgraders: nil,
