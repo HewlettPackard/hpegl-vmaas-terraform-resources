@@ -6,10 +6,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/models"
-	"github.com/hpe-hcss/vmaas-terraform-resources/internal/logger"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
 )
 
@@ -26,7 +26,7 @@ func newNetworkInterface(cClient *client.CloudsAPIService, pClient *client.Provi
 }
 
 func (c *networkInterface) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
-	logger.Debug("Get Network interface")
+	log.Printf("[DEBUG] Get Network interface")
 
 	cloudID := d.GetInt("cloud_id")
 	name := d.GetString("name")
