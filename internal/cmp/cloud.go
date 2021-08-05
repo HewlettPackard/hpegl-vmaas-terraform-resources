@@ -5,10 +5,10 @@ package cmp
 import (
 	"context"
 	"fmt"
+	"log"
 
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/models"
-	"github.com/hpe-hcss/vmaas-terraform-resources/internal/logger"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
 )
 
@@ -23,7 +23,7 @@ func newCloud(cloudClient *client.CloudsAPIService) *cloud {
 }
 
 func (c *cloud) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
-	logger.Debug("Get Cloud")
+	log.Printf("[INFO] Get Cloud")
 
 	name := d.GetString("name")
 	if err := d.Error(); err != nil {

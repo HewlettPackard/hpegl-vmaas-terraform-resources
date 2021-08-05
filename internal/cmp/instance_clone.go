@@ -6,12 +6,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"strings"
 	"time"
 
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/models"
-	"github.com/hpe-hcss/vmaas-terraform-resources/internal/logger"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
 )
 
@@ -39,9 +39,8 @@ func newInstanceClone(iClient *client.InstancesAPIService) *instanceClone {
 
 // Create instanceClone
 func (i *instanceClone) Create(ctx context.Context, d *utils.Data, meta interface{}) error {
-	logger.Debug("Cloning instance")
+	log.Printf("[INFO] Cloning instance")
 
-	volumes := d.GetListMap("volume")
 	req := &models.CreateInstanceBody{
 		CloneName: d.GetString("name"),
 		ZoneID:    d.GetJSONNumber("cloud_id"),
@@ -87,58 +86,26 @@ func (i *instanceClone) Create(ctx context.Context, d *utils.Data, meta interfac
 
 	// Get source instance
 	sourceID := d.GetInt("source_instance_id")
-	sourceInstanceResp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return i.iClient.GetASpecificInstance(ctx, sourceID)
-	})
+	err := copyInstanceAttribsToClone(ctx, i, meta, req, d.GetListMap("volume"), sourceID)
 	if err != nil {
 		return err
-	}
-	sourceInstance := sourceInstanceResp.(models.GetInstanceResponse)
-
-	if utils.IsEmpty(req.ZoneID) {
-		req.ZoneID = utils.JSONNumber(sourceInstance.Instance.Cloud.ID)
-	}
-	if utils.IsEmpty(req.Instance.Plan.ID) {
-		req.Instance.Plan.ID = utils.JSONNumber(sourceInstance.Instance.Plan.ID)
-	}
-	if req.Instance.InstanceType.Code == "" {
-		req.Instance.InstanceType.Code = sourceInstance.Instance.InstanceType.Code
-	}
-	if req.Instance.Site.ID == 0 {
-		req.Instance.Site.ID = sourceInstance.Instance.Group.ID
-	}
-	if req.LayoutSize == 0 {
-		req.LayoutSize = sourceInstance.Instance.Config.Layoutsize
-	}
-	if req.Labels == nil {
-		req.Labels = sourceInstance.Instance.Labels
-	}
-	if req.Tags == nil {
-		req.Tags = sourceInstance.Instance.Tags
-	}
-
-	req.Volumes = instanceCloneCompareVolume(volumes, sourceInstance.Instance.Volumes)
-	req.Instance.Layout = &models.CreateInstanceBodyInstanceLayout{
-		ID: utils.JSONNumber(sourceInstance.Instance.Layout.ID),
 	}
 
 	// clone the instance
-	logger.Info("Cloning the instance with ", sourceID)
-	respClone, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return i.iClient.CloneAnInstance(ctx, sourceID, req)
-	})
+	log.Printf("[INFO] Cloning the instance with %d", sourceID)
+	err = cloneInstance(ctx, i, meta, req, sourceID)
 	if err != nil {
 		return err
 	}
 
-	logger.Info("Check clone success")
-	isCloneSuccess := respClone.(models.SuccessOrErrorMessage)
-	if !isCloneSuccess.Success {
-		return fmt.Errorf("failed to clone, error: %s", isCloneSuccess.Message)
+	log.Printf("[INFO] Check history")
+	err = checkInstanceCloneHistory(ctx, i, meta, sourceID)
+	if err != nil {
+		return err
 	}
 
-	logger.Info("Get all instances")
-	customRetry := &utils.CustomRetry{
+	log.Printf("[INFO] Get all instances")
+	getInstanceRetry := &utils.CustomRetry{
 		Delay:        instanceCloneRetryDelay,
 		RetryTimeout: instanceCloneRetryTimeout,
 		RetryCount:   instanceCloneRetryCount,
@@ -152,7 +119,7 @@ func (i *instanceClone) Create(ctx context.Context, d *utils.Data, meta interfac
 		},
 	}
 	// get cloned instance ID
-	instancesResp, err := customRetry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
+	instancesResp, err := getInstanceRetry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
 		return i.iClient.GetAllInstances(ctx, map[string]string{
 			nameKey: req.CloneName,
 		})
@@ -204,7 +171,7 @@ func (i *instanceClone) Delete(ctx context.Context, d *utils.Data, meta interfac
 func (i *instanceClone) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
 	id := d.GetID()
 
-	logger.Debug("Get instance with ID %d", id)
+	log.Printf("[INFO] Get instance with ID %d", id)
 
 	// Precheck
 	if err := d.Error(); err != nil {
@@ -242,4 +209,112 @@ func (i *instanceClone) Read(ctx context.Context, d *utils.Data, meta interface{
 
 	// post check
 	return d.Error()
+}
+
+func checkInstanceCloneHistory(ctx context.Context, i *instanceClone, meta interface{}, instanceID int) error {
+	errCount := 0
+	historyRetry := utils.CustomRetry{
+		Delay:        instanceCloneRetryDelay,
+		RetryTimeout: instanceCloneRetryTimeout,
+		RetryCount:   instanceCloneRetryCount,
+		Cond: func(response interface{}, ResponseErr error) (bool, error) {
+			if ResponseErr != nil {
+				errCount++
+				if errCount == 3 {
+					return false, ResponseErr
+				}
+
+				return false, nil
+			}
+			errCount = 0
+
+			instanceHistory := response.(models.GetInstanceHistory)
+			if len(instanceHistory.Processes) > 0 && instanceHistory.Processes[0].ProcessType.Code == "cloning" {
+				if instanceHistory.Processes[0].Status == "failed" {
+					return false, fmt.Errorf("failed to clone instance")
+				} else if instanceHistory.Processes[0].Status == "success" {
+					return true, nil
+				}
+			}
+
+			return false, nil
+		},
+	}
+	_, err := historyRetry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
+		return i.iClient.GetInstanceHistory(ctx, instanceID)
+	})
+
+	return err
+}
+
+func cloneInstance(
+	ctx context.Context,
+	i *instanceClone,
+	meta interface{},
+	req *models.CreateInstanceBody,
+	sourceID int,
+) error {
+	cloneRetry := &utils.CustomRetry{
+		Cond: func(response interface{}, ResponseErr error) (bool, error) {
+			if ResponseErr != nil {
+				return false, nil
+			}
+			if !response.(models.SuccessOrErrorMessage).Success {
+				return false, fmt.Errorf("failed to clone instance")
+			}
+
+			return true, nil
+		},
+	}
+	_, err := cloneRetry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
+		return i.iClient.CloneAnInstance(ctx, sourceID, req)
+	})
+
+	return err
+}
+
+func copyInstanceAttribsToClone(
+	ctx context.Context,
+	i *instanceClone,
+	meta interface{},
+	req *models.CreateInstanceBody,
+	volumes []map[string]interface{},
+	sourceID int,
+) error {
+	sourceInstanceResp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
+		return i.iClient.GetASpecificInstance(ctx, sourceID)
+	})
+	if err != nil {
+		return err
+	}
+	sourceInstance := sourceInstanceResp.(models.GetInstanceResponse)
+
+	if utils.IsEmpty(req.ZoneID) {
+		req.ZoneID = utils.JSONNumber(sourceInstance.Instance.Cloud.ID)
+	}
+	if utils.IsEmpty(req.Instance.Plan.ID) {
+		req.Instance.Plan.ID = utils.JSONNumber(sourceInstance.Instance.Plan.ID)
+	}
+	if req.Instance.InstanceType.Code == "" {
+		req.Instance.InstanceType.Code = sourceInstance.Instance.InstanceType.Code
+	}
+	if req.Instance.Site.ID == 0 {
+		req.Instance.Site.ID = sourceInstance.Instance.Group.ID
+	}
+	if req.LayoutSize == 0 {
+		req.LayoutSize = sourceInstance.Instance.Config.Layoutsize
+	}
+	if req.Labels == nil {
+		req.Labels = sourceInstance.Instance.Labels
+	}
+	if req.Tags == nil {
+		req.Tags = sourceInstance.Instance.Tags
+	}
+
+	req.Volumes = instanceCloneCompareVolume(volumes, sourceInstance.Instance.Volumes)
+	req.Instance.Layout = &models.CreateInstanceBodyInstanceLayout{
+		ID: utils.JSONNumber(sourceInstance.Instance.Layout.ID),
+	}
+
+	return nil
 }

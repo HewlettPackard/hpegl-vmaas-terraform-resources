@@ -5,13 +5,13 @@ package cmp
 import (
 	"context"
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 	"time"
 
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/models"
-	"github.com/hpe-hcss/vmaas-terraform-resources/internal/logger"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
 )
 
@@ -23,7 +23,7 @@ type iClient interface {
 // changing volumes and instance properties such as labels
 // groups and tags
 func updateInstance(ctx context.Context, iclient iClient, d *utils.Data, meta interface{}) error {
-	logger.Debug("Updating the instance")
+	log.Printf("[DEBUG] Updating the instance")
 
 	id := d.GetID()
 	if d.HasChanged("name") || d.HasChanged("group_id") || d.HasChanged("tags") ||
@@ -122,7 +122,7 @@ func updateInstance(ctx context.Context, iclient iClient, d *utils.Data, meta in
 // Delete instance and set ID as ""
 func deleteInstance(ctx context.Context, iclient iClient, d *utils.Data, meta interface{}) error {
 	id := d.GetID()
-	logger.Debugf("Deleting instance with ID : %d", id)
+	log.Printf("[DEBUG] Deleting instance with ID : %d", id)
 
 	// Precheck
 	if err := d.Error(); err != nil {
@@ -168,7 +168,6 @@ func deleteInstance(ctx context.Context, iclient iClient, d *utils.Data, meta in
 
 func instanceGetVolume(volumes []map[string]interface{}) []models.CreateInstanceBodyVolumes {
 	volumesModel := make([]models.CreateInstanceBodyVolumes, 0, len(volumes))
-	logger.Debug(volumes)
 	for i := range volumes {
 		volumesModel = append(volumesModel, models.CreateInstanceBodyVolumes{
 			ID:          -1,

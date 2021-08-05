@@ -5,11 +5,11 @@ package cmp
 import (
 	"context"
 	"errors"
+	"log"
 	"strings"
 
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/models"
-	"github.com/hpe-hcss/vmaas-terraform-resources/internal/logger"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
 )
 
@@ -31,7 +31,7 @@ func newInstance(iClient *client.InstancesAPIService) *instance {
 
 // Create instance
 func (i *instance) Create(ctx context.Context, d *utils.Data, meta interface{}) error {
-	logger.Debug("Creating new instance")
+	log.Printf("[DEBUG] Creating new instance")
 
 	c := d.GetListMap("config")[0]
 	req := &models.CreateInstanceBody{
@@ -120,7 +120,7 @@ func (i *instance) Delete(ctx context.Context, d *utils.Data, meta interface{}) 
 func (i *instance) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
 	id := d.GetID()
 
-	logger.Debug("Get instance with ID %d", id)
+	log.Printf("[DEBUG] Get instance with ID %d", id)
 
 	// Precheck
 	if err := d.Error(); err != nil {
