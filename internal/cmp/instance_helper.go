@@ -210,12 +210,16 @@ func instanceGetNetwork(networksMap []map[string]interface{}) []models.CreateIns
 	return networks
 }
 
-func instanceGetConfig(c map[string]interface{}) *models.CreateInstanceBodyConfig {
+func instanceGetConfig(c map[string]interface{}, isVmware bool) *models.CreateInstanceBodyConfig {
 	config := &models.CreateInstanceBodyConfig{
 		ResourcePoolID: utils.JSONNumber(c["resource_pool_id"]),
 		NoAgent:        strconv.FormatBool(c["no_agent"].(bool)),
 		SmbiosAssetTag: c["asset_tag"].(string),
 		VMwareFolderID: c["folder_code"].(string),
+		Template:       c["template_id"].(int),
+	}
+	if !isVmware {
+		config.Template = 0
 	}
 
 	return config

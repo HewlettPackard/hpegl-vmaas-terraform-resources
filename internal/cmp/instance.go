@@ -4,7 +4,6 @@ package cmp
 
 import (
 	"context"
-	"errors"
 	"log"
 	"strings"
 
@@ -59,20 +58,12 @@ func (i *instance) Create(ctx context.Context, d *utils.Data, meta interface{}) 
 		Labels:            d.GetStringList("labels"),
 		Volumes:           instanceGetVolume(d.GetListMap("volume")),
 		NetworkInterfaces: instanceGetNetwork(d.GetListMap("network")),
-		Config:            instanceGetConfig(c),
+		Config:            instanceGetConfig(c, strings.ToLower(d.GetString("instance_type_code")) == vmware),
 		Tags:              instanceGetTags(d.GetMap("tags")),
 		LayoutSize:        d.GetInt("scale"),
 		PowerScheduleType: utils.JSONNumber(d.GetInt("power_schedule_id")),
 	}
 
-	// Get template id instance type is vmware
-	if strings.ToLower(req.Instance.InstanceType.Code) == vmware {
-		templateID := c["template_id"]
-		if templateID == nil {
-			return errors.New("error, template id is required for vmware instance type")
-		}
-		req.Config.Template = templateID.(int)
-	}
 	// Pre check
 	if err := d.Error(); err != nil {
 		return err

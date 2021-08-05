@@ -68,16 +68,7 @@ func (i *instanceClone) Create(ctx context.Context, d *utils.Data, meta interfac
 
 	c := d.GetListMap("config")
 	if len(c) > 0 {
-		req.Config = instanceGetConfig(c[0])
-
-		// Get template id instance type is vmware
-		if strings.ToLower(req.Instance.InstanceType.Code) == vmware {
-			templateID := c[0]["template_id"]
-			if templateID == nil {
-				return errors.New("error, template id is required for vmware instance type")
-			}
-			req.Config.Template = templateID.(int)
-		}
+		req.Config = instanceGetConfig(c[0], strings.ToLower(req.Instance.InstanceType.Code) == vmware)
 	}
 	// Pre check
 	if err := d.Error(); err != nil {

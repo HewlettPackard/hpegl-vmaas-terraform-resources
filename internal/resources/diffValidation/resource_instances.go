@@ -4,6 +4,7 @@ package diffvalidation
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
@@ -43,6 +44,10 @@ func (i *Instance) DiffValidate() error {
 		return err
 	}
 
+	if err := i.instanceTemplateValidate(); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -57,6 +62,27 @@ func (i *Instance) isEmpty(param interface{}) bool {
 	default:
 		return false
 	}
+}
+
+func (i *Instance) instanceTemplateValidate() error {
+	configSet := i.diff.Get("config").(*schema.Set)
+	if configSet == nil {
+		return nil
+	}
+
+	config := configSet.List()
+	// for clone config can be nil
+	if len(config) > 0 {
+		c0 := config[0].(map[string]interface{})
+		templateID := c0["template_id"].(int)
+		if strings.ToLower(i.diff.Get("instance_type_code").(string)) == "vmware" {
+			if templateID == 0 {
+				return fmt.Errorf("template_id is required for 'vmware' instance type code")
+			}
+		}
+	}
+
+	return nil
 }
 
 func (i *Instance) instanceVolumeDiffValidate() error {
