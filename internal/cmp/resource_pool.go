@@ -5,10 +5,10 @@ package cmp
 import (
 	"context"
 	"fmt"
+	"log"
 
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/models"
-	"github.com/hpe-hcss/vmaas-terraform-resources/internal/logger"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
 )
 
@@ -21,7 +21,7 @@ func newResourcePool(rClient *client.CloudsAPIService) *resourcePool {
 }
 
 func (n *resourcePool) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
-	logger.Debug("Get ResourcePool")
+	log.Printf("[DEBUG] Get ResourcePool")
 
 	name := d.GetString("name")
 	cloudID := d.GetInt("cloud_id")

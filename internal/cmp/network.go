@@ -5,10 +5,10 @@ package cmp
 import (
 	"context"
 	"fmt"
+	"log"
 
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/models"
-	"github.com/hpe-hcss/vmaas-terraform-resources/internal/logger"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
 )
 
@@ -21,7 +21,7 @@ func newNetwork(nClient *client.NetworksAPIService) *network {
 }
 
 func (n *network) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
-	logger.Debug("Get Network")
+	log.Printf("[DEBUG] Get Network")
 
 	name := d.GetString("name")
 	// Pre check
