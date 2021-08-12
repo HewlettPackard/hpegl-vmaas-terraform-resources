@@ -47,15 +47,27 @@ func retry(
 		log.Printf("[WARN] on API call got error: %+v, response: %+v. Retrying", err, resp)
 		time.Sleep(retryDelay)
 	}
-	// This sleeps for the timeout period and then checks the response and returns
+
 	if timeout != 0 {
-		time.Sleep(timeout)
-		auth.SetScmClientToken(&ctx, meta)
-		resp, err = fn(ctx)
-		_, err := cond(resp, err)
-		if err != nil {
-			return nil, err
+		for {
+			select {
+			case <-ctx.Done():
+				return resp, err
+			case <-time.After(time.Second * timeout):
+				return resp, err
+			default:
+				auth.SetScmClientToken(&ctx, meta)
+				resp, err = fn(ctx)
+				c, err := cond(resp, err)
+				if err != nil {
+					return nil, err
+				}
+				if c {
+					return resp, err
+				}
+			}
 		}
+
 	}
 
 	return resp, err
