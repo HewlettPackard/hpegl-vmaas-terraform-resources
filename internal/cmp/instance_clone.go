@@ -97,9 +97,9 @@ func (i *instanceClone) Create(ctx context.Context, d *utils.Data, meta interfac
 
 	log.Printf("[INFO] Get all instances")
 	getInstanceRetry := &utils.CustomRetry{
-		Delay:        instanceCloneRetryDelay,
-		RetryTimeout: instanceCloneRetryTimeout,
-		RetryCount:   instanceCloneRetryCount,
+		Delay:      instanceCloneRetryDelay,
+		RetryDelay: instanceCloneRetryTimeout,
+		RetryCount: instanceCloneRetryCount,
 		Cond: func(resp interface{}, err error) (bool, error) {
 			if err != nil {
 				return false, nil
@@ -205,9 +205,9 @@ func (i *instanceClone) Read(ctx context.Context, d *utils.Data, meta interface{
 func checkInstanceCloneHistory(ctx context.Context, i *instanceClone, meta interface{}, instanceID int) error {
 	errCount := 0
 	historyRetry := utils.CustomRetry{
-		Delay:        instanceCloneRetryDelay,
-		RetryTimeout: instanceCloneRetryTimeout,
-		RetryCount:   instanceCloneRetryCount,
+		Delay:      instanceCloneRetryDelay,
+		RetryDelay: instanceCloneRetryTimeout,
+		RetryCount: instanceCloneRetryCount,
 		Cond: func(response interface{}, ResponseErr error) (bool, error) {
 			if ResponseErr != nil {
 				errCount++
