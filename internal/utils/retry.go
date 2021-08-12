@@ -4,6 +4,7 @@ package utils
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"time"
 
@@ -32,50 +33,52 @@ func retry(
 ) (interface{}, error) {
 	var err error
 	var resp interface{}
-	// If timeout is set then this code will be skipped
-	for i := 0; i < count; i++ {
-		auth.SetScmClientToken(&ctx, meta)
-		resp, err = fn(ctx)
-		c, err := cond(resp, err)
-		if err != nil {
-			return nil, err
-		}
-		if c {
-			break
-		}
-
-		log.Printf("[WARN] on API call got error: %+v, response: %+v. Retrying", err, resp)
-		time.Sleep(retryDelay)
-	}
-
-	if timeout != 0 {
-		for {
+	errorChannel := make(chan error)
+	responseChannel := make(chan interface{})
+	go func(ctx context.Context, meta interface{}, errorChannel chan error, responseChannel chan interface{}) {
+		for i := 0; ; i++ {
+			if i == count {
+				break
+			}
 			select {
 			case <-ctx.Done():
-				return resp, err
-			case <-time.After(time.Second * timeout):
-				return resp, err
+				errorChannel <- fmt.Errorf("context timed out")
+				responseChannel <- nil
+				return
+			case <-time.After(timeout):
+				errorChannel <- fmt.Errorf("retry timed out")
+				responseChannel <- nil
+				return
 			default:
 				auth.SetScmClientToken(&ctx, meta)
 				resp, err = fn(ctx)
 				c, err := cond(resp, err)
 				if err != nil {
-					return nil, err
+					errorChannel <- err
+					responseChannel <- nil
+					return
 				}
 				if c {
-					return resp, err
+					errorChannel <- nil
+					responseChannel <- resp
+					return
 				}
+				log.Printf("[WARN] on API call got error: %+v, response: %+v. Retrying", err, resp)
+				time.Sleep(retryDelay)
 			}
 		}
-
+	}(ctx, meta, errorChannel, responseChannel)
+	err = <-errorChannel
+	resp = <-responseChannel
+	if err != nil {
+		return resp, err
 	}
-
-	return resp, err
+	return resp, nil
 }
 
 // Retry with default count and timeout
 func Retry(ctx context.Context, meta interface{}, fn RetryFunc) (interface{}, error) {
-	return retry(ctx, meta, defaultRetryCount, defaultTimeout, fn, defaultCond)
+	return retry(ctx, meta, defaultRetryCount, defaultRetryTimeout, fn, defaultCond, defaultTimeout)
 }
 
 // CustomRetry allows developers to configure the timeout, retry count and delay
@@ -98,7 +101,7 @@ func (c *CustomRetry) Retry(
 		c.RetryCount = defaultRetryCount
 	}
 	if c.RetryDelay == 0 {
-		c.RetryDelay = defaultTimeout
+		c.RetryDelay = defaultRetryTimeout
 	}
 	if c.Cond == nil {
 		c.Cond = defaultCond

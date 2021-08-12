@@ -21,8 +21,9 @@ const (
 	ErrSet           = "failed to set"
 	NAN              = 0
 	// retry constants
-	defaultTimeout    = time.Second * 5
-	defaultRetryCount = 3
+	defaultRetryTimeout = time.Second * 5
+	defaultRetryCount   = 3
+	defaultTimeout      = time.Duration(0)
 	// power constants
 	PowerOn         = "poweron"
 	PowerOff        = "poweroff"
