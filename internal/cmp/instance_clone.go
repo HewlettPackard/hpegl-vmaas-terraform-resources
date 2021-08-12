@@ -4,6 +4,7 @@ package cmp
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
@@ -41,34 +42,29 @@ func newInstanceClone(iClient *client.InstancesAPIService) *instanceClone {
 func (i *instanceClone) Create(ctx context.Context, d *utils.Data, meta interface{}) error {
 	log.Printf("[INFO] Cloning instance")
 
-	req := &models.CreateInstanceBody{
-		CloneName: d.GetString("name"),
-		ZoneID:    d.GetJSONNumber("cloud_id"),
-		Instance: &models.CreateInstanceBodyInstance{
-			InstanceType: &models.CreateInstanceBodyInstanceInstanceType{
-				Code: d.GetString("instance_type_code"),
-			},
-			Plan: &models.CreateInstanceBodyInstancePlan{
-				ID: d.GetJSONNumber("plan_id"),
-			},
-			Site: &models.CreateInstanceBodyInstanceSite{
-				ID: d.GetInt("group_id"),
-			},
-			HostName:          d.GetString("hostname"),
-			EnvironmentPrefix: d.GetString("env_prefix"),
+	req := models.CreateInstanceCloneBody{
+		Name:  d.GetString("name"),
+		Cloud: models.IDModel{ID: d.GetInt("cloud_id")},
+		Group: models.IDModel{ID: d.GetInt("group_id")},
+		InstanceType: models.CreateInstanceCloneInstanceTypeBody{
+			Code: d.GetString("instance_type_code"),
 		},
-		Environment:       d.GetString("environment_code"),
-		Evars:             instanceGetEvars(d.GetMap("evars")),
-		Labels:            d.GetStringList("labels"),
-		NetworkInterfaces: instanceGetNetwork(d.GetListMap("network")),
-		Tags:              instanceGetTags(d.GetMap("tags")),
+		Instance: models.CreateInstanceCloneInstanceBody{
+			EnvironmentPrefix: d.GetString("env_prefix"),
+			Tags:              d.GetStringList("labels"),
+			InstanceContext:   d.GetString("environment_code"),
+			PowerScheduleType: d.GetInt("power_schedule_id"),
+		},
+		Plan:              models.IDModel{ID: d.GetInt("plan_id")},
 		LayoutSize:        d.GetInt("scale"),
-		PowerScheduleType: utils.JSONNumber(d.GetInt("power_schedule_id")),
+		NetworkInterfaces: instanceGetNetwork(d.GetListMap("network")),
+		Evars:             instanceGetEvars(d.GetMap("evars")),
+		Metadata:          instanceGetTags(d.GetMap("tags")),
 	}
 
 	c := d.GetListMap("config")
 	if len(c) > 0 {
-		req.Config = instanceGetConfig(c[0], strings.ToLower(req.Instance.InstanceType.Code) == vmware)
+		req.Config = *instanceGetConfig(c[0], strings.ToLower(req.InstanceType.Code) == vmware)
 	}
 	// Pre check
 	if err := d.Error(); err != nil {
@@ -77,7 +73,7 @@ func (i *instanceClone) Create(ctx context.Context, d *utils.Data, meta interfac
 
 	// Get source instance
 	sourceID := d.GetInt("source_instance_id")
-	err := copyInstanceAttribsToClone(ctx, i, meta, req, d.GetListMap("volume"), sourceID)
+	err := copyInstanceAttribsToClone(ctx, i, meta, &req, d.GetListMap("volume"), sourceID)
 	if err != nil {
 		return err
 	}
@@ -112,7 +108,7 @@ func (i *instanceClone) Create(ctx context.Context, d *utils.Data, meta interfac
 	// get cloned instance ID
 	instancesResp, err := getInstanceRetry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
 		return i.iClient.GetAllInstances(ctx, map[string]string{
-			nameKey: req.CloneName,
+			nameKey: req.Name,
 		})
 	})
 	if err != nil {
@@ -220,11 +216,16 @@ func checkInstanceCloneHistory(ctx context.Context, i *instanceClone, meta inter
 			errCount = 0
 
 			instanceHistory := response.(models.GetInstanceHistory)
-			if len(instanceHistory.Processes) > 0 && instanceHistory.Processes[0].ProcessType.Code == "cloning" {
-				if instanceHistory.Processes[0].Status == "failed" {
-					return false, fmt.Errorf("failed to clone instance")
-				} else if instanceHistory.Processes[0].Status == "success" {
-					return true, nil
+			for _, processes := range instanceHistory.Processes {
+				if processes.ProcessType.Code == "cloning" {
+					if processes.Status == "success" || processes.Status == "complete" {
+						return true, nil
+					}
+					if processes.Status == "failed" {
+						return false, fmt.Errorf("failed to clone instance")
+					}
+
+					break
 				}
 			}
 
@@ -242,7 +243,7 @@ func cloneInstance(
 	ctx context.Context,
 	i *instanceClone,
 	meta interface{},
-	req *models.CreateInstanceBody,
+	req models.CreateInstanceCloneBody,
 	sourceID int,
 ) error {
 	cloneRetry := &utils.CustomRetry{
@@ -258,6 +259,9 @@ func cloneInstance(
 		},
 	}
 	_, err := cloneRetry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
+		val, _ := json.Marshal(&req)
+		log.Printf("value: %s", string(val))
+
 		return i.iClient.CloneAnInstance(ctx, sourceID, req)
 	})
 
@@ -268,7 +272,7 @@ func copyInstanceAttribsToClone(
 	ctx context.Context,
 	i *instanceClone,
 	meta interface{},
-	req *models.CreateInstanceBody,
+	req *models.CreateInstanceCloneBody,
 	volumes []map[string]interface{},
 	sourceID int,
 ) error {
@@ -280,32 +284,60 @@ func copyInstanceAttribsToClone(
 	}
 	sourceInstance := sourceInstanceResp.(models.GetInstanceResponse)
 
-	if utils.IsEmpty(req.ZoneID) {
-		req.ZoneID = utils.JSONNumber(sourceInstance.Instance.Cloud.ID)
+	if utils.IsEmpty(req.Cloud.ID) {
+		req.Cloud.ID = sourceInstance.Instance.Cloud.ID
 	}
-	if utils.IsEmpty(req.Instance.Plan.ID) {
-		req.Instance.Plan.ID = utils.JSONNumber(sourceInstance.Instance.Plan.ID)
+	if utils.IsEmpty(req.Plan.ID) {
+		req.Plan.ID = sourceInstance.Instance.Plan.ID
 	}
-	if req.Instance.InstanceType.Code == "" {
-		req.Instance.InstanceType.Code = sourceInstance.Instance.InstanceType.Code
+	if utils.IsEmpty(req.InstanceType.Code) {
+		req.InstanceType.Code = sourceInstance.Instance.InstanceType.Code
 	}
-	if req.Instance.Site.ID == 0 {
-		req.Instance.Site.ID = sourceInstance.Instance.Group.ID
+	if utils.IsEmpty(req.Group.ID) {
+		req.Group.ID = sourceInstance.Instance.Group.ID
 	}
-	if req.LayoutSize == 0 {
+	if utils.IsEmpty(req.LayoutSize) {
 		req.LayoutSize = sourceInstance.Instance.Config.Layoutsize
 	}
-	if req.Labels == nil {
-		req.Labels = sourceInstance.Instance.Labels
+	if utils.IsEmpty(req.Instance.Tags) {
+		req.Instance.Tags = sourceInstance.Instance.Labels
 	}
-	if req.Tags == nil {
-		req.Tags = sourceInstance.Instance.Tags
+	if utils.IsEmpty(req.Metadata) {
+		req.Metadata = sourceInstance.Instance.Tags
 	}
+	if utils.IsEmpty(req.Instance.PowerScheduleType) {
+		req.Instance.PowerScheduleType = sourceInstance.Instance.Config.PowerScheduleType
+	}
+	if utils.IsEmpty(req.Instance.EnvironmentPrefix) {
+		req.Instance.EnvironmentPrefix = sourceInstance.Instance.EnvironmentPrefix
+	}
+	if utils.IsEmpty(req.Instance.InstanceContext) {
+		req.Instance.InstanceContext = sourceInstance.Instance.InstanceContext
+	}
+	if utils.IsEmpty(req.LayoutSize) {
+		req.LayoutSize = sourceInstance.Instance.Config.Layoutsize
+	}
+	instanceCloneCopyConfig(req, sourceInstance)
 
-	req.Volumes = instanceCloneCompareVolume(volumes, sourceInstance.Instance.Volumes)
-	req.Instance.Layout = &models.CreateInstanceBodyInstanceLayout{
-		ID: utils.JSONNumber(sourceInstance.Instance.Layout.ID),
+	// req.Volumes = instanceCloneCompareVolume(volumes, sourceInstance.Instance.Volumes)
+	req.Layout = models.IDModel{
+		ID: sourceInstance.Instance.Layout.ID,
 	}
 
 	return nil
+}
+
+func instanceCloneCopyConfig(req *models.CreateInstanceCloneBody, sourceInstance models.GetInstanceResponse) {
+	if utils.IsEmpty(req.Config.ResourcePoolID) {
+		req.Config.ResourcePoolID = sourceInstance.Instance.Config.ResourcePoolID
+	}
+	if utils.IsEmpty(req.Config.Template) {
+		req.Config.Template = sourceInstance.Instance.Config.Template
+	}
+	if utils.IsEmpty(req.Config.VMwareFolderID) {
+		req.Config.VMwareFolderID = sourceInstance.Instance.Config.Vmwarefolderid
+	}
+	if utils.IsEmpty(req.Config.SmbiosAssetTag) {
+		req.Config.SmbiosAssetTag = sourceInstance.Instance.Config.Smbiosassettag
+	}
 }

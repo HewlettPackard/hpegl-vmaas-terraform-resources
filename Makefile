@@ -87,5 +87,11 @@ install: build $(NAME)
 	cp build/$(NAME) $(LOCAL_LOCATION)
 .PHONY: install
 
+v: latest
+sdk:
+	@go get github.com/hpe-hcss/vmaas-cmp-go-sdk@$v
+	go mod vendor
+.PHONY: v
+
 all: lint test
 .PHONY: all
