@@ -25,12 +25,14 @@ func retry(
 	ctx context.Context,
 	meta interface{},
 	count int,
-	timeout time.Duration,
+	retryDelay time.Duration,
 	fn RetryFunc,
 	cond CondFunc,
+	timeout time.Duration,
 ) (interface{}, error) {
 	var err error
 	var resp interface{}
+	// If timeout is set then this code will be skipped
 	for i := 0; i < count; i++ {
 		auth.SetScmClientToken(&ctx, meta)
 		resp, err = fn(ctx)
@@ -43,7 +45,17 @@ func retry(
 		}
 
 		log.Printf("[WARN] on API call got error: %+v, response: %+v. Retrying", err, resp)
+		time.Sleep(retryDelay)
+	}
+	// This sleeps for the timeout period and then checks the response and returns
+	if timeout != 0 {
 		time.Sleep(timeout)
+		auth.SetScmClientToken(&ctx, meta)
+		resp, err = fn(ctx)
+		_, err := cond(resp, err)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return resp, err
@@ -56,10 +68,11 @@ func Retry(ctx context.Context, meta interface{}, fn RetryFunc) (interface{}, er
 
 // CustomRetry allows developers to configure the timeout, retry count and delay
 type CustomRetry struct {
-	RetryCount   int
-	RetryTimeout time.Duration
-	Delay        time.Duration
-	Cond         CondFunc
+	RetryCount int
+	RetryDelay time.Duration
+	Delay      time.Duration
+	Cond       CondFunc
+	Timeout    time.Duration
 }
 
 // Retry with custom count, timeout and delay
@@ -68,16 +81,20 @@ func (c *CustomRetry) Retry(
 	meta interface{},
 	fn RetryFunc,
 ) (interface{}, error) {
+
 	if c.RetryCount == 0 {
 		c.RetryCount = defaultRetryCount
 	}
-	if c.RetryTimeout == 0 {
-		c.RetryTimeout = defaultTimeout
+	if c.RetryDelay == 0 {
+		c.RetryDelay = defaultTimeout
 	}
 	if c.Cond == nil {
 		c.Cond = defaultCond
 	}
+	if c.Timeout != 0 {
+		c.RetryCount = -1
+	}
 	time.Sleep(c.Delay)
 
-	return retry(ctx, meta, c.RetryCount, c.RetryTimeout, fn, c.Cond)
+	return retry(ctx, meta, c.RetryCount, c.RetryDelay, fn, c.Cond, c.Timeout)
 }
