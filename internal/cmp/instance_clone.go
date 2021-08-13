@@ -319,7 +319,7 @@ func copyInstanceAttribsToClone(
 	}
 	instanceCloneCopyConfig(req, sourceInstance)
 
-	// req.Volumes = instanceCloneCompareVolume(volumes, sourceInstance.Instance.Volumes)
+	req.Volumes = instanceCloneCompareVolume(volumes, sourceInstance.Instance.Volumes)
 	req.Layout = models.IDModel{
 		ID: sourceInstance.Instance.Layout.ID,
 	}
