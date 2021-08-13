@@ -14,8 +14,8 @@ import (
 type token interface {
 	setScmClientToken(ctx *context.Context, meta interface{})
 }
-type tokenStruct struct {
-}
+
+type tokenStruct struct{}
 
 func (t *tokenStruct) setScmClientToken(ctx *context.Context, meta interface{}) {
 	auth.SetScmClientToken(ctx, meta)
