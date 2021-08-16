@@ -1,5 +1,7 @@
 // (C) Copyright 2021 Hewlett Packard Enterprise Development LP
 
+//go:generate go run github.com/golang/mock/mockgen -source ./retry.go -package utils -destination ./retry_mock.go
+
 package utils
 
 import (
@@ -73,7 +75,7 @@ func retry(
 
 					return
 				}
-				log.Printf("[WARN] on API call got error: %+v, response: %+v. Retrying", err, resp)
+				log.Printf("[WARN] on API call got error: %#v, response: %#v. Retrying", err, resp)
 				time.Sleep(params.retryDelay)
 			}
 		}
