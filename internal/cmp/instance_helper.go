@@ -13,6 +13,7 @@ import (
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
 	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/models"
 	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
+	"github.com/tshihad/tftags"
 )
 
 type iClient interface {
@@ -492,4 +493,26 @@ func instanceSetHostname(d *utils.Data, instance models.GetInstanceResponse) {
 	if d.GetString("hostname") == "" {
 		d.Set("hostname", instance.Instance.HostName)
 	}
+}
+
+func instanceSetHistory(
+	ctx context.Context,
+	meta interface{},
+	iclient iClient,
+	d *utils.Data,
+	instanceID int,
+) {
+	resp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
+		return iclient.getIClient().GetInstanceHistory(ctx, instanceID)
+	})
+	if err != nil {
+		log.Printf("[WARN] Failed to retrieve the history for InstanceID: %d", instanceID)
+		return
+	}
+	historyModel := resp.(models.GetInstanceHistory)
+	type InstanceModel struct {
+		History models.GetInstanceHistory `tf:"history,computed"`
+	}
+
+	tftags.Set(d, InstanceModel{historyModel})
 }

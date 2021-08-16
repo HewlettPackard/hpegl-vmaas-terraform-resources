@@ -7,115 +7,72 @@ func GetInstanceHistorySchema() *schema.Schema {
 		Type:        schema.TypeList,
 		Description: `History details for the instance`,
 		Computed:    true,
-		Elem: schema.Resource{
+		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
-				"id": {
-					Type:     schema.TypeInt,
-					Computed: true,
-				},
-				"accountId": {
-					Type:     schema.TypeInt,
-					Computed: true,
-				},
-				"uniqueId": {
-					Type:     schema.TypeString,
-					Computed: true,
-				},
-				"processType": {
+				"id":         computedInt(),
+				"account_id": computedInt(),
+				"unique_id":  computedString(),
+				"process_type": {
 					Type:     schema.TypeSet,
 					Computed: true,
 					Elem: &schema.Resource{
 						Schema: map[string]*schema.Schema{
-							"code": {
-								Type:     schema.TypeString,
-								Computed: true,
-							},
-							"name": {
-								Type:     schema.TypeString,
-								Computed: true,
-							},
+							"code": computedString(),
+							"name": computedString(),
 						},
 					},
 				},
-				"displayName": {
-					Type:     schema.TypeString,
-					Computed: true,
-				},
-				"instanceId": {
-					Type:     schema.TypeInt,
-					Computed: true,
-				},
-				"status": {
-					Type:     schema.TypeString,
-					Computed: true,
-				},
-				"reason": {
-					Type:     schema.TypeString,
-					Computed: true,
-				},
+				"display_name": computedString(),
+				"instance_id":  computedInt(),
+				"status":       computedString(),
+				"reason":       computedString(),
 				"percent": {
 					Type:     schema.TypeFloat,
 					Computed: true,
 				},
-				"statusEta": {
+				"status_eta": {
 					Type:     schema.TypeFloat,
 					Computed: true,
 				},
-				"startDate": {
-					Type:     schema.TypeString,
-					Computed: true,
-				},
-				"endDate": {
-					Type:     schema.TypeString,
-					Computed: true,
-				},
-				"duration": {
-					Type:     schema.TypeInt,
-					Computed: true,
-				},
-				"dateCreated": {
-					Type:     schema.TypeString,
-					Computed: true,
-				},
-				"lastUpdated": {
-					Type:     schema.TypeString,
-					Computed: true,
-				},
-				"createdBy": {
-					Type: schema.TypeSet,
-					Elem: &schema.Resource{
-						Schema: map[string]*schema.Schema{
-							"username": {
-								Type:     schema.TypeString,
-								Computed: true,
-							},
-							"displayName": {
-								Type:     schema.TypeString,
-								Computed: true,
-							},
-						},
-					},
-				},
-				"updatedBy": {
-					Type: schema.TypeSet,
-					Elem: &schema.Resource{
-						Schema: map[string]*schema.Schema{
-							"username": {
-								Type:     schema.TypeString,
-								Computed: true,
-							},
-							"displayName": {
-								Type:     schema.TypeString,
-								Computed: true,
-							},
-						},
-					},
-				},
-				"events": {
-					Type:     schema.TypeList,
-					Computed: true,
-					Elem:     &schema.Resource{},
-				},
+				"start_date":   computedString(),
+				"end_date":     computedString(),
+				"duration":     computedInt(),
+				"date_created": computedString(),
+				"last_updated": computedString(),
+				"created_by":   computedUpdatedBySchema(),
+				"updated_by":   computedUpdatedBySchema(),
+				// "events": {
+				// 	Type:     schema.TypeList,
+				// 	Computed: true,
+				// 	Elem:     &schema.Resource{},
+				// },
+			},
+		},
+	}
+}
+
+func computedString() *schema.Schema {
+	return &schema.Schema{
+		Computed: true,
+		Type:     schema.TypeString,
+	}
+}
+
+func computedInt() *schema.Schema {
+	return &schema.Schema{
+		Computed: true,
+		Type:     schema.TypeInt,
+	}
+}
+
+func computedUpdatedBySchema() *schema.Schema {
+	return &schema.Schema{
+		Computed: true,
+		Type:     schema.TypeSet,
+		Elem: &schema.Resource{
+			Schema: map[string]*schema.Schema{
+				"username":     computedString(),
+				"display_name": computedString(),
 			},
 		},
 	}

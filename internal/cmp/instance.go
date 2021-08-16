@@ -151,6 +151,7 @@ func (i *instance) Read(ctx context.Context, d *utils.Data, meta interface{}) er
 	d.Set("volume", volumes)
 	d.SetID(instance.Instance.ID)
 	d.SetString("status", instance.Instance.Status)
+	instanceSetHistory(ctx, meta, i, d, instance.Instance.ID)
 
 	// post check
 	return d.Error()
