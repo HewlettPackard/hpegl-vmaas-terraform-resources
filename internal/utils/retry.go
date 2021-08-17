@@ -62,7 +62,7 @@ func retry(
 	}
 
 	timeoutTimer := time.NewTimer(cRetry.Timeout)
-
+	// trigger retry initially and then wait for channels.
 	go retryRoutineFunc(ctx, meta, rChan, tClient, cRetry, fn)
 	for i := 0; ; i++ {
 		select {
@@ -108,7 +108,10 @@ type CustomRetry struct {
 	Timeout      time.Duration
 }
 
-// Retry with custom count, timeout and delay
+// Retry supports extra arguments. nitialDelay will put a delay before invoking the function.
+// RetryCount supports customized retry count. If Timeout specified then RetryCount will be
+// skipped. RetryDelay will put a delay in between each retrys. If any of these values are
+// not specified then default value will be assigned.
 func (c *CustomRetry) Retry(
 	ctx context.Context,
 	meta interface{},

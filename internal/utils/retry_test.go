@@ -32,7 +32,7 @@ func Test_retry(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		given   func(m *Mocktoken)
+		given   func(m *MockscmTokenInterface)
 		want    interface{}
 		wantErr bool
 	}{
@@ -49,7 +49,7 @@ func Test_retry(t *testing.T) {
 					Cond:       defaultCond,
 				},
 			},
-			given: func(m *Mocktoken) {
+			given: func(m *MockscmTokenInterface) {
 				m.EXPECT().setScmClientToken(gomock.Any(), "mock meta")
 			},
 			want: testRetrySuccess,
@@ -72,7 +72,7 @@ func Test_retry(t *testing.T) {
 					Cond:       defaultCond,
 				},
 			},
-			given: func(m *Mocktoken) {
+			given: func(m *MockscmTokenInterface) {
 				m.EXPECT().setScmClientToken(gomock.Any(), "mock meta").Times(3)
 			},
 			want: testRetrySuccess,
@@ -90,7 +90,7 @@ func Test_retry(t *testing.T) {
 					Cond:       defaultCond,
 				},
 			},
-			given: func(m *Mocktoken) {
+			given: func(m *MockscmTokenInterface) {
 				m.EXPECT().setScmClientToken(gomock.Any(), "mock meta")
 			},
 			want: testRetrySuccess,
@@ -108,7 +108,7 @@ func Test_retry(t *testing.T) {
 					Cond:       defaultCond,
 				},
 			},
-			given: func(m *Mocktoken) {
+			given: func(m *MockscmTokenInterface) {
 				m.EXPECT().setScmClientToken(gomock.Any(), "mock meta").Times(3)
 			},
 			wantErr: true,
@@ -127,7 +127,7 @@ func Test_retry(t *testing.T) {
 					RetryDelay: time.Second,
 				},
 			},
-			given: func(m *Mocktoken) {
+			given: func(m *MockscmTokenInterface) {
 				m.EXPECT().setScmClientToken(gomock.Any(), "mock meta").AnyTimes()
 			},
 			wantErr: true,
@@ -135,7 +135,7 @@ func Test_retry(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			m := NewMocktoken(ctrl)
+			m := NewMockscmTokenInterface(ctrl)
 			tt.args.tClient = m
 			count = 0
 
