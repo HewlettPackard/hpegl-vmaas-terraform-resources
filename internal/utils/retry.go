@@ -44,6 +44,8 @@ func retry(
 	errorChannel := make(chan error)
 	responseChannel := make(chan interface{})
 	go func(ctx context.Context, meta interface{}, errorChannel chan error, responseChannel chan interface{}) {
+		timeoutTimer := time.NewTimer(cRetry.Timeout)
+
 		for i := 0; ; i++ {
 			if i == cRetry.RetryCount {
 				errorChannel <- fmt.Errorf("maximum retry limit reached")
@@ -55,7 +57,7 @@ func retry(
 				errorChannel <- fmt.Errorf("context timed out")
 
 				return
-			case <-time.After(cRetry.Timeout):
+			case <-timeoutTimer.C:
 				errorChannel <- fmt.Errorf("retry timed out")
 
 				return

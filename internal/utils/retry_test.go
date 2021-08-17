@@ -128,7 +128,7 @@ func Test_retry(t *testing.T) {
 				},
 			},
 			given: func(m *Mocktoken) {
-				m.EXPECT().setScmClientToken(gomock.Any(), "mock meta").Times(3)
+				m.EXPECT().setScmClientToken(gomock.Any(), "mock meta").AnyTimes()
 			},
 			wantErr: true,
 		},
