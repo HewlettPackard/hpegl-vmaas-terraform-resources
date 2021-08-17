@@ -26,6 +26,9 @@ linters-settings:
     # minimal complexity of if statements to report
     min-complexity: 20
 
+  goconst:
+    ignore-tests: true
+
 linters:
   enable-all: true
   disable:

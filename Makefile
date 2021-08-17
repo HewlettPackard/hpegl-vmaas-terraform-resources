@@ -96,5 +96,8 @@ sdk:
 	go mod vendor
 .PHONY: v
 
+tflint:
+	@terraform fmt -recursive ./examples/
+
 all: lint test
 .PHONY: all

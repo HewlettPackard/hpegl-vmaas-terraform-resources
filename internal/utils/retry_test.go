@@ -141,6 +141,7 @@ func Test_retry(t *testing.T) {
 			got, err := retry(ctx, tt.args.meta, tt.args.fn, tt.args.cRetry, tt.args.tClient)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("retry() error = %v, wantErr %v", err, tt.wantErr)
+
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
