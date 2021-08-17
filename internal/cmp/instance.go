@@ -61,7 +61,7 @@ func (i *instance) Create(ctx context.Context, d *utils.Data, meta interface{}) 
 		Config:            instanceGetConfig(c, strings.ToLower(d.GetString("instance_type_code")) == vmware),
 		Tags:              instanceGetTags(d.GetMap("tags")),
 		LayoutSize:        d.GetInt("scale"),
-		PowerScheduleType: utils.JSONNumber(d.GetInt("power_schedule_id")),
+		PowerScheduleType: d.GetJSONNumber("power_schedule_id"),
 	}
 
 	// Pre check
