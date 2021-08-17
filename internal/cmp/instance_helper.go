@@ -142,8 +142,8 @@ func deleteInstance(ctx context.Context, iclient iClient, d *utils.Data, meta in
 
 	errCount := 0
 	cRetry := utils.CustomRetry{
-		RetryCount: 240,
 		RetryDelay: time.Second * 15,
+		Timeout:    maxTimeout,
 		Cond: func(response interface{}, ResponseErr error) (bool, error) {
 			if ResponseErr != nil {
 				if utils.GetStatusCode(ResponseErr) == http.StatusNotFound {
@@ -448,7 +448,7 @@ func instanceCheckSnaphotByName(name string, snapshotResp interface{}) int {
 func instanceWaitUntilCreated(ctx context.Context, iclient iClient, meta interface{}, instanceID int) error {
 	errCount := 0
 	cRetry := utils.CustomRetry{
-		RetryCount:   240,
+		Timeout:      maxTimeout,
 		RetryDelay:   time.Second * 15,
 		InitialDelay: time.Minute,
 		Cond: func(response interface{}, err error) (bool, error) {

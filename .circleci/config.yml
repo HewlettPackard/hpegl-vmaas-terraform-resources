@@ -124,7 +124,7 @@ jobs:
       - run:
           name: go-test
           command: |
-            make test
+            make unit-test
 
   go-lint:
     <<: *defaults
