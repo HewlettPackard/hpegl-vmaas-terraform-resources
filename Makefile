@@ -40,7 +40,10 @@ $(NAME): $(shell find . -name \*.go)
 default: all
 .PHONY: default
 
-vendor: go.mod go.sum
+generate:
+	go generate ./...
+
+vendor: generate go.mod go.sum
 	go mod download
 
 update up: really-clean vendor
@@ -75,7 +78,7 @@ coverage: vendor
 	@echo "Generated $(coverage_dir)/html/main.html";
 .PHONY: coverage
 
-acceptance:
+acceptance: generate
 	TF_ACC=true go test -v -timeout=1200s -cover ./...
 
 build: vendor $(NAME)
