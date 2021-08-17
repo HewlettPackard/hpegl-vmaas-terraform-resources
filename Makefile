@@ -66,8 +66,8 @@ lint: vendor golangci-lint-config.yaml
 .PHONY: lint
 
 testreport_dir := test-reports
-test: generate
-	go test -v ./...
+unit-test: generate
+	@go test `go list ./... | grep -v github.com/hpe-hcss/vmaas-terraform-resources/internal/acceptance_test`
 .PHONY: test
 
 coverage_dir := coverage/go
@@ -79,7 +79,7 @@ coverage: vendor
 .PHONY: coverage
 
 acceptance: generate
-	TF_ACC=true go test -v -timeout=1200s -cover ./...
+	TF_ACC=true go test -v -timeout=1200s -cover github.com/hpe-hcss/vmaas-terraform-resources/internal/acceptance_test
 
 build: vendor $(NAME)
 .PHONY: build
