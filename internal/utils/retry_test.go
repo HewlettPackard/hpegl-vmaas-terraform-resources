@@ -27,7 +27,7 @@ func Test_retry(t *testing.T) {
 		meta    interface{}
 		fn      RetryFunc
 		cRetry  CustomRetry
-		tClient token
+		tClient scmTokenInterface
 	}
 	tests := []struct {
 		name    string

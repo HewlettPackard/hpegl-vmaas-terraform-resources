@@ -13,12 +13,23 @@ import (
 	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/auth"
 )
 
-type token interface {
+// scmTokenInterface will wrap up setScmClientToken function to help on writing
+// unit test
+type scmTokenInterface interface {
 	setScmClientToken(ctx *context.Context, meta interface{})
 }
 
+// tokenStruct implements scmTokenInterface
 type tokenStruct struct{}
 
+// retryChan used as an arguments for groutine function retryRoutineFunc
+type retryChan struct {
+	errChan  chan error
+	respChan chan interface{}
+	contChan chan struct{}
+}
+
+// setScmClientToken calls auth.SetScmClientToken
 func (t *tokenStruct) setScmClientToken(ctx *context.Context, meta interface{}) {
 	auth.SetScmClientToken(ctx, meta)
 }
@@ -30,62 +41,49 @@ type CondFunc func(response interface{}, ResponseErr error) (bool, error)
 // RetryFunc accepts ctx as parameters and return response and error
 type RetryFunc func(ctx context.Context) (interface{}, error)
 
+// defaultCond default condition check for 'Retry' function
 func defaultCond(resp interface{}, err error) (bool, error) {
 	return err == nil, nil
 }
 
+// retry supports both retry with count and timeout as well and returns result as
+// interface{}. This result can converted to proper struct/model afterwards
 func retry(
 	ctx context.Context,
 	meta interface{},
 	fn RetryFunc,
 	cRetry CustomRetry,
-	tClient token,
+	tClient scmTokenInterface,
 ) (interface{}, error) {
-	errorChannel := make(chan error)
-	responseChannel := make(chan interface{})
-	go func(ctx context.Context, meta interface{}, errorChannel chan error, responseChannel chan interface{}) {
-		timeoutTimer := time.NewTimer(cRetry.Timeout)
+	rChan := retryChan{
+		errChan:  make(chan error),
+		respChan: make(chan interface{}),
+		contChan: make(chan struct{}),
+	}
 
-		for i := 0; ; i++ {
-			if i == cRetry.RetryCount {
-				errorChannel <- fmt.Errorf("maximum retry limit reached")
+	timeoutTimer := time.NewTimer(cRetry.Timeout)
 
-				return
+	go retryRoutineFunc(ctx, meta, rChan, tClient, cRetry, fn)
+	for i := 0; ; i++ {
+		select {
+		case <-ctx.Done():
+			return nil, fmt.Errorf("context timed out")
+		case <-timeoutTimer.C:
+			return nil, fmt.Errorf("retry timed out")
+		case <-rChan.contChan:
+			// check exit condtion before invoking next retry
+			if i == cRetry.RetryCount-1 {
+				return nil, fmt.Errorf("maximum retry limit reached")
 			}
-			select {
-			case <-ctx.Done():
-				errorChannel <- fmt.Errorf("context timed out")
-
-				return
-			case <-timeoutTimer.C:
-				errorChannel <- fmt.Errorf("retry timed out")
-
-				return
-			default:
-				tClient.setScmClientToken(&ctx, meta)
-				resp, respErr := fn(ctx)
-				c, err := cRetry.Cond(resp, respErr)
-				if err != nil {
-					errorChannel <- err
-
-					return
-				}
-				if c {
-					responseChannel <- resp
-
-					return
-				}
-				log.Printf("[WARN] on API call got error: %#v, response: %#v. Retrying", err, resp)
-				time.Sleep(cRetry.RetryDelay)
-			}
+			go retryRoutineFunc(ctx, meta, rChan, tClient, cRetry, fn)
+		case err := <-rChan.errChan:
+			return nil, err
+		case resp := <-rChan.respChan:
+			return resp, nil
 		}
-	}(ctx, meta, errorChannel, responseChannel)
-
-	select {
-	case err := <-errorChannel:
-		return nil, err
-	case resp := <-responseChannel:
-		return resp, nil
+		if i == cRetry.RetryCount-1 {
+			return nil, fmt.Errorf("maximum retry limit reached")
+		}
 	}
 }
 
@@ -131,4 +129,32 @@ func (c *CustomRetry) Retry(
 	time.Sleep(c.InitialDelay)
 
 	return retry(ctx, meta, fn, *c, &tokenStruct{})
+}
+
+// retryRoutineFunc implements logic for retry, this will check custom condition and call given function
+func retryRoutineFunc(
+	ctx context.Context,
+	meta interface{},
+	sChan retryChan,
+	tClient scmTokenInterface,
+	cRetry CustomRetry,
+	fn RetryFunc,
+) {
+	tClient.setScmClientToken(&ctx, meta)
+	resp, respErr := fn(ctx)
+	c, err := cRetry.Cond(resp, respErr)
+	if err != nil {
+		sChan.errChan <- err
+
+		return
+	}
+	if c {
+		sChan.respChan <- resp
+
+		return
+	}
+	log.Printf("[WARN] on API call got error: %#v, response: %#v. Retrying", err, resp)
+	time.Sleep(cRetry.RetryDelay)
+	// continue retry
+	sChan.contChan <- struct{}{}
 }
