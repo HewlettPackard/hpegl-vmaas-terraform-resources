@@ -6,128 +6,139 @@ package utils
 
 import (
 	"context"
+	"errors"
 	"reflect"
 	"testing"
 	"time"
 
-	gomock "github.com/golang/mock/gomock"
-	"github.com/hewlettpackard/hpegl-provider-lib/pkg/token/retrieve"
+	"github.com/golang/mock/gomock"
 )
 
-type RetrySampleReturn struct {
-	Name string
-}
-
-var metaFunc retrieve.TokenRetrieveFuncCtx = func(ctx context.Context) (string, error) {
-	return "", nil
-}
-
-func TestCustomRetry_Retry(t *testing.T) {
-	ctx := context.Background()
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-	meta := map[string]interface{}{
-		"tokenRetrieveFunc": metaFunc,
-	}
-	tests := []struct {
-		name    string
-		fn      RetryFunc
-		given   func(m *Mocktoken)
-		delay   time.Duration
-		param   CustomRetryParameters
-		want    interface{}
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-		{
-			name: "Normal Test case 1: Retry with count",
-			fn: func(ctx context.Context) (interface{}, error) {
-				return RetrySampleReturn{Name: "template"}, nil
-			},
-			given: func(m *Mocktoken) {
-				//m.EXPECT().setScmClientToken(gomock.Any(), meta)
-			},
-			delay: time.Second * 5,
-			param: CustomRetryParameters{
-				retryCount: 5,
-				retryDelay: time.Second * 5,
-				cond:       defaultCond,
-				timeout:    0,
-			},
-			want: RetrySampleReturn{
-				Name: "template",
-			},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			mockToken := NewMocktoken(ctrl)
-			a := CustomRetry{
-				RetryCount: tt.param.retryCount,
-				RetryDelay: tt.param.retryDelay,
-				Cond:       tt.param.cond,
-				Timeout:    tt.param.timeout,
-				Delay:      tt.delay,
-			}
-			tt.given(mockToken)
-			got, err := a.Retry(ctx, meta, tt.fn)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("CustomRetry.Retry() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("CustomRetry.Retry() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
 func Test_retry(t *testing.T) {
-	ctx := context.Background()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	meta := map[string]interface{}{
-		"tokenRetrieveFunc": metaFunc,
-	}
 
+	ctx := context.Background()
+	count := 0
+
+	type args struct {
+		meta    interface{}
+		fn      RetryFunc
+		cRetry  CustomRetry
+		tClient token
+	}
 	tests := []struct {
 		name    string
-		fn      RetryFunc
+		args    args
 		given   func(m *Mocktoken)
-		delay   time.Duration
-		params  CustomRetryParameters
-		tClient token
 		want    interface{}
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{
-			name: "Normal Test case 1: Retry with count",
-			fn: func(ctx context.Context) (interface{}, error) {
-				return RetrySampleReturn{Name: "template"}, nil
+			name: "Normal test case 1 - no retry",
+			args: args{
+				meta: "mock meta",
+				fn: func(ctx context.Context) (interface{}, error) {
+					return "success", nil
+				},
+				cRetry: CustomRetry{
+					RetryCount: 1,
+					Timeout:    defaultTimeout,
+					Cond:       defaultCond,
+				},
 			},
 			given: func(m *Mocktoken) {
-				m.EXPECT().setScmClientToken(gomock.Any(), meta)
+				m.EXPECT().setScmClientToken(gomock.Any(), "mock meta")
 			},
-			delay: time.Second * 5,
-			params: CustomRetryParameters{
-				retryCount: 5,
-				retryDelay: time.Second * 5,
-				cond:       defaultCond,
-				timeout:    0,
+			want: "success",
+		},
+		{
+			name: "Normal test case 2 - 2 retry",
+			args: args{
+				meta: "mock meta",
+				fn: func(ctx context.Context) (interface{}, error) {
+					if count == 2 {
+						return "success", nil
+					}
+					count++
+
+					return "", errors.New("error")
+				},
+				cRetry: CustomRetry{
+					RetryCount: 3,
+					Timeout:    defaultTimeout,
+					Cond:       defaultCond,
+				},
 			},
-			tClient: &tokenStruct{},
-			want: RetrySampleReturn{
-				Name: "template",
+			given: func(m *Mocktoken) {
+				m.EXPECT().setScmClientToken(gomock.Any(), "mock meta").Times(3)
 			},
-			wantErr: false,
+			want: "success",
+		},
+		{
+			name: "Normal test case 3 - with timeout",
+			args: args{
+				meta: "mock meta",
+				fn: func(ctx context.Context) (interface{}, error) {
+					return "success", nil
+				},
+				cRetry: CustomRetry{
+					RetryCount: noRetryCount,
+					Timeout:    time.Millisecond * 10,
+					Cond:       defaultCond,
+				},
+			},
+			given: func(m *Mocktoken) {
+				m.EXPECT().setScmClientToken(gomock.Any(), "mock meta")
+			},
+			want: "success",
+		},
+		{
+			name: "Failed test case 1 - retry count exceeded",
+			args: args{
+				meta: "mock meta",
+				fn: func(ctx context.Context) (interface{}, error) {
+					return nil, errors.New("error")
+				},
+				cRetry: CustomRetry{
+					RetryCount: 3,
+					Timeout:    defaultTimeout,
+					Cond:       defaultCond,
+				},
+			},
+			given: func(m *Mocktoken) {
+				m.EXPECT().setScmClientToken(gomock.Any(), "mock meta").Times(3)
+			},
+			wantErr: true,
+		},
+		{
+			name: "Failed test case 2 - retry timeout exceeds",
+			args: args{
+				meta: "mock meta",
+				fn: func(ctx context.Context) (interface{}, error) {
+					return nil, errors.New("error")
+				},
+				cRetry: CustomRetry{
+					RetryCount: 3,
+					Timeout:    time.Millisecond * 5,
+					Cond:       defaultCond,
+					RetryDelay: time.Second,
+				},
+			},
+			given: func(m *Mocktoken) {
+				m.EXPECT().setScmClientToken(gomock.Any(), "mock meta").Times(3)
+			},
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			mockToken := NewMocktoken(ctrl)
-			tt.given(mockToken)
-			got, err := retry(ctx, meta, tt.fn, tt.params, tt.tClient)
+			m := NewMocktoken(ctrl)
+			tt.args.tClient = m
+			count = 0
+
+			tt.given(m)
+			got, err := retry(ctx, tt.args.meta, tt.args.fn, tt.args.cRetry, tt.args.tClient)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("retry() error = %v, wantErr %v", err, tt.wantErr)
 				return

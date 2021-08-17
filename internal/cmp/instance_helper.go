@@ -448,9 +448,9 @@ func instanceCheckSnaphotByName(name string, snapshotResp interface{}) int {
 func instanceWaitUntilCreated(ctx context.Context, iclient iClient, meta interface{}, instanceID int) error {
 	errCount := 0
 	cRetry := utils.CustomRetry{
-		RetryCount: 240,
-		RetryDelay: time.Second * 15,
-		Delay:      time.Minute,
+		RetryCount:   240,
+		RetryDelay:   time.Second * 15,
+		InitialDelay: time.Minute,
 		Cond: func(response interface{}, err error) (bool, error) {
 			if err != nil {
 				errCount++

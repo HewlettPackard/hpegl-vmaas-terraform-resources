@@ -38,84 +38,73 @@ func retry(
 	ctx context.Context,
 	meta interface{},
 	fn RetryFunc,
-	params CustomRetryParameters,
+	cRetry CustomRetry,
 	tClient token,
 ) (interface{}, error) {
 	errorChannel := make(chan error)
 	responseChannel := make(chan interface{})
 	go func(ctx context.Context, meta interface{}, errorChannel chan error, responseChannel chan interface{}) {
 		for i := 0; ; i++ {
-			if i == params.retryCount {
-				break
+			if i == cRetry.RetryCount {
+				errorChannel <- fmt.Errorf("maximum retry limit reached")
+				return
 			}
 			select {
 			case <-ctx.Done():
 				errorChannel <- fmt.Errorf("context timed out")
-				responseChannel <- nil
 
 				return
-			case <-time.After(params.timeout):
+			case <-time.After(cRetry.Timeout):
 				errorChannel <- fmt.Errorf("retry timed out")
-				responseChannel <- nil
 
 				return
 			default:
 				tClient.setScmClientToken(&ctx, meta)
-				resp, err := fn(ctx)
-				c, err := params.cond(resp, err)
+				resp, respErr := fn(ctx)
+				c, err := cRetry.Cond(resp, respErr)
 				if err != nil {
 					errorChannel <- err
-					responseChannel <- nil
 
 					return
 				}
 				if c {
-					errorChannel <- nil
 					responseChannel <- resp
 
 					return
 				}
 				log.Printf("[WARN] on API call got error: %#v, response: %#v. Retrying", err, resp)
-				time.Sleep(params.retryDelay)
+				time.Sleep(cRetry.RetryDelay)
 			}
 		}
 	}(ctx, meta, errorChannel, responseChannel)
-	err := <-errorChannel
-	resp := <-responseChannel
-	if err != nil {
-		return resp, err
-	}
 
-	return resp, nil
+	select {
+	case err := <-errorChannel:
+		return nil, err
+	case resp := <-responseChannel:
+		return resp, nil
+	}
 }
 
 // Retry with default count and timeout
 func Retry(ctx context.Context, meta interface{}, fn RetryFunc) (interface{}, error) {
-	params := CustomRetryParameters{
-		retryCount: defaultRetryCount,
-		retryDelay: defaultRetryTimeout,
-		cond:       defaultCond,
-		timeout:    defaultTimeout,
+	c := CustomRetry{
+		RetryCount: defaultRetryCount,
+		RetryDelay: defaultRetryDelay,
+		Cond:       defaultCond,
+		Timeout:    defaultTimeout,
 	}
-	tStruct := tokenStruct{}
 
-	return retry(ctx, meta, fn, params, &tStruct)
-}
-
-type CustomRetryParameters struct {
-	retryCount int
-	retryDelay time.Duration
-	cond       CondFunc
-	timeout    time.Duration
+	return retry(ctx, meta, fn, c, &tokenStruct{})
 }
 
 // CustomRetry allows developers to configure the timeout, retry count and delay
 type CustomRetry struct {
-	RetryCount int
-	RetryDelay time.Duration
-	Delay      time.Duration
-	Cond       CondFunc
-	Timeout    time.Duration
+	RetryCount   int
+	RetryDelay   time.Duration
+	InitialDelay time.Duration
+	Cond         CondFunc
+	Timeout      time.Duration
 }
 
 // Retry with custom count, timeout and delay
@@ -128,22 +117,15 @@ func (c *CustomRetry) Retry(
 		c.RetryCount = defaultRetryCount
 	}
 	if c.RetryDelay <= 0 {
-		c.RetryDelay = defaultRetryTimeout
+		c.RetryDelay = defaultRetryDelay
 	}
 	if c.Cond == nil {
 		c.Cond = defaultCond
 	}
 	if c.Timeout != 0 {
-		c.RetryCount = -1
+		c.RetryCount = noRetryCount
 	}
-	time.Sleep(c.Delay)
-	params := CustomRetryParameters{
-		retryCount: c.RetryCount,
-		retryDelay: c.RetryDelay,
-		cond:       c.Cond,
-		timeout:    c.Timeout,
-	}
-	tStruct := tokenStruct{}
+	time.Sleep(c.InitialDelay)
 
-	return retry(ctx, meta, fn, params, &tStruct)
+	return retry(ctx, meta, fn, *c, &tokenStruct{})
 }

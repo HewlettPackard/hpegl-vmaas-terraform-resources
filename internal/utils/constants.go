@@ -15,22 +15,23 @@ const (
 	StateSuspended    = "suspended"
 	StateSuspending   = "suspending"
 	StateResizing     = "resizing"
+	StateRestarting   = "restarting"
 	// data constants
 	ErrInvalidType   = "invalid Type"
 	ErrKeyNotDefined = "key is not defined"
 	ErrSet           = "failed to set"
 	NAN              = 0
 	// retry constants
-	defaultRetryTimeout = time.Second * 5
-	defaultRetryCount   = 3
-	defaultTimeout      = time.Duration(0)
+	defaultRetryDelay = time.Second * 5
+	defaultRetryCount = 3
+	defaultTimeout    = time.Hour * 24
+	noRetryCount      = -1
 	// power constants
-	PowerOn         = "poweron"
-	PowerOff        = "poweroff"
-	Restart         = "restart"
-	Suspend         = "suspend"
-	Deleting        = "deleting"
-	Deleted         = "deleted"
-	Failed          = "failed"
-	StateRestarting = "restarting"
+	PowerOn  = "poweron"
+	PowerOff = "poweroff"
+	Restart  = "restart"
+	Suspend  = "suspend"
+	Deleting = "deleting"
+	Deleted  = "deleted"
+	Failed   = "failed"
 )
