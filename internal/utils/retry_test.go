@@ -14,6 +14,8 @@ import (
 	"github.com/golang/mock/gomock"
 )
 
+const testRetrySuccess = "success"
+
 func Test_retry(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -39,7 +41,7 @@ func Test_retry(t *testing.T) {
 			args: args{
 				meta: "mock meta",
 				fn: func(ctx context.Context) (interface{}, error) {
-					return "success", nil
+					return testRetrySuccess, nil
 				},
 				cRetry: CustomRetry{
 					RetryCount: 1,
@@ -50,7 +52,7 @@ func Test_retry(t *testing.T) {
 			given: func(m *Mocktoken) {
 				m.EXPECT().setScmClientToken(gomock.Any(), "mock meta")
 			},
-			want: "success",
+			want: testRetrySuccess,
 		},
 		{
 			name: "Normal test case 2 - 2 retry",
@@ -58,7 +60,7 @@ func Test_retry(t *testing.T) {
 				meta: "mock meta",
 				fn: func(ctx context.Context) (interface{}, error) {
 					if count == 2 {
-						return "success", nil
+						return testRetrySuccess, nil
 					}
 					count++
 
@@ -73,14 +75,14 @@ func Test_retry(t *testing.T) {
 			given: func(m *Mocktoken) {
 				m.EXPECT().setScmClientToken(gomock.Any(), "mock meta").Times(3)
 			},
-			want: "success",
+			want: testRetrySuccess,
 		},
 		{
 			name: "Normal test case 3 - with timeout",
 			args: args{
 				meta: "mock meta",
 				fn: func(ctx context.Context) (interface{}, error) {
-					return "success", nil
+					return testRetrySuccess, nil
 				},
 				cRetry: CustomRetry{
 					RetryCount: noRetryCount,
@@ -91,7 +93,7 @@ func Test_retry(t *testing.T) {
 			given: func(m *Mocktoken) {
 				m.EXPECT().setScmClientToken(gomock.Any(), "mock meta")
 			},
-			want: "success",
+			want: testRetrySuccess,
 		},
 		{
 			name: "Failed test case 1 - retry count exceeded",

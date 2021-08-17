@@ -66,7 +66,7 @@ lint: vendor golangci-lint-config.yaml
 .PHONY: lint
 
 testreport_dir := test-reports
-test:
+test: generate
 	go test -v ./...
 .PHONY: test
 

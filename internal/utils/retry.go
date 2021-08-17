@@ -47,6 +47,7 @@ func retry(
 		for i := 0; ; i++ {
 			if i == cRetry.RetryCount {
 				errorChannel <- fmt.Errorf("maximum retry limit reached")
+
 				return
 			}
 			select {

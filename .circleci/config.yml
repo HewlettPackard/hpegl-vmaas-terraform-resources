@@ -41,6 +41,10 @@ workflows:
           <<: *common
           requires:
             - copyright-check
+      - go-test:
+          <<: *common
+          requires:
+            - go-vendor
       - go-lint:
           <<: *common
           requires:
@@ -110,6 +114,17 @@ jobs:
           key: gopkg-v1-{{ checksum "go.mod" }}-{{ checksum "go.sum" }}
           paths:
             - /go/pkg
+
+  go-test:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/project
+      - <<: *restore_cache
+      - run:
+          name: go-test
+          command: |
+            make test
 
   go-lint:
     <<: *defaults
