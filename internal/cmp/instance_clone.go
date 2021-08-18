@@ -17,9 +17,7 @@ import (
 )
 
 const (
-	instanceCloneRetryDelay   = time.Second * 60
-	instanceCloneRetryTimeout = time.Second * 30
-	instanceCloneRetryCount   = 20
+	instanceCloneRetryDelay = time.Second * 15
 )
 
 // instanceClone implements functions related to cmp instanceClones
@@ -93,9 +91,8 @@ func (i *instanceClone) Create(ctx context.Context, d *utils.Data, meta interfac
 
 	log.Printf("[INFO] Get all instances")
 	getInstanceRetry := &utils.CustomRetry{
-		Delay:        instanceCloneRetryDelay,
-		RetryTimeout: instanceCloneRetryTimeout,
-		RetryCount:   instanceCloneRetryCount,
+		RetryDelay: instanceCloneRetryDelay,
+		Timeout:    time.Minute * 2,
 		Cond: func(resp interface{}, err error) (bool, error) {
 			if err != nil {
 				return false, nil
@@ -201,9 +198,9 @@ func (i *instanceClone) Read(ctx context.Context, d *utils.Data, meta interface{
 func checkInstanceCloneHistory(ctx context.Context, i *instanceClone, meta interface{}, instanceID int) error {
 	errCount := 0
 	historyRetry := utils.CustomRetry{
-		Delay:        instanceCloneRetryDelay,
-		RetryTimeout: instanceCloneRetryTimeout,
-		RetryCount:   instanceCloneRetryCount,
+		InitialDelay: time.Second * 15,
+		RetryDelay:   time.Second * 30,
+		Timeout:      maxTimeout,
 		Cond: func(response interface{}, ResponseErr error) (bool, error) {
 			if ResponseErr != nil {
 				errCount++

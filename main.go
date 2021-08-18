@@ -1,7 +1,5 @@
 // (C) Copyright 2021 Hewlett Packard Enterprise Development LP
 
-//go:generate terraform fmt -recursive ./examples/
-
 package main
 
 import (
