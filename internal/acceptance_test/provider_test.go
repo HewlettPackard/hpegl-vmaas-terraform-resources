@@ -4,11 +4,14 @@ package acceptancetest
 
 import (
 	"os"
+	"path/filepath"
+	"runtime"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
 	testutils "github.com/hpe-hcss/vmaas-terraform-resources/internal/test-utils"
+	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/utils"
 )
 
 var (
@@ -40,4 +43,12 @@ func TestProvider(t *testing.T) {
 		t.Fatalf("%s\n", err)
 	}
 	testAccPreCheck(t)
+}
+
+func TestMain(m *testing.M) {
+	// nolint
+	_, b, _, _ := runtime.Caller(0)
+	// Root folder of this project
+	d := filepath.Join(filepath.Dir(b), "../..")
+	utils.ReadAccConfig(d)
 }

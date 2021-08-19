@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/spf13/viper"
 )
 
 func TestAccDataSourceCloud(t *testing.T) {
@@ -24,8 +25,8 @@ func TestAccDataSourceCloud(t *testing.T) {
 	})
 }
 
-const testAccDataSourceCloud = providerStanza + `
+var testAccDataSourceCloud = providerStanza + `
 	data "hpegl_vmaas_cloud" "test_cloud" {
-		name = "HPE GreenLake VMaaS Cloud"
+		name = "` + viper.GetString("vmaas.datasource.cloud.name") + `"
 	}
 `

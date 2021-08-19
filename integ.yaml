@@ -1,0 +1,27 @@
+vmaas:
+  resource:
+    instance:
+      name: tf_acc
+      cloud_id: 1
+      group_id: 1
+      layout_id: 113
+      plan_id: 407
+      instance_type_code: vmware
+      network:
+        - id: 6
+          interface_id: 9
+        - id: 6
+          interface_id: 4
+      volume:
+        name: root_vol
+        size: 7
+        datastore_id: "13"
+      config:
+        resource_pool_id: 3
+        no_agent: true
+        template_id: 580
+      scale: 4
+
+  datasource:
+    cloud:
+      name: "HPE GreenLake VMaaS Cloud"
