@@ -8,6 +8,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"sync"
 	"time"
 
 	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/auth"
@@ -62,6 +63,9 @@ func retry(
 	}
 
 	timeoutTimer := time.NewTimer(cRetry.Timeout)
+
+	//tClient.setScmClientToken(&ctx, meta)
+	//fmt.Print("After CALLING setScmClientToken\n")
 	// trigger retry initially and then wait for channels.
 	go retryRoutineFunc(ctx, meta, rChan, tClient, cRetry, fn)
 	for i := 0; ; i++ {
@@ -85,6 +89,7 @@ func retry(
 			return nil, fmt.Errorf("maximum retry limit reached")
 		}
 	}
+
 }
 
 // Retry with default count and timeout
@@ -99,6 +104,40 @@ func Retry(ctx context.Context, meta interface{}, fn RetryFunc) (interface{}, er
 	return retry(ctx, meta, fn, c, &tokenStruct{})
 }
 
+type RetryRoutineStruct struct {
+	resp             interface{}
+	err              error
+	retryTokenStruct scmTokenInterface
+	wg               *sync.WaitGroup
+}
+
+func (r *RetryRoutineStruct) RetryRoutine(ctx context.Context, meta interface{}, fn RetryFunc) {
+	r.wg = new(sync.WaitGroup)
+	r.wg.Add(1)
+	go func(ctx context.Context, meta interface{}, fn RetryFunc, r *RetryRoutineStruct) {
+		defer r.wg.Done()
+		c := CustomRetry{
+			RetryCount: defaultRetryCount,
+			Timeout:    defaultTimeout,
+			RetryDelay: defaultRetryDelay,
+			Cond:       defaultCond,
+		}
+		r.resp, r.err = retry(ctx, meta, fn, c, r.retryTokenStruct)
+	}(ctx, meta, fn, r)
+}
+func (r *RetryRoutineStruct) WaitForRetryRoutine() (interface{}, error) {
+	r.wg.Wait()
+
+	return r.resp, r.err
+}
+
+// func RetryWithRoutine(ctx context.Context, meta interface{}, fn RetryFunc) *RetryRoutineStruct {
+// 	rs := RetryRoutineStruct{}
+// 	rs.RetryRoutine(ctx, meta, fn)
+
+// 	return &rs
+// }
+
 // CustomRetry allows developers to configure the timeout, retry count and delay
 type CustomRetry struct {
 	RetryCount   int
@@ -108,7 +147,7 @@ type CustomRetry struct {
 	Timeout      time.Duration
 }
 
-// Retry supports extra arguments. nitialDelay will put a delay before invoking the function.
+// Retry supports extra arguments. initialDelay will put a delay before invoking the function.
 // RetryCount supports customized retry count. If Timeout specified then RetryCount will be
 // skipped. RetryDelay will put a delay in between each retrys. If any of these values are
 // not specified then default value will be assigned.
