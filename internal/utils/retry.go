@@ -87,7 +87,6 @@ func retry(
 			return nil, fmt.Errorf("maximum retry limit reached")
 		}
 	}
-
 }
 
 // Retry with default count and timeout
@@ -123,6 +122,7 @@ func (r *RetryRoutineStruct) RetryRoutine(ctx context.Context, meta interface{},
 		r.resp, r.err = retry(ctx, meta, fn, c, r.retryTokenStruct)
 	}(ctx, meta, fn, r)
 }
+
 func (r *RetryRoutineStruct) WaitForRetryRoutine() (interface{}, error) {
 	r.wg.Wait()
 
