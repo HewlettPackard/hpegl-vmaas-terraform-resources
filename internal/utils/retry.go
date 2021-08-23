@@ -64,8 +64,6 @@ func retry(
 
 	timeoutTimer := time.NewTimer(cRetry.Timeout)
 
-	//tClient.setScmClientToken(&ctx, meta)
-	//fmt.Print("After CALLING setScmClientToken\n")
 	// trigger retry initially and then wait for channels.
 	go retryRoutineFunc(ctx, meta, rChan, tClient, cRetry, fn)
 	for i := 0; ; i++ {

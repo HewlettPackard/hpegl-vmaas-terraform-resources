@@ -228,6 +228,7 @@ func TestRetryRoutineStruct_WaitForRetryRoutine(t *testing.T) {
 			got, err := a.WaitForRetryRoutine()
 			if (err != nil) != tt.wantErr {
 				t.Errorf("RetryRoutineStruct.WaitForRetryRoutine() error = %v, wantErr %v", err, tt.wantErr)
+
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
