@@ -51,4 +51,6 @@ func TestMain(m *testing.M) {
 	// Root folder of this project
 	d := filepath.Join(filepath.Dir(b), "../..")
 	utils.ReadAccConfig(d)
+	m.Run()
+	os.Exit(0)
 }

@@ -78,7 +78,7 @@ coverage: vendor
 	@echo "Generated $(coverage_dir)/html/main.html";
 .PHONY: coverage
 
-acceptance: generate
+acceptance:
 	TF_ACC=true go test -v -timeout=1200s -cover github.com/hpe-hcss/vmaas-terraform-resources/internal/acceptance_test
 
 build: vendor $(NAME)
