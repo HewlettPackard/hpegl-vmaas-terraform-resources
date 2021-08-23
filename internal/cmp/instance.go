@@ -15,16 +15,15 @@ import (
 // instance implements functions related to cmp instances
 type instance struct {
 	// expose Instance API service to instances related operations
-	iClient *client.InstancesAPIService
+	instanceSharedClient
 }
 
-func (i *instance) getIClient() *client.InstancesAPIService {
-	return i.iClient
-}
-
-func newInstance(iClient *client.InstancesAPIService) *instance {
+func newInstance(iClient *client.InstancesAPIService, sClient *client.ServersAPIService) *instance {
 	return &instance{
-		iClient: iClient,
+		instanceSharedClient{
+			iClient: iClient,
+			sClient: sClient,
+		},
 	}
 }
 
@@ -80,12 +79,12 @@ func (i *instance) Create(ctx context.Context, d *utils.Data, meta interface{}) 
 	// Set id just after created the instnance
 	d.SetID(getInstanceBody.ID)
 
-	if err := instanceWaitUntilCreated(ctx, i, meta, getInstanceBody.ID); err != nil {
+	if err := instanceWaitUntilCreated(ctx, i.instanceSharedClient, meta, getInstanceBody.ID); err != nil {
 		return err
 	}
 
 	if snapshot := d.GetListMap("snapshot"); len(snapshot) == 1 {
-		err := createInstanceSnapshot(ctx, i, meta, getInstanceBody.ID, models.SnapshotBody{
+		err := createInstanceSnapshot(ctx, i.instanceSharedClient, meta, getInstanceBody.ID, models.SnapshotBody{
 			Snapshot: &models.SnapshotBodySnapshot{
 				Name:        snapshot[0]["name"].(string),
 				Description: snapshot[0]["description"].(string),
@@ -96,53 +95,23 @@ func (i *instance) Create(ctx context.Context, d *utils.Data, meta interface{}) 
 		}
 	}
 
+	err = instanceSetServerID(ctx, meta, d, i.instanceSharedClient)
+	if err != nil {
+		return err
+	}
+
 	// post check
 	return d.Error()
 }
 
 func (i *instance) Update(ctx context.Context, d *utils.Data, meta interface{}) error {
-	return updateInstance(ctx, i, d, meta)
+	return updateInstance(ctx, i.instanceSharedClient, d, meta)
 }
 
 func (i *instance) Delete(ctx context.Context, d *utils.Data, meta interface{}) error {
-	return deleteInstance(ctx, i, d, meta)
+	return deleteInstance(ctx, i.instanceSharedClient, d, meta)
 }
 
 func (i *instance) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
-	id := d.GetID()
-
-	log.Printf("[DEBUG] Get instance with ID %d", id)
-
-	// Precheck
-	if err := d.Error(); err != nil {
-		return err
-	}
-
-	resp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return i.iClient.GetASpecificInstance(ctx, id)
-	})
-	if err != nil {
-		return err
-	}
-	instance := resp.(models.GetInstanceResponse)
-
-	volumes := d.GetListMap("volume")
-	volumeLen := len(volumes)
-	if volumeLen > len(instance.Instance.Volumes) {
-		volumeLen = len(instance.Instance.Volumes)
-	}
-	for i := 0; i < volumeLen; i++ {
-		volumes[i]["id"] = instance.Instance.Volumes[i].ID
-		volumes[i]["root"] = instance.Instance.Volumes[i].RootVolume
-	}
-	instanceSetSnaphot(ctx, i, meta, d, instance.Instance.ID)
-	instanceSetIP(d, instance)
-	instanceSetHostname(d, instance)
-
-	d.Set("volume", volumes)
-	d.SetID(instance.Instance.ID)
-	d.SetString("status", instance.Instance.Status)
-
-	// post check
-	return d.Error()
+	return readInstance(ctx, i.instanceSharedClient, d, meta, false)
 }

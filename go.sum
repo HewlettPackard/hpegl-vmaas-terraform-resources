@@ -307,8 +307,8 @@ github.com/hpe-hcss/monitoring v0.0.8 h1:Pcl688W7IGdZkWtg6LNGoD4lYs9/7EzCDamh9Uy
 github.com/hpe-hcss/monitoring v0.0.8/go.mod h1:0mI+mTKUT79V0Rm3Z5lH3gr4cC5zuffvmxzGDKCFJQ8=
 github.com/hpe-hcss/tracing v0.0.8 h1:/nqcuT7EJPkwk7KdBzLLEZx9fTkn3+/A50FTOiJrRYs=
 github.com/hpe-hcss/tracing v0.0.8/go.mod h1:uLIMjkXabCZZs6ACJD5jr7r6K9CUjqZ+vPK6lUQlf2E=
-github.com/hpe-hcss/vmaas-cmp-go-sdk v0.0.0-20210816135330-cd9c5b5d2feb h1:J2nbigyGFQVbhfJcQOu7QKDQcZrYKM8cz1OsiRqh2a8=
-github.com/hpe-hcss/vmaas-cmp-go-sdk v0.0.0-20210816135330-cd9c5b5d2feb/go.mod h1:+WFyrYTZqigIAcOjydCNpYpfO61By0TdjE4m9Qznuf8=
+github.com/hpe-hcss/vmaas-cmp-go-sdk v0.0.0-20210818111708-3fc481a2ff6e h1:6Ot2yAPNDKgZZRcis8FNtjjTQzJrzS/3lbQnQEk7Dqk=
+github.com/hpe-hcss/vmaas-cmp-go-sdk v0.0.0-20210818111708-3fc481a2ff6e/go.mod h1:+WFyrYTZqigIAcOjydCNpYpfO61By0TdjE4m9Qznuf8=
 github.com/huandu/xstrings v1.3.2 h1:L18LIDzqlW6xN2rEkpdV8+oL/IXWJ1APd+vsdYy4Wdw=
 github.com/huandu/xstrings v1.3.2/go.mod h1:y5/lhBue+AyNmUVz9RLU9xbLR0o4KIIExikq4ovT0aE=
 github.com/ianlancetaylor/demangle v0.0.0-20181102032728-5e5cf60278f6/go.mod h1:aSSvb/t6k1mPoxDqO4vJh6VOCGPwU4O0C2/Eqndh1Sc=

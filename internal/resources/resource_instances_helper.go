@@ -40,6 +40,12 @@ func getInstanceDefaultSchema(isClone bool) *schema.Resource {
 
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
+			"server_id": {
+				Type:        schema.TypeInt,
+				ForceNew:    true,
+				Computed:    true,
+				Description: f(generalDDesc, "server"),
+			},
 			"name": {
 				Type:        schema.TypeString,
 				Required:    true,
@@ -76,9 +82,9 @@ func getInstanceDefaultSchema(isClone bool) *schema.Resource {
 			},
 			"network": {
 				Type:        schema.TypeList,
-				ForceNew:    true,
 				Required:    true,
 				MinItems:    1,
+				MaxItems:    5,
 				Description: "Details of the network to which the instance should belong.",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -91,6 +97,22 @@ func getInstanceDefaultSchema(isClone bool) *schema.Resource {
 							Type:        schema.TypeInt,
 							Optional:    true,
 							Description: f(generalDDesc, "network interface type"),
+						},
+						"is_primary": {
+							Type:        schema.TypeBool,
+							Computed:    true,
+							Description: `Flag to identify given network is primary or not. Primary network cannot be updated or deleted.`,
+						},
+						"internal_id": {
+							Type:        schema.TypeInt,
+							Computed:    true,
+							Description: f(generalDDesc, "network intternal ID"),
+						},
+						"name": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Optional:    true,
+							Description: "name of the interface",
 						},
 					},
 				},

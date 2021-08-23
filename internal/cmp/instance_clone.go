@@ -23,16 +23,15 @@ const (
 // instanceClone implements functions related to cmp instanceClones
 type instanceClone struct {
 	// expose Instance API service to instanceClones related operations
-	iClient *client.InstancesAPIService
+	instanceSharedClient
 }
 
-func (i *instanceClone) getIClient() *client.InstancesAPIService {
-	return i.iClient
-}
-
-func newInstanceClone(iClient *client.InstancesAPIService) *instanceClone {
+func newInstanceClone(iClient *client.InstancesAPIService, sClient *client.ServersAPIService) *instanceClone {
 	return &instanceClone{
-		iClient: iClient,
+		instanceSharedClient: instanceSharedClient{
+			iClient: iClient,
+			sClient: sClient,
+		},
 	}
 }
 
@@ -117,12 +116,12 @@ func (i *instanceClone) Create(ctx context.Context, d *utils.Data, meta interfac
 		return errors.New("get cloned instance is failed")
 	}
 
-	if err := instanceWaitUntilCreated(ctx, i, meta, instancesList.Instances[0].ID); err != nil {
+	if err := instanceWaitUntilCreated(ctx, i.instanceSharedClient, meta, instancesList.Instances[0].ID); err != nil {
 		return err
 	}
 
 	if snapshot := d.GetListMap("snapshot"); len(snapshot) == 1 {
-		err := createInstanceSnapshot(ctx, i, meta, instancesList.Instances[0].ID, models.SnapshotBody{
+		err := createInstanceSnapshot(ctx, i.instanceSharedClient, meta, instancesList.Instances[0].ID, models.SnapshotBody{
 			Snapshot: &models.SnapshotBodySnapshot{
 				Name:        snapshot[0]["name"].(string),
 				Description: snapshot[0]["description"].(string),
@@ -143,56 +142,17 @@ func (i *instanceClone) Create(ctx context.Context, d *utils.Data, meta interfac
 // changing volumes and instance properties such as labels
 // groups and tags
 func (i *instanceClone) Update(ctx context.Context, d *utils.Data, meta interface{}) error {
-	return updateInstance(ctx, i, d, meta)
+	return updateInstance(ctx, i.instanceSharedClient, d, meta)
 }
 
 // Delete instance and set ID as ""
 func (i *instanceClone) Delete(ctx context.Context, d *utils.Data, meta interface{}) error {
-	return deleteInstance(ctx, i, d, meta)
+	return deleteInstance(ctx, i.instanceSharedClient, d, meta)
 }
 
 // Read instance and set state values accordingly
 func (i *instanceClone) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
-	id := d.GetID()
-
-	log.Printf("[INFO] Get instance with ID %d", id)
-
-	// Precheck
-	if err := d.Error(); err != nil {
-		return err
-	}
-
-	resp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return i.iClient.GetASpecificInstance(ctx, id)
-	})
-	if err != nil {
-		return err
-	}
-	instance := resp.(models.GetInstanceResponse)
-
-	volumes := d.GetListMap("volume")
-	// Assign proper ID for the volume, since response may contains more
-	// volumes than schema, check the name and assign ip
-	for i := range volumes {
-		for _, vModel := range instance.Instance.Volumes {
-			if vModel.Name == volumes[i]["name"].(string) {
-				volumes[i]["id"] = vModel.ID
-			}
-		}
-	}
-
-	d.Set("volume", volumes)
-
-	// Write IPs in to state file
-	instanceSetIP(d, instance)
-	instanceSetHostname(d, instance)
-
-	d.Set("layout_id", instance.Instance.Layout.ID)
-	d.SetString("status", instance.Instance.Status)
-	d.SetID(instance.Instance.ID)
-
-	// post check
-	return d.Error()
+	return readInstance(ctx, i.instanceSharedClient, d, meta, true)
 }
 
 func checkInstanceCloneHistory(ctx context.Context, i *instanceClone, meta interface{}, instanceID int) error {
