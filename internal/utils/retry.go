@@ -78,7 +78,11 @@ func retry(
 		case continueChan := <-rChan.continueChan:
 			// check exit condition before invoking next retry
 			if i == cRetry.RetryCount-1 {
-				return nil, fmt.Errorf("maximum retry limit reached, with Error: %#v, Response: %#v", continueChan.respErr, continueChan.resp)
+				return nil, fmt.Errorf(
+					"maximum retry limit reached, with Error: %#v, Response: %#v",
+					continueChan.respErr,
+					continueChan.resp,
+				)
 			}
 			go retryRoutineFunc(ctx, meta, rChan, tClient, cRetry, fn)
 		case err := <-rChan.errChan:
