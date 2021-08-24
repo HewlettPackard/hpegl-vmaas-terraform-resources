@@ -33,10 +33,11 @@ func (g *group) Read(ctx context.Context, d *utils.Data, meta interface{}) error
 	resp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
 		return g.gClient.GetAllGroups(ctx, nil)
 	})
-	groups := resp.(models.Groups)
 	if err != nil {
 		return err
 	}
+
+	groups := resp.(models.Groups)
 	isMatched := false
 	for i, g := range *groups.Groups {
 		if g.Name == name {
