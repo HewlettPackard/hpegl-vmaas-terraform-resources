@@ -36,10 +36,11 @@ func (f *cloudFolder) Read(ctx context.Context, d *utils.Data, meta interface{})
 			nameKey: name,
 		})
 	})
-	folders := resp.(models.GetAllCloudFolders)
 	if err != nil {
 		return err
 	}
+
+	folders := resp.(models.GetAllCloudFolders)
 	if len(folders.Folders) != 1 {
 		return fmt.Errorf(errExactMatch, "folder")
 	}
