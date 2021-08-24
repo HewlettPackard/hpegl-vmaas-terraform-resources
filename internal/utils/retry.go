@@ -22,11 +22,16 @@ type scmTokenInterface interface {
 // tokenStruct implements scmTokenInterface
 type tokenStruct struct{}
 
+type contStruct struct {
+	resp    interface{}
+	respErr error
+}
+
 // retryChan used as an arguments for groutine function retryRoutineFunc
 type retryChan struct {
 	errChan  chan error
 	respChan chan interface{}
-	contChan chan struct{}
+	contChan chan contStruct
 }
 
 // setScmClientToken calls auth.SetScmClientToken
@@ -58,7 +63,7 @@ func retry(
 	rChan := retryChan{
 		errChan:  make(chan error),
 		respChan: make(chan interface{}),
-		contChan: make(chan struct{}),
+		contChan: make(chan contStruct),
 	}
 
 	timeoutTimer := time.NewTimer(cRetry.Timeout)
@@ -70,10 +75,10 @@ func retry(
 			return nil, fmt.Errorf("context timed out")
 		case <-timeoutTimer.C:
 			return nil, fmt.Errorf("retry timed out")
-		case <-rChan.contChan:
+		case cont := <-rChan.contChan:
 			// check exit condtion before invoking next retry
 			if i == cRetry.RetryCount-1 {
-				return nil, fmt.Errorf("maximum retry limit reached")
+				return nil, fmt.Errorf("maximum retry limit reached, with error: %#v, response: %#v", cont.respErr, cont.resp)
 			}
 			go retryRoutineFunc(ctx, meta, rChan, tClient, cRetry, fn)
 		case err := <-rChan.errChan:
@@ -159,5 +164,8 @@ func retryRoutineFunc(
 	log.Printf("[WARN] on API call got error: %#v, response: %#v. Retrying", err, resp)
 	time.Sleep(cRetry.RetryDelay)
 	// continue retry
-	sChan.contChan <- struct{}{}
+	sChan.contChan <- contStruct{
+		resp:    resp,
+		respErr: respErr,
+	}
 }
