@@ -7,3 +7,4 @@
 go.mod
 go.sum
 Dockerfile.circleci
+*_mock.go

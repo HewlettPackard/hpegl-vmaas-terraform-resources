@@ -40,10 +40,7 @@ $(NAME): $(shell find . -name \*.go)
 default: all
 .PHONY: default
 
-generate:
-	go generate ./...
-
-vendor: generate go.mod go.sum
+vendor: go.mod go.sum
 	go mod download
 
 update up: really-clean vendor
@@ -66,7 +63,7 @@ lint: vendor golangci-lint-config.yaml
 .PHONY: lint
 
 testreport_dir := test-reports
-unit-test: generate
+unit-test:
 	@go test `go list ./... | grep -v github.com/hpe-hcss/vmaas-terraform-resources/internal/acceptance_test`
 .PHONY: test
 
