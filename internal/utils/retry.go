@@ -8,7 +8,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"sync"
 	"time"
 
 	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/auth"
@@ -33,6 +32,16 @@ type retryChan struct {
 	errChan      chan error
 	respChan     chan interface{}
 	continueChan chan continueStruct
+}
+
+// CustomRetry allows developers to configure the timeout, retry count and delay
+type CustomRetry struct {
+	RetryCount   int
+	RetryDelay   time.Duration
+	InitialDelay time.Duration
+	Cond         CondFunc
+	Timeout      time.Duration
+	apiChan      chan continueStruct
 }
 
 // setScmClientToken calls auth.SetScmClientToken
@@ -60,7 +69,7 @@ func retry(
 	fn RetryFunc,
 	cRetry CustomRetry,
 	tClient scmTokenInterface,
-) (interface{}, error) {
+) {
 	rChan := retryChan{
 		errChan:      make(chan error),
 		respChan:     make(chan interface{}),
@@ -71,31 +80,56 @@ func retry(
 
 	// trigger retry initially and then wait for channels.
 	go retryRoutineFunc(ctx, meta, rChan, tClient, cRetry, fn)
-	for i := 0; ; i++ {
-		select {
-		case <-ctx.Done():
-			return nil, fmt.Errorf("context timed out")
-		case <-timeoutTimer.C:
-			return nil, fmt.Errorf("retry timed out")
-		case continueChan := <-rChan.continueChan:
-			// check exit condition before invoking next retry
-			if i == cRetry.RetryCount-1 {
-				return nil, fmt.Errorf(
-					"maximum retry limit reached, with Error: %#v, Response: %#v",
-					continueChan.respErr,
-					continueChan.resp,
-				)
+	go func(apiChan chan continueStruct) {
+		for i := 0; ; i++ {
+			select {
+			case <-ctx.Done():
+				apiChan <- continueStruct{
+					respErr: fmt.Errorf("context timed out"),
+				}
+				return
+			case <-timeoutTimer.C:
+				apiChan <- continueStruct{
+					respErr: fmt.Errorf("retry timed out"),
+				}
+			case continueChan := <-rChan.continueChan:
+				// check exit condition before invoking next retry
+				if i == cRetry.RetryCount-1 {
+					apiChan <- continueStruct{
+						respErr: fmt.Errorf(
+							"maximum retry limit reached, with Error: %#v, Response: %#v",
+							continueChan.respErr,
+							continueChan.resp,
+						),
+					}
+					return
+				}
+				// call retry function
+				go retryRoutineFunc(ctx, meta, rChan, tClient, cRetry, fn)
+
+			// check for error while retrying
+			case err := <-rChan.errChan:
+				apiChan <- continueStruct{
+					respErr: err,
+				}
+				return
+
+			// if response recieved stop retrying and return backs the result
+			case resp := <-rChan.respChan:
+				apiChan <- continueStruct{
+					resp: resp,
+				}
+				return
 			}
-			go retryRoutineFunc(ctx, meta, rChan, tClient, cRetry, fn)
-		case err := <-rChan.errChan:
-			return nil, err
-		case resp := <-rChan.respChan:
-			return resp, nil
+			// check is the retry limit exceeded
+			if i == cRetry.RetryCount-1 {
+				apiChan <- continueStruct{
+					respErr: fmt.Errorf("maximum retry limit reached"),
+				}
+				return
+			}
 		}
-		if i == cRetry.RetryCount-1 {
-			return nil, fmt.Errorf("maximum retry limit reached")
-		}
-	}
+	}(cRetry.apiChan)
 }
 
 // Retry with default count and timeout
@@ -107,62 +141,28 @@ func Retry(ctx context.Context, meta interface{}, fn RetryFunc) (interface{}, er
 		Timeout:    defaultTimeout,
 	}
 
-	return retry(ctx, meta, fn, c, &tokenStruct{})
+	retry(ctx, meta, fn, c, &tokenStruct{})
+	apiChan := <-c.apiChan
+
+	return apiChan.resp, apiChan.respErr
 }
 
-type RetryRoutineStruct struct {
-	resp             interface{}
-	err              error
-	retryTokenStruct scmTokenInterface
-	wg               *sync.WaitGroup
+// RetryParallel runs retry as routine. Use Wait function to wait and get the response error.
+// To run more than one API or functions as a routine you may need to specify different
+// CustomRetry struct.
+func (c *CustomRetry) RetryParallel(ctx context.Context, meta interface{}, fn RetryFunc) {
+	c.setDefaultValues()
+	retry(ctx, meta, fn, *c, &tokenStruct{})
 }
 
-func (r *RetryRoutineStruct) RetryRoutine(ctx context.Context, meta interface{}, fn RetryFunc) {
-	r.wg = new(sync.WaitGroup)
-	r.wg.Add(1)
-	go func(ctx context.Context, meta interface{}, fn RetryFunc, r *RetryRoutineStruct) {
-		defer r.wg.Done()
-		c := CustomRetry{
-			RetryCount: defaultRetryCount,
-			Timeout:    defaultTimeout,
-			RetryDelay: defaultRetryDelay,
-			Cond:       defaultCond,
-		}
-		r.resp, r.err = retry(ctx, meta, fn, c, r.retryTokenStruct)
-	}(ctx, meta, fn, r)
+func (c *CustomRetry) Wait() (interface{}, error) {
+	apiChan := <-c.apiChan
+
+	return apiChan.resp, apiChan.respErr
 }
 
-func (r *RetryRoutineStruct) WaitForRetryRoutine() (interface{}, error) {
-	r.wg.Wait()
-
-	return r.resp, r.err
-}
-
-// func RetryWithRoutine(ctx context.Context, meta interface{}, fn RetryFunc) *RetryRoutineStruct {
-// 	rs := RetryRoutineStruct{}
-// 	rs.RetryRoutine(ctx, meta, fn)
-
-// 	return &rs
-// }
-
-// CustomRetry allows developers to configure the timeout, retry count and delay
-type CustomRetry struct {
-	RetryCount   int
-	RetryDelay   time.Duration
-	InitialDelay time.Duration
-	Cond         CondFunc
-	Timeout      time.Duration
-}
-
-// Retry supports extra arguments. initialDelay will put a delay before invoking the function.
-// RetryCount supports customized retry count. If Timeout specified then RetryCount will be
-// skipped. RetryDelay will put a delay in between each retrys. If any of these values are
-// not specified then default value will be assigned.
-func (c *CustomRetry) Retry(
-	ctx context.Context,
-	meta interface{},
-	fn RetryFunc,
-) (interface{}, error) {
+// setDefaultValues set defaults only if no user input provided
+func (c *CustomRetry) setDefaultValues() {
 	if c.RetryCount == 0 {
 		c.RetryCount = defaultRetryCount
 	}
@@ -175,9 +175,24 @@ func (c *CustomRetry) Retry(
 	if c.Timeout != 0 {
 		c.RetryCount = noRetryCount
 	}
+}
+
+// Retry supports extra arguments. initialDelay will put a delay before invoking the function.
+// RetryCount supports customized retry count. If Timeout specified then RetryCount will be
+// skipped. RetryDelay will put a delay in between each retrys. If any of these values are
+// not specified then default value will be assigned.
+func (c *CustomRetry) Retry(
+	ctx context.Context,
+	meta interface{},
+	fn RetryFunc,
+) (interface{}, error) {
+	c.setDefaultValues()
 	time.Sleep(c.InitialDelay)
 
-	return retry(ctx, meta, fn, *c, &tokenStruct{})
+	retry(ctx, meta, fn, *c, &tokenStruct{})
+	cChan := <-c.apiChan
+
+	return cChan.resp, cChan.respErr
 }
 
 // retryRoutineFunc implements logic for retry, this will check custom condition and call given function
