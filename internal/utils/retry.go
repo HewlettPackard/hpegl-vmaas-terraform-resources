@@ -42,6 +42,7 @@ type CustomRetry struct {
 	Cond         CondFunc
 	Timeout      time.Duration
 	apiChan      chan continueStruct
+	tclient      scmTokenInterface
 }
 
 // setScmClientToken calls auth.SetScmClientToken
@@ -67,7 +68,7 @@ func retry(
 	ctx context.Context,
 	meta interface{},
 	fn RetryFunc,
-	cRetry CustomRetry,
+	cRetry *CustomRetry,
 	tClient scmTokenInterface,
 ) {
 	rChan := retryChan{
@@ -78,8 +79,11 @@ func retry(
 
 	timeoutTimer := time.NewTimer(cRetry.Timeout)
 
-	// trigger retry initially and then wait for channels.
-	go retryRoutineFunc(ctx, meta, rChan, tClient, cRetry, fn)
+	// wait initial delay and trigger retry first and then wait for channels.
+	go func() {
+		time.Sleep(cRetry.InitialDelay)
+		retryRoutineFunc(ctx, meta, rChan, tClient, cRetry, fn)
+	}()
 	go func(apiChan chan continueStruct) {
 		for i := 0; ; i++ {
 			select {
@@ -87,6 +91,7 @@ func retry(
 				apiChan <- continueStruct{
 					respErr: fmt.Errorf("context timed out"),
 				}
+
 				return
 			case <-timeoutTimer.C:
 				apiChan <- continueStruct{
@@ -102,6 +107,7 @@ func retry(
 							continueChan.resp,
 						),
 					}
+
 					return
 				}
 				// call retry function
@@ -112,20 +118,15 @@ func retry(
 				apiChan <- continueStruct{
 					respErr: err,
 				}
+
 				return
 
-			// if response recieved stop retrying and return backs the result
+			// if response received, stop retrying and return backs the result
 			case resp := <-rChan.respChan:
 				apiChan <- continueStruct{
 					resp: resp,
 				}
-				return
-			}
-			// check is the retry limit exceeded
-			if i == cRetry.RetryCount-1 {
-				apiChan <- continueStruct{
-					respErr: fmt.Errorf("maximum retry limit reached"),
-				}
+
 				return
 			}
 		}
@@ -134,14 +135,10 @@ func retry(
 
 // Retry with default count and timeout
 func Retry(ctx context.Context, meta interface{}, fn RetryFunc) (interface{}, error) {
-	c := CustomRetry{
-		RetryCount: defaultRetryCount,
-		RetryDelay: defaultRetryDelay,
-		Cond:       defaultCond,
-		Timeout:    defaultTimeout,
-	}
+	c := &CustomRetry{}
+	c.setDefaultValues()
 
-	retry(ctx, meta, fn, c, &tokenStruct{})
+	retry(ctx, meta, fn, c, c.tclient)
 	apiChan := <-c.apiChan
 
 	return apiChan.resp, apiChan.respErr
@@ -152,7 +149,7 @@ func Retry(ctx context.Context, meta interface{}, fn RetryFunc) (interface{}, er
 // CustomRetry struct.
 func (c *CustomRetry) RetryParallel(ctx context.Context, meta interface{}, fn RetryFunc) {
 	c.setDefaultValues()
-	retry(ctx, meta, fn, *c, &tokenStruct{})
+	retry(ctx, meta, fn, c, c.tclient)
 }
 
 func (c *CustomRetry) Wait() (interface{}, error) {
@@ -163,6 +160,11 @@ func (c *CustomRetry) Wait() (interface{}, error) {
 
 // setDefaultValues set defaults only if no user input provided
 func (c *CustomRetry) setDefaultValues() {
+	if c.Timeout != 0 {
+		c.RetryCount = noRetryCount
+	} else {
+		c.Timeout = defaultTimeout
+	}
 	if c.RetryCount == 0 {
 		c.RetryCount = defaultRetryCount
 	}
@@ -172,9 +174,11 @@ func (c *CustomRetry) setDefaultValues() {
 	if c.Cond == nil {
 		c.Cond = defaultCond
 	}
-	if c.Timeout != 0 {
-		c.RetryCount = noRetryCount
+	if c.tclient == nil {
+		c.tclient = &tokenStruct{}
 	}
+
+	c.apiChan = make(chan continueStruct)
 }
 
 // Retry supports extra arguments. initialDelay will put a delay before invoking the function.
@@ -187,9 +191,8 @@ func (c *CustomRetry) Retry(
 	fn RetryFunc,
 ) (interface{}, error) {
 	c.setDefaultValues()
-	time.Sleep(c.InitialDelay)
 
-	retry(ctx, meta, fn, *c, &tokenStruct{})
+	retry(ctx, meta, fn, c, c.tclient)
 	cChan := <-c.apiChan
 
 	return cChan.resp, cChan.respErr
@@ -201,7 +204,7 @@ func retryRoutineFunc(
 	meta interface{},
 	sChan retryChan,
 	tClient scmTokenInterface,
-	cRetry CustomRetry,
+	cRetry *CustomRetry,
 	fn RetryFunc,
 ) {
 	tClient.setScmClientToken(&ctx, meta)

@@ -26,7 +26,7 @@ func Test_retry(t *testing.T) {
 	type args struct {
 		meta    interface{}
 		fn      RetryFunc
-		cRetry  CustomRetry
+		cRetry  *CustomRetry
 		tClient scmTokenInterface
 	}
 	tests := []struct {
@@ -43,10 +43,11 @@ func Test_retry(t *testing.T) {
 				fn: func(ctx context.Context) (interface{}, error) {
 					return testRetrySuccess, nil
 				},
-				cRetry: CustomRetry{
+				cRetry: &CustomRetry{
 					RetryCount: 1,
-					Timeout:    defaultTimeout,
 					Cond:       defaultCond,
+					Timeout:    defaultTimeout,
+					apiChan:    make(chan continueStruct),
 				},
 			},
 			given: func(m *MockscmTokenInterface) {
@@ -66,10 +67,11 @@ func Test_retry(t *testing.T) {
 
 					return "", errors.New("error")
 				},
-				cRetry: CustomRetry{
+				cRetry: &CustomRetry{
 					RetryCount: 3,
-					Timeout:    defaultTimeout,
 					Cond:       defaultCond,
+					Timeout:    defaultTimeout,
+					apiChan:    make(chan continueStruct),
 				},
 			},
 			given: func(m *MockscmTokenInterface) {
@@ -84,10 +86,11 @@ func Test_retry(t *testing.T) {
 				fn: func(ctx context.Context) (interface{}, error) {
 					return testRetrySuccess, nil
 				},
-				cRetry: CustomRetry{
+				cRetry: &CustomRetry{
 					RetryCount: noRetryCount,
 					Timeout:    time.Millisecond * 10,
 					Cond:       defaultCond,
+					apiChan:    make(chan continueStruct),
 				},
 			},
 			given: func(m *MockscmTokenInterface) {
@@ -102,10 +105,11 @@ func Test_retry(t *testing.T) {
 				fn: func(ctx context.Context) (interface{}, error) {
 					return nil, errors.New("error")
 				},
-				cRetry: CustomRetry{
+				cRetry: &CustomRetry{
 					RetryCount: 3,
-					Timeout:    defaultTimeout,
 					Cond:       defaultCond,
+					Timeout:    defaultTimeout,
+					apiChan:    make(chan continueStruct),
 				},
 			},
 			given: func(m *MockscmTokenInterface) {
@@ -120,11 +124,12 @@ func Test_retry(t *testing.T) {
 				fn: func(ctx context.Context) (interface{}, error) {
 					return nil, errors.New("error")
 				},
-				cRetry: CustomRetry{
+				cRetry: &CustomRetry{
 					RetryCount: 3,
 					Timeout:    time.Millisecond * 5,
 					Cond:       defaultCond,
 					RetryDelay: time.Second,
+					apiChan:    make(chan continueStruct),
 				},
 			},
 			given: func(m *MockscmTokenInterface) {
@@ -140,7 +145,9 @@ func Test_retry(t *testing.T) {
 			count = 0
 
 			tt.given(m)
-			got, err := retry(ctx, tt.args.meta, tt.args.fn, tt.args.cRetry, tt.args.tClient)
+			retry(ctx, tt.args.meta, tt.args.fn, tt.args.cRetry, tt.args.tClient)
+			response := <-tt.args.cRetry.apiChan
+			got, err := response.resp, response.respErr
 			if (err != nil) != tt.wantErr {
 				t.Errorf("retry() error = %v, wantErr %v", err, tt.wantErr)
 
@@ -153,7 +160,7 @@ func Test_retry(t *testing.T) {
 	}
 }
 
-func TestRetryRoutineStruct_WaitForRetryRoutine(t *testing.T) {
+func TestCustomRetry_Wait(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -172,7 +179,6 @@ func TestRetryRoutineStruct_WaitForRetryRoutine(t *testing.T) {
 		want    interface{}
 		wantErr bool
 	}{
-		// TODO: Add test cases.
 		{
 			name: "Normal test case 1 - no retry",
 			args: args{
@@ -218,21 +224,21 @@ func TestRetryRoutineStruct_WaitForRetryRoutine(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			m := NewMockscmTokenInterface(ctrl)
-			a := RetryRoutineStruct{
-				retryTokenStruct: m,
+			a := CustomRetry{
+				tclient: m,
 			}
 
 			tt.given(m)
 			count = 0
-			a.RetryRoutine(ctx, meta, tt.args.fn)
-			got, err := a.WaitForRetryRoutine()
+			a.RetryParallel(ctx, meta, tt.args.fn)
+			got, err := a.Wait()
 			if (err != nil) != tt.wantErr {
-				t.Errorf("RetryRoutineStruct.WaitForRetryRoutine() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("CustomRetry.Wait() error = %v, wantErr %v", err, tt.wantErr)
 
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("RetryRoutineStruct.WaitForRetryRoutine() = %v, want %v", got, tt.want)
+				t.Errorf("CustomRetry.Wait() = %v, want %v", got, tt.want)
 			}
 		})
 	}
