@@ -67,7 +67,7 @@ lint: vendor golangci-lint-config.yaml
 
 testreport_dir := test-reports
 unit-test: generate
-	@go test `go list ./... | grep -v github.com/hpe-hcss/vmaas-terraform-resources/internal/acceptance_test`
+	@go test `go list ./... | grep -v github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/acceptance_test`
 .PHONY: test
 
 coverage_dir := coverage/go
@@ -79,7 +79,7 @@ coverage: vendor
 .PHONY: coverage
 
 acceptance:
-	TF_ACC=true go test -v -timeout=1200s -cover github.com/hpe-hcss/vmaas-terraform-resources/internal/acceptance_test
+	TF_ACC=true go test -v -timeout=1200s -cover github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/acceptance_test
 
 build: vendor $(NAME)
 .PHONY: build
@@ -92,7 +92,7 @@ install: build $(NAME)
 
 v := latest
 sdk:
-	@go get github.com/hpe-hcss/vmaas-cmp-go-sdk@$v
+	@go get github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk@$v
 	go mod vendor
 .PHONY: v
 

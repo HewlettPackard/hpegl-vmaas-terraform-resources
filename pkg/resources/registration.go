@@ -5,9 +5,9 @@ package resources
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
+	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/resources"
+	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/constants"
 	"github.com/hewlettpackard/hpegl-provider-lib/pkg/registration"
-	"github.com/hpe-hcss/vmaas-terraform-resources/internal/resources"
-	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/constants"
 )
 
 // Assert that Registration implements the ServiceRegistration interface

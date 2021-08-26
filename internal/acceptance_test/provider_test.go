@@ -10,8 +10,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
-	testutils "github.com/hpe-hcss/vmaas-terraform-resources/internal/test-utils"
-	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/utils"
+	testutils "github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/test-utils"
+	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/utils"
 )
 
 var (

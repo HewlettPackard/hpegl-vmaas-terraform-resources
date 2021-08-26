@@ -11,10 +11,10 @@ import (
 	"testing"
 	"time"
 
+	api_client "github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
+	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
-	api_client "github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
-	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
 )
 
 func TestVmaasInstanceClonePlan(t *testing.T) {

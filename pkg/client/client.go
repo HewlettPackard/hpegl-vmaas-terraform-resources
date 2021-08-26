@@ -7,11 +7,11 @@ import (
 	"os"
 	"strings"
 
+	api_client "github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
+	cmp_client "github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/cmp"
+	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/constants"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hewlettpackard/hpegl-provider-lib/pkg/client"
-	api_client "github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
-	cmp_client "github.com/hpe-hcss/vmaas-terraform-resources/internal/cmp"
-	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/constants"
 )
 
 // keyForGLClientMap is the key in the map[string]interface{} that is passed down by hpegl used to store *Client
