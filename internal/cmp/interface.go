@@ -5,7 +5,7 @@ package cmp
 import (
 	"context"
 
-	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
+	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/utils"
 )
 
 // Resource interface implements all the resource operations (CRUD)

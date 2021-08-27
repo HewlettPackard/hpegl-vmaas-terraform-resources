@@ -5,7 +5,7 @@ package utils
 import (
 	"encoding/json"
 
-	api_client "github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
+	api_client "github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
 )
 
 func parseError(err error) api_client.CustomError {
