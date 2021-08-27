@@ -8,9 +8,9 @@ import (
 	"runtime"
 	"testing"
 
+	testutils "github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/test-utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	libUtils "github.com/hpe-hcss/hpegl-provider-lib/pkg/utils"
-	testutils "github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/test-utils"
 )
 
 var (
