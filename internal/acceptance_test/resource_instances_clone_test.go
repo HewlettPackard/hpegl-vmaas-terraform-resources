@@ -11,8 +11,10 @@ import (
 	"testing"
 	"time"
 
+	"github.com/spf13/viper"
+
 	api_client "github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
-	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/utils"
+	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
@@ -93,18 +95,22 @@ func testVmaasInstanceCloneDestroy(name string) resource.TestCheckFunc {
 func testAccResourceInstanceClone() string {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 
-	return fmt.Sprintf(`%s
-		resource "hpegl_vmaas_instance_clone" "tf_acc_instance_clone" {
+	networkStanza := fmt.Sprintf(`
+			network {
+			  id = %d
+			  interface_id = %d
+			}`, viper.GetInt("vmaas.resource_instances_clone_test.instanceCloneNetworkID"),
+		viper.GetInt("vmaas.resource_instances_clone_test.instanceCloneNetworkInterfaceID"))
+
+	return providerStanza + fmt.Sprintf(`
+		resource "hpegl_vmaas_instance_clone" "%s" {
 			name               = "tf_acc_clone_%d"
-			source_instance_id = 150
-			network {
-			  id = 6
-			  interface_id = 9
-			}
-			network {
-			  id = 6
-			  interface_id = 4
-			}
+			source_instance_id = %d
+			%s
+			%s
 		}
-	`, providerStanza, r.Int63n(999999))
+	`, viper.GetString("vmaas.resource_instances_clone_test.instanceCloneLocalName"),
+		r.Int63n(999999),
+		viper.GetInt("vmaas.resource_instances_clone_test.instanceCloneSourceInstanceID"),
+		networkStanza, networkStanza)
 }

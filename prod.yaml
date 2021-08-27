@@ -1,0 +1,69 @@
+vmaas:
+
+  data_source_clouds_test:
+    cloudLocalName: cloud
+    cloudName: HPE GreenLake VMaaS Cloud
+
+  data_source_datastores_test:
+    dataStoreLocalName: "c_3par"
+    cloudID: 3
+    dataStoreName: Compute-Cluster-Vol0
+
+  data_source_environment_test:
+    environmentLocalName: dev
+    environmentName: Dev
+
+  data_source_groups_test:
+    groupLocalName: default_group
+    groupName: default 
+
+  data_source_layout_test:
+    layoutLocalName: vmware
+    layoutName: Vmware VM
+    layoutInstanceTypeCode: vmware
+
+  data_source_network_interface_test:
+    networkInterfaceLocalName: e1000
+    networkInterfaceName: E1000
+    networkInterfaceCloudID: 3
+
+  data_source_networks_test:
+    networksLocalName: blue_net
+    networksName: Blue-Net
+
+  data_source_plans_test:
+    planLocalName: g1_small
+    planName: G1-Small
+
+  data_source_power_schedules_test:
+    powerScheduleLocalName: weekday
+    powerScheduleName: DEMO_WEEKDAY 
+
+  data_source_resource_pools_test:
+    resourcePoolLocalName: cl_resource_pool
+    resourcePoolCloudID: 3
+    resourcePoolName: ComputeResourcePool
+
+  data_source_templates_test:
+    templateLocalName: vanilla
+    templateName: vanilla-centos7-x86_64-09072020
+
+  resource_instances_clone_test:
+    instanceCloneLocalName: tf_advanced_acctest_clone
+    instanceCloneSourceInstanceID: 27129
+    instanceCloneNetworkID: 177
+    instanceCloneNetworkInterfaceID: 0
+    
+  resource_instances_test:
+    instanceLocalName: tf_advanced_acctest
+    instanceCloudID: 3
+    instanceGroupID: 6
+    instanceLayoutID: 339
+    instancePlanID: 1221
+    instanceTypeCode: vmware
+    instanceVolumeName: root_vol
+    instanceVolumeDatastoreID: 37254
+    instanceScaleCount: 2
+    instanceResourcePoolID: 6
+    instanceAgentInstall: true
+    instanceTemplateID: 1719

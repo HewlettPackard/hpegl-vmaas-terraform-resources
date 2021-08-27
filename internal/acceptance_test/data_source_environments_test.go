@@ -3,7 +3,10 @@
 package acceptancetest
 
 import (
+	"fmt"
 	"testing"
+
+	"github.com/spf13/viper"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
@@ -15,17 +18,21 @@ func TestAccDataSourceEnvironment(t *testing.T) {
 		Providers:  testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceEnvironment,
+				Config: testAccDataSourceEnvironmentConfig(),
 				Check: resource.ComposeTestCheckFunc(
-					validateDataSourceID("data.hpegl_vmaas_environment.dev"),
+					validateDataSourceID("data.hpegl_vmaas_environment." +
+						viper.GetString("vmaas.data_source_environment_test.environmentLocalName")),
 				),
 			},
 		},
 	})
 }
 
-const testAccDataSourceEnvironment = providerStanza + `
-data "hpegl_vmaas_environment" "dev" {
-	name = "Dev"
+func testAccDataSourceEnvironmentConfig() string {
+	return providerStanza + fmt.Sprintf(`
+data "hpegl_vmaas_environment" "%s" {
+	name = "%s"
   }
-`
+`, viper.GetString("vmaas.data_source_environment_test.environmentLocalName"),
+		viper.GetString("vmaas.data_source_environment_test.environmentName"))
+}

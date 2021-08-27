@@ -57,6 +57,7 @@ require (
 	github.com/hashicorp/terraform-plugin-go v0.3.0 // indirect
 	github.com/hashicorp/yamux v0.0.0-20181012175058-2f1d1f20f75d // indirect
 	github.com/hpe-hcss/errors v0.0.8 // indirect
+	github.com/hpe-hcss/hpegl-provider-lib v0.0.6 // indirect
 	github.com/hpe-hcss/iam-lib v1.12.8 // indirect
 	github.com/hpe-hcss/monitoring v0.0.8 // indirect
 	github.com/hpe-hcss/tracing v0.0.8 // indirect

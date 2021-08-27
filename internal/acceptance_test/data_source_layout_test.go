@@ -3,7 +3,10 @@
 package acceptancetest
 
 import (
+	"fmt"
 	"testing"
+
+	"github.com/spf13/viper"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
@@ -15,18 +18,22 @@ func TestAccDataSourceLayout(t *testing.T) {
 		Providers:  testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceLayout,
+				Config: testAccDataSourceLayoutConfig(),
 				Check: resource.ComposeTestCheckFunc(
-					validateDataSourceID("data.hpegl_vmaas_layout.vmware"),
+					validateDataSourceID("data.hpegl_vmaas_layout." + viper.GetString("vmaas.data_source_layout_test.layoutLocalName")),
 				),
 			},
 		},
 	})
 }
 
-const testAccDataSourceLayout = providerStanza + `
-data "hpegl_vmaas_layout" "vmware" {
-	name               = "Vmware VM"
-	instance_type_code = "vmware"
+func testAccDataSourceLayoutConfig() string {
+	return providerStanza + fmt.Sprintf(`
+data "hpegl_vmaas_layout" "%s" {
+	name               = "%s"
+	instance_type_code = "%s"
 }
-`
+`, viper.GetString("vmaas.data_source_layout_test.layoutLocalName"),
+		viper.GetString("vmaas.data_source_layout_test.layoutName"),
+		viper.GetString("vmaas.data_source_layout_test.layoutInstanceTypeCode"))
+}

@@ -3,7 +3,10 @@
 package acceptancetest
 
 import (
+	"fmt"
 	"testing"
+
+	"github.com/spf13/viper"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
@@ -15,18 +18,23 @@ func TestAccDataSourceResourcePool(t *testing.T) {
 		Providers:  testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceResourcePool,
+				Config: testAccDataSourceResourcePoolConfig(),
 				Check: resource.ComposeTestCheckFunc(
-					validateDataSourceID("data.hpegl_vmaas_resource_pool.compute"),
+					validateDataSourceID("data.hpegl_vmaas_resource_pool." +
+						viper.GetString("vmaas.data_source_resource_pools_test.resourcePoolLocalName")),
 				),
 			},
 		},
 	})
 }
 
-const testAccDataSourceResourcePool = providerStanza + `
-data "hpegl_vmaas_resource_pool" "compute" {
-	cloud_id = 1
-	name     = "ComputeResourcePool"
+func testAccDataSourceResourcePoolConfig() string {
+	return providerStanza + fmt.Sprintf(`
+data "hpegl_vmaas_resource_pool" "%s" {
+	cloud_id = %d
+	name     = "%s"
 }
-`
+`, viper.GetString("vmaas.data_source_resource_pools_test.resourcePoolLocalName"),
+		viper.GetInt("vmaas.data_source_resource_pools_test.resourcePoolCloudID"),
+		viper.GetString("vmaas.data_source_resource_pools_test.resourcePoolName"))
+}
