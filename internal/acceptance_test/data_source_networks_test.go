@@ -20,7 +20,7 @@ func TestAccDataSourceNetwork(t *testing.T) {
 			{
 				Config: testAccDataSourceNetworkConfig(),
 				Check: resource.ComposeTestCheckFunc(
-					validateDataSourceID("data.hpegl_vmaas_network." + viper.GetString("vmaas.data_source_networks_test.networksLocalName")),
+					validateDataSourceID("data.hpegl_vmaas_network." + viper.GetString("vmaas.data_source_networks.networksLocalName")),
 				),
 			},
 		},
@@ -32,6 +32,6 @@ func testAccDataSourceNetworkConfig() string {
 data "hpegl_vmaas_network" "%s" {
 	name = "%s"
 }
-`, viper.GetString("vmaas.data_source_networks_test.networksLocalName"),
-		viper.GetString("vmaas.data_source_networks_test.networksName"))
+`, viper.GetString("vmaas.data_source_networks.networksLocalName"),
+		viper.GetString("vmaas.data_source_networks.networksName"))
 }

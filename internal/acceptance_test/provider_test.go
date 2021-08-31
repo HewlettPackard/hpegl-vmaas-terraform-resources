@@ -8,9 +8,9 @@ import (
 	"runtime"
 	"testing"
 
-	testutils "github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/test-utils"
+	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	libUtils "github.com/hpe-hcss/hpegl-provider-lib/pkg/utils"
+	libUtils "github.com/HewlettPackard/hpegl-provider-lib/pkg/utils"
 )
 
 var (
@@ -19,7 +19,7 @@ var (
 )
 
 func init() {
-	testAccProvider = testutils.ProviderFunc()()
+	testAccProvider = utils.ProviderFunc()()
 	testAccProviders = map[string]*schema.Provider{
 		"hpegl": testAccProvider,
 	}
@@ -38,7 +38,7 @@ func testAccPreCheck(t *testing.T) {
 }
 
 func TestProvider(t *testing.T) {
-	if err := testutils.ProviderFunc()().InternalValidate(); err != nil {
+	if err := utils.ProviderFunc()().InternalValidate(); err != nil {
 		t.Fatalf("%s\n", err)
 	}
 	testAccPreCheck(t)

@@ -9,8 +9,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/plugin"
 
-	testutils "github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/test-utils"
-	libUtils "github.com/hpe-hcss/hpegl-provider-lib/pkg/utils"
+	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/utils"
+	libUtils "github.com/HewlettPackard/hpegl-provider-lib/pkg/utils"
 )
 
 func main() {
@@ -22,7 +22,7 @@ func main() {
 	flag.BoolVar(&debugMode, "debug", false, "set to true to run the provider with support for debuggers like delve")
 	flag.Parse()
 	opts := &plugin.ServeOpts{
-		ProviderFunc: testutils.ProviderFunc(),
+		ProviderFunc: utils.ProviderFunc(),
 	}
 	if debugMode {
 		err := plugin.Debug(context.Background(), "terraform.example.com/vmaas/hpegl", opts)

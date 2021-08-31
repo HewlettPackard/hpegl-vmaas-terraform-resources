@@ -318,8 +318,6 @@ github.com/hewlettpackard/hpegl-provider-lib v0.0.3/go.mod h1:RQGAi2sQqZInuf5tyJ
 github.com/hpe-hcss/errors v0.0.8 h1:ODOUv4lZbGmiHsKVRl2863S5u1Ijhup4xSn8BE8h/xY=
 github.com/hpe-hcss/errors v0.0.8/go.mod h1:ieXrj038G75rSFwb0ZgDAzpIVWyzhj/tFIjxMpaUK3E=
 github.com/hpe-hcss/events v0.1.1/go.mod h1:2FTqFjyKsa4zoV2+rMIsmDnJWYKy70VYWumU1OwYH2k=
-github.com/hpe-hcss/hpegl-provider-lib v0.0.6 h1:61MwItOGYNfP7DjAXP60aVCl1kKdLb4xXpCfDWQnqjM=
-github.com/hpe-hcss/hpegl-provider-lib v0.0.6/go.mod h1:jRvjcroDNZtwsp2ZPfzqRIVNK+qOdoGk/sU52m4hCYM=
 github.com/hpe-hcss/iam-lib v1.12.8 h1:P2dPiX1RyW46asqOUvNdgbYrLrT6f2mg0KjFqqxfN3M=
 github.com/hpe-hcss/iam-lib v1.12.8/go.mod h1:cNX/S4mv/JTm9AGj5ZhQ4BWBczWF+7T49h69BmnsoW0=
 github.com/hpe-hcss/monitoring v0.0.8 h1:Pcl688W7IGdZkWtg6LNGoD4lYs9/7EzCDamh9UyFZt8=

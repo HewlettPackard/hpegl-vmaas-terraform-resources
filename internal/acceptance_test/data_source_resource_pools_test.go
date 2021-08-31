@@ -21,7 +21,7 @@ func TestAccDataSourceResourcePool(t *testing.T) {
 				Config: testAccDataSourceResourcePoolConfig(),
 				Check: resource.ComposeTestCheckFunc(
 					validateDataSourceID("data.hpegl_vmaas_resource_pool." +
-						viper.GetString("vmaas.data_source_resource_pools_test.resourcePoolLocalName")),
+						viper.GetString("vmaas.data_source_resource_pools.resourcePoolLocalName")),
 				),
 			},
 		},
@@ -34,7 +34,7 @@ data "hpegl_vmaas_resource_pool" "%s" {
 	cloud_id = %d
 	name     = "%s"
 }
-`, viper.GetString("vmaas.data_source_resource_pools_test.resourcePoolLocalName"),
-		viper.GetInt("vmaas.data_source_resource_pools_test.resourcePoolCloudID"),
-		viper.GetString("vmaas.data_source_resource_pools_test.resourcePoolName"))
+`, viper.GetString("vmaas.data_source_resource_pools.resourcePoolLocalName"),
+		viper.GetInt("vmaas.data_source_resource_pools.resourcePoolCloudID"),
+		viper.GetString("vmaas.data_source_resource_pools.resourcePoolName"))
 }

@@ -20,7 +20,7 @@ func TestAccDataSourceGroup(t *testing.T) {
 			{
 				Config: testAccDataSourceGroupConfig(),
 				Check: resource.ComposeTestCheckFunc(
-					validateDataSourceID("data.hpegl_vmaas_group." + viper.GetString("vmaas.data_source_groups_test.groupLocalName")),
+					validateDataSourceID("data.hpegl_vmaas_group." + viper.GetString("vmaas.data_source_groups.groupLocalName")),
 				),
 			},
 		},
@@ -32,5 +32,5 @@ func testAccDataSourceGroupConfig() string {
 data "hpegl_vmaas_group" "%s" {
 	name = "%s"
 }
-`, viper.GetString("vmaas.data_source_groups_test.groupLocalName"), viper.GetString("vmaas.data_source_groups_test.groupName"))
+`, viper.GetString("vmaas.data_source_groups.groupLocalName"), viper.GetString("vmaas.data_source_groups.groupName"))
 }

@@ -21,7 +21,7 @@ func TestAccDataSourceDataStore(t *testing.T) {
 				Config: testAccDataSourceDataStoreConfig(),
 				Check: resource.ComposeTestCheckFunc(
 					validateDataSourceID("data.hpegl_vmaas_datastore." +
-						viper.GetString("vmaas.data_source_datastores_test.dataStoreLocalName")),
+						viper.GetString("vmaas.data_source_datastores.dataStoreLocalName")),
 				),
 			},
 		},
@@ -34,7 +34,7 @@ func testAccDataSourceDataStoreConfig() string {
 		cloud_id = %d
 		name = "%s"
 	}
-`, viper.GetString("vmaas.data_source_datastores_test.dataStoreLocalName"),
-		viper.GetInt("vmaas.data_source_datastores_test.cloudID"),
-		viper.GetString("vmaas.data_source_datastores_test.dataStoreName"))
+`, viper.GetString("vmaas.data_source_datastores.dataStoreLocalName"),
+		viper.GetInt("vmaas.data_source_datastores.cloudID"),
+		viper.GetString("vmaas.data_source_datastores.dataStoreName"))
 }

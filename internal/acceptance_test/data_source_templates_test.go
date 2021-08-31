@@ -32,6 +32,6 @@ func testAccDataSourceTemplateConfig() string {
 data "hpegl_vmaas_template" "%s" {
 	name = "%s"
 }
-`, viper.GetString("vmaas.data_source_templates_test.templateLocalName"),
-		viper.GetString("vmaas.data_source_templates_test.templateName"))
+`, viper.GetString("vmaas.data_source_templates.templateLocalName"),
+		viper.GetString("vmaas.data_source_templates.templateName"))
 }

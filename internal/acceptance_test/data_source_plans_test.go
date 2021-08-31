@@ -20,7 +20,7 @@ func TestAccDataSourcePlan(t *testing.T) {
 			{
 				Config: testAccDataSourcePlanConfig(),
 				Check: resource.ComposeTestCheckFunc(
-					validateDataSourceID("data.hpegl_vmaas_plan." + viper.GetString("vmaas.data_source_plans_test.planLocalName")),
+					validateDataSourceID("data.hpegl_vmaas_plan." + viper.GetString("vmaas.data_source_plans.planLocalName")),
 				),
 			},
 		},
@@ -32,5 +32,5 @@ func testAccDataSourcePlanConfig() string {
 data "hpegl_vmaas_plan" "%s" {
 	name = "%s"
 }
-`, viper.GetString("vmaas.data_source_plans_test.planLocalName"), viper.GetString("vmaas.data_source_plans_test.planName"))
+`, viper.GetString("vmaas.data_source_plans.planLocalName"), viper.GetString("vmaas.data_source_plans.planName"))
 }

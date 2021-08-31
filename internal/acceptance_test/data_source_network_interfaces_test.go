@@ -21,7 +21,7 @@ func TestAccDataSourceNetworkInterface(t *testing.T) {
 				Config: testAccDataSourceNetworkInterfaceConfig(),
 				Check: resource.ComposeTestCheckFunc(
 					validateDataSourceID("data.hpegl_vmaas_network_interface." +
-						viper.GetString("vmaas.data_source_network_interface_test.networkInterfaceLocalName")),
+						viper.GetString("vmaas.data_source_network_interface.networkInterfaceLocalName")),
 				),
 			},
 		},
@@ -34,7 +34,7 @@ data "hpegl_vmaas_network_interface" "%s"{
 	name = "%s"
 	cloud_id = %d
   }
-`, viper.GetString("vmaas.data_source_network_interface_test.networkInterfaceLocalName"),
-		viper.GetString("vmaas.data_source_network_interface_test.networkInterfaceName"),
-		viper.GetInt("vmaas.data_source_network_interface_test.networkInterfaceCloudID"))
+`, viper.GetString("vmaas.data_source_network_interface.networkInterfaceLocalName"),
+		viper.GetString("vmaas.data_source_network_interface.networkInterfaceName"),
+		viper.GetInt("vmaas.data_source_network_interface.networkInterfaceCloudID"))
 }
