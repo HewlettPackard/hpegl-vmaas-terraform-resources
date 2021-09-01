@@ -2,7 +2,7 @@
 
 package cmp
 
-import apiClient "github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
+import apiClient "github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
 
 // Client is the cmp client which will implements all the
 // functions in interface.go

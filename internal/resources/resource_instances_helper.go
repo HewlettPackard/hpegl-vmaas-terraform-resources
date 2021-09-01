@@ -6,13 +6,13 @@ import (
 	"context"
 	"time"
 
+	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/cmp"
+	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/utils"
+	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/client"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
-	"github.com/hpe-hcss/vmaas-terraform-resources/internal/cmp"
-	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
-	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/client"
 )
 
 const (

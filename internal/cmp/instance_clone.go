@@ -11,9 +11,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
-	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/models"
-	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
+	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
+	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/models"
+	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/utils"
 )
 
 const (

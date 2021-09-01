@@ -10,7 +10,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/hpe-hcss/vmaas-terraform-resources/pkg/auth"
+	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/auth"
 )
 
 // scmTokenInterface will wrap up setScmClientToken function to help on writing
