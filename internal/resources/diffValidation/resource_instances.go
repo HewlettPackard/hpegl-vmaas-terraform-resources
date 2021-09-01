@@ -7,8 +7,8 @@ import (
 	"reflect"
 	"strings"
 
+	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
 )
 
 var errPrimaryNetworkUpdation = fmt.Errorf("primary network updation/deletion is not supported")
