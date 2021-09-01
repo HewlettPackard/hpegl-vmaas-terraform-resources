@@ -4,6 +4,7 @@ package utils
 
 import (
 	"encoding/json"
+	"reflect"
 	"strconv"
 )
 
@@ -18,8 +19,8 @@ func JSONNumber(in interface{}) json.Number {
 	return json.Number(in.(string))
 }
 
-func IsEmpty(n json.Number) bool {
-	return n == "0" || n == ""
+func IsEmpty(n interface{}) bool {
+	return n == nil || reflect.ValueOf(n).IsZero()
 }
 
 func ParseInt(str string) (int64, error) {

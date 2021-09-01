@@ -5,5 +5,6 @@ package tools
 
 import (
 	// document generation
+	_ "github.com/golang/mock/mockgen"
 	_ "github.com/hashicorp/terraform-plugin-docs/cmd/tfplugindocs"
 )

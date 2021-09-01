@@ -40,7 +40,10 @@ $(NAME): $(shell find . -name \*.go)
 default: all
 .PHONY: default
 
-vendor: go.mod go.sum
+generate:
+	go generate ./...
+
+vendor: generate go.mod go.sum
 	go mod download
 
 update up: really-clean vendor
@@ -63,8 +66,8 @@ lint: vendor golangci-lint-config.yaml
 .PHONY: lint
 
 testreport_dir := test-reports
-test:
-	go test -v ./...
+unit-test: generate
+	@go test `go list ./... | grep -v github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/acceptance_test`
 .PHONY: test
 
 coverage_dir := coverage/go
@@ -76,7 +79,7 @@ coverage: vendor
 .PHONY: coverage
 
 acceptance:
-	TF_ACC=true go test -v -timeout=1200s -cover ./...
+	TF_ACC=true go test -v -timeout=1200s -cover github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/acceptance_test
 
 build: vendor $(NAME)
 .PHONY: build
@@ -86,6 +89,15 @@ install: build $(NAME)
 	mkdir -p $(LOCAL_LOCATION)
 	cp build/$(NAME) $(LOCAL_LOCATION)
 .PHONY: install
+
+v := latest
+sdk:
+	@go get github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk@$v
+	go mod vendor
+.PHONY: v
+
+tflint:
+	@terraform fmt -recursive ./examples/
 
 all: lint test
 .PHONY: all

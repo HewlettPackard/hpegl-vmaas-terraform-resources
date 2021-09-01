@@ -2,7 +2,7 @@
 
 package cmp
 
-import apiClient "github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
+import apiClient "github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
 
 // Client is the cmp client which will implements all the
 // functions in interface.go
@@ -26,8 +26,14 @@ type Client struct {
 // NewClient returns configured client
 func NewClient(client *apiClient.APIClient, cfg apiClient.Configuration) *Client {
 	return &Client{
-		Instance:      newInstance(&apiClient.InstancesAPIService{Client: client, Cfg: cfg}),
-		InstanceClone: newInstanceClone(&apiClient.InstancesAPIService{Client: client, Cfg: cfg}),
+		Instance: newInstance(
+			&apiClient.InstancesAPIService{Client: client, Cfg: cfg},
+			&apiClient.ServersAPIService{Client: client, Cfg: cfg},
+		),
+		InstanceClone: newInstanceClone(
+			&apiClient.InstancesAPIService{Client: client, Cfg: cfg},
+			&apiClient.ServersAPIService{Client: client, Cfg: cfg},
+		),
 		Network:       newNetwork(&apiClient.NetworksAPIService{Client: client, Cfg: cfg}),
 		Plan:          newPlan(&apiClient.PlansAPIService{Client: client, Cfg: cfg}),
 		Group:         newGroup(&apiClient.GroupsAPIService{Client: client, Cfg: cfg}),

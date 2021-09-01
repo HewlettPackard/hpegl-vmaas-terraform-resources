@@ -7,9 +7,9 @@ import (
 	"log"
 	"os"
 
+	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
 	"github.com/hewlettpackard/hpegl-provider-lib/pkg/token/common"
 	"github.com/hewlettpackard/hpegl-provider-lib/pkg/token/retrieve"
-	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
 )
 
 // GetToken is a convenience function used by provider code to extract retrieve.TokenRetrieveFuncCtx from

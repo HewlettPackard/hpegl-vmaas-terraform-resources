@@ -4,10 +4,14 @@ package diffvalidation
 
 import (
 	"fmt"
+	"reflect"
+	"strings"
 
+	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
 )
+
+var errPrimaryNetworkUpdation = fmt.Errorf("primary network updation/deletion is not supported")
 
 type Instance struct {
 	diff *schema.ResourceDiff
@@ -20,12 +24,12 @@ func NewInstanceValidate(diff *schema.ResourceDiff) *Instance {
 }
 
 func (i *Instance) DiffValidate() error {
-	notAllowed := []string{"network", "plan_id", "scale"}
+	notAllowed := []string{"plan_id", "scale"}
 
 	for _, param := range notAllowed {
 		if i.diff.HasChange(param) {
 			oldParam, _ := i.diff.GetChange(param)
-			if i.isEmpty(oldParam) {
+			if utils.IsEmpty(oldParam) {
 				continue
 			}
 
@@ -43,20 +47,64 @@ func (i *Instance) DiffValidate() error {
 		return err
 	}
 
+	if err := i.instanceTemplateValidate(); err != nil {
+		return err
+	}
+
+	if err := i.validateIsPrimaryNetworkChanged(); err != nil {
+		return err
+	}
+
 	return nil
 }
 
-func (i *Instance) isEmpty(param interface{}) bool {
-	switch paramVal := param.(type) {
-	case []interface{}:
-		return len(paramVal) == 0
-	case string:
-		return paramVal == ""
-	case int:
-		return paramVal == 0
-	default:
-		return false
+func (i *Instance) validateIsPrimaryNetworkChanged() error {
+	if i.diff.HasChange("network") {
+		o, n := i.diff.GetChange("network")
+		oldMap := utils.GetlistMap(o)
+		newMap := utils.GetlistMap(n)
+
+		// skip upon create operation
+		if len(oldMap) == 0 {
+			return nil
+		}
+		// check whether primary network has been changed?
+		for i := range oldMap {
+			if oldMap[i]["is_primary"].(bool) {
+				if len(newMap) < i {
+					return errPrimaryNetworkUpdation
+				}
+				if !reflect.DeepEqual(newMap[i], oldMap[i]) {
+					return errPrimaryNetworkUpdation
+				}
+
+				break
+			}
+		}
 	}
+
+	return nil
+}
+
+func (i *Instance) instanceTemplateValidate() error {
+	configSet := i.diff.Get("config").(*schema.Set)
+	if configSet == nil {
+		return nil
+	}
+
+	config := configSet.List()
+	// for clone config can be nil
+	if len(config) > 0 {
+		c0 := config[0].(map[string]interface{})
+		templateID := c0["template_id"].(int)
+		if strings.ToLower(i.diff.Get("instance_type_code").(string)) == "vmware" {
+			if templateID == 0 {
+				return fmt.Errorf("template_id is required for 'vmware' instance type code")
+			}
+		}
+	}
+
+	return nil
 }
 
 func (i *Instance) instanceVolumeDiffValidate() error {
@@ -73,7 +121,7 @@ func (i *Instance) instanceVolumeDiffValidate() error {
 	}
 
 	// If create operation validation should be skipped
-	if i.isEmpty(oldVol) {
+	if utils.IsEmpty(oldVol) {
 		return nil
 	}
 

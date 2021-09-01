@@ -7,9 +7,9 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/client"
-	"github.com/hpe-hcss/vmaas-cmp-go-sdk/pkg/models"
-	"github.com/hpe-hcss/vmaas-terraform-resources/internal/utils"
+	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
+	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/models"
+	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/utils"
 )
 
 type cloudFolder struct {
@@ -36,10 +36,11 @@ func (f *cloudFolder) Read(ctx context.Context, d *utils.Data, meta interface{})
 			nameKey: name,
 		})
 	})
-	folders := resp.(models.GetAllCloudFolders)
 	if err != nil {
 		return err
 	}
+
+	folders := resp.(models.GetAllCloudFolders)
 	if len(folders.Folders) != 1 {
 		return fmt.Errorf(errExactMatch, "folder")
 	}

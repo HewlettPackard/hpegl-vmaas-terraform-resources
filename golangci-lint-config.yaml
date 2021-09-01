@@ -20,11 +20,13 @@ linters-settings:
   exhaustive:
     default-signifies-exhaustive: true
   funlen:
-    lines: 300
+    lines: 400
     statements: 60
   nestif:
     # minimal complexity of if statements to report
     min-complexity: 20
+  goconst:
+    ignore-tests: true
 
 linters:
   enable-all: true
@@ -42,6 +44,7 @@ linters:
     # - forbidigo
     - testpackage
     - nolintlint
+    - scopelint
     # Temporarily disabling paralleltest
     # - paralleltest
     #Temporarily disabling wrapcheck
