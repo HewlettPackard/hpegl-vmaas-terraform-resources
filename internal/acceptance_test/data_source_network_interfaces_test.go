@@ -3,7 +3,10 @@
 package acceptancetest
 
 import (
+	"fmt"
 	"testing"
+
+	"github.com/spf13/viper"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
@@ -15,18 +18,23 @@ func TestAccDataSourceNetworkInterface(t *testing.T) {
 		Providers:  testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceNetworkInterface,
+				Config: testAccDataSourceNetworkInterfaceConfig(),
 				Check: resource.ComposeTestCheckFunc(
-					validateDataSourceID("data.hpegl_vmaas_network_interface.e1000"),
+					validateDataSourceID("data.hpegl_vmaas_network_interface." +
+						viper.GetString("vmaas.data_source_network_interface.networkInterfaceLocalName")),
 				),
 			},
 		},
 	})
 }
 
-const testAccDataSourceNetworkInterface = providerStanza + `
-data "hpegl_vmaas_network_interface" "e1000"{
-	name = "E1000"
-	cloud_id = 1
+func testAccDataSourceNetworkInterfaceConfig() string {
+	return providerStanza + fmt.Sprintf(`
+data "hpegl_vmaas_network_interface" "%s"{
+	name = "%s"
+	cloud_id = %d
   }
-`
+`, viper.GetString("vmaas.data_source_network_interface.networkInterfaceLocalName"),
+		viper.GetString("vmaas.data_source_network_interface.networkInterfaceName"),
+		viper.GetInt("vmaas.data_source_network_interface.networkInterfaceCloudID"))
+}

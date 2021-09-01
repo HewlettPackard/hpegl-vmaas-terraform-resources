@@ -3,7 +3,10 @@
 package acceptancetest
 
 import (
+	"fmt"
 	"testing"
+
+	"github.com/spf13/viper"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
@@ -15,18 +18,23 @@ func TestAccDataSourceDataStore(t *testing.T) {
 		Providers:  testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceDataStore,
+				Config: testAccDataSourceDataStoreConfig(),
 				Check: resource.ComposeTestCheckFunc(
-					validateDataSourceID("data.hpegl_vmaas_datastore.glhc_vol10"),
+					validateDataSourceID("data.hpegl_vmaas_datastore." +
+						viper.GetString("vmaas.data_source_datastores.dataStoreLocalName")),
 				),
 			},
 		},
 	})
 }
 
-const testAccDataSourceDataStore = providerStanza + `
-	data "hpegl_vmaas_datastore" "glhc_vol10" {
-		cloud_id = 1
-		name = "GLHC-Vol10"
+func testAccDataSourceDataStoreConfig() string {
+	return providerStanza + fmt.Sprintf(`
+	data "hpegl_vmaas_datastore" "%s" {
+		cloud_id = %d
+		name = "%s"
 	}
-`
+`, viper.GetString("vmaas.data_source_datastores.dataStoreLocalName"),
+		viper.GetInt("vmaas.data_source_datastores.cloudID"),
+		viper.GetString("vmaas.data_source_datastores.dataStoreName"))
+}

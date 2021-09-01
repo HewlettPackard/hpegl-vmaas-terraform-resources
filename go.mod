@@ -7,7 +7,7 @@ require (
 	github.com/golang/mock v1.6.0
 	github.com/hashicorp/terraform-plugin-docs v0.4.0
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.7.0
-	github.com/hewlettpackard/hpegl-provider-lib v0.0.3
+	github.com/hewlettpackard/hpegl-provider-lib v0.0.4
 	github.com/spf13/viper v1.8.1
 )
 
@@ -65,6 +65,7 @@ require (
 	github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af // indirect
 	github.com/json-iterator/go v1.1.11 // indirect
 	github.com/jstemmer/go-junit-report v0.9.1 // indirect
+	github.com/kisielk/godepgraph v0.0.0-20190626013829-57a7e4a651a9 // indirect
 	github.com/klauspost/compress v1.11.2 // indirect
 	github.com/leodido/go-urn v1.2.0 // indirect
 	github.com/magiconair/properties v1.8.5 // indirect

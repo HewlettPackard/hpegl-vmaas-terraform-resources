@@ -9,13 +9,13 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/plugin"
 
-	testutils "github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/test-utils"
-	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/utils"
+	libUtils "github.com/hewlettpackard/hpegl-provider-lib/pkg/utils"
+	testutils "github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/test-utils"
 )
 
 func main() {
 	// Read config file for acceptance test if TF_ACC sets
-	utils.ReadAccConfig(".")
+	libUtils.ReadAccConfig(".")
 
 	var debugMode bool
 

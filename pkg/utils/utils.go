@@ -3,19 +3,26 @@
 package utils
 
 import (
-	"os"
+	"encoding/json"
 
-	"github.com/spf13/viper"
+	api_client "github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
 )
 
-func ReadAccConfig(path string) {
-	if os.Getenv("TF_ACC") == "true" {
-		viper.AddConfigPath(path)
-		viper.SetConfigType("yaml")
-		viper.SetConfigName(os.Getenv("TF_ACC_CONFIG"))
-		err := viper.ReadInConfig()
-		if err != nil {
-			panic("fatal error config file: " + err.Error())
-		}
+func parseError(err error) api_client.CustomError {
+	customErr := api_client.CustomError{}
+	if err == nil {
+		return customErr
 	}
+	jsonErr := json.Unmarshal([]byte(err.Error()), &customErr)
+	if jsonErr != nil {
+		customErr.Errors = jsonErr.Error()
+	}
+
+	return customErr
+}
+
+func GetStatusCode(err error) int {
+	customErr := parseError(err)
+
+	return customErr.StatusCode
 }
