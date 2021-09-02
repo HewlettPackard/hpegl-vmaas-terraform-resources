@@ -8,10 +8,9 @@ import (
 	"runtime"
 	"testing"
 
+	testutils "github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/test-utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-
-	testutils "github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/test-utils"
-	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/utils"
+	libUtils "github.com/hewlettpackard/hpegl-provider-lib/pkg/utils"
 )
 
 var (
@@ -50,7 +49,7 @@ func TestMain(m *testing.M) {
 	_, b, _, _ := runtime.Caller(0)
 	// Root folder of this project
 	d := filepath.Join(filepath.Dir(b), "../..")
-	utils.ReadAccConfig(d)
+	libUtils.ReadAccConfig(d)
 	m.Run()
 	os.Exit(0)
 }

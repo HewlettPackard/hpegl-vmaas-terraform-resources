@@ -13,6 +13,7 @@ import (
 	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
 	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/models"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/utils"
+	pkgUtils "github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/utils"
 )
 
 type instanceSharedClient struct {
@@ -175,7 +176,7 @@ func deleteInstance(ctx context.Context, sharedClient instanceSharedClient, d *u
 		Timeout:    maxTimeout,
 		Cond: func(response interface{}, ResponseErr error) (bool, error) {
 			if ResponseErr != nil {
-				if utils.GetStatusCode(ResponseErr) == http.StatusNotFound {
+				if pkgUtils.GetStatusCode(ResponseErr) == http.StatusNotFound {
 					return true, nil
 				}
 				errCount++
@@ -455,7 +456,7 @@ func instanceSetSnaphot(
 		return sharedClient.iClient.GetListOfSnapshotsForAnInstance(ctx, instanceID)
 	})
 	if err != nil {
-		if utils.GetStatusCode(err) != http.StatusNotFound {
+		if pkgUtils.GetStatusCode(err) != http.StatusNotFound {
 			return
 		}
 		snaphotSchema[0]["is_snapshot_exists"] = false
