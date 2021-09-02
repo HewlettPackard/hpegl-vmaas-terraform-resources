@@ -9,8 +9,8 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/plugin"
 
-	libUtils "github.com/hewlettpackard/hpegl-provider-lib/pkg/utils"
 	testutils "github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/test-utils"
+	libUtils "github.com/hewlettpackard/hpegl-provider-lib/pkg/utils"
 )
 
 func main() {
