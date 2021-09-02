@@ -171,19 +171,19 @@ func (i *Instance) instanceValidatePowerTransition() error {
 	}
 
 	oldPower, newPower := i.diff.GetChange("power")
-
+	oldPowerStr := oldPower.(string)
+	newPowerStr := newPower.(string)
 	// If the current power state is On, then only Off, suspend and restart will allowed
-	if oldPower.(string) == utils.PowerOn {
-		if newPower.(string) == utils.PowerOff || newPower.(string) == utils.Suspend || newPower.(string) == utils.Restart {
+	// If the current state is "" due to new instance creation
+	if oldPowerStr == utils.PowerOn || oldPowerStr == "" {
+		if newPowerStr == utils.PowerOff || newPowerStr == utils.Suspend || newPowerStr == utils.Restart {
 			return nil
 		}
-	} else {
-		// If the current state is "" due to new instance creation or the current state is Off, suspend and restart,
+	} else if newPowerStr == utils.PowerOn {
+		// The current state is Off, suspend and restart,
 		// then the new state allowed is only PowerOn
-		if newPower.(string) == utils.PowerOn {
-			return nil
-		}
+		return nil
 	}
 
-	return fmt.Errorf("power operation not allowed from %s state to %s state", oldPower.(string), newPower.(string))
+	return fmt.Errorf("power operation not allowed from %s state to %s state", oldPowerStr, newPowerStr)
 }
