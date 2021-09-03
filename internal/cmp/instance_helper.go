@@ -13,6 +13,7 @@ import (
 	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
 	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/models"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/utils"
+	"github.com/tshihad/tftags"
 )
 
 type instanceSharedClient struct {
@@ -58,6 +59,7 @@ func readInstance(ctx context.Context, sharedClient instanceSharedClient, d *uti
 	}
 	// set snapshot details
 	instanceSetSnaphot(ctx, sharedClient, meta, d, instance.Instance.ID)
+	instanceSetHistory(ctx, meta, sharedClient, d, instance.Instance.ID)
 
 	if isClone {
 		d.Set("layout_id", instance.Instance.Layout.ID)
@@ -536,23 +538,22 @@ func instanceSetHostname(d *utils.Data, instance models.GetInstanceResponse) {
 func instanceSetHistory(
 	ctx context.Context,
 	meta interface{},
-	iclient iClient,
+	sharedClient instanceSharedClient,
 	d *utils.Data,
 	instanceID int,
 ) {
 	resp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return iclient.getIClient().GetInstanceHistory(ctx, instanceID)
+		return sharedClient.iClient.GetInstanceHistory(ctx, instanceID)
 	})
 	if err != nil {
 		log.Printf("[WARN] Failed to retrieve the history for InstanceID: %d", instanceID)
 		return
 	}
 	historyModel := resp.(models.GetInstanceHistory)
-	type InstanceModel struct {
-		History models.GetInstanceHistory `tf:"history,computed"`
-	}
 
-	// tftags.Set(d, InstanceModel{historyModel})
+	tftags.Set(d, models.TFInstance{
+		History: historyModel.Processes,
+	})
 }
 
 func instanceGetResizeNetwork(network []map[string]interface{}) []models.CreateInstanceBodyNetworkInterfaces {

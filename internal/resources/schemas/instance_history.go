@@ -41,11 +41,6 @@ func GetInstanceHistorySchema() *schema.Schema {
 				"last_updated": computedString(),
 				"created_by":   computedUpdatedBySchema(),
 				"updated_by":   computedUpdatedBySchema(),
-				// "events": {
-				// 	Type:     schema.TypeList,
-				// 	Computed: true,
-				// 	Elem:     &schema.Resource{},
-				// },
 			},
 		},
 	}

@@ -46,6 +46,10 @@ github.com/HdrHistogram/hdrhistogram-go v1.0.1 h1:GX8GAYDuhlFQnI2fRDHQhTlkHMz8bE
 github.com/HdrHistogram/hdrhistogram-go v1.0.1/go.mod h1:BWJ+nMSHY3L41Zj7CA3uXnloDp7xxV0YvstAE7nKTaM=
 github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk v0.0.0-20210826090418-7e83f7f97edb h1:Xzq0x5IdmoXao5bGBL+gq9VncIysCFtMs5rhdOo1i2M=
 github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk v0.0.0-20210826090418-7e83f7f97edb/go.mod h1:ZvrEbVcIZndDXpYV4OyAVKr0Bs1bKmpXXa4fvW8cKz0=
+github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk v0.0.0-20210902130225-4d9f6fd8bd17 h1:78MkUfsXUOucrnSfOnfxS43jIcOhZ4Sq5tUepJ6f0OQ=
+github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk v0.0.0-20210902130225-4d9f6fd8bd17/go.mod h1:ZvrEbVcIZndDXpYV4OyAVKr0Bs1bKmpXXa4fvW8cKz0=
+github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk v0.0.0-20210903054934-2fa2cb096dc2 h1:r5/sF3nfYt9uiKbIdR5lldsxdC5E4G6NFjehxQyEzso=
+github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk v0.0.0-20210903054934-2fa2cb096dc2/go.mod h1:ZvrEbVcIZndDXpYV4OyAVKr0Bs1bKmpXXa4fvW8cKz0=
 github.com/Masterminds/goutils v1.1.0 h1:zukEsf/1JZwCMgHiK3GZftabmxiCw4apj3a28RPBiVg=
 github.com/Masterminds/goutils v1.1.0/go.mod h1:8cTjp+g8YejhMuvIA5y2vz3BpJxksy863GQaJW2MFNU=
 github.com/Masterminds/semver v1.5.0 h1:H65muMkzWKEuNDnfl9d70GUjFniHKHRbFPGBuZ3QEww=
@@ -310,6 +314,8 @@ github.com/hashicorp/terraform-plugin-go v0.3.0/go.mod h1:dFHsQMaTLpON2gWhVWT96f
 github.com/hashicorp/terraform-plugin-sdk/v2 v2.5.0/go.mod h1:z+cMZ0iswzZOahBJ3XmNWgWkVnAd2bl8g+FhyyuPDH4=
 github.com/hashicorp/terraform-plugin-sdk/v2 v2.7.0 h1:SuI59MqNjYDrL7EfqHX9V6P/24isgqYx/FdglwVs9bg=
 github.com/hashicorp/terraform-plugin-sdk/v2 v2.7.0/go.mod h1:grseeRo9g3yNkYW09iFlV8LG78jTa1ssBgouogQg/RU=
+github.com/hashicorp/terraform-plugin-sdk/v2 v2.7.1 h1:vpzKKP2dIFb9n89AG8Wxl758/5JSZWZH0OuKdlq0M38=
+github.com/hashicorp/terraform-plugin-sdk/v2 v2.7.1/go.mod h1:o3pdss6ynDZW9FfiZ+rETUH5LEVufrXdhwLU+5OiRo0=
 github.com/hashicorp/yamux v0.0.0-20180604194846-3520598351bb/go.mod h1:+NfK9FKeTrX5uv1uIXGdwYDTeHna2qgaIlx54MXqjAM=
 github.com/hashicorp/yamux v0.0.0-20181012175058-2f1d1f20f75d h1:kJCB4vdITiW1eC1vq2e6IsrXKrZit1bv/TDYFGMp4BQ=
 github.com/hashicorp/yamux v0.0.0-20181012175058-2f1d1f20f75d/go.mod h1:+NfK9FKeTrX5uv1uIXGdwYDTeHna2qgaIlx54MXqjAM=
@@ -513,6 +519,16 @@ github.com/stretchr/testify v1.7.0 h1:nwc3DEeHmmLAfoZucVR881uASk0Mfjw8xYJ99tb5Cc
 github.com/stretchr/testify v1.7.0/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
 github.com/subosito/gotenv v1.2.0 h1:Slr1R9HxAlEKefgq5jn9U+DnETlIUa6HfgEzj0g5d7s=
 github.com/subosito/gotenv v1.2.0/go.mod h1:N0PQaV/YGNqwC0u51sEeR/aUtSLEXKX9iv69rRypqCw=
+github.com/tshihad/tftags v0.0.1 h1:ebXQG4kRlwrjvpFfuANkqCfX6/5JqeyXI7Vkkq7wwjM=
+github.com/tshihad/tftags v0.0.1/go.mod h1:VWmNZAQzuhFG7E/jWODegZhrpP7BBROPsol5F3FCcoE=
+github.com/tshihad/tftags v0.0.2-0.20210902071421-219352ef04dc h1:l/7lXX3TkkrH6AzdKfSi0svpG8ayyxOWbKkfClD7+Zg=
+github.com/tshihad/tftags v0.0.2-0.20210902071421-219352ef04dc/go.mod h1:VWmNZAQzuhFG7E/jWODegZhrpP7BBROPsol5F3FCcoE=
+github.com/tshihad/tftags v0.0.2-0.20210902091229-5fa1c874b709 h1:LE6p81ZDnuCAL8dVYhdCqlgp9/MDRVBStn1gzGPuJYQ=
+github.com/tshihad/tftags v0.0.2-0.20210902091229-5fa1c874b709/go.mod h1:VWmNZAQzuhFG7E/jWODegZhrpP7BBROPsol5F3FCcoE=
+github.com/tshihad/tftags v0.0.2-0.20210902123253-d5a066b0b42e h1:YJyFJoVjJtoFSmhAHc/LBfpP6E+Na8U7dccgjYgPROY=
+github.com/tshihad/tftags v0.0.2-0.20210902123253-d5a066b0b42e/go.mod h1:d1I8QuvIoOjoHp2zOPEAl3EbsPYj4TBTxOtIRDWUI8E=
+github.com/tshihad/tftags v0.0.2 h1:ZzpnKY/Y7Pra1QTXGs3a5pR8miewSf6g6nZZtCpOXRc=
+github.com/tshihad/tftags v0.0.2/go.mod h1:d1I8QuvIoOjoHp2zOPEAl3EbsPYj4TBTxOtIRDWUI8E=
 github.com/uber/jaeger-client-go v2.25.0+incompatible h1:IxcNZ7WRY1Y3G4poYlx24szfsn/3LvK9QHCq9oQw8+U=
 github.com/uber/jaeger-client-go v2.25.0+incompatible/go.mod h1:WVhlPFC8FDjOFMMWRy2pZqQJSXxYSwNYOkTr/Z6d3Kk=
 github.com/uber/jaeger-lib v2.4.0+incompatible h1:fY7QsGQWiCt8pajv4r7JEvmATdCVaWxXbjwyYwsNaLQ=
@@ -733,7 +749,6 @@ golang.org/x/sys v0.0.0-20210403161142-5e06dd20ab57/go.mod h1:h1NjWce9XRLGQEsW7w
 golang.org/x/sys v0.0.0-20210502180810-71e4cd670f79/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/sys v0.0.0-20210510120138-977fb7262007 h1:gG67DSER+11cZvqIMb8S8bt0vZtiN6xWYARwirrOSfE=
 golang.org/x/sys v0.0.0-20210510120138-977fb7262007/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
-golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1 h1:v+OssWQX+hTHEmOBgwxdZxK4zHq3yOs8F9J7mk0PY8E=
 golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
 golang.org/x/text v0.0.0-20170915032832-14c0d48ead0c/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
 golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
