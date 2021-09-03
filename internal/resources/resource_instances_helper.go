@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/cmp"
+	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/resources/schemas"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/utils"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/client"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -319,6 +320,7 @@ func getInstanceDefaultSchema(isClone bool) *schema.Resource {
 					},
 				},
 			},
+			"history": schemas.GetInstanceHistorySchema(),
 		},
 		SchemaVersion:  0,
 		StateUpgraders: nil,
