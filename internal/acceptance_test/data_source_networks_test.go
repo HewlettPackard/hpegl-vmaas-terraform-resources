@@ -3,7 +3,10 @@
 package acceptancetest
 
 import (
+	"fmt"
 	"testing"
+
+	"github.com/spf13/viper"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
@@ -15,17 +18,20 @@ func TestAccDataSourceNetwork(t *testing.T) {
 		Providers:  testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config: testAccDataSourceNetwork,
+				Config: testAccDataSourceNetworkConfig(),
 				Check: resource.ComposeTestCheckFunc(
-					validateDataSourceID("data.hpegl_vmaas_network.test_net"),
+					validateDataSourceID("data.hpegl_vmaas_network." + viper.GetString("vmaas.data_source_networks.networksLocalName")),
 				),
 			},
 		},
 	})
 }
 
-const testAccDataSourceNetwork = providerStanza + `
-data "hpegl_vmaas_network" "test_net" {
-	name = "Test_Network"
+func testAccDataSourceNetworkConfig() string {
+	return providerStanza + fmt.Sprintf(`
+data "hpegl_vmaas_network" "%s" {
+	name = "%s"
 }
-`
+`, viper.GetString("vmaas.data_source_networks.networksLocalName"),
+		viper.GetString("vmaas.data_source_networks.networksName"))
+}
