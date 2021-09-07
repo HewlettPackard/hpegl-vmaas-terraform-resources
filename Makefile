@@ -79,6 +79,7 @@ coverage: vendor
 .PHONY: coverage
 
 acceptance:
+	TF_ACC_CONFIG_PATH=$(shell pwd)	\
 	TF_ACC=true go test -v -timeout=1200s -cover github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/acceptance_test
 
 build: vendor $(NAME)
