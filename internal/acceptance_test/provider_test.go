@@ -4,8 +4,6 @@ package acceptancetest
 
 import (
 	"os"
-	"path/filepath"
-	"runtime"
 	"testing"
 
 	testutils "github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/test-utils"
@@ -45,11 +43,8 @@ func TestProvider(t *testing.T) {
 }
 
 func TestMain(m *testing.M) {
-	// nolint
-	_, b, _, _ := runtime.Caller(0)
-	// Root folder of this project
-	d := filepath.Join(filepath.Dir(b), "../..")
-	libUtils.ReadAccConfig(d)
+	// TF_ACC_CONFIG_PATH set in make acceptance
+	libUtils.ReadAccConfig(os.Getenv("TF_ACC_CONFIG_PATH"))
 	m.Run()
 	os.Exit(0)
 }
