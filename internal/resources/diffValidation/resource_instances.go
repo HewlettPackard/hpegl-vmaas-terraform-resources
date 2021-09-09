@@ -180,9 +180,7 @@ func (i *Instance) instanceValidatePowerTransition() error {
 		// if status is empty it indicates this is a create operation
 		if _, status := i.diff.GetChange("status"); status == "" {
 			if newPowerStr != utils.PowerOn {
-				return fmt.Errorf(
-					"while creating instance only %s is supported, %s is not supported", utils.PowerOn, newPowerStr,
-				)
+				return fmt.Errorf("while creating instance only %s is supported", utils.PowerOn)
 			}
 			return nil
 		}
