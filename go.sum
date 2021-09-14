@@ -46,6 +46,10 @@ github.com/HdrHistogram/hdrhistogram-go v1.0.1 h1:GX8GAYDuhlFQnI2fRDHQhTlkHMz8bE
 github.com/HdrHistogram/hdrhistogram-go v1.0.1/go.mod h1:BWJ+nMSHY3L41Zj7CA3uXnloDp7xxV0YvstAE7nKTaM=
 github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk v0.0.0-20210903054934-2fa2cb096dc2 h1:r5/sF3nfYt9uiKbIdR5lldsxdC5E4G6NFjehxQyEzso=
 github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk v0.0.0-20210903054934-2fa2cb096dc2/go.mod h1:ZvrEbVcIZndDXpYV4OyAVKr0Bs1bKmpXXa4fvW8cKz0=
+github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk v0.0.0-20210913045608-d5099ae98a50 h1:SV2grhdj8e1mpPq7CPpGKVXN66IEYxQQuEtp6KFhvkg=
+github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk v0.0.0-20210913045608-d5099ae98a50/go.mod h1:ZvrEbVcIZndDXpYV4OyAVKr0Bs1bKmpXXa4fvW8cKz0=
+github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk v0.0.0-20210914063842-32c2f8ee3256 h1:laKsBW8mr5TwHlgqmi4OqL82qcvSalbE/AkeFvC/AGQ=
+github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk v0.0.0-20210914063842-32c2f8ee3256/go.mod h1:ZvrEbVcIZndDXpYV4OyAVKr0Bs1bKmpXXa4fvW8cKz0=
 github.com/Masterminds/goutils v1.1.0 h1:zukEsf/1JZwCMgHiK3GZftabmxiCw4apj3a28RPBiVg=
 github.com/Masterminds/goutils v1.1.0/go.mod h1:8cTjp+g8YejhMuvIA5y2vz3BpJxksy863GQaJW2MFNU=
 github.com/Masterminds/semver v1.5.0 h1:H65muMkzWKEuNDnfl9d70GUjFniHKHRbFPGBuZ3QEww=

@@ -9,6 +9,7 @@ import apiClient "github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
 type Client struct {
 	Instance         Resource
 	InstanceClone    Resource
+	ResNetwork       Resource
 	Network          DataSource
 	Plan             DataSource
 	Group            DataSource
@@ -34,6 +35,7 @@ func NewClient(client *apiClient.APIClient, cfg apiClient.Configuration) *Client
 			&apiClient.InstancesAPIService{Client: client, Cfg: cfg},
 			&apiClient.ServersAPIService{Client: client, Cfg: cfg},
 		),
+		ResNetwork:    newResNetwork(&apiClient.NetworksAPIService{Client: client, Cfg: cfg}),
 		Network:       newNetwork(&apiClient.NetworksAPIService{Client: client, Cfg: cfg}),
 		Plan:          newPlan(&apiClient.PlansAPIService{Client: client, Cfg: cfg}),
 		Group:         newGroup(&apiClient.GroupsAPIService{Client: client, Cfg: cfg}),
