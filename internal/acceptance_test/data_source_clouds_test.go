@@ -19,9 +19,7 @@ func TestAccDataSourceCloud(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccDataSourceCloudConfig(),
-				Check: resource.ComposeTestCheckFunc(
-					validateDataSourceID("data.hpegl_vmaas_cloud." + viper.GetString("vmaas.data_source_clouds.cloudLocalName")),
-				),
+				Check:  validateDataSourceID("data.hpegl_vmaas_cloud.cloud"),
 			},
 		},
 	})
@@ -29,8 +27,8 @@ func TestAccDataSourceCloud(t *testing.T) {
 
 func testAccDataSourceCloudConfig() string {
 	return providerStanza + fmt.Sprintf(`
-	data "hpegl_vmaas_cloud" "%s" {
+	data "hpegl_vmaas_cloud" cloud {
 		name = "%s"
 	}
-`, viper.GetString("vmaas.data_source_clouds.cloudLocalName"), viper.GetString("vmaas.data_source_clouds.cloudName"))
+`, viper.GetString("vmaas.datasource.cloud.name"))
 }

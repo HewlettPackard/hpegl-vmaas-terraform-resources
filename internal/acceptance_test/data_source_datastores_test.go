@@ -20,8 +20,7 @@ func TestAccDataSourceDataStore(t *testing.T) {
 			{
 				Config: testAccDataSourceDataStoreConfig(),
 				Check: resource.ComposeTestCheckFunc(
-					validateDataSourceID("data.hpegl_vmaas_datastore." +
-						viper.GetString("vmaas.data_source_datastores.dataStoreLocalName")),
+					validateDataSourceID("data.hpegl_vmaas_datastore.storage"),
 				),
 			},
 		},
@@ -29,12 +28,13 @@ func TestAccDataSourceDataStore(t *testing.T) {
 }
 
 func testAccDataSourceDataStoreConfig() string {
-	return providerStanza + fmt.Sprintf(`
-	data "hpegl_vmaas_datastore" "%s" {
+	return fmt.Sprintf(`%s
+	data "hpegl_vmaas_datastore" "storage" {
 		cloud_id = %d
 		name = "%s"
 	}
-`, viper.GetString("vmaas.data_source_datastores.dataStoreLocalName"),
-		viper.GetInt("vmaas.data_source_datastores.cloudID"),
-		viper.GetString("vmaas.data_source_datastores.dataStoreName"))
+	`,
+		providerStanza,
+		viper.GetInt("vmaas.datasource.datastore.cloud_id"),
+		viper.GetString("vmaas.datasource.datastore.name"))
 }

@@ -28,10 +28,11 @@ func TestAccDataSourceTemplate(t *testing.T) {
 }
 
 func testAccDataSourceTemplateConfig() string {
-	return providerStanza + fmt.Sprintf(`
-data "hpegl_vmaas_template" "%s" {
+	return fmt.Sprintf(`%s
+data "hpegl_vmaas_template" "vanilla" {
 	name = "%s"
 }
-`, viper.GetString("vmaas.data_source_templates.templateLocalName"),
-		viper.GetString("vmaas.data_source_templates.templateName"))
+`,
+		providerStanza,
+		viper.GetString("vmaas.datasource.template.name"))
 }

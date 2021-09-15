@@ -20,8 +20,7 @@ func TestAccDataSourcePowerSchedule(t *testing.T) {
 			{
 				Config: testAccDataSourcePowerScheduleConfig(),
 				Check: resource.ComposeTestCheckFunc(
-					validateDataSourceID("data.hpegl_vmaas_power_schedule." +
-						viper.GetString("vmaas.data_source_power_schedules.powerScheduleLocalName")),
+					validateDataSourceID("data.hpegl_vmaas_power_schedule.workday"),
 				),
 			},
 		},
@@ -29,10 +28,11 @@ func TestAccDataSourcePowerSchedule(t *testing.T) {
 }
 
 func testAccDataSourcePowerScheduleConfig() string {
-	return providerStanza + fmt.Sprintf(`
-data "hpegl_vmaas_power_schedule" "%s" {
+	return fmt.Sprintf(`%s
+data "hpegl_vmaas_power_schedule" "workday" {
 	name = "%s"
 }
-`, viper.GetString("vmaas.data_source_power_schedules.powerScheduleLocalName"),
-		viper.GetString("vmaas.data_source_power_schedules.powerScheduleName"))
+`,
+		providerStanza,
+		viper.GetString("vmaas.datasource.power_schedule.name"))
 }

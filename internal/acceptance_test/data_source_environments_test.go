@@ -20,8 +20,7 @@ func TestAccDataSourceEnvironment(t *testing.T) {
 			{
 				Config: testAccDataSourceEnvironmentConfig(),
 				Check: resource.ComposeTestCheckFunc(
-					validateDataSourceID("data.hpegl_vmaas_environment." +
-						viper.GetString("vmaas.data_source_environment.environmentLocalName")),
+					validateDataSourceID("data.hpegl_vmaas_environment.dev"),
 				),
 			},
 		},
@@ -29,10 +28,10 @@ func TestAccDataSourceEnvironment(t *testing.T) {
 }
 
 func testAccDataSourceEnvironmentConfig() string {
-	return providerStanza + fmt.Sprintf(`
-data "hpegl_vmaas_environment" "%s" {
+	return fmt.Sprintf(`%s
+data "hpegl_vmaas_environment" "dev" {
 	name = "%s"
   }
-`, viper.GetString("vmaas.data_source_environment.environmentLocalName"),
-		viper.GetString("vmaas.data_source_environment.environmentName"))
+`, providerStanza,
+		viper.GetString("vmaas.datasource.environment.name"))
 }
