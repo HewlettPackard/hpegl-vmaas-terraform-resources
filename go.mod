@@ -9,7 +9,7 @@ require (
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.7.1
 	github.com/hewlettpackard/hpegl-provider-lib v0.0.4
 	github.com/spf13/viper v1.8.1
-	github.com/tshihad/tftags v0.0.2
+	github.com/tshihad/tftags v0.0.3
 )
 
 require (
