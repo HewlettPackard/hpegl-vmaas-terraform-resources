@@ -182,15 +182,6 @@ func getInstanceDefaultSchema(isClone bool) *schema.Resource {
 				Optional:    true,
 				Description: "Hostname for the instance",
 			},
-			"ip": {
-				Type:        schema.TypeList,
-				Computed:    true,
-				Optional:    true,
-				Description: "IP assigned to instance",
-				Elem: &schema.Schema{
-					Type: schema.TypeString,
-				},
-			},
 			"config": {
 				Type:        schema.TypeSet,
 				ForceNew:    true,
@@ -320,7 +311,8 @@ func getInstanceDefaultSchema(isClone bool) *schema.Resource {
 					},
 				},
 			},
-			"history": schemas.GetInstanceHistorySchema(),
+			"history":    schemas.GetInstanceHistorySchema(),
+			"containers": schemas.GetInstanceContainerSchema(),
 		},
 		SchemaVersion:  0,
 		StateUpgraders: nil,

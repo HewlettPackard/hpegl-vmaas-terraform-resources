@@ -39,33 +39,54 @@ func readInstance(ctx context.Context, sharedClient instanceSharedClient, d *uti
 	}
 	instance := resp.(models.GetInstanceResponse)
 
-	volumes := d.GetListMap("volume")
+	tfInstance := models.TFInstance{}
+	if err := tftags.Get(d, &tfInstance); err != nil {
+		return err
+	}
+
 	// Assign proper ID for the volume, since response may contains more
-	// volumes than schema, check the name and assign ip
-	for i := range volumes {
+	// volumes than schema, check the name and assign id
+	for i := range tfInstance.Volume {
 		for _, vModel := range instance.Instance.Volumes {
-			if vModel.Name == volumes[i]["name"].(string) {
-				volumes[i]["id"] = vModel.ID
+			if vModel.Name == tfInstance.Volume[i].Name {
+				tfInstance.Volume[i].ID = vModel.ID
+				break
 			}
 		}
 	}
-
-	d.Set("volume", volumes)
-	// Write IPs and hostname in to state file
-	instanceSetIP(d, instance)
-	instanceSetHostname(d, instance)
-	// set network internal_id, name and is_primary
-	if err := instanceSetNetwork(ctx, meta, d, sharedClient); err != nil {
-		return err
-	}
-	// set snapshot details
-	instanceSetSnaphot(ctx, sharedClient, meta, d, instance.Instance.ID)
-	instanceSetHistory(ctx, meta, sharedClient, d, instance.Instance.ID)
+	// Invoke all API request parallely
+	// Get server details
+	serverRetry := &utils.CustomRetry{}
+	serverRetry.RetryParallel(ctx, meta, func(ctx context.Context) (interface{}, error) {
+		return sharedClient.sClient.GetSpecificServer(ctx, d.GetInt("server_id"))
+	})
+	// get snapshot details
+	snapshotRetry := &utils.CustomRetry{}
+	snapshotRetry.RetryParallel(ctx, meta, func(ctx context.Context) (interface{}, error) {
+		return sharedClient.iClient.GetListOfSnapshotsForAnInstance(ctx, instance.Instance.ID)
+	})
+	// Get history details
+	historyRetry := &utils.CustomRetry{}
+	historyRetry.RetryParallel(ctx, meta, func(ctx context.Context) (interface{}, error) {
+		return sharedClient.iClient.GetInstanceHistory(ctx, instance.Instance.ID)
+	})
 
 	if isClone {
 		d.Set("layout_id", instance.Instance.Layout.ID)
 	}
-	d.SetString("status", instance.Instance.Status)
+
+	tfInstance.Network, err = instanceGetNetworkModel(tfInstance.Network, serverRetry)
+	if err != nil {
+		return err
+	}
+
+	tfInstance.Status = instance.Instance.Status
+	tfInstance.Snapshot = instanceGetSnaphotModel(tfInstance.Snapshot, snapshotRetry)
+	tfInstance.History = instanceGetHistoryModel(historyRetry)
+	tfInstance.Containers = instance.Instance.ContainerDetails
+
+	tftags.Set(d, tfInstance)
+
 	d.SetID(instance.Instance.ID)
 
 	// post check
@@ -434,42 +455,25 @@ func createInstanceSnapshot(
 	return nil
 }
 
-func instanceSetIP(d *utils.Data, instance models.GetInstanceResponse) {
-	ip := make([]string, len(instance.Instance.ConnectionInfo))
-	for i := range instance.Instance.ConnectionInfo {
-		ip[i] = instance.Instance.ConnectionInfo[i].IP
-	}
-	d.Set("ip", ip)
-}
-
-func instanceSetSnaphot(
-	ctx context.Context,
-	sharedClient instanceSharedClient,
-	meta interface{},
-	d *utils.Data,
-	instanceID int,
-) {
-	snaphotSchema := d.GetListMap("snapshot")
-	if len(snaphotSchema) == 0 {
-		return
+func instanceGetSnaphotModel(snapshot models.TFInstanceSnapshot, retry *utils.CustomRetry) models.TFInstanceSnapshot {
+	if utils.IsEmpty(snapshot) {
+		return snapshot
 	}
 
-	snaphostResp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return sharedClient.iClient.GetListOfSnapshotsForAnInstance(ctx, instanceID)
-	})
+	snaphostResp, err := retry.Wait()
 	if err != nil {
 		if pkgUtils.GetStatusCode(err) != http.StatusNotFound {
-			return
+			return snapshot
 		}
-		snaphotSchema[0]["is_snapshot_exists"] = false
+		snapshot.IsSnapshotExists = false
 
-		return
+		return snapshot
 	}
-	id := instanceCheckSnaphotByName(snaphotSchema[0]["name"].(string), snaphostResp)
-	snaphotSchema[0]["id"] = id
-	snaphotSchema[0]["is_snapshot_exists"] = !(id == -1)
+	id := instanceCheckSnaphotByName(snapshot.Name, snaphostResp)
+	snapshot.ID = id
+	snapshot.IsSnapshotExists = !(id == -1)
 
-	d.Set("snapshot", snaphotSchema)
+	return snapshot
 }
 
 func instanceCheckSnaphotByName(name string, snapshotResp interface{}) int {
@@ -530,31 +534,16 @@ func instanceWaitUntilCreated(ctx context.Context, sharedClient instanceSharedCl
 	return nil
 }
 
-func instanceSetHostname(d *utils.Data, instance models.GetInstanceResponse) {
-	if d.GetString("hostname") == "" {
-		d.Set("hostname", instance.Instance.HostName)
-	}
-}
-
-func instanceSetHistory(
-	ctx context.Context,
-	meta interface{},
-	sharedClient instanceSharedClient,
-	d *utils.Data,
-	instanceID int,
-) {
-	resp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return sharedClient.iClient.GetInstanceHistory(ctx, instanceID)
-	})
+func instanceGetHistoryModel(retry *utils.CustomRetry) []models.GetInstanceHistoryProcesses {
+	resp, err := retry.Wait()
 	if err != nil {
-		log.Printf("[WARN] Failed to retrieve the history for InstanceID: %d", instanceID)
-		return
+		log.Printf("[WARN] Failed to retrieve the history with error %v", err)
+
+		return nil
 	}
 	historyModel := resp.(models.GetInstanceHistory)
 
-	tftags.Set(d, models.TFInstance{
-		History: historyModel.Processes,
-	})
+	return historyModel.Processes
 }
 
 func instanceGetResizeNetwork(network []map[string]interface{}) []models.CreateInstanceBodyNetworkInterfaces {
@@ -591,33 +580,22 @@ func instanceSetServerID(ctx context.Context, meta interface{}, d *utils.Data, s
 	return nil
 }
 
-func instanceSetNetwork(
-	ctx context.Context,
-	meta interface{},
-	d *utils.Data,
-	sharedClient instanceSharedClient,
-) error {
-	resp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return sharedClient.sClient.GetSpecificServer(ctx, d.GetInt("server_id"))
-	})
+func instanceGetNetworkModel(networks []models.TFInstanceNetwork, retry *utils.CustomRetry) ([]models.TFInstanceNetwork, error) {
+	resp, err := retry.Wait()
 	if err != nil {
-		return err
+		return nil, err
 	}
 	serverInterface := resp.(models.GetSpecificServerResponse).Server.Interfaces
-	networks := d.GetListMap("network")
 	if len(serverInterface) != len(networks) {
-		return fmt.Errorf("failed to set network. There is mismatch on created network and the terraform state")
+		return nil, fmt.Errorf("failed to set network. There is mismatch on created network and the terraform state")
+	}
+	for i, s := range serverInterface {
+		networks[i].InternalID = s.ID
+		networks[i].IsPrimary = s.PrimaryInterface
+		networks[i].Name = s.Name
 	}
 
-	for i := range networks {
-		networks[i]["internal_id"] = serverInterface[i].ID
-		networks[i]["is_primary"] = serverInterface[i].PrimaryInterface
-		networks[i]["name"] = serverInterface[i].Name
-	}
-
-	d.Set("network", networks)
-
-	return nil
+	return networks, nil
 }
 
 func instanceUpdateNetworkVolume(
