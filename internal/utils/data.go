@@ -205,6 +205,7 @@ func (d *Data) getOk(key string, ignore []bool) (interface{}, bool) {
 
 	return val, ok
 }
+
 func (d *Data) GetOk(key string) (interface{}, bool) {
 	return d.d.GetOk(key)
 }
