@@ -46,5 +46,5 @@ func TestMain(m *testing.M) {
 	// TF_ACC_CONFIG_PATH set in make acceptance
 	libUtils.ReadAccConfig(os.Getenv("TF_ACC_CONFIG_PATH"))
 	m.Run()
-	os.Exit(0)
+	// os.Exit(0)
 }

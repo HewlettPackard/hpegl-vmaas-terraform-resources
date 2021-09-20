@@ -37,16 +37,15 @@ func TestAccResourceInstanceCreate(t *testing.T) {
 		t.Skip("Skipping instance resource creation in short mode")
 	}
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:  func() { testAccPreCheck(t) },
-		Providers: testAccProviders,
-		CheckDestroy: resource.ComposeTestCheckFunc(testVmaasInstanceDestroy("hpegl_vmaas_instance." +
-			viper.GetString("vmaas.resource_instances.instanceLocalName"))),
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: resource.ComposeTestCheckFunc(testVmaasInstanceDestroy("hpegl_vmaas_instance.tf_instance")),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceInstance(),
 				Check: resource.ComposeTestCheckFunc(
 					validateResource(
-						"hpegl_vmaas_instance."+viper.GetString("vmaas.resource_instances.instanceLocalName"),
+						"hpegl_vmaas_instance.tf_instance",
 						validateVmaasInstanceStatus,
 					),
 				),
@@ -92,48 +91,34 @@ func testVmaasInstanceDestroy(name string) resource.TestCheckFunc {
 
 func testAccResourceInstance() string {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
-
 	instancePrimitiveStanza := fmt.Sprintf(`
-			name               = "tf_acc_%d"
+			name               = "%s_%d"
 			cloud_id           = %d
 			group_id           = %d
 			layout_id          = %d
 			plan_id            = %d
 			instance_type_code = "%s"
 			scale = %d
-`, r.Int63n(999999),
-		viper.GetInt("vmaas.resource_instances.instanceCloudID"),
-		viper.GetInt("vmaas.resource_instances.instanceGroupID"),
-		viper.GetInt("vmaas.resource_instances.instanceLayoutID"),
-		viper.GetInt("vmaas.resource_instances.instancePlanID"),
-		viper.GetString("vmaas.resource_instances.instanceTypeCode"),
-		viper.GetInt("vmaas.resource_instances.instanceScaleCount"))
-
-	networkStanza := fmt.Sprintf(`
-			network {
-			  id = %d
-			  interface_id = %d
-			}`, viper.GetInt("vmaas.resource_instances_clone.instanceCloneNetworkID"),
-		viper.GetInt("vmaas.resource_instances_clone.instanceCloneNetworkInterfaceID"))
-
-	volumeStanza := fmt.Sprintf(`
-			volume {
-			  name         = "%s"
-			  size         = %d
-			  datastore_id = %d
-			}`, viper.GetString("vmaas.resource_instances.instanceVolumeName"),
-		r.Intn(5)+5,
-		viper.GetInt("vmaas.resource_instances.instanceVolumeDatastoreID"))
+`,
+		viper.GetString("vmaas.resource.instance.name"),
+		r.Int63n(999999),
+		viper.GetInt("vmaas.resource.instance.cloud_id"),
+		viper.GetInt("vmaas.resource.instance.group_id"),
+		viper.GetInt("vmaas.resource.instance.layout_id"),
+		viper.GetInt("vmaas.resource.instance.plan_id"),
+		viper.GetString("vmaas.resource.instance.instance_type_code"),
+		viper.GetInt("vmaas.resource.instance.scale"))
 
 	configStanza := fmt.Sprintf(`
-		config {
-			  resource_pool_id = %d
-			  no_agent         = %t
-			  template_id	   = %d 
-			}
-`, viper.GetInt("vmaas.resource_instances.instanceResourcePoolID"),
-		viper.GetBool("vmaas.resource_instances.instanceAgentInstall"),
-		viper.GetInt("vmaas.resource_instances.instanceTemplateID"))
+			config {
+				resource_pool_id = %d
+				no_agent         = %t
+				template_id	   = %d
+				}
+			`,
+		viper.GetInt("vmaas.resource.instance.config.resource_pool_id"),
+		viper.GetBool("vmaas.resource.instance.config.no_agent"),
+		viper.GetInt("vmaas.resource.instance.config.template_id"))
 
 	return providerStanza + fmt.Sprintf(`
 		resource "hpegl_vmaas_instance" "%s" {
@@ -141,8 +126,11 @@ func testAccResourceInstance() string {
 			%s
 			%s
 			%s
-			%s
 		}
-	`, viper.GetString("vmaas.resource_instances.instanceLocalName"),
-		instancePrimitiveStanza, networkStanza, networkStanza, volumeStanza, configStanza)
+	`, "tf_instance",
+		instancePrimitiveStanza,
+		getNetworkStanza(),
+		getVolumeStanza(),
+		configStanza,
+	)
 }
