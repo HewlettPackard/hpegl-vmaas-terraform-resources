@@ -97,6 +97,7 @@ func getNetworkStanza() string {
 			viper.GetInt("vmaas.resource.instance.network."+strconv.Itoa(i)+".id"),
 			viper.GetInt("vmaas.resource.instance.network."+strconv.Itoa(i)+".interface_id"))
 	}
+
 	return networkStanza
 }
 
@@ -116,5 +117,6 @@ func getVolumeStanza() string {
 			r.Intn(5)+5,
 			viper.GetString("vmaas.resource.instance.volume."+strconv.Itoa(i)+".datastore_id"))
 	}
+
 	return volumeStanza
 }
