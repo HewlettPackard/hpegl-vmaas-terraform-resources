@@ -42,6 +42,7 @@ func TestProvider(t *testing.T) {
 	testAccPreCheck(t)
 }
 
+// nolint
 func TestMain(m *testing.M) {
 	// TF_ACC_CONFIG_PATH set in make acceptance
 	libUtils.ReadAccConfig(os.Getenv("TF_ACC_CONFIG_PATH"))
