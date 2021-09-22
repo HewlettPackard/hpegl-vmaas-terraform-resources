@@ -20,7 +20,7 @@ func TestAccDataSourceLayout(t *testing.T) {
 			{
 				Config: testAccDataSourceLayoutConfig(),
 				Check: resource.ComposeTestCheckFunc(
-					validateDataSourceID("data.hpegl_vmaas_layout." + viper.GetString("vmaas.data_source_layout.layoutLocalName")),
+					validateDataSourceID("data.hpegl_vmaas_layout.vmware"),
 				),
 			},
 		},
@@ -28,12 +28,12 @@ func TestAccDataSourceLayout(t *testing.T) {
 }
 
 func testAccDataSourceLayoutConfig() string {
-	return providerStanza + fmt.Sprintf(`
-data "hpegl_vmaas_layout" "%s" {
+	return fmt.Sprintf(`%s
+data "hpegl_vmaas_layout" "vmware" {
 	name               = "%s"
 	instance_type_code = "%s"
 }
-`, viper.GetString("vmaas.data_source_layout.layoutLocalName"),
-		viper.GetString("vmaas.data_source_layout.layoutName"),
-		viper.GetString("vmaas.data_source_layout.layoutInstanceTypeCode"))
+`, providerStanza,
+		viper.GetString("vmaas.datasource.layout.name"),
+		viper.GetString("vmaas.datasource.layout.instance_type_code"))
 }

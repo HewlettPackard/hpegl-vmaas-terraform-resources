@@ -50,11 +50,12 @@ func readInstance(ctx context.Context, sharedClient instanceSharedClient, d *uti
 		for _, vModel := range instance.Instance.Volumes {
 			if vModel.Name == tfInstance.Volume[i].Name {
 				tfInstance.Volume[i].ID = vModel.ID
+
 				break
 			}
 		}
 	}
-	// Invoke all API request parallely
+	// Invoke all API request in parallel
 	// Get server details
 	serverRetry := &utils.CustomRetry{}
 	serverRetry.RetryParallel(ctx, meta, func(ctx context.Context) (interface{}, error) {
@@ -580,7 +581,8 @@ func instanceSetServerID(ctx context.Context, meta interface{}, d *utils.Data, s
 	return nil
 }
 
-func instanceGetNetworkModel(networks []models.TFInstanceNetwork, retry *utils.CustomRetry) ([]models.TFInstanceNetwork, error) {
+func instanceGetNetworkModel(
+	networks []models.TFInstanceNetwork, retry *utils.CustomRetry) ([]models.TFInstanceNetwork, error) {
 	resp, err := retry.Wait()
 	if err != nil {
 		return nil, err

@@ -1,5 +1,3 @@
-[![CircleCI](https://circleci.com/gh/hpe-hcss/vmaas-terraform-resources.svg?style=svg&circle-token=c1c7aa2b581ba9afdc027b995e98cfeca6ce15f5)](https://circleci.com/gh/hpe-hcss/vmaas-terraform-resources)
-
 # vmaas-terraform-resources
 
 - [vmaas-terraform-resources](#vmaas-terraform-resources)

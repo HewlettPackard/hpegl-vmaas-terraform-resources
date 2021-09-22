@@ -182,6 +182,7 @@ func (i *Instance) instanceValidatePowerTransition() error {
 			if newPowerStr != utils.PowerOn {
 				return fmt.Errorf("while creating instance only %s is supported", utils.PowerOn)
 			}
+
 			return nil
 		}
 		// In case of update operation consider oldPower = powerOn

@@ -20,8 +20,7 @@ func TestAccDataSourceResourcePool(t *testing.T) {
 			{
 				Config: testAccDataSourceResourcePoolConfig(),
 				Check: resource.ComposeTestCheckFunc(
-					validateDataSourceID("data.hpegl_vmaas_resource_pool." +
-						viper.GetString("vmaas.data_source_resource_pools.resourcePoolLocalName")),
+					validateDataSourceID("data.hpegl_vmaas_resource_pool.compute"),
 				),
 			},
 		},
@@ -29,12 +28,13 @@ func TestAccDataSourceResourcePool(t *testing.T) {
 }
 
 func testAccDataSourceResourcePoolConfig() string {
-	return providerStanza + fmt.Sprintf(`
-data "hpegl_vmaas_resource_pool" "%s" {
+	return fmt.Sprintf(`%s
+data "hpegl_vmaas_resource_pool" "compute" {
 	cloud_id = %d
 	name     = "%s"
 }
-`, viper.GetString("vmaas.data_source_resource_pools.resourcePoolLocalName"),
-		viper.GetInt("vmaas.data_source_resource_pools.resourcePoolCloudID"),
-		viper.GetString("vmaas.data_source_resource_pools.resourcePoolName"))
+`,
+		providerStanza,
+		viper.GetInt("vmaas.datasource.resource_pool.cloud_id"),
+		viper.GetString("vmaas.datasource.resource_pool.name"))
 }

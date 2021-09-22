@@ -1,5 +1,7 @@
 vmaas:
+# Resources
   resource:
+
     instance:
       name: tf_acc
       cloud_id: 1
@@ -13,15 +15,54 @@ vmaas:
         - id: 6
           interface_id: 4
       volume:
-        name: root_vol
-        size: 7
-        datastore_id: "13"
+        - name: root_vol
+          datastore_id: "13"
       config:
         resource_pool_id: 3
         no_agent: true
         template_id: 580
       scale: 4
 
+    instance_clone:
+      source_instance_id: 123
+      network_id: 6
+      network_interface_id: 4
+
+# Data sources
   datasource:
     cloud:
-      name: "HPE GreenLake VMaaS Cloud"
+      name: HPE GreenLake VMaaS Cloud
+
+    datastore:
+      name: GLHC-Vol10
+      cloud_id: 1
+
+    environment:
+      name: dev
+
+    group:
+      name: test_dev_group
+
+    layout:
+      name: Vmware VM
+      instance_type_code: vmware
+
+    network_interface:
+      name: E1000
+      cloud_id: 1
+
+    network:
+      name: Test_Network
+
+    plan:
+      name: G1-Small
+
+    power_schedule:
+      name: TF_Weekday
+
+    resource_pool:
+      cloud_id: 1
+      name: ComputeResourcePool
+
+    template:
+      name: vanilla-centos7-x86_64-09072020

@@ -4,12 +4,16 @@ package acceptancetest
 
 import (
 	"fmt"
+	"math/rand"
 	"os"
+	"strconv"
+	"time"
 
 	api_client "github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/constants"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
+	"github.com/spf13/viper"
 )
 
 const providerStanza = `
@@ -78,4 +82,41 @@ func getAPIClient() (*api_client.APIClient, api_client.Configuration) {
 	apiClient := api_client.NewAPIClient(&cfg, false)
 
 	return apiClient, cfg
+}
+
+func getNetworkStanza() string {
+	networks := viper.Get("vmaas.resource.instance.network")
+	var networkStanza string
+	for i := range networks.([]interface{}) {
+		networkStanza = fmt.Sprintf(`%s
+		network {
+		  id = %d
+		  interface_id = %d
+		}`,
+			networkStanza,
+			viper.GetInt("vmaas.resource.instance.network."+strconv.Itoa(i)+".id"),
+			viper.GetInt("vmaas.resource.instance.network."+strconv.Itoa(i)+".interface_id"))
+	}
+
+	return networkStanza
+}
+
+func getVolumeStanza() string {
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	volumes := viper.Get("vmaas.resource.instance.volume")
+	var volumeStanza string
+	for i := range volumes.([]interface{}) {
+		volumeStanza = fmt.Sprintf(`%s
+		volume {
+			name         = "%s"
+			size         = %d
+			datastore_id = %s
+		}`,
+			volumeStanza,
+			viper.GetString("vmaas.resource.instance.volume."+strconv.Itoa(i)+".name"),
+			r.Intn(5)+5,
+			viper.GetString("vmaas.resource.instance.volume."+strconv.Itoa(i)+".datastore_id"))
+	}
+
+	return volumeStanza
 }

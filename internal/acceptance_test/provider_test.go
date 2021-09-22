@@ -6,7 +6,7 @@ import (
 	"os"
 	"testing"
 
-	testutils "github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/test-utils"
+	testutils "github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/test-utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	libUtils "github.com/hewlettpackard/hpegl-provider-lib/pkg/utils"
 )
@@ -42,9 +42,10 @@ func TestProvider(t *testing.T) {
 	testAccPreCheck(t)
 }
 
+// nolint
 func TestMain(m *testing.M) {
 	// TF_ACC_CONFIG_PATH set in make acceptance
 	libUtils.ReadAccConfig(os.Getenv("TF_ACC_CONFIG_PATH"))
 	m.Run()
-	os.Exit(0)
+	// os.Exit(0)
 }
