@@ -17,7 +17,9 @@ const (
 	DSNetworkInterface = "hpegl_vmaas_network_interface"
 	DSCloudFolder      = "hpegl_vmaas_cloud_folder"
 	// resource key
-	ResInstance = "hpegl_vmaas_instance"
+	ResInstance      = "hpegl_vmaas_instance"
+	ResInstanceClone = "hpegl_vmaas_instance_clone"
+	ResNetwork       = "hpegl_vmaas_network"
 
 	// documentation related constants
 	generalNamedesc = "Name of the %s as it appears on GLPC Portal. " +
