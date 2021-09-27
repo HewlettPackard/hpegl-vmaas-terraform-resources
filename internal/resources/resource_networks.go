@@ -29,6 +29,11 @@ func Network() *schema.Resource {
 				Computed:    true,
 				Description: "Display name of the network",
 			},
+			"group_id": {
+				Type:        schema.TypeInt,
+				Optional:    true,
+				Description: "ID of the group in which network associated. Please use " + DSGroup + " data source to retrieve ID",
+			},
 			"code": {
 				Type:        schema.TypeString,
 				Computed:    true,
@@ -45,7 +50,7 @@ func Network() *schema.Resource {
 				Description: "Type id for the NSX-T. This value will be constant always",
 			},
 			"external_id": {
-				Type:        schema.TypeInt,
+				Type:        schema.TypeString,
 				Computed:    true,
 				Description: "External ID ",
 			},
@@ -55,13 +60,13 @@ func Network() *schema.Resource {
 				Description: "Internal ID",
 			},
 			"unique_id": {
-				Type:        schema.TypeInt,
+				Type:        schema.TypeString,
 				Computed:    true,
 				Description: "Unique ID",
 			},
 			"gateway": {
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 				Description: "Gateway address for the network",
 			},
 			"netmask": {
@@ -95,8 +100,8 @@ func Network() *schema.Resource {
 				Description: "Dentes whether scan network",
 			},
 			"dhcp_server": {
-				Type:        schema.TypeString,
-				Optional:    true,
+				Type:        schema.TypeBool,
+				Required:    true,
 				Description: "DHCP server address",
 			},
 			"appliance_url_proxy_bypass": {
@@ -111,7 +116,7 @@ func Network() *schema.Resource {
 			},
 			"config": {
 				Type:        schema.TypeSet,
-				Required:    true,
+				Optional:    true,
 				Description: "Network configuration",
 				MaxItems:    1,
 				Elem: &schema.Resource{
@@ -158,7 +163,7 @@ func Network() *schema.Resource {
 			},
 			"scope_id": {
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 				Description: "Scope ID",
 			},
 		},
@@ -199,7 +204,7 @@ func resNetworkCreateContext(ctx context.Context, rd *schema.ResourceData, meta 
 		return diag.FromErr(err)
 	}
 
-	return nil
+	return resNetworkReadContext(ctx, rd, meta)
 }
 func resNetworkDeleteContext(ctx context.Context, rd *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, err := client.GetClientFromMetaMap(meta)
