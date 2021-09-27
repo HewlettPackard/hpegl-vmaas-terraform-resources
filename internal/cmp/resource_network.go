@@ -78,7 +78,6 @@ func (r *resNetwork) Create(ctx context.Context, d *utils.Data, meta interface{}
 			Network: createReq,
 		})
 	})
-
 	if err != nil {
 		return err
 	}
