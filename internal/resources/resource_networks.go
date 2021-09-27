@@ -192,6 +192,7 @@ func resNetworkReadContext(ctx context.Context, rd *schema.ResourceData, meta in
 
 	return nil
 }
+
 func resNetworkCreateContext(ctx context.Context, rd *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, err := client.GetClientFromMetaMap(meta)
 	if err != nil {
@@ -206,6 +207,7 @@ func resNetworkCreateContext(ctx context.Context, rd *schema.ResourceData, meta 
 
 	return resNetworkReadContext(ctx, rd, meta)
 }
+
 func resNetworkDeleteContext(ctx context.Context, rd *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, err := client.GetClientFromMetaMap(meta)
 	if err != nil {
@@ -220,6 +222,7 @@ func resNetworkDeleteContext(ctx context.Context, rd *schema.ResourceData, meta 
 
 	return nil
 }
+
 func resNetworkUpdateContext(ctx context.Context, rd *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, err := client.GetClientFromMetaMap(meta)
 	if err != nil {
