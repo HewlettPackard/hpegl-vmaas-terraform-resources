@@ -40,6 +40,7 @@ func (r Registration) SupportedResources() map[string]*schema.Resource {
 	return map[string]*schema.Resource{
 		"hpegl_vmaas_instance":       resources.Instances(),
 		"hpegl_vmaas_instance_clone": resources.InstancesClone(),
+		resources.ResRouter:    resources.Router(),
 	}
 }
 

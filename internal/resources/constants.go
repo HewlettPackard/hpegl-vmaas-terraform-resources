@@ -18,6 +18,7 @@ const (
 	DSCloudFolder      = "hpegl_vmaas_cloud_folder"
 	// resource key
 	ResInstance = "hpegl_vmaas_instance"
+	ResRouter   = "hpegl_vmaas_router"
 
 	// documentation related constants
 	generalNamedesc = "Name of the %s as it appears on GLPC Portal. " +

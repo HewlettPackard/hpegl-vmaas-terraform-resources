@@ -102,8 +102,8 @@ func retry(
 				if i == cRetry.RetryCount-1 {
 					apiChan <- continueStruct{
 						respErr: fmt.Errorf(
-							"maximum retry limit reached, with Error: %#v, Response: %#v",
-							continueChan.respErr,
+							"maximum retry limit reached, with Error: %s, Response: %#v",
+							continueChan.respErr.Error(),
 							continueChan.resp,
 						),
 					}
