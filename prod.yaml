@@ -22,10 +22,10 @@ vmaas:
       name: E1000
       cloud_id: 3
 
-    networks:
+    network:
       name: Blue-Net
 
-    plans:
+    plan:
       name: G1-Small
 
     power_schedule:
@@ -48,15 +48,20 @@ vmaas:
           interface_id: 0
 
     instance:
-      name: tf_acc
+      name: tf_instance
       cloud_id: 3
       group_id: 6
       layout_id: 339
       plan_id: 1221
       instance_type_code: vmware
+      network:
+        - id: 117
+          interface_id: 0
+        - id: 117
+          interface_id: 0
       volume:
         - name: root_vol
-          datastore_id: 37254
+          datastore_id: 24
       scale: 2
       config:
         resource_pool_id: 6

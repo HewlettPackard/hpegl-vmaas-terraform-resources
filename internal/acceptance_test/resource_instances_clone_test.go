@@ -103,16 +103,15 @@ func testAccResourceInstanceClone() string {
 		viper.GetInt("vmaas.resource.instance_clone.network.0.id"),
 		viper.GetInt("vmaas.resource.instance_clone.network.0.interface_id"))
 
-	return providerStanza + fmt.Sprintf(`%s
+	return fmt.Sprintf(`%s
 		resource "hpegl_vmaas_instance_clone" "tf_clone" {
 			name               = "tf_acc_clone_%d"
 			source_instance_id = %d
-			%s
 			%s
 		}
 	`,
 		providerStanza,
 		r.Int63n(999999),
 		viper.GetInt("vmaas.resource.instance_clone.source_instance_id"),
-		networkStanza, networkStanza)
+		networkStanza)
 }

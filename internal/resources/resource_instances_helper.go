@@ -318,7 +318,7 @@ func getInstanceDefaultSchema(isClone bool) *schema.Resource {
 		StateUpgraders: nil,
 		CustomizeDiff:  nil,
 		Timeouts: &schema.ResourceTimeout{
-			Create: schema.DefaultTimeout(10 * time.Minute),
+			Create: schema.DefaultTimeout(30 * time.Minute),
 			Delete: schema.DefaultTimeout(10 * time.Minute),
 		},
 		Importer: &schema.ResourceImporter{
