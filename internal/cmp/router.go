@@ -29,7 +29,7 @@ func (r *router) Read(ctx context.Context, d *utils.Data, meta interface{}) erro
 
 func (r *router) Create(ctx context.Context, d *utils.Data, meta interface{}) error {
 	createReq := models.CreateRouterRequest{}
-	if err := tftags.Get(d, &createReq); err != nil {
+	if err := tftags.Get(d, &createReq.NetworkRouter); err != nil {
 		return err
 	}
 	routerResp, err := r.routerClient.CreateRouter(ctx, createReq)

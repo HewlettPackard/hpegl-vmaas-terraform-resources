@@ -1,6 +1,9 @@
 package schemas
 
-import "github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+import (
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
+)
 
 func RouterTier0ConfigSchema() *schema.Schema {
 	return &schema.Schema{
@@ -12,16 +15,20 @@ func RouterTier0ConfigSchema() *schema.Schema {
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
 				"ha_mode": {
-					Type:         schema.TypeString,
-					Optional:     true,
-					ExactlyOneOf: []string{"ACTIVE_ACTIVE"},
-					Description:  "Available values are 'ACTIVE_ACTIVE'",
+					Type:     schema.TypeString,
+					Optional: true,
+					ValidateDiagFunc: validation.ToDiagFunc(validation.StringInSlice([]string{
+						"ACTIVE_ACTIVE",
+					}, false)),
+					Description: "Available values are 'ACTIVE_ACTIVE'",
 				},
 				"fail_over": {
-					Type:         schema.TypeString,
-					Required:     true,
-					ExactlyOneOf: []string{"NON_PREEMPTIVE"},
-					Description:  "Available values are 'NON_PREEMPTIVE'",
+					Type:     schema.TypeString,
+					Required: true,
+					ValidateDiagFunc: validation.ToDiagFunc(validation.StringInSlice([]string{
+						"NON_PREEMPTIVE", "PREEMPTIVE",
+					}, false)),
+					Description: "Available values are 'NON_PREEMPTIVE'",
 				},
 				"enable_bgp": {
 					Type:     schema.TypeBool,
@@ -33,35 +40,35 @@ func RouterTier0ConfigSchema() *schema.Schema {
 					Optional: true,
 					Elem: &schema.Resource{
 						Schema: map[string]*schema.Schema{
-							"TIER0_STATIC": {
+							"tier0_static": {
 								Type:     schema.TypeBool,
 								Optional: true,
 							},
-							"TIER0_NAT": {
+							"tier0_nat": {
 								Type:     schema.TypeBool,
 								Optional: true,
 							},
-							"TIER0_IPSEC_LOCAL_IP": {
+							"tier0_ipsec_local_ip": {
 								Type:     schema.TypeBool,
 								Optional: true,
 							},
-							"TIER0_DNS_FORWARDER_IP": {
+							"tier0_dns_forwarder_ip": {
 								Type:     schema.TypeBool,
 								Optional: true,
 							},
-							"TIER0_SERVICE_INTERFACE": {
+							"tier0_service_interface": {
 								Type:     schema.TypeBool,
 								Optional: true,
 							},
-							"TIER0_EXTERNAL_INTERFACE": {
+							"tier0_external_interface": {
 								Type:     schema.TypeBool,
 								Optional: true,
 							},
-							"TIER0_LOOPBACK_INTERFACE": {
+							"tier0_loopback_interface": {
 								Type:     schema.TypeBool,
 								Optional: true,
 							},
-							"TIER0_SEGMENT": {
+							"tier0_segment": {
 								Type:     schema.TypeBool,
 								Optional: true,
 							},
@@ -74,35 +81,35 @@ func RouterTier0ConfigSchema() *schema.Schema {
 					Optional: true,
 					Elem: &schema.Resource{
 						Schema: map[string]*schema.Schema{
-							"TIER1_DNS_FORWARDER_IP": {
+							"tier1_dns_forwarder_ip": {
 								Type:     schema.TypeBool,
 								Optional: true,
 							},
-							"TIER1_STATIC": {
+							"tier1_static": {
 								Type:     schema.TypeBool,
 								Optional: true,
 							},
-							"TIER1_LB_VIP": {
+							"tier1_lb_vip": {
 								Type:     schema.TypeBool,
 								Optional: true,
 							},
-							"TIER1_NAT": {
+							"tier1_nat": {
 								Type:     schema.TypeBool,
 								Optional: true,
 							},
-							"TIER1_LB_SNAT": {
+							"tier1_lb_snat": {
 								Type:     schema.TypeBool,
 								Optional: true,
 							},
-							"TIER1_IPSEC_LOCAL_ENDPOINT": {
+							"tier1_ipsec_local_endpoint": {
 								Type:     schema.TypeBool,
 								Optional: true,
 							},
-							"TIER1_SERVICE_INTERFACE": {
+							"tier1_service_interface": {
 								Type:     schema.TypeBool,
 								Optional: true,
 							},
-							"TIER1_SEGMENT": {
+							"tier1_segment": {
 								Type:     schema.TypeBool,
 								Optional: true,
 							},
@@ -114,36 +121,36 @@ func RouterTier0ConfigSchema() *schema.Schema {
 					Optional: true,
 					Elem: &schema.Resource{
 						Schema: map[string]*schema.Schema{
-							"LOCAL_AS_NUM": {
+							"local_as_num": {
 								Type:     schema.TypeInt,
 								Optional: true,
 							},
-							"ECMP": {
+							"ecmp": {
 								Type:     schema.TypeBool,
 								Optional: true,
 							},
-							"MULTIPATH_RELAX": {
+							"multipath_relax": {
 								Type:     schema.TypeBool,
 								Optional: true,
 							},
-							"INTER_SR_IBGP": {
+							"inter_sr_ibgp": {
 								Type:     schema.TypeBool,
 								Optional: true,
 							},
-							"RESTART_MODE": {
+							"restart_mode": {
 								Type:     schema.TypeString,
 								Optional: true,
-								ExactlyOneOf: []string{
+								ValidateDiagFunc: validation.ToDiagFunc(validation.StringInSlice([]string{
 									"HELPER_ONLY",
 									"GRACEFUL_RESTART_AND_HELPER",
 									"DISABLE",
-								},
+								}, false)),
 							},
-							"RESTART_TIME": {
+							"restart_time": {
 								Type:     schema.TypeInt,
 								Optional: true,
 							},
-							"STALE_ROUTE_TIME": {
+							"stale_route_time": {
 								Type:     schema.TypeInt,
 								Optional: true,
 							},
@@ -178,31 +185,31 @@ func RouterTier1ConfigSchema() *schema.Schema {
 					MaxItems: 1,
 					Elem: &schema.Resource{
 						Schema: map[string]*schema.Schema{
-							"TIER1_CONNECTED": {
+							"tier1_connected": {
 								Type:     schema.TypeBool,
 								Optional: true,
 							},
-							"TIER1_NAT": {
+							"tier1_nat": {
 								Type:     schema.TypeBool,
 								Optional: true,
 							},
-							"TIER1_STATIC_ROUTES": {
+							"tier1_static_routes": {
 								Type:     schema.TypeBool,
 								Optional: true,
 							},
-							"TIER1_LB_VIP": {
+							"tier1_lb_vip": {
 								Type:     schema.TypeBool,
 								Optional: true,
 							},
-							"TIER1_LB_SNAT": {
+							"tier1_lb_snat": {
 								Type:     schema.TypeBool,
 								Optional: true,
 							},
-							"TIER1_DNS_FORWARDER_IP": {
+							"tier1_dns_forwarder_ip": {
 								Type:     schema.TypeBool,
 								Optional: true,
 							},
-							"TIER1_IPSEC_LOCAL_ENDPOINT": {
+							"tier1_ipsec_local_endpoint": {
 								Type:     schema.TypeBool,
 								Optional: true,
 							},
