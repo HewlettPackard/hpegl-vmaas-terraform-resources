@@ -5,6 +5,8 @@ package resources
 const (
 	// datasource key
 	DSNetwork          = "hpegl_vmaas_network"
+	DSNetworkType      = "hpegl_vmaas_network_type"
+	DSNetworkPool      = "hpegl_vmaas_network_pool"
 	DSLayout           = "hpegl_vmaas_layout"
 	DSGroup            = "hpegl_vmaas_group"
 	DSPlan             = "hpegl_vmaas_plan"

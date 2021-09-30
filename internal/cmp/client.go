@@ -11,6 +11,8 @@ type Client struct {
 	InstanceClone    Resource
 	ResNetwork       Resource
 	Network          DataSource
+	NetworkType      DataSource
+	NetworkPool      DataSource
 	Plan             DataSource
 	Group            DataSource
 	Cloud            DataSource
@@ -37,6 +39,8 @@ func NewClient(client *apiClient.APIClient, cfg apiClient.Configuration) *Client
 		),
 		ResNetwork:    newResNetwork(&apiClient.NetworksAPIService{Client: client, Cfg: cfg}),
 		Network:       newNetwork(&apiClient.NetworksAPIService{Client: client, Cfg: cfg}),
+		NetworkType:   newNetworkType(&apiClient.NetworksAPIService{Client: client, Cfg: cfg}),
+		NetworkPool:   newNetworkPool(&apiClient.NetworksAPIService{Client: client, Cfg: cfg}),
 		Plan:          newPlan(&apiClient.PlansAPIService{Client: client, Cfg: cfg}),
 		Group:         newGroup(&apiClient.GroupsAPIService{Client: client, Cfg: cfg}),
 		Layout:        newLayout(&apiClient.LibraryAPIService{Client: client, Cfg: cfg}),
