@@ -35,5 +35,6 @@ func (n *networkType) Read(ctx context.Context, d *utils.Data, meta interface{})
 	}
 
 	d.SetID(networkResp.NetworkTypes[0].ID)
+
 	return nil
 }

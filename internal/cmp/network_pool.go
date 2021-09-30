@@ -33,6 +33,7 @@ func (n *networkPool) Read(ctx context.Context, d *utils.Data, meta interface{})
 		if p.DisplayName == name {
 			d.SetString("display_name", p.DisplayName)
 			d.SetID(p.ID)
+
 			return nil
 		}
 	}
