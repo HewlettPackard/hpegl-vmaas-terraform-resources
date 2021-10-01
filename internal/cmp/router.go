@@ -88,6 +88,7 @@ func (r *router) routerAlignRouterRequest(ctx context.Context, meta interface{},
 		routerReq.NetworkRouter.Config.HaMode = routerReq.NetworkRouter.TfTier0Config.TfHaMode
 		routerReq.NetworkRouter.Config.FailOver = routerReq.NetworkRouter.TfTier0Config.TfFailOver
 		routerReq.NetworkRouter.Config.EdgeCluster = routerReq.NetworkRouter.TfTier0Config.TfEdgeCluster
+		routerReq.NetworkRouter.Config.EnableBgp = routerReq.NetworkRouter.TfTier0Config.TfEnableBgp
 		queryParam[nameKey] = tier0GatewayType
 	} else {
 		routerReq.NetworkRouter.Config.CreateRouterTier0Config.RouteRedistributionTier1.RouteAdvertisement =
@@ -118,7 +119,6 @@ func (r *router) routerAlignRouterRequest(ctx context.Context, meta interface{},
 		return fmt.Errorf(errExactMatch, "router-type")
 	}
 	routerReq.NetworkRouter.Type.ID = routerTypes.NetworkRouterTypes[0].ID
-	routerReq.NetworkRouter.TypeID = routerTypes.NetworkRouterTypes[0].ID
 
 	nsResp, err := nsRetry.Wait()
 	if err != nil {
@@ -130,6 +130,8 @@ func (r *router) routerAlignRouterRequest(ctx context.Context, meta interface{},
 	}
 	routerReq.NetworkRouter.NetworkServer.ID = networkService.NetworkServices[0].ID
 	routerReq.NetworkRouter.NetworkServerID = networkService.NetworkServices[0].ID
+
+	routerReq.NetworkRouter.Site.ID = routerReq.NetworkRouter.GroupID
 
 	return nil
 }

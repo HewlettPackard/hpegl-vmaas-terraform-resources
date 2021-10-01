@@ -32,8 +32,9 @@ func RouterTier0ConfigSchema() *schema.Schema {
 					Description: "Available values are 'NON_PREEMPTIVE'",
 				},
 				"enable_bgp": {
-					Type:     schema.TypeBool,
-					Optional: true,
+					Type:         schema.TypeBool,
+					Optional:     true,
+					InputDefault: "true",
 				},
 				"route_redistribution_tier0": {
 					Type:     schema.TypeSet,
@@ -119,28 +120,29 @@ func RouterTier0ConfigSchema() *schema.Schema {
 				},
 				"bgp": {
 					Type:     schema.TypeSet,
-					Optional: true,
+					Required: true,
+					MaxItems: 1,
 					Elem: &schema.Resource{
 						Schema: map[string]*schema.Schema{
 							"local_as_num": {
 								Type:     schema.TypeInt,
-								Optional: true,
+								Required: true,
 							},
 							"ecmp": {
 								Type:     schema.TypeBool,
-								Optional: true,
+								Required: true,
 							},
 							"multipath_relax": {
 								Type:     schema.TypeBool,
-								Optional: true,
+								Required: true,
 							},
 							"inter_sr_ibgp": {
 								Type:     schema.TypeBool,
-								Optional: true,
+								Required: true,
 							},
 							"restart_mode": {
 								Type:     schema.TypeString,
-								Optional: true,
+								Required: true,
 								ValidateDiagFunc: validation.ToDiagFunc(validation.StringInSlice([]string{
 									"HELPER_ONLY",
 									"GRACEFUL_RESTART_AND_HELPER",
@@ -149,11 +151,11 @@ func RouterTier0ConfigSchema() *schema.Schema {
 							},
 							"restart_time": {
 								Type:     schema.TypeInt,
-								Optional: true,
+								Required: true,
 							},
 							"stale_route_time": {
+								Required: true,
 								Type:     schema.TypeInt,
-								Optional: true,
 							},
 						},
 					},

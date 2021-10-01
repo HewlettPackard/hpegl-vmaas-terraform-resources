@@ -26,9 +26,9 @@ func Router() *schema.Resource {
 				Description: "NSX-T segment network type ID",
 			},
 			"group_id": {
-				Type:        schema.TypeInt,
+				Type:        schema.TypeString,
 				Required:    true,
-				Description: "Group ID",
+				Description: "Group ID. Available values are either 'Shared' or ID fetched from " + DSGroup,
 			},
 			"enable": {
 				Type:        schema.TypeBool,
