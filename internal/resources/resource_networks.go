@@ -46,8 +46,19 @@ func Network() *schema.Resource {
 			},
 			"type_id": {
 				Type:        schema.TypeInt,
-				Computed:    true,
-				Description: "Type id for the NSX-T. This value will be constant always",
+				Required:    true,
+				Description: "Type id for the NSX-T. Use " + DSNetworkType + " Data source for retrieving type ID",
+			},
+			"parent_network_id": {
+				Type:     schema.TypeInt,
+				Optional: true,
+				Description: "Parent network ID can be obtained with " + DSNetwork + " data source/resource. This field" +
+					"should be set only when creating 'Custom Network'.",
+			},
+			"pool_id": {
+				Type:        schema.TypeInt,
+				Optional:    true,
+				Description: "Pool ID can be obtained with " + DSNetworkPool + " data source. pool_id will not support with NSX-T segment",
 			},
 			"external_id": {
 				Type:        schema.TypeString,

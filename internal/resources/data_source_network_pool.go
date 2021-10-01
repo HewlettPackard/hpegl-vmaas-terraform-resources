@@ -11,35 +11,40 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func NetworkData() *schema.Resource {
+func NetworkPoolData() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"name": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: f(generalNamedesc, "network", "network"),
+				Description: "Name of the network pool",
+			},
+			"display_name": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Display name of the network pool",
 			},
 		},
-		ReadContext: networkReadContext,
-		Description: `The ` + DSNetwork + ` data source can be used to discover the ID of a hpegl vmaas network.
-		This can then be used with resources or data sources that require a ` + DSNetwork + `,
-		such as the ` + ResInstance + ` resource.`,
+		ReadContext:    networkPoolReadContext,
 		SchemaVersion:  0,
 		StateUpgraders: nil,
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
+		Description: `The ` + DSNetworkPool + ` data source can be used to discover the ID of a hpegl vmaas network pool.
+		This can then be used with resources or data sources that require a ` + DSNetworkPool + `,
+		such as the ` + ResNetwork + ` resource (for creating non NSX-T segments).`,
 	}
 }
 
-func networkReadContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func networkPoolReadContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, err := client.GetClientFromMetaMap(meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
 	data := utils.NewData(d)
-	err = c.CmpClient.Network.Read(ctx, data, meta)
+	err = c.CmpClient.NetworkPool.Read(ctx, data, meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}
