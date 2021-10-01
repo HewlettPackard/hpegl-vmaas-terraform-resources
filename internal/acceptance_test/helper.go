@@ -120,3 +120,22 @@ func getVolumeStanza() string {
 
 	return volumeStanza
 }
+
+var skipMap map[string]bool
+
+func init() {
+	skipMap = make(map[string]bool)
+	readSkip()
+}
+func readSkip() {
+	skipItems := viper.Get("vmaas.skip")
+	for _, val := range skipItems.([]interface{}) {
+		skipMap[val.(string)] = true
+	}
+
+}
+func isSkipped(param string) bool {
+	_, ok := skipMap[param]
+
+	return ok
+}
