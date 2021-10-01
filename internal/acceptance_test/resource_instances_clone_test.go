@@ -12,7 +12,7 @@ import (
 	"time"
 
 	api_client "github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
-	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/utils"
+	pkgutils "github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 
@@ -20,6 +20,7 @@ import (
 )
 
 func TestVmaasInstanceClonePlan(t *testing.T) {
+	pkgutils.SkipAcc(t, "vmaas.resource.instance_clone")
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:  func() { testAccPreCheck(t) },
 		Providers: testAccProviders,
@@ -34,6 +35,7 @@ func TestVmaasInstanceClonePlan(t *testing.T) {
 }
 
 func TestAccResourceInstanceCloneCreate(t *testing.T) {
+	pkgutils.SkipAcc(t, "vmaas.resource.instance_clone")
 	if testing.Short() {
 		t.Skip("Skipping instance clone resource creation in short mode")
 	}
@@ -83,7 +85,7 @@ func testVmaasInstanceCloneDestroy(name string) resource.TestCheckFunc {
 		}
 		_, err = iClient.GetASpecificInstance(context.Background(), id)
 
-		statusCode := utils.GetStatusCode(err)
+		statusCode := pkgutils.GetStatusCode(err)
 		if statusCode != http.StatusNotFound {
 			return fmt.Errorf("Expected %d statuscode, but got %d", 404, statusCode)
 		}

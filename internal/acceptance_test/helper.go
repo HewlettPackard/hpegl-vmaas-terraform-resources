@@ -110,7 +110,7 @@ func getVolumeStanza() string {
 		volume {
 			name         = "%s"
 			size         = %d
-			datastore_id = %s
+			datastore_id = "%s"
 		}`,
 			volumeStanza,
 			viper.GetString("vmaas.resource.instance.volume."+strconv.Itoa(i)+".name"),
