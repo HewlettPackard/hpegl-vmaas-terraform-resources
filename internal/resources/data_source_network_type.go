@@ -11,35 +11,35 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func NetworkData() *schema.Resource {
+func NetworkTypeData() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"name": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: f(generalNamedesc, "network", "network"),
+				Description: "Name of the network type. Example 'NSX-T Segment' or 'Custom Network'",
 			},
 		},
-		ReadContext: networkReadContext,
-		Description: `The ` + DSNetwork + ` data source can be used to discover the ID of a hpegl vmaas network.
-		This can then be used with resources or data sources that require a ` + DSNetwork + `,
-		such as the ` + ResInstance + ` resource.`,
+		ReadContext:    networkTypeReadContext,
 		SchemaVersion:  0,
 		StateUpgraders: nil,
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
+		Description: `The ` + DSNetworkType + ` data source can be used to discover the ID of a hpegl vmaas network types.
+		This can then be used with resources or data sources that require a ` + DSNetworkType + `,
+		such as the ` + ResNetwork + ` resource.`,
 	}
 }
 
-func networkReadContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func networkTypeReadContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, err := client.GetClientFromMetaMap(meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
 	data := utils.NewData(d)
-	err = c.CmpClient.Network.Read(ctx, data, meta)
+	err = c.CmpClient.NetworkType.Read(ctx, data, meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}

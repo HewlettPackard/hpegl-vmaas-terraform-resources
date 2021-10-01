@@ -4,7 +4,6 @@ package cmp
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
 	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/models"
@@ -56,21 +55,7 @@ func (r *resNetwork) Create(ctx context.Context, d *utils.Data, meta interface{}
 
 	createReq.Zone.ID = createReq.CloudID
 	createReq.Site.ID = createReq.GroupID
-	// Get network type ID for NSX T Segment
-	typeResp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return r.rClient.GetNetworkType(ctx, map[string]string{
-			nameKey: nsxtSegment,
-		})
-	})
-	if err != nil {
-		return fmt.Errorf("failed to retrieve %s, got error %v", nsxtSegment, err)
-	}
-
-	networkTypes := typeResp.(models.GetNetworkTypesResponse)
-	if len(networkTypes.NetworkTypes) != 1 {
-		return fmt.Errorf("couldn't find NSX-T integration type")
-	}
-	createReq.Type.ID = networkTypes.NetworkTypes[0].ID
+	createReq.Type.ID = createReq.TypeID
 
 	// Create network
 	resp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {

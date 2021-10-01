@@ -22,6 +22,8 @@ func (r Registration) Name() string {
 func (r Registration) SupportedDataSources() map[string]*schema.Resource {
 	return map[string]*schema.Resource{
 		resources.DSNetwork:          resources.NetworkData(),
+		resources.DSNetworkType:      resources.NetworkTypeData(),
+		resources.DSNetworkPool:      resources.NetworkPoolData(),
 		resources.DSLayout:           resources.LayoutData(),
 		resources.DSGroup:            resources.GroupData(),
 		resources.DSPlan:             resources.PlanData(),

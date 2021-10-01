@@ -6,7 +6,6 @@ import "time"
 
 const (
 	vmware        = "vmware"
-	nsxtSegment   = "NSX-T Segment"
 	errExactMatch = "error, could not find the %s with the specified name. Please verify the name and try again"
 	// query params keys
 	provisionTypeKey = "provisionType"
