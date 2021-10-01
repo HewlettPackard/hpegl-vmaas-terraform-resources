@@ -56,6 +56,11 @@ github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk v0.0.0-20210927092442-2a9caa7f5
 github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk v0.0.0-20210927092442-2a9caa7f511f/go.mod h1:ZvrEbVcIZndDXpYV4OyAVKr0Bs1bKmpXXa4fvW8cKz0=
 github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk v0.0.0-20210928110031-f537ec51478e h1:KU2hfHUIF0ciMiLAEVdFsN4TesOTN4qCbDxo9za2NY8=
 github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk v0.0.0-20210928110031-f537ec51478e/go.mod h1:ZvrEbVcIZndDXpYV4OyAVKr0Bs1bKmpXXa4fvW8cKz0=
+github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk v0.0.0-20210930093922-846e8af6386c h1:4ElI4coLhf4YPYtdpeqQ4Tyts5PI0Cd745o+hC/7S2M=
+github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk v0.0.0-20210930093922-846e8af6386c/go.mod h1:ZvrEbVcIZndDXpYV4OyAVKr0Bs1bKmpXXa4fvW8cKz0=
+github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk v0.0.0-20210930105154-855dd277e701/go.mod h1:ZvrEbVcIZndDXpYV4OyAVKr0Bs1bKmpXXa4fvW8cKz0=
+github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk v0.0.0-20211001040252-d1afb0808b0c h1:wnl8TR02ScbtXWf9ZRDA+m2aSGBHoL+faNv/8elICEY=
+github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk v0.0.0-20211001040252-d1afb0808b0c/go.mod h1:ZvrEbVcIZndDXpYV4OyAVKr0Bs1bKmpXXa4fvW8cKz0=
 github.com/Masterminds/goutils v1.1.0 h1:zukEsf/1JZwCMgHiK3GZftabmxiCw4apj3a28RPBiVg=
 github.com/Masterminds/goutils v1.1.0/go.mod h1:8cTjp+g8YejhMuvIA5y2vz3BpJxksy863GQaJW2MFNU=
 github.com/Masterminds/semver v1.5.0 h1:H65muMkzWKEuNDnfl9d70GUjFniHKHRbFPGBuZ3QEww=
@@ -525,6 +530,8 @@ github.com/subosito/gotenv v1.2.0 h1:Slr1R9HxAlEKefgq5jn9U+DnETlIUa6HfgEzj0g5d7s
 github.com/subosito/gotenv v1.2.0/go.mod h1:N0PQaV/YGNqwC0u51sEeR/aUtSLEXKX9iv69rRypqCw=
 github.com/tshihad/tftags v0.0.3 h1:sC6O2Cy0JowSt7ibKtXwuTuKvGh6giGdm+sYve6U4qk=
 github.com/tshihad/tftags v0.0.3/go.mod h1:d1I8QuvIoOjoHp2zOPEAl3EbsPYj4TBTxOtIRDWUI8E=
+github.com/tshihad/tftags v0.0.4 h1:y/yTISWTgrjtA+z68jQ1zfCOcjT3/70iM2SFupYQHIY=
+github.com/tshihad/tftags v0.0.4/go.mod h1:d1I8QuvIoOjoHp2zOPEAl3EbsPYj4TBTxOtIRDWUI8E=
 github.com/uber/jaeger-client-go v2.25.0+incompatible h1:IxcNZ7WRY1Y3G4poYlx24szfsn/3LvK9QHCq9oQw8+U=
 github.com/uber/jaeger-client-go v2.25.0+incompatible/go.mod h1:WVhlPFC8FDjOFMMWRy2pZqQJSXxYSwNYOkTr/Z6d3Kk=
 github.com/uber/jaeger-lib v2.4.0+incompatible h1:fY7QsGQWiCt8pajv4r7JEvmATdCVaWxXbjwyYwsNaLQ=

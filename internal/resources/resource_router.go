@@ -27,7 +27,7 @@ func Router() *schema.Resource {
 			},
 			"group_id": {
 				Type:        schema.TypeInt,
-				Optional:    true,
+				Required:    true,
 				Description: "Group ID",
 			},
 			"enable": {
@@ -75,7 +75,7 @@ func routerCreateContext(ctx context.Context, rd *schema.ResourceData, meta inte
 		return diag.FromErr(err)
 	}
 
-	return nil
+	return routerReadContext(ctx, rd, meta)
 }
 
 func routerUpdateContext(ctx context.Context, rd *schema.ResourceData, meta interface{}) diag.Diagnostics {

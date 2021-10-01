@@ -16,4 +16,7 @@ const (
 	externalNameKey  = "externalName"
 	// retry related constants
 	maxTimeout = time.Hour * 2
+	// router consts
+	tier0GatewayType = "NSX-T Tier-0 Gateway"
+	tier1GatewayType = "NSX-T Tier-1 Gateway"
 )

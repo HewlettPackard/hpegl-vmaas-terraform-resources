@@ -11,12 +11,13 @@ func RouterTier0ConfigSchema() *schema.Schema {
 		Optional:      true,
 		Description:   "Tier0 Gateway configuration",
 		MaxItems:      1,
+		ExactlyOneOf:  []string{"tier1_config", "tier0_config"},
 		ConflictsWith: []string{"tier1_config"},
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
 				"ha_mode": {
 					Type:     schema.TypeString,
-					Optional: true,
+					Required: true,
 					ValidateDiagFunc: validation.ToDiagFunc(validation.StringInSlice([]string{
 						"ACTIVE_ACTIVE",
 					}, false)),
