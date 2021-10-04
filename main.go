@@ -8,14 +8,19 @@ import (
 	"log"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/plugin"
+	"github.com/spf13/viper"
 
 	testutils "github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/test-utils"
+	pkgutils "github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/utils"
 	libUtils "github.com/hewlettpackard/hpegl-provider-lib/pkg/utils"
 )
 
 func main() {
 	// Read config file for acceptance test if TF_ACC sets
 	libUtils.ReadAccConfig(".")
+	if viper.GetBool("TF_ACC") {
+		pkgutils.ReadSkip()
+	}
 
 	var debugMode bool
 

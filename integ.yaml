@@ -5,22 +5,19 @@ vmaas:
     instance:
       name: tf_acc
       cloud_id: 1
-      group_id: 1
+      group_id: 2
       layout_id: 113
       plan_id: 407
       instance_type_code: vmware
       network:
-        - id: 6
-          interface_id: 9
-        - id: 6
-          interface_id: 4
+        - id: 3
       volume:
         - name: root_vol
-          datastore_id: "13"
+          datastore_id: "auto"
       config:
-        resource_pool_id: 3
+        resource_pool_id: 2
         no_agent: true
-        template_id: 580
+        template_id: 504
       scale: 4
 
     instance_clone:
@@ -41,7 +38,7 @@ vmaas:
       name: dev
 
     group:
-      name: test_dev_group
+      name: tf_group
 
     layout:
       name: Vmware VM
@@ -66,3 +63,6 @@ vmaas:
 
     template:
       name: vanilla-centos7-x86_64-09072020
+
+skip:
+  - vmaas.resource.instance_clone
