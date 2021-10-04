@@ -43,6 +43,7 @@ func (r Registration) SupportedResources() map[string]*schema.Resource {
 		resources.ResInstance:      resources.Instances(),
 		resources.ResInstanceClone: resources.InstancesClone(),
 		resources.ResNetwork:       resources.Network(),
+		resources.ResRouter:        resources.Router(),
 	}
 }
 
