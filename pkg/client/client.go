@@ -60,7 +60,6 @@ func (i InitialiseClient) NewClient(r *schema.ResourceData) (interface{}, error)
 	// Read the value supplied in the tf file
 	location := vmaasProviderSettings[constants.LOCATION].(string)
 	spaceName := vmaasProviderSettings[constants.SPACENAME].(string)
-	allowInsecure := vmaasProviderSettings[constants.INSECURE].(bool)
 
 	// Create VMaas Client
 	client := new(Client)
@@ -75,7 +74,7 @@ func (i InitialiseClient) NewClient(r *schema.ResourceData) (interface{}, error)
 			constants.LocationKey: location,
 		},
 	}
-	apiClient := api_client.NewAPIClient(&cfg, !allowInsecure)
+	apiClient := api_client.NewAPIClient(&cfg)
 	client.CmpClient = cmp_client.NewClient(apiClient, cfg)
 
 	return client, nil

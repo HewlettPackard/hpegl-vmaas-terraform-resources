@@ -62,14 +62,6 @@ func (r Registration) ProviderSchemaEntry() *schema.Resource {
 				DefaultFunc: schema.EnvDefaultFunc("HPEGL_VMAAS_SPACE_NAME", ""),
 				Description: "IAM Space name of the GL VMaaS Service, can also be set with the HPEGL_VMAAS_SPACE_NAME env var.",
 			},
-			constants.INSECURE: {
-				Type:        schema.TypeBool,
-				Optional:    true,
-				DefaultFunc: schema.EnvDefaultFunc("HPEGL_VMAAS_ALLOW_INSECURE", false),
-				Description: "Skip verification of TLS certificates of API requests. You may want set this as `true` " +
-					`if you are using local API without signing certificate.
-					It can also be set with HPEGL_VMAAS_INSECURE environment variable.`,
-			},
 		},
 	}
 }
