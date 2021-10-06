@@ -1,0 +1,22 @@
+name: acc
+
+on: pull_request
+jobs:
+
+  ci:
+    runs-on: [self-hosted, Linux, ubuntu]
+    steps:
+
+      - name: Checkout workspace
+        uses: actions/checkout@v2
+
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.17
+
+      - name: Install necessary tools
+        run: make tools
+
+      - name: Run Acceptance test
+        run: make acceptance
