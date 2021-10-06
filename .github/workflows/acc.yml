@@ -3,7 +3,7 @@ name: acc
 on: pull_request
 jobs:
 
-  ci:
+  acc:
     runs-on: [self-hosted, Linux, ubuntu]
     steps:
 
