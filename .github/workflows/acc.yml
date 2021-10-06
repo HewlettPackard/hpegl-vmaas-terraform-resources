@@ -19,4 +19,8 @@ jobs:
         run: make tools
 
       - name: Run Acceptance test
+        env:
+          HPEGL_IAM_TOKEN: ${{secrets.HPEGL_IAM_TOKEN}}
+          CMP_SUBJECT: ${{secrets.CMP_SUBJECT}}
+          TF_ACC_CONFIG: ${{secrets.TF_ACC_CONFIG}}
         run: make acceptance
