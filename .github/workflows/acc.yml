@@ -15,10 +15,10 @@ jobs:
         with:
           go-version: 1.17
 
-      - name: Set up terraform
-        uses: hashicorp/setup-terraform@v1
-        with:
-          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+      # - name: Set up terraform
+      #   uses: hashicorp/setup-terraform@v1
+      #   with:
+      #     cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
       - name: Install necessary tools
         run: make tools
