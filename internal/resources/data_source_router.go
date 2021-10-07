@@ -43,5 +43,6 @@ func RouterReadContext(ctx context.Context, d *schema.ResourceData, meta interfa
 	if err != nil {
 		return diag.FromErr(err)
 	}
+
 	return nil
 }

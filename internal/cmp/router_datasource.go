@@ -43,6 +43,7 @@ func (n *routerds) Read(ctx context.Context, d *utils.Data, meta interface{}) er
 			isMatch = true
 			d.SetID(routers.NetworkRouters[i].ID)
 			log.Print("[DEBUG]", routers.NetworkRouters[i].ID)
+
 			break
 		}
 	}
