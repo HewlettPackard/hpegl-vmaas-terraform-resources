@@ -1,0 +1,29 @@
+name: acc
+
+on:
+  push:
+    branches:
+      - master
+jobs:
+
+  acc:
+    runs-on: [self-hosted, Linux, ubuntu]
+    steps:
+
+      - name: Checkout workspace
+        uses: actions/checkout@v2
+
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.17
+
+      - name: Install necessary tools
+        run: make tools
+
+      - name: Run Acceptance test
+        env:
+          HPEGL_IAM_TOKEN: ${{secrets.HPEGL_IAM_TOKEN}}
+          CMP_SUBJECT: ${{secrets.CMP_SUBJECT}}
+          TF_ACC_CONFIG: ${{secrets.TF_ACC_CONFIG}}
+        run: make acceptance
