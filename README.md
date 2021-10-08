@@ -1,4 +1,4 @@
-![acc workflow](https://github.com/HewlettPackard/hpegl-vmaas-terraform-resources/.github/workflows/acc.yml/badge.svg)
+![acc workflow](https://github.com/HewlettPackard/hpegl-vmaas-terraform-resources/actions/workflows/acc.yml/badge.svg)
 
 # vmaas-terraform-resources
 
