@@ -143,6 +143,14 @@ func (d *Data) SetID(v interface{}) {
 	d.d.SetId(stringID)
 }
 
+func (d *Data) SetId(v string) {
+	d.d.SetId(v)
+}
+
+func (d *Data) Id() string {
+	return d.d.Id()
+}
+
 func (d *Data) set(key string, value interface{}) error {
 	return d.d.Set(key, value)
 }
