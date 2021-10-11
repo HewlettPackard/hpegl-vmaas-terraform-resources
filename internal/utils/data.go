@@ -143,10 +143,12 @@ func (d *Data) SetID(v interface{}) {
 	d.d.SetId(stringID)
 }
 
+// nolint
 func (d *Data) SetId(v string) {
 	d.d.SetId(v)
 }
 
+// nolint
 func (d *Data) Id() string {
 	return d.d.Id()
 }
