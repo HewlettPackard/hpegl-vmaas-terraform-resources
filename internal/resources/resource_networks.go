@@ -5,6 +5,7 @@ package resources
 import (
 	"context"
 
+	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/resources/validations"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/utils"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/client"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -32,6 +33,7 @@ func Network() *schema.Resource {
 			"group_id": {
 				Type:        schema.TypeInt,
 				Optional:    true,
+				ForceNew:    true,
 				Description: "ID of the group in which network associated. Please use " + DSGroup + " data source to retrieve ID",
 			},
 			"code": {
@@ -43,6 +45,7 @@ func Network() *schema.Resource {
 				Type:        schema.TypeInt,
 				Required:    true,
 				Description: "Cloud ID or the zone ID",
+				ForceNew:    true,
 			},
 			"type_id": {
 				Type:        schema.TypeInt,
@@ -63,42 +66,47 @@ func Network() *schema.Resource {
 			"external_id": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: "External ID ",
+				Description: "External ID of the network",
 			},
 			"internal_id": {
-				Type:        schema.TypeInt,
+				Type:        schema.TypeString,
 				Computed:    true,
-				Description: "Internal ID",
+				Description: "Internal ID of the network",
 			},
 			"unique_id": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: "Unique ID",
+				Description: "Unique ID of the network",
 			},
 			"gateway": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "Gateway address for the network",
+				Type:             schema.TypeString,
+				Optional:         true,
+				Description:      "Gateway address for the network",
+				ValidateDiagFunc: validations.ValidateIPAddress,
 			},
 			"netmask": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "Netmask address for the network",
+				Type:             schema.TypeString,
+				Optional:         true,
+				Description:      "Netmask address for the network",
+				ValidateDiagFunc: validations.ValidateIPAddress,
 			},
 			"primary_dns": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "Primary DNS",
+				Type:             schema.TypeString,
+				Optional:         true,
+				Description:      "Primary DNS",
+				ValidateDiagFunc: validations.ValidateIPAddress,
 			},
 			"secondary_dns": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "Secondary DNS",
+				Type:             schema.TypeString,
+				Optional:         true,
+				Description:      "Secondary DNS",
+				ValidateDiagFunc: validations.ValidateIPAddress,
 			},
 			"cidr": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "CIDR of the network",
+				Type:             schema.TypeString,
+				Optional:         true,
+				Description:      "CIDR of the network",
+				ValidateDiagFunc: validations.ValidateCidr,
 			},
 			"active": {
 				Type:        schema.TypeBool,
@@ -160,8 +168,14 @@ func Network() *schema.Resource {
 							Type:        schema.TypeList,
 							Optional:    true,
 							Description: "List of site id",
-							Elem: &schema.Schema{
-								Type: schema.TypeInt,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"id": {
+										Type:        schema.TypeInt,
+										Required:    true,
+										Description: "id for the site",
+									},
+								},
 							},
 						},
 					},

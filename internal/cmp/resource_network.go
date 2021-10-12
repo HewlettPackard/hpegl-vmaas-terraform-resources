@@ -4,6 +4,7 @@ package cmp
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
 	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/models"
@@ -46,14 +47,13 @@ func (r *resNetwork) Create(ctx context.Context, d *utils.Data, meta interface{}
 		return err
 	}
 
-	createReq.Zone.ID = createReq.CloudID
-	createReq.Site.ID = createReq.GroupID
-	createReq.Type.ID = createReq.TypeID
+	alignNetworkReq(&createReq)
 
 	// Create network
 	resp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
 		return r.rClient.CreateNetwork(ctx, models.CreateNetworkRequest{
-			Network: createReq,
+			Network:             createReq,
+			ResourcePermissions: createReq.ResourcePermissions,
 		})
 	})
 	if err != nil {
@@ -64,6 +64,28 @@ func (r *resNetwork) Create(ctx context.Context, d *utils.Data, meta interface{}
 }
 
 func (r *resNetwork) Update(ctx context.Context, d *utils.Data, meta interface{}) error {
+	var networkReq models.CreateNetwork
+	if err := tftags.Get(d, &networkReq); err != nil {
+		return err
+	}
+
+	alignNetworkReq(&networkReq)
+	resp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
+		return r.rClient.UpdateNetwork(ctx, networkReq.ID, models.CreateNetworkRequest{
+			Network:             networkReq,
+			ResourcePermissions: networkReq.ResourcePermissions,
+		})
+	})
+	if err != nil {
+		return err
+	}
+
+	updateResp := resp.(models.SuccessOrErrorMessage)
+	if !updateResp.Success {
+		return fmt.Errorf("failed to update network, got success = 'false' on update, error: %v", updateResp.Error)
+	}
+	d.SetID(networkReq.ID)
+
 	return nil
 }
 
@@ -74,4 +96,13 @@ func (r *resNetwork) Delete(ctx context.Context, d *utils.Data, meta interface{}
 	})
 
 	return nil
+}
+
+func alignNetworkReq(request *models.CreateNetwork) {
+	request.Zone.ID = request.CloudID
+	request.Site.ID = request.GroupID
+	request.Type.ID = request.TypeID
+	if request.Pool != nil {
+		request.PoolID = request.Pool.ID
+	}
 }
