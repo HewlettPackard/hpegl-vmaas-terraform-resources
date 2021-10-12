@@ -11,6 +11,7 @@ func errsTodiags(errs []error) diag.Diagnostics {
 	for _, err := range errs {
 		d = append(d, diag.FromErr(err)...)
 	}
+
 	return d
 }
 
