@@ -7,6 +7,8 @@ const (
 	DSNetwork          = "hpegl_vmaas_network"
 	DSNetworkType      = "hpegl_vmaas_network_type"
 	DSNetworkPool      = "hpegl_vmaas_network_pool"
+	DSNetworkProxy     = "hpegl_vmaas_network_proxy"
+	DSNetworkDomain    = "hpegl_vmaas_network_domain"
 	DSLayout           = "hpegl_vmaas_layout"
 	DSGroup            = "hpegl_vmaas_group"
 	DSPlan             = "hpegl_vmaas_plan"
@@ -24,8 +26,6 @@ const (
 	ResInstanceClone = "hpegl_vmaas_instance_clone"
 	ResNetwork       = "hpegl_vmaas_network"
 	ResRouter        = "hpegl_vmaas_router"
-	DSDomain         = "hpegl_vmaas_domain"
-	DSProxy          = "hpegl_vmaas_proxy"
 
 	// documentation related constants
 	generalNamedesc = "Name of the %s as it appears on GLPC Portal. " +

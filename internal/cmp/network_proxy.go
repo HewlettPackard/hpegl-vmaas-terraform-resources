@@ -9,6 +9,7 @@ import (
 	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
 	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/models"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/utils"
+	"github.com/tshihad/tftags"
 )
 
 type networkProxy struct {
@@ -20,23 +21,21 @@ func newNetworkProxy(nClient *client.NetworksAPIService) *networkProxy {
 }
 
 func (n *networkProxy) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
-	name := d.GetString("name")
+	tfProxy := models.GetNetworkProxy{}
+	tftags.Get(d, &tfProxy)
+
 	resp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return n.nClient.GetNetworkPool(ctx, nil)
+		return n.nClient.GetNetworkProxy(ctx, map[string]string{
+			nameKey: tfProxy.Name,
+		})
 	})
 	if err != nil {
 		return err
 	}
-
-	poolResp := resp.(models.GetNetworkPoolsResp)
-	for _, p := range poolResp.NetworkPools {
-		if p.DisplayName == name {
-			d.SetString("display_name", p.DisplayName)
-			d.SetID(p.ID)
-
-			return nil
-		}
+	proxyResp := resp.(models.GetAllNetworkProxies)
+	if len(proxyResp.GetNetworkProxies) != 1 {
+		return fmt.Errorf(errExactMatch, "network proxy")
 	}
 
-	return fmt.Errorf(errExactMatch, "Network Pool")
+	return tftags.Set(d, proxyResp.GetNetworkProxies[0])
 }

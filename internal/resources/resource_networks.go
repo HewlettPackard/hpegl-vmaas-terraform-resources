@@ -46,10 +46,9 @@ func Network() *schema.Resource {
 				Description: "Type id for the NSX-T.",
 			},
 			"pool_id": {
-				Type:          schema.TypeInt,
-				Optional:      true,
-				Description:   "Pool ID can be obtained with " + DSNetworkPool + " data source. pool_id will not support with NSX-T segment",
-				ConflictsWith: []string{"dhcp_server"},
+				Type:        schema.TypeInt,
+				Optional:    true,
+				Description: "Pool ID can be obtained with " + DSNetworkPool + " data source. pool_id will not support with NSX-T segment",
 			},
 			"external_id": {
 				Type:        schema.TypeString,
@@ -92,6 +91,7 @@ func Network() *schema.Resource {
 			},
 			"cidr": {
 				Type:             schema.TypeString,
+				RequiredWith:     []string{"pool_id"},
 				Optional:         true,
 				Description:      "CIDR of the network",
 				ValidateDiagFunc: validations.ValidateCidr,
@@ -107,10 +107,9 @@ func Network() *schema.Resource {
 				Description: "Dentes whether scan network",
 			},
 			"dhcp_server": {
-				ConflictsWith: []string{"pool_id"},
-				Type:          schema.TypeBool,
-				Optional:      true,
-				Description:   "DHCP server address",
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: "DHCP server address",
 			},
 			"appliance_url_proxy_bypass": {
 				Type:        schema.TypeString,
@@ -125,12 +124,12 @@ func Network() *schema.Resource {
 			"domain_id": {
 				Type:        schema.TypeInt,
 				Optional:    true,
-				Description: "ID of thr domain. Use " + DSDomain + " datasource to obtain the id.",
+				Description: "ID of thr domain. Use " + DSNetworkDomain + " datasource to obtain the id.",
 			},
 			"proxy_id": {
 				Type:        schema.TypeInt,
 				Optional:    true,
-				Description: "Proxy ID. Use " + DSProxy + " data source to obtain the id.",
+				Description: "Proxy ID. Use " + DSNetworkProxy + " data source to obtain the id.",
 			},
 			"search_domains": {
 				Type:     schema.TypeString,

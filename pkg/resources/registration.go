@@ -36,7 +36,8 @@ func (r Registration) SupportedDataSources() map[string]*schema.Resource {
 		resources.DSNetworkInterface: resources.NetworkInterfaceData(),
 		resources.DSCloudFolder:      resources.CloudFolderData(),
 		resources.DSRouter:           resources.RouterData(),
-		resources.DSDomain:           resources.DomainData(),
+		resources.DSNetworkDomain:    resources.DomainData(),
+		resources.DSNetworkProxy:     resources.NetworkProxyData(),
 	}
 }
 
