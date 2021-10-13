@@ -31,9 +31,8 @@ func Network() *schema.Resource {
 				Description: "Display name of the network",
 			},
 			"group_id": {
-				Type:        schema.TypeInt,
-				Optional:    true,
-				ForceNew:    true,
+				Type:        schema.TypeString,
+				Required:    true,
 				Description: "ID of the group in which network associated. Please use " + DSGroup + " data source to retrieve ID",
 			},
 			"code": {
@@ -41,27 +40,16 @@ func Network() *schema.Resource {
 				Computed:    true,
 				Description: "network code",
 			},
-			"cloud_id": {
-				Type:        schema.TypeInt,
-				Required:    true,
-				Description: "Cloud ID or the zone ID",
-				ForceNew:    true,
-			},
 			"type_id": {
 				Type:        schema.TypeInt,
-				Required:    true,
-				Description: "Type id for the NSX-T. Use " + DSNetworkType + " Data source for retrieving type ID",
-			},
-			"parent_network_id": {
-				Type:     schema.TypeInt,
-				Optional: true,
-				Description: "Parent network ID can be obtained with " + DSNetwork + " data source/resource. This field" +
-					"should be set only when creating 'Custom Network'.",
+				Computed:    true,
+				Description: "Type id for the NSX-T.",
 			},
 			"pool_id": {
-				Type:        schema.TypeInt,
-				Optional:    true,
-				Description: "Pool ID can be obtained with " + DSNetworkPool + " data source. pool_id will not support with NSX-T segment",
+				Type:          schema.TypeInt,
+				Optional:      true,
+				Description:   "Pool ID can be obtained with " + DSNetworkPool + " data source. pool_id will not support with NSX-T segment",
+				ConflictsWith: []string{"dhcp_server"},
 			},
 			"external_id": {
 				Type:        schema.TypeString,
@@ -119,9 +107,10 @@ func Network() *schema.Resource {
 				Description: "Dentes whether scan network",
 			},
 			"dhcp_server": {
-				Type:        schema.TypeBool,
-				Required:    true,
-				Description: "DHCP server address",
+				ConflictsWith: []string{"pool_id"},
+				Type:          schema.TypeBool,
+				Optional:      true,
+				Description:   "DHCP server address",
 			},
 			"appliance_url_proxy_bypass": {
 				Type:        schema.TypeString,
@@ -133,6 +122,25 @@ func Network() *schema.Resource {
 				Optional:    true,
 				Description: "No proxy IPs/Adrresses",
 			},
+			"domain_id": {
+				Type:        schema.TypeInt,
+				Optional:    true,
+				Description: "ID of thr domain. Use " + DSDomain + " datasource to obtain the id.",
+			},
+			"proxy_id": {
+				Type:        schema.TypeInt,
+				Optional:    true,
+				Description: "Proxy ID. Use " + DSProxy + " data source to obtain the id.",
+			},
+			"search_domains": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+			"allow_static_override": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: "If set to true, networ will allow static override",
+			},
 			"config": {
 				Type:        schema.TypeSet,
 				Optional:    true,
@@ -141,14 +149,15 @@ func Network() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"connected_gateway": {
-							Type:        schema.TypeString,
-							Required:    true,
-							Description: "ID for the gateway connection",
+							Type:     schema.TypeString,
+							Required: true,
+							Description: "ID for the gateway connection. Use " + DSRouter +
+								" resource/datasource id here.",
 						},
 						"vlan_id": {
 							Type:        schema.TypeString,
 							Required:    true,
-							Description: "VLAN ID",
+							Description: "Comma seperated VLAN IDs",
 						},
 					},
 				},
@@ -167,13 +176,17 @@ func Network() *schema.Resource {
 						"sites": {
 							Type:        schema.TypeList,
 							Optional:    true,
-							Description: "List of site id",
+							Description: "List of site details",
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"id": {
 										Type:        schema.TypeInt,
 										Required:    true,
 										Description: "id for the site",
+									},
+									"default": {
+										Type:     schema.TypeBool,
+										Optional: true,
 									},
 								},
 							},

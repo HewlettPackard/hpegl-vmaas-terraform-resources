@@ -4,6 +4,7 @@ package cmp
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
 	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
@@ -13,12 +14,14 @@ import (
 )
 
 type resNetwork struct {
-	rClient *client.NetworksAPIService
+	nClient *client.NetworksAPIService
+	rClient *client.RouterAPIService
 }
 
-func newResNetwork(client *client.NetworksAPIService) *resNetwork {
+func newResNetwork(nclient *client.NetworksAPIService, rclient *client.RouterAPIService) *resNetwork {
 	return &resNetwork{
-		rClient: client,
+		nClient: nclient,
+		rClient: rclient,
 	}
 }
 
@@ -31,7 +34,7 @@ func (r *resNetwork) Read(ctx context.Context, d *utils.Data, meta interface{}) 
 
 	// Get network details with ID
 	response, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return r.rClient.GetSpecificNetwork(ctx, tfNetwork.ID)
+		return r.nClient.GetSpecificNetwork(ctx, tfNetwork.ID)
 	})
 	if err != nil {
 		return err
@@ -47,11 +50,48 @@ func (r *resNetwork) Create(ctx context.Context, d *utils.Data, meta interface{}
 		return err
 	}
 
+	// Get network type id for NSX-T
+	typeRetry := utils.CustomRetry{}
+	typeRetry.RetryParallel(ctx, meta, func(ctx context.Context) (interface{}, error) {
+		return r.nClient.GetNetworkType(ctx, map[string]string{
+			nameKey: nsxtSegment,
+		})
+	})
+	// Get network server ID for nsx-t
+	serverRetry := utils.CustomRetry{}
+	serverRetry.RetryParallel(ctx, meta, func(ctx context.Context) (interface{}, error) {
+		return r.rClient.GetNetworkServices(ctx, map[string]string{
+			nameKey: "NSX-T",
+		})
+	})
+	typeResp, err := typeRetry.Wait()
+	if err != nil {
+		return err
+	}
+	networkTypeResp := typeResp.(models.GetNetworkTypesResponse)
+	if len(networkTypeResp.NetworkTypes) != 1 {
+		return fmt.Errorf(errExactMatch, "network type")
+	}
+
+	serverResp, err := serverRetry.Wait()
+	if err != nil {
+		return err
+	}
+	networkServer := serverResp.(models.GetNetworkServicesResp)
+	if len(networkServer.NetworkServices) != 1 {
+		return fmt.Errorf(errExactMatch, "network server")
+	}
+
+	// Align request
+	createReq.NetworkServer.ID = networkServer.NetworkServices[0].ID
+	createReq.Type.ID = networkTypeResp.NetworkTypes[0].ID
 	alignNetworkReq(&createReq)
 
+	b, _ := json.Marshal(createReq)
+	fmt.Println(string(b))
 	// Create network
-	resp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return r.rClient.CreateNetwork(ctx, models.CreateNetworkRequest{
+	createResp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
+		return r.nClient.CreateNetwork(ctx, models.CreateNetworkRequest{
 			Network:             createReq,
 			ResourcePermissions: createReq.ResourcePermissions,
 		})
@@ -60,7 +100,7 @@ func (r *resNetwork) Create(ctx context.Context, d *utils.Data, meta interface{}
 		return err
 	}
 
-	return tftags.Set(d, resp.(models.CreateNetworkResponse).Network)
+	return tftags.Set(d, createResp.(models.CreateNetworkResponse).Network)
 }
 
 func (r *resNetwork) Update(ctx context.Context, d *utils.Data, meta interface{}) error {
@@ -71,7 +111,7 @@ func (r *resNetwork) Update(ctx context.Context, d *utils.Data, meta interface{}
 
 	alignNetworkReq(&networkReq)
 	resp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return r.rClient.UpdateNetwork(ctx, networkReq.ID, models.CreateNetworkRequest{
+		return r.nClient.UpdateNetwork(ctx, networkReq.ID, models.CreateNetworkRequest{
 			Network:             networkReq,
 			ResourcePermissions: networkReq.ResourcePermissions,
 		})
@@ -92,17 +132,22 @@ func (r *resNetwork) Update(ctx context.Context, d *utils.Data, meta interface{}
 func (r *resNetwork) Delete(ctx context.Context, d *utils.Data, meta interface{}) error {
 	networkID := d.GetID()
 	utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return r.rClient.DeleteNetwork(ctx, networkID)
+		return r.nClient.DeleteNetwork(ctx, networkID)
 	})
 
 	return nil
 }
 
 func alignNetworkReq(request *models.CreateNetwork) {
-	request.Zone.ID = request.CloudID
 	request.Site.ID = request.GroupID
-	request.Type.ID = request.TypeID
-	if request.Pool != nil {
-		request.PoolID = request.Pool.ID
+	if request.PoolID != 0 {
+		request.Pool = &models.IDModel{ID: request.PoolID}
+	}
+	if request.NetworkDomainID != 0 {
+		request.NetworkDomain = &models.IDModel{ID: request.NetworkDomainID}
+
+	}
+	if request.ProxyID != 0 {
+		request.NetworkProxy = &models.IDModel{ID: request.ProxyID}
 	}
 }
