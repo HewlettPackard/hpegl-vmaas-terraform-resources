@@ -142,7 +142,6 @@ func alignNetworkReq(request *models.CreateNetwork) {
 	}
 	if request.NetworkDomainID != 0 {
 		request.NetworkDomain = &models.IDModel{ID: request.NetworkDomainID}
-
 	}
 	if request.ProxyID != 0 {
 		request.NetworkProxy = &models.IDModel{ID: request.ProxyID}
