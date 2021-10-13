@@ -141,7 +141,7 @@ func Network() *schema.Resource {
 				Description: "If set to true, networ will allow static override",
 			},
 			"config": {
-				Type:        schema.TypeSet,
+				Type:        schema.TypeList,
 				Optional:    true,
 				Description: "Network configuration",
 				MaxItems:    1,
@@ -150,8 +150,8 @@ func Network() *schema.Resource {
 						"connected_gateway": {
 							Type:     schema.TypeString,
 							Required: true,
-							Description: "ID for the gateway connection. Use " + DSRouter +
-								" resource/datasource id here.",
+							Description: "Provider ID for the gateway connection. Use " + DSRouter +
+								".provider_id  here.",
 						},
 						"vlan_id": {
 							Type:        schema.TypeString,
@@ -162,7 +162,7 @@ func Network() *schema.Resource {
 				},
 			},
 			"resource_permission": {
-				Type:     schema.TypeSet,
+				Type:     schema.TypeList,
 				Optional: true,
 				MaxItems: 1,
 				Elem: &schema.Resource{
@@ -170,7 +170,7 @@ func Network() *schema.Resource {
 						"all": {
 							Type:        schema.TypeBool,
 							Optional:    true,
-							Description: "Dentes whether provide all permissions",
+							Description: "Denotes whether provide all permissions",
 						},
 						"sites": {
 							Type:        schema.TypeList,
