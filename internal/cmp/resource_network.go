@@ -4,7 +4,6 @@ package cmp
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 
 	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
@@ -87,8 +86,6 @@ func (r *resNetwork) Create(ctx context.Context, d *utils.Data, meta interface{}
 	createReq.Type.ID = networkTypeResp.NetworkTypes[0].ID
 	alignNetworkReq(&createReq)
 
-	b, _ := json.Marshal(createReq)
-	fmt.Println(string(b))
 	// Create network
 	createResp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
 		return r.nClient.CreateNetwork(ctx, models.CreateNetworkRequest{

@@ -156,7 +156,7 @@ func Network() *schema.Resource {
 						"vlan_id": {
 							Type:        schema.TypeString,
 							Required:    true,
-							Description: "Comma seperated VLAN IDs",
+							Description: "Comma separated VLAN IDs",
 						},
 					},
 				},
