@@ -23,28 +23,21 @@ func newResNetwork(client *client.NetworksAPIService) *resNetwork {
 
 func (r *resNetwork) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
 	// get network details
-	var tfNetwork models.GetSpecificNetworkBody
+	var tfNetwork models.GetSpecificNetwork
 	if err := tftags.Get(d, &tfNetwork); err != nil {
 		return err
 	}
-	tfNetwork.Network.ID = d.GetID()
 
 	// Get network details with ID
 	response, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return r.rClient.GetSpecificNetwork(ctx, tfNetwork.Network.ID)
+		return r.rClient.GetSpecificNetwork(ctx, tfNetwork.ID)
 	})
 	if err != nil {
 		return err
 	}
 	getNetwork := response.(models.GetSpecificNetworkBody)
 
-	if err := tftags.Set(d, getNetwork.Network); err != nil {
-		return err
-	}
-
-	d.SetID(tfNetwork.Network.ID)
-
-	return nil
+	return tftags.Set(d, getNetwork.Network)
 }
 
 func (r *resNetwork) Create(ctx context.Context, d *utils.Data, meta interface{}) error {
@@ -67,9 +60,7 @@ func (r *resNetwork) Create(ctx context.Context, d *utils.Data, meta interface{}
 		return err
 	}
 
-	d.SetID(resp.(models.CreateNetworkResponse).Network.ID)
-
-	return nil
+	return tftags.Set(d, resp.(models.CreateNetworkResponse).Network)
 }
 
 func (r *resNetwork) Update(ctx context.Context, d *utils.Data, meta interface{}) error {

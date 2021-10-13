@@ -64,5 +64,8 @@ vmaas:
     template:
       name: vanilla-centos7-x86_64-09072020
 
+    router:
+      name: tier0_gateway
+
 skip:
   - vmaas.resource.instance_clone

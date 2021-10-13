@@ -19,7 +19,6 @@ import (
 const providerStanza = `
 	provider hpegl {
 		vmaas {
-			allow_insecure = true
 			space_name = "` + constants.AccSpace + `"
 			location = "` + constants.AccLocation + `"
 		}
@@ -79,7 +78,7 @@ func getAPIClient() (*api_client.APIClient, api_client.Configuration) {
 			constants.LocationKey: constants.AccLocation,
 		},
 	}
-	apiClient := api_client.NewAPIClient(&cfg, false)
+	apiClient := api_client.NewAPIClient(&cfg)
 
 	return apiClient, cfg
 }
