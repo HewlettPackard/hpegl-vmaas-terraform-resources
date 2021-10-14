@@ -82,7 +82,7 @@ func (i *instance) Create(ctx context.Context, d *utils.Data, meta interface{}) 
 	}
 
 	if snapshot := d.GetListMap("snapshot"); len(snapshot) == 1 {
-		err := createInstanceSnapshot(ctx, i.instanceSharedClient, meta, getInstanceBody.ID, models.SnapshotBody{
+		err := createInstanceSnapshot(ctx, i.instanceSharedClient, getInstanceBody.ID, models.SnapshotBody{
 			Snapshot: &models.SnapshotBodySnapshot{
 				Name:        snapshot[0]["name"].(string),
 				Description: snapshot[0]["description"].(string),
@@ -93,7 +93,7 @@ func (i *instance) Create(ctx context.Context, d *utils.Data, meta interface{}) 
 		}
 	}
 
-	err = instanceSetServerID(ctx, meta, d, i.instanceSharedClient)
+	err = instanceSetServerID(ctx, d, i.instanceSharedClient)
 	if err != nil {
 		return err
 	}
@@ -103,7 +103,7 @@ func (i *instance) Create(ctx context.Context, d *utils.Data, meta interface{}) 
 }
 
 func (i *instance) Update(ctx context.Context, d *utils.Data, meta interface{}) error {
-	return updateInstance(ctx, i.instanceSharedClient, d, meta)
+	return updateInstance(ctx, i.instanceSharedClient, d)
 }
 
 func (i *instance) Delete(ctx context.Context, d *utils.Data, meta interface{}) error {

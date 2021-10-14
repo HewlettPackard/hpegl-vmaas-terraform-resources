@@ -70,7 +70,7 @@ func (i *instanceClone) Create(ctx context.Context, d *utils.Data, meta interfac
 
 	// Get source instance
 	sourceID := d.GetInt("source_instance_id")
-	err := copyInstanceAttribsToClone(ctx, i, meta, &req, d.GetListMap("volume"), sourceID)
+	err := copyInstanceAttribsToClone(ctx, i, &req, d.GetListMap("volume"), sourceID)
 	if err != nil {
 		return err
 	}
@@ -121,7 +121,7 @@ func (i *instanceClone) Create(ctx context.Context, d *utils.Data, meta interfac
 	}
 
 	if snapshot := d.GetListMap("snapshot"); len(snapshot) == 1 {
-		err := createInstanceSnapshot(ctx, i.instanceSharedClient, meta, instancesList.Instances[0].ID, models.SnapshotBody{
+		err := createInstanceSnapshot(ctx, i.instanceSharedClient, instancesList.Instances[0].ID, models.SnapshotBody{
 			Snapshot: &models.SnapshotBodySnapshot{
 				Name:        snapshot[0]["name"].(string),
 				Description: snapshot[0]["description"].(string),
@@ -142,7 +142,7 @@ func (i *instanceClone) Create(ctx context.Context, d *utils.Data, meta interfac
 // changing volumes and instance properties such as labels
 // groups and tags
 func (i *instanceClone) Update(ctx context.Context, d *utils.Data, meta interface{}) error {
-	return updateInstance(ctx, i.instanceSharedClient, d, meta)
+	return updateInstance(ctx, i.instanceSharedClient, d)
 }
 
 // Delete instance and set ID as ""
@@ -228,7 +228,6 @@ func cloneInstance(
 func copyInstanceAttribsToClone(
 	ctx context.Context,
 	i *instanceClone,
-	meta interface{},
 	req *models.CreateInstanceCloneBody,
 	volumes []map[string]interface{},
 	sourceID int,

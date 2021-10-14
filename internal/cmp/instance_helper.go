@@ -94,7 +94,7 @@ func readInstance(ctx context.Context, sharedClient instanceSharedClient, d *uti
 // Update instance including poweroff, powerOn, restart, suspend
 // changing volumes and instance properties such as labels
 // groups and tags
-func updateInstance(ctx context.Context, sharedClient instanceSharedClient, d *utils.Data, meta interface{}) error {
+func updateInstance(ctx context.Context, sharedClient instanceSharedClient, d *utils.Data) error {
 	log.Printf("[DEBUG] Updating the instance")
 
 	id := d.GetID()
@@ -125,7 +125,7 @@ func updateInstance(ctx context.Context, sharedClient instanceSharedClient, d *u
 			return err
 		}
 	}
-	if err := instanceUpdateNetworkVolume(ctx, meta, sharedClient, d, id); err != nil {
+	if err := instanceUpdateNetworkVolume(ctx, sharedClient, d, id); err != nil {
 		return err
 	}
 
@@ -139,11 +139,11 @@ func updateInstance(ctx context.Context, sharedClient instanceSharedClient, d *u
 		status := utils.ParsePowerState(getInstance.Instance.Status)
 		powerOp := d.GetString("power")
 		if powerOp != status {
-			if err := instanceDoPowerTask(ctx, sharedClient, id, meta, d.GetString("power")); err != nil {
+			if err := instanceDoPowerTask(ctx, sharedClient, id, d.GetString("power")); err != nil {
 				return err
 			}
 		} else if d.HasChanged("restart_instance") {
-			if err := instanceDoPowerTask(ctx, sharedClient, id, meta, utils.Restart); err != nil {
+			if err := instanceDoPowerTask(ctx, sharedClient, id, utils.Restart); err != nil {
 				return err
 			}
 		}
@@ -151,7 +151,7 @@ func updateInstance(ctx context.Context, sharedClient instanceSharedClient, d *u
 
 	if d.HasChanged("snapshot") {
 		snapshot := d.GetListMap("snapshot")
-		err := createInstanceSnapshot(ctx, sharedClient, meta, getInstance.Instance.ID, models.SnapshotBody{
+		err := createInstanceSnapshot(ctx, sharedClient, getInstance.Instance.ID, models.SnapshotBody{
 			Snapshot: &models.SnapshotBodySnapshot{
 				Name:        snapshot[0]["name"].(string),
 				Description: snapshot[0]["description"].(string),
@@ -351,7 +351,6 @@ func instanceDoPowerTask(
 	ctx context.Context,
 	sharedClient instanceSharedClient,
 	instanceID int,
-	meta interface{},
 	newOp string) error {
 	var err error
 
@@ -411,7 +410,6 @@ func instanceCloneCompareVolume(
 func createInstanceSnapshot(
 	ctx context.Context,
 	sharedClient instanceSharedClient,
-	meta interface{},
 	instanceID int,
 	snapshot models.SnapshotBody,
 ) error {
@@ -533,7 +531,7 @@ func instanceGetResizeNetwork(network []map[string]interface{}) []models.CreateI
 	return nics
 }
 
-func instanceSetServerID(ctx context.Context, meta interface{}, d *utils.Data, sharedClient instanceSharedClient) error {
+func instanceSetServerID(ctx context.Context, d *utils.Data, sharedClient instanceSharedClient) error {
 	servers, err := sharedClient.sClient.GetAllServers(ctx, map[string]string{
 		externalNameKey: d.GetString("name"),
 	})
@@ -569,7 +567,6 @@ func instanceGetNetworkModel(
 
 func instanceUpdateNetworkVolume(
 	ctx context.Context,
-	meta interface{},
 	sharedClient instanceSharedClient,
 	d *utils.Data,
 	instanceID int,
