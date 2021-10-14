@@ -4,15 +4,12 @@ package resources
 
 import (
 	"context"
-	"time"
 
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/utils"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/client"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
-
-const readTimeout = 30 * time.Second
 
 func GroupData() *schema.Resource {
 	return &schema.Resource{
@@ -27,9 +24,6 @@ func GroupData() *schema.Resource {
 		Description: `The ` + DSGroup + ` data source can be used to discover the ID of a hpegl vmaas group.
 		This can then be used with resources or data sources that require a ` + DSGroup + `,
 		such as the ` + ResInstance + ` resource.`,
-		Timeouts: &schema.ResourceTimeout{
-			Read: schema.DefaultTimeout(readTimeout),
-		},
 		SchemaVersion:  0,
 		StateUpgraders: nil,
 		Importer: &schema.ResourceImporter{

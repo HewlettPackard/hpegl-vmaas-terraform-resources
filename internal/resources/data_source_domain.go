@@ -11,19 +11,24 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func CloudData() *schema.Resource {
+func DomainData() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"name": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: f(generalNamedesc, "cloud", "cloud"),
+				Description: f(generalNamedesc, "network domain", "network domain"),
+			},
+			"active": {
+				Type:        schema.TypeBool,
+				Computed:    true,
+				Description: "Flag denotes active domain or not",
 			},
 		},
-		ReadContext: cloudReadContext,
-		Description: `The ` + DSCloud + ` data source can be used to discover the ID of a hpegl vmaas Cloud.
-		 This can then be used with resources or data sources that require a hpegl vmaas cloud,
-		 such as the hpegl_vmaas_datastore data source, hpegl_vmaas_instance resource, etc.`,
+		ReadContext: domainReadContext,
+		Description: `The ` + DSNetworkDomain + ` data source can be used to discover the ID of a ` + DSNetworkDomain + `.
+		 This can then be used with resources or data sources that require a ` + DSNetworkDomain + `
+		 such as the ` + ResNetwork,
 		SchemaVersion:  0,
 		StateUpgraders: nil,
 		Importer: &schema.ResourceImporter{
@@ -32,14 +37,14 @@ func CloudData() *schema.Resource {
 	}
 }
 
-func cloudReadContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func domainReadContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, err := client.GetClientFromMetaMap(meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
 	data := utils.NewData(d)
-	err = c.CmpClient.Cloud.Read(ctx, data, meta)
+	err = c.CmpClient.DSDomain.Read(ctx, data, meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}
