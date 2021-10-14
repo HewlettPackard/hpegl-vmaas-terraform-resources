@@ -10,6 +10,7 @@ import (
 	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
 	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/models"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/utils"
+	"github.com/tshihad/tftags"
 )
 
 type routerds struct {
@@ -22,7 +23,6 @@ func newRouterDS(nClient *client.RouterAPIService) *routerds {
 
 func (n *routerds) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
 	log.Printf("[DEBUG] Get Router")
-
 	name := d.GetString("name")
 
 	// Pre check
@@ -36,21 +36,13 @@ func (n *routerds) Read(ctx context.Context, d *utils.Data, meta interface{}) er
 		return err
 	}
 
-	isMatch := false
 	routers := resp.(models.GetAllNetworkRouter)
 	for i, n := range routers.NetworkRouters {
 		if n.Name == name {
-			isMatch = true
-			d.SetID(routers.NetworkRouters[i].ID)
 			log.Print("[DEBUG]", routers.NetworkRouters[i].ID)
-
-			break
+			return tftags.Set(d, routers.NetworkRouters[i])
 		}
 	}
-	if !isMatch {
-		return fmt.Errorf(errExactMatch, "Router")
-	}
+	return fmt.Errorf(errExactMatch, "Router")
 
-	// post check
-	return d.Error()
 }
