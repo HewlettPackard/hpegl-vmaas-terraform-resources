@@ -233,13 +233,10 @@ func copyInstanceAttribsToClone(
 	volumes []map[string]interface{},
 	sourceID int,
 ) error {
-	sourceInstanceResp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return i.iClient.GetASpecificInstance(ctx, sourceID)
-	})
+	sourceInstance, err := i.iClient.GetASpecificInstance(ctx, sourceID)
 	if err != nil {
 		return err
 	}
-	sourceInstance := sourceInstanceResp.(models.GetInstanceResponse)
 
 	if utils.IsEmpty(req.Cloud.ID) {
 		req.Cloud.ID = sourceInstance.Instance.Cloud.ID

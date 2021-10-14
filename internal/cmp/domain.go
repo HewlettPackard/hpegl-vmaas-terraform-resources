@@ -8,7 +8,6 @@ import (
 	"log"
 
 	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
-	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/models"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/utils"
 	"github.com/tshihad/tftags"
 )
@@ -31,13 +30,10 @@ func (n *domain) Read(ctx context.Context, d *utils.Data, meta interface{}) erro
 		return err
 	}
 	// Get all domain with filter as name
-	resp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return n.dClient.GetAllDomains(ctx, map[string]string{nameKey: name})
-	})
+	domains, err := n.dClient.GetAllDomains(ctx, map[string]string{nameKey: name})
 	if err != nil {
 		return err
 	}
-	domains := resp.(models.GetAllDomains)
 	if len(domains.NetworkDomains) != 1 {
 		return errors.New("error coudn't find exact domain, please check the name")
 	}

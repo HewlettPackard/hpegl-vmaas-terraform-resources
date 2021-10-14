@@ -69,13 +69,11 @@ func (i *instance) Create(ctx context.Context, d *utils.Data, meta interface{}) 
 	}
 
 	// create instance
-	respVM, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return i.iClient.CreateAnInstance(ctx, req)
-	})
+	respVM, err := i.iClient.CreateAnInstance(ctx, req)
 	if err != nil {
 		return err
 	}
-	getInstanceBody := *respVM.(models.GetInstanceResponse).Instance
+	getInstanceBody := *respVM.Instance
 	// Set id just after created the instnance
 	d.SetID(getInstanceBody.ID)
 

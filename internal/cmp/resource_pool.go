@@ -8,7 +8,6 @@ import (
 	"log"
 
 	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
-	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/models"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/utils"
 )
 
@@ -31,16 +30,13 @@ func (n *resourcePool) Read(ctx context.Context, d *utils.Data, meta interface{}
 	}
 
 	flag := false
-	resp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return n.rClient.GetAllCloudResourcePools(ctx, cloudID, map[string]string{
-			maxKey: "100",
-		})
+	resourcePools, err := n.rClient.GetAllCloudResourcePools(ctx, cloudID, map[string]string{
+		maxKey: "100",
 	})
 	if err != nil {
 		return err
 	}
 
-	resourcePools := resp.(models.ResourcePoolsResp)
 	for i, r := range resourcePools.ResourcePools {
 		if r.Name == name {
 			flag = true

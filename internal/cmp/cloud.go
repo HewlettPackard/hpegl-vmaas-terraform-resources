@@ -8,7 +8,6 @@ import (
 	"log"
 
 	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
-	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/models"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/utils"
 )
 
@@ -29,15 +28,12 @@ func (c *cloud) Read(ctx context.Context, d *utils.Data, meta interface{}) error
 	if err := d.Error(); err != nil {
 		return err
 	}
-	resp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return c.cloudClient.GetAllClouds(ctx, map[string]string{
-			nameKey: name,
-		})
+	cloud, err := c.cloudClient.GetAllClouds(ctx, map[string]string{
+		nameKey: name,
 	})
 	if err != nil {
 		return err
 	}
-	cloud := resp.(models.CloudsResp)
 	if len(cloud.Clouds) != 1 {
 		return fmt.Errorf(errExactMatch, "clouds")
 	}

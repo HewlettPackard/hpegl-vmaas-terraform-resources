@@ -8,7 +8,6 @@ import (
 	"log"
 
 	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
-	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/models"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/utils"
 )
 
@@ -29,15 +28,12 @@ func (n *routerds) Read(ctx context.Context, d *utils.Data, meta interface{}) er
 	if err := d.Error(); err != nil {
 		return err
 	}
-	resp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return n.nClient.GetAllRouter(ctx, nil)
-	})
+	routers, err := n.nClient.GetAllRouter(ctx, nil)
 	if err != nil {
 		return err
 	}
 
 	isMatch := false
-	routers := resp.(models.GetAllNetworkRouter)
 	for i, n := range routers.NetworkRouters {
 		if n.Name == name {
 			isMatch = true

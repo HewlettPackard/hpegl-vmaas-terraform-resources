@@ -24,13 +24,11 @@ func newRouter(routerClient *client.RouterAPIService) *router {
 
 func (r *router) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
 	routerID := d.GetID()
-	routerResp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return r.routerClient.GetSpecificRouter(ctx, routerID)
-	})
+	routerResp, err := r.routerClient.GetSpecificRouter(ctx, routerID)
 	if err != nil {
 		return err
 	}
-	d.SetID(routerResp.(models.GetSpecificRouterResp).NetworkRouter.ID)
+	d.SetID(routerResp.NetworkRouter.ID)
 
 	return nil
 }
@@ -43,13 +41,10 @@ func (r *router) Create(ctx context.Context, d *utils.Data, meta interface{}) er
 	// align createReq and fill json related fields
 	r.routerAlignRouterRequest(ctx, meta, &createReq)
 
-	resp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return r.routerClient.CreateRouter(ctx, createReq)
-	})
+	routerResp, err := r.routerClient.CreateRouter(ctx, createReq)
 	if err != nil {
 		return err
 	}
-	routerResp := resp.(models.CreateRouterResp)
 	if !routerResp.Success {
 		return fmt.Errorf("got success = 'false' while creating router")
 	}
@@ -64,9 +59,7 @@ func (r *router) Update(ctx context.Context, d *utils.Data, meta interface{}) er
 
 func (r *router) Delete(ctx context.Context, d *utils.Data, meta interface{}) error {
 	routerID := d.GetID()
-	_, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return r.routerClient.DeleteRouter(ctx, routerID)
-	})
+	_, err := r.routerClient.DeleteRouter(ctx, routerID)
 	if err != nil {
 		return err
 	}

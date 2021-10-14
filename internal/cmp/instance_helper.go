@@ -31,13 +31,10 @@ func readInstance(ctx context.Context, sharedClient instanceSharedClient, d *uti
 		return err
 	}
 
-	resp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return sharedClient.iClient.GetASpecificInstance(ctx, id)
-	})
+	instance, err := sharedClient.iClient.GetASpecificInstance(ctx, id)
 	if err != nil {
 		return err
 	}
-	instance := resp.(models.GetInstanceResponse)
 
 	tfInstance := models.TFInstance{}
 	if err := tftags.Get(d, &tfInstance); err != nil {
@@ -123,9 +120,7 @@ func updateInstance(ctx context.Context, sharedClient instanceSharedClient, d *u
 			return err
 		}
 		// update instance
-		_, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-			return sharedClient.iClient.UpdatingAnInstance(ctx, id, updateReq)
-		})
+		_, err := sharedClient.iClient.UpdatingAnInstance(ctx, id, updateReq)
 		if err != nil {
 			return err
 		}
@@ -134,13 +129,10 @@ func updateInstance(ctx context.Context, sharedClient instanceSharedClient, d *u
 		return err
 	}
 
-	resp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return sharedClient.iClient.GetASpecificInstance(ctx, id)
-	})
+	getInstance, err := sharedClient.iClient.GetASpecificInstance(ctx, id)
 	if err != nil {
 		return err
 	}
-	getInstance := resp.(models.GetInstanceResponse)
 	if d.HasChanged("power") || d.HasChanged("restart_instance") {
 		// Do power operation only if backend is in different state
 		// restart only if instance in actual is in power-on state
@@ -183,10 +175,7 @@ func deleteInstance(ctx context.Context, sharedClient instanceSharedClient, d *u
 		return err
 	}
 
-	resp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return sharedClient.iClient.DeleteAnInstance(ctx, id)
-	})
-	deleResp := resp.(models.SuccessOrErrorMessage)
+	deleResp, err := sharedClient.iClient.DeleteAnInstance(ctx, id)
 	if err != nil {
 		return err
 	}
@@ -368,29 +357,13 @@ func instanceDoPowerTask(
 
 	switch newOp {
 	case utils.PowerOn:
-		_, err = utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-			_, err := sharedClient.iClient.StartAnInstance(ctx, instanceID)
-
-			return nil, err
-		})
+		_, err = sharedClient.iClient.StartAnInstance(ctx, instanceID)
 	case utils.PowerOff:
-		_, err = utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-			_, err := sharedClient.iClient.StopAnInstance(ctx, instanceID)
-
-			return nil, err
-		})
+		_, err = sharedClient.iClient.StopAnInstance(ctx, instanceID)
 	case utils.Suspend:
-		_, err = utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-			_, err := sharedClient.iClient.SuspendAnInstance(ctx, instanceID)
-
-			return nil, err
-		})
+		_, err = sharedClient.iClient.SuspendAnInstance(ctx, instanceID)
 	case utils.Restart:
-		_, err = utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-			_, err := sharedClient.iClient.RestartAnInstance(ctx, instanceID)
-
-			return nil, err
-		})
+		_, err = sharedClient.iClient.RestartAnInstance(ctx, instanceID)
 	}
 
 	return err
@@ -442,13 +415,10 @@ func createInstanceSnapshot(
 	instanceID int,
 	snapshot models.SnapshotBody,
 ) error {
-	snapshotResponse, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return sharedClient.iClient.SnapshotAnInstance(ctx, instanceID, &snapshot)
-	})
+	instanceModel, err := sharedClient.iClient.SnapshotAnInstance(ctx, instanceID, &snapshot)
 	if err != nil {
 		return err
 	}
-	instanceModel := snapshotResponse.(models.Instances)
 	if !instanceModel.Success {
 		return fmt.Errorf("%s", "failed to create snapshot, API returns status as false")
 	}
@@ -564,15 +534,12 @@ func instanceGetResizeNetwork(network []map[string]interface{}) []models.CreateI
 }
 
 func instanceSetServerID(ctx context.Context, meta interface{}, d *utils.Data, sharedClient instanceSharedClient) error {
-	resp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return sharedClient.sClient.GetAllServers(ctx, map[string]string{
-			externalNameKey: d.GetString("name"),
-		})
+	servers, err := sharedClient.sClient.GetAllServers(ctx, map[string]string{
+		externalNameKey: d.GetString("name"),
 	})
 	if err != nil {
 		return err
 	}
-	servers := resp.(models.ServersResponse)
 	if len(servers.Server) != 1 {
 		return fmt.Errorf(errExactMatch, "server")
 	}
@@ -627,13 +594,11 @@ func instanceUpdateNetworkVolume(
 		resizeReq.NetworkInterfaces = instanceGetResizeNetwork(schemaNetwork)
 	}
 	if d.HasChanged("volume") || d.HasChanged("network") {
-		updateResp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-			return sharedClient.iClient.ResizeAnInstance(ctx, instanceID, &resizeReq)
-		})
+		updateResp, err := sharedClient.iClient.ResizeAnInstance(ctx, instanceID, &resizeReq)
 		if err != nil {
 			return err
 		}
-		if !updateResp.(models.ResizeInstanceResponse).Success {
+		if !updateResp.Success {
 			return fmt.Errorf("%s", "failed to resize")
 		}
 	}

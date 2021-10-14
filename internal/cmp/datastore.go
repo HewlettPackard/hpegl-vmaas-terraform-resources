@@ -8,7 +8,6 @@ import (
 	"log"
 
 	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
-	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/models"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/utils"
 )
 
@@ -31,15 +30,12 @@ func (n *datastore) Read(ctx context.Context, d *utils.Data, meta interface{}) e
 	if err := d.Error(); err != nil {
 		return err
 	}
-	resp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return n.nClient.GetAllCloudDataStores(ctx, cloudID,
-			map[string]string{"name": name},
-		)
-	})
+	datastores, err := n.nClient.GetAllCloudDataStores(ctx, cloudID,
+		map[string]string{"name": name},
+	)
 	if err != nil {
 		return err
 	}
-	datastores := resp.(models.DataStoresResp)
 	if len(datastores.Datastores) != 1 {
 		return errors.New("error coudn't find exact datastore, please check the name")
 	}
