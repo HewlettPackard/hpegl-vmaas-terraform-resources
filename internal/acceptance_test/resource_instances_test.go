@@ -123,14 +123,13 @@ func testAccResourceInstance() string {
 		viper.GetInt("vmaas.resource.instance.config.template_id"))
 
 	return providerStanza + fmt.Sprintf(`
-		resource "hpegl_vmaas_instance" "%s" {
+		resource "hpegl_vmaas_instance" "tf_instance" {
 			%s
 			%s
 			%s
 			%s
 		}
-	`, "tf_instance",
-		instancePrimitiveStanza,
+	`, instancePrimitiveStanza,
 		getNetworkStanza(),
 		getVolumeStanza(),
 		configStanza,
