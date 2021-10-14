@@ -18,27 +18,31 @@ func Router() *schema.Resource {
 			"name": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "Router gateway name",
+				Description: "Network router name",
 			},
 			"type_id": {
 				Type:        schema.TypeInt,
 				Computed:    true,
-				Description: "NSX-T segment network type ID",
+				Description: "Network router type ID.",
+				ForceNew:    true,
 			},
 			"group_id": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Group ID. Available values are either 'Shared' or ID fetched from " + DSGroup,
+				ForceNew:    true,
 			},
 			"enable": {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Description: "enabled will be true if not provided",
+				Description: "Can be used to enable/disable the network router",
+				Default:     true,
 			},
 			"network_server_id": {
 				Type:        schema.TypeInt,
 				Computed:    true,
-				Description: "NSX-T segment network type ID",
+				Description: "NSX-T Integration ID",
+				ForceNew:    true,
 			},
 			"tier0_config": schemas.RouterTier0ConfigSchema(),
 			"tier1_config": schemas.RouterTier1ConfigSchema(),
@@ -89,7 +93,7 @@ func routerUpdateContext(ctx context.Context, rd *schema.ResourceData, meta inte
 		return diag.FromErr(err)
 	}
 
-	return nil
+	return routerReadContext(ctx, rd, meta)
 }
 
 func routerDeleteContext(ctx context.Context, rd *schema.ResourceData, meta interface{}) diag.Diagnostics {
