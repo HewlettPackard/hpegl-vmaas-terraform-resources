@@ -84,6 +84,7 @@ func testVmaasNetworkDestroy(name string) resource.TestCheckFunc {
 
 func testAccResourceNetwork() string {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+
 	return providerStanza + fmt.Sprintf(`
 	resource "hpegl_vmaas_network" "tf_network" {
 			name                = "%s_%d"
