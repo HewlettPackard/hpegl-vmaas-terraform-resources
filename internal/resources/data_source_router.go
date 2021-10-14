@@ -19,6 +19,12 @@ func RouterData() *schema.Resource {
 				Required:    true,
 				Description: f(generalNamedesc, "Router", "Router"),
 			},
+			"provider_id": {
+				Type:     schema.TypeString,
+				Computed: true,
+				Description: "Provider ID of the given router/gateway. This field can be used as connected_gateway in " +
+					ResNetwork,
+			},
 		},
 		ReadContext: RouterReadContext,
 		Description: `The ` + DSRouter + ` data source can be used to discover the ID of a hpegl vmaas router.

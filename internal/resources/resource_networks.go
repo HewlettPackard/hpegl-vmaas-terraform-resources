@@ -5,6 +5,7 @@ package resources
 import (
 	"context"
 
+	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/resources/validations"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/utils"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/client"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -30,8 +31,8 @@ func Network() *schema.Resource {
 				Description: "Display name of the network",
 			},
 			"group_id": {
-				Type:        schema.TypeInt,
-				Optional:    true,
+				Type:        schema.TypeString,
+				Required:    true,
 				Description: "ID of the group in which network associated. Please use " + DSGroup + " data source to retrieve ID",
 			},
 			"code": {
@@ -39,21 +40,10 @@ func Network() *schema.Resource {
 				Computed:    true,
 				Description: "network code",
 			},
-			"cloud_id": {
-				Type:        schema.TypeInt,
-				Required:    true,
-				Description: "Cloud ID or the zone ID",
-			},
 			"type_id": {
 				Type:        schema.TypeInt,
-				Required:    true,
-				Description: "Type id for the NSX-T. Use " + DSNetworkType + " Data source for retrieving type ID",
-			},
-			"parent_network_id": {
-				Type:     schema.TypeInt,
-				Optional: true,
-				Description: "Parent network ID can be obtained with " + DSNetwork + " data source/resource. This field" +
-					"should be set only when creating 'Custom Network'.",
+				Computed:    true,
+				Description: "Type id for the NSX-T.",
 			},
 			"pool_id": {
 				Type:        schema.TypeInt,
@@ -63,42 +53,48 @@ func Network() *schema.Resource {
 			"external_id": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: "External ID ",
+				Description: "External ID of the network",
 			},
 			"internal_id": {
-				Type:        schema.TypeInt,
+				Type:        schema.TypeString,
 				Computed:    true,
-				Description: "Internal ID",
+				Description: "Internal ID of the network",
 			},
 			"unique_id": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: "Unique ID",
+				Description: "Unique ID of the network",
 			},
 			"gateway": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "Gateway address for the network",
+				Type:             schema.TypeString,
+				Optional:         true,
+				Description:      "Gateway address for the network",
+				ValidateDiagFunc: validations.ValidateIPAddress,
 			},
 			"netmask": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "Netmask address for the network",
+				Type:             schema.TypeString,
+				Optional:         true,
+				Description:      "Netmask address for the network",
+				ValidateDiagFunc: validations.ValidateIPAddress,
 			},
 			"primary_dns": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "Primary DNS",
+				Type:             schema.TypeString,
+				Optional:         true,
+				Description:      "Primary DNS",
+				ValidateDiagFunc: validations.ValidateIPAddress,
 			},
 			"secondary_dns": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "Secondary DNS",
+				Type:             schema.TypeString,
+				Optional:         true,
+				Description:      "Secondary DNS",
+				ValidateDiagFunc: validations.ValidateIPAddress,
 			},
 			"cidr": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "CIDR of the network",
+				Type:             schema.TypeString,
+				RequiredWith:     []string{"pool_id"},
+				Optional:         true,
+				Description:      "CIDR of the network",
+				ValidateDiagFunc: validations.ValidateCidr,
 			},
 			"active": {
 				Type:        schema.TypeBool,
@@ -112,7 +108,7 @@ func Network() *schema.Resource {
 			},
 			"dhcp_server": {
 				Type:        schema.TypeBool,
-				Required:    true,
+				Optional:    true,
 				Description: "DHCP server address",
 			},
 			"appliance_url_proxy_bypass": {
@@ -125,28 +121,48 @@ func Network() *schema.Resource {
 				Optional:    true,
 				Description: "No proxy IPs/Adrresses",
 			},
+			"domain_id": {
+				Type:        schema.TypeInt,
+				Optional:    true,
+				Description: "ID of thr domain. Use " + DSNetworkDomain + " datasource to obtain the id.",
+			},
+			"proxy_id": {
+				Type:        schema.TypeInt,
+				Optional:    true,
+				Description: "Proxy ID. Use " + DSNetworkProxy + " data source to obtain the id.",
+			},
+			"search_domains": {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+			"allow_static_override": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: "If set to true, networ will allow static override",
+			},
 			"config": {
-				Type:        schema.TypeSet,
+				Type:        schema.TypeList,
 				Optional:    true,
 				Description: "Network configuration",
 				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"connected_gateway": {
-							Type:        schema.TypeString,
-							Required:    true,
-							Description: "ID for the gateway connection",
+							Type:     schema.TypeString,
+							Required: true,
+							Description: "Provider ID for the gateway connection. Use " + DSRouter +
+								".provider_id  here.",
 						},
 						"vlan_id": {
 							Type:        schema.TypeString,
 							Required:    true,
-							Description: "VLAN ID",
+							Description: "Comma separated VLAN IDs",
 						},
 					},
 				},
 			},
 			"resource_permission": {
-				Type:     schema.TypeSet,
+				Type:     schema.TypeList,
 				Optional: true,
 				MaxItems: 1,
 				Elem: &schema.Resource{
@@ -154,14 +170,24 @@ func Network() *schema.Resource {
 						"all": {
 							Type:        schema.TypeBool,
 							Optional:    true,
-							Description: "Dentes whether provide all permissions",
+							Description: "Denotes whether provide all permissions",
 						},
 						"sites": {
 							Type:        schema.TypeList,
 							Optional:    true,
-							Description: "List of site id",
-							Elem: &schema.Schema{
-								Type: schema.TypeInt,
+							Description: "List of site details",
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"id": {
+										Type:        schema.TypeInt,
+										Required:    true,
+										Description: "id for the site",
+									},
+									"default": {
+										Type:     schema.TypeBool,
+										Optional: true,
+									},
+								},
 							},
 						},
 					},

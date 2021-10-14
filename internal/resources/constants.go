@@ -7,6 +7,8 @@ const (
 	DSNetwork          = "hpegl_vmaas_network"
 	DSNetworkType      = "hpegl_vmaas_network_type"
 	DSNetworkPool      = "hpegl_vmaas_network_pool"
+	DSNetworkProxy     = "hpegl_vmaas_network_proxy"
+	DSNetworkDomain    = "hpegl_vmaas_network_domain"
 	DSLayout           = "hpegl_vmaas_layout"
 	DSGroup            = "hpegl_vmaas_group"
 	DSPlan             = "hpegl_vmaas_plan"

@@ -11,35 +11,35 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func CloudData() *schema.Resource {
+func NetworkProxyData() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"name": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: f(generalNamedesc, "cloud", "cloud"),
+				Description: "Name of the network proxy",
 			},
 		},
-		ReadContext: cloudReadContext,
-		Description: `The ` + DSCloud + ` data source can be used to discover the ID of a hpegl vmaas Cloud.
-		 This can then be used with resources or data sources that require a hpegl vmaas cloud,
-		 such as the hpegl_vmaas_datastore data source, hpegl_vmaas_instance resource, etc.`,
+		ReadContext:    networkProxyReadContext,
 		SchemaVersion:  0,
 		StateUpgraders: nil,
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
+		Description: `The ` + DSNetworkProxy + ` data source can be used to discover the ID of a ` + DSNetworkProxy + `.
+		This can then be used with resources or data sources that require a ` + DSNetworkProxy + `,
+		such as the ` + ResNetwork + ` resource (for creating non NSX-T segments).`,
 	}
 }
 
-func cloudReadContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func networkProxyReadContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, err := client.GetClientFromMetaMap(meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
 	data := utils.NewData(d)
-	err = c.CmpClient.Cloud.Read(ctx, data, meta)
+	err = c.CmpClient.NetworkProxy.Read(ctx, data, meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}
