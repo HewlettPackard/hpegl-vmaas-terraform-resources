@@ -40,9 +40,11 @@ func (n *routerds) Read(ctx context.Context, d *utils.Data, meta interface{}) er
 	for i, n := range routers.NetworkRouters {
 		if n.Name == name {
 			log.Print("[DEBUG]", routers.NetworkRouters[i].ID)
+
 			return tftags.Set(d, routers.NetworkRouters[i])
 		}
 	}
+
 	return fmt.Errorf(errExactMatch, "Router")
 
 }

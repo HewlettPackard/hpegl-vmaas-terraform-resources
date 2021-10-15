@@ -56,6 +56,7 @@ func (r *router) Create(ctx context.Context, d *utils.Data, meta interface{}) er
 	if !routerResp.Success {
 		return fmt.Errorf("got success = 'false' while creating router")
 	}
+
 	return tftags.Set(d, routerResp)
 }
 
@@ -67,7 +68,7 @@ func (r *router) Update(ctx context.Context, d *utils.Data, meta interface{}) er
 	// align createReq and fill json related fields
 	r.routerAlignRouterRequest(ctx, meta, &createReq)
 
-	//HaMode cannot be updated, setting it to empty so that it is ignored in the API Payload.
+	// HaMode cannot be updated, setting it to empty so that it is ignored in the API Payload.
 	createReq.NetworkRouter.Config.HaMode = ""
 
 	resp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
@@ -81,6 +82,7 @@ func (r *router) Update(ctx context.Context, d *utils.Data, meta interface{}) er
 		return fmt.Errorf("got success = 'false' while updating router")
 	}
 	d.SetID(createReq.NetworkRouter.ID)
+
 	return nil
 }
 
