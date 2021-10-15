@@ -46,5 +46,4 @@ func (n *routerds) Read(ctx context.Context, d *utils.Data, meta interface{}) er
 	}
 
 	return fmt.Errorf(errExactMatch, "Router")
-
 }
