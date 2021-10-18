@@ -23,16 +23,19 @@ func newRouter(routerClient *client.RouterAPIService) *router {
 }
 
 func (r *router) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
-	routerID := d.GetID()
+	var tfRouter models.GetNetworkRouter
+	if err := tftags.Get(d, &tfRouter); err != nil {
+		return err
+	}
 	routerResp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return r.routerClient.GetSpecificRouter(ctx, routerID)
+		return r.routerClient.GetSpecificRouter(ctx, tfRouter.ID)
 	})
 	if err != nil {
 		return err
 	}
-	d.SetID(routerResp.(models.GetSpecificRouterResp).NetworkRouter.ID)
+	getRouter := routerResp.(models.GetNetworkRouter)
 
-	return nil
+	return tftags.Set(d, getRouter)
 }
 
 func (r *router) Create(ctx context.Context, d *utils.Data, meta interface{}) error {
@@ -53,12 +56,33 @@ func (r *router) Create(ctx context.Context, d *utils.Data, meta interface{}) er
 	if !routerResp.Success {
 		return fmt.Errorf("got success = 'false' while creating router")
 	}
-	d.SetID(routerResp.ID)
 
-	return nil
+	return tftags.Set(d, routerResp)
 }
 
 func (r *router) Update(ctx context.Context, d *utils.Data, meta interface{}) error {
+	createReq := models.CreateRouterRequest{}
+	if err := tftags.Get(d, &createReq.NetworkRouter); err != nil {
+		return err
+	}
+	// align createReq and fill json related fields
+	r.routerAlignRouterRequest(ctx, meta, &createReq)
+
+	// HaMode cannot be updated, setting it to empty so that it is ignored in the API Payload.
+	createReq.NetworkRouter.Config.HaMode = ""
+
+	resp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
+		return r.routerClient.UpdateRouter(ctx, createReq.NetworkRouter.ID, createReq)
+	})
+	if err != nil {
+		return err
+	}
+	routerResp := resp.(models.SuccessOrErrorMessage)
+	if !routerResp.Success {
+		return fmt.Errorf("got success = 'false' while updating router")
+	}
+	d.SetID(createReq.NetworkRouter.ID)
+
 	return nil
 }
 
@@ -80,15 +104,33 @@ func (r *router) routerAlignRouterRequest(ctx context.Context, meta interface{},
 	if routerReq.NetworkRouter.TfTier0Config != nil {
 		routerReq.NetworkRouter.Config.CreateRouterTier0Config.RouteRedistributionTier0 =
 			routerReq.NetworkRouter.TfTier0Config.TfRRTier0
+
 		routerReq.NetworkRouter.Config.CreateRouterTier0Config.RouteRedistributionTier1 =
 			routerReq.NetworkRouter.TfTier0Config.TfRRTier1
+		routerReq.NetworkRouter.Config.CreateRouterTier0Config.RouteRedistributionTier1.RouteAdvertisement.TIER1DNSFORWARDERIP =
+			routerReq.NetworkRouter.TfTier0Config.TfRRTier1.TIER1DNSFORWARDERIP
+		routerReq.NetworkRouter.Config.CreateRouterTier0Config.RouteRedistributionTier1.RouteAdvertisement.TIER1LBSNAT =
+			routerReq.NetworkRouter.TfTier0Config.TfRRTier1.TIER1LBSNAT
+		routerReq.NetworkRouter.Config.CreateRouterTier0Config.RouteRedistributionTier1.RouteAdvertisement.TIER1NAT =
+			routerReq.NetworkRouter.TfTier0Config.TfRRTier1.TIER1NAT
+		routerReq.NetworkRouter.Config.CreateRouterTier0Config.RouteRedistributionTier1.RouteAdvertisement.TIER1LBVIP =
+			routerReq.NetworkRouter.TfTier0Config.TfRRTier1.TIER1LBVIP
+		routerReq.NetworkRouter.Config.CreateRouterTier0Config.RouteRedistributionTier1.RouteAdvertisement.TIER1IPSECLOCALENDPOINT =
+			routerReq.NetworkRouter.TfTier0Config.TfRRTier1.TIER1IPSECLOCALENDPOINT
+		routerReq.NetworkRouter.Config.CreateRouterTier0Config.RouteRedistributionTier1.RouteAdvertisement.TIER1STATIC =
+			routerReq.NetworkRouter.TfTier0Config.TfRRTier1.TIER1STATIC
+		routerReq.NetworkRouter.Config.CreateRouterTier0Config.RouteRedistributionTier1.RouteAdvertisement.Tier1Connected =
+			routerReq.NetworkRouter.TfTier0Config.TfRRTier1.Tier1Connected
+		routerReq.NetworkRouter.Config.CreateRouterTier0Config.RouteRedistributionTier1.RouteAdvertisement.Tier1StaticRoutes =
+			routerReq.NetworkRouter.TfTier0Config.TfRRTier1.Tier1StaticRoutes
+
 		routerReq.NetworkRouter.Config.CreateRouterTier0Config.Bgp =
 			routerReq.NetworkRouter.TfTier0Config.TfBGP
 
 		routerReq.NetworkRouter.Config.HaMode = routerReq.NetworkRouter.TfTier0Config.TfHaMode
 		routerReq.NetworkRouter.Config.FailOver = routerReq.NetworkRouter.TfTier0Config.TfFailOver
 		routerReq.NetworkRouter.Config.EdgeCluster = routerReq.NetworkRouter.TfTier0Config.TfEdgeCluster
-		routerReq.NetworkRouter.Config.EnableBgp = routerReq.NetworkRouter.TfTier0Config.TfEnableBgp
+		routerReq.NetworkRouter.EnableBGP = routerReq.NetworkRouter.TfTier0Config.Bgp.TfEnableBgp
 		queryParam[nameKey] = tier0GatewayType
 	} else {
 		routerReq.NetworkRouter.Config.CreateRouterTier0Config.RouteRedistributionTier1.RouteAdvertisement =
