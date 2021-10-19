@@ -71,7 +71,7 @@ vmaas:
           fail_over: NON_PREEMPTIVE
           ha_mode: ACTIVE_STANDBY
       tier1:
-        name: tf_tier0_gateway
+        name: tf_tier1_gateway
         enable: true
         group_id: shared
         tier1_config:
