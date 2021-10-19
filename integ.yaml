@@ -1,7 +1,6 @@
 vmaas:
-# Resources
+  # Resources
   resource:
-
     instance:
       name: tf_acc
       cloud_id: 1
@@ -25,7 +24,18 @@ vmaas:
       network_id: 6
       network_interface_id: 4
 
-# Data sources
+    network:
+      name: tf_acc_net
+      group_id: shared
+      active: true
+      dhcp_server: true
+      description: Network created using tf
+      cidr: "168.72.10.0/18"
+      gateway: "168.72.10.10"
+      netmask: "255.255.255.255"
+      pool_id: 2
+
+  # Data sources
   datasource:
     cloud:
       name: HPE GreenLake VMaaS Cloud
@@ -66,6 +76,22 @@ vmaas:
 
     router:
       name: tier0_gateway
+
+    cloud_folder:
+      name: ComputeFolder
+      cloud_id: 1
+
+    network_domain:
+      name: tf_domain
+
+    network_pool:
+      name: tf_pool
+
+    network_proxy:
+      name: tf_proxy
+
+    network_type:
+      name: NSX-T Segment
 
 skip:
   - vmaas.resource.instance_clone

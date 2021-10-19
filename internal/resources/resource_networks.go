@@ -71,12 +71,6 @@ func Network() *schema.Resource {
 				Description:      "Gateway address for the network",
 				ValidateDiagFunc: validations.ValidateIPAddress,
 			},
-			"netmask": {
-				Type:             schema.TypeString,
-				Optional:         true,
-				Description:      "Netmask address for the network",
-				ValidateDiagFunc: validations.ValidateIPAddress,
-			},
 			"primary_dns": {
 				Type:             schema.TypeString,
 				Optional:         true,
@@ -155,7 +149,7 @@ func Network() *schema.Resource {
 						},
 						"vlan_id": {
 							Type:        schema.TypeString,
-							Required:    true,
+							Optional:    true,
 							Description: "Comma separated VLAN IDs",
 						},
 					},
