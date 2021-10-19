@@ -8,7 +8,6 @@ import (
 	"log"
 
 	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
-	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/models"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/utils"
 )
 
@@ -28,16 +27,13 @@ func (n *plan) Read(ctx context.Context, d *utils.Data, meta interface{}) error 
 	if err := d.Error(); err != nil {
 		return err
 	}
-	resp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return n.pClient.GetAllServicePlans(ctx, map[string]string{
-			provisionTypeKey: vmware,
-			nameKey:          name,
-		})
+	plans, err := n.pClient.GetAllServicePlans(ctx, map[string]string{
+		provisionTypeKey: vmware,
+		nameKey:          name,
 	})
 	if err != nil {
 		return err
 	}
-	plans := resp.(models.ServicePlans)
 	if len(plans.ServicePlansResponse) != 1 {
 		return fmt.Errorf(errExactMatch, "plan")
 	}

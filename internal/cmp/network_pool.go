@@ -7,7 +7,6 @@ import (
 	"fmt"
 
 	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
-	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/models"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/utils"
 )
 
@@ -21,14 +20,11 @@ func newNetworkPool(nClient *client.NetworksAPIService) *networkPool {
 
 func (n *networkPool) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
 	name := d.GetString("name")
-	resp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return n.nClient.GetNetworkPool(ctx, nil)
-	})
+	poolResp, err := n.nClient.GetNetworkPool(ctx, nil)
 	if err != nil {
 		return err
 	}
 
-	poolResp := resp.(models.GetNetworkPoolsResp)
 	for _, p := range poolResp.NetworkPools {
 		if p.Name == name {
 			d.SetString("display_name", p.DisplayName)

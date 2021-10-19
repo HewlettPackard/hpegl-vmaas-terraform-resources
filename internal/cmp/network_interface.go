@@ -9,7 +9,6 @@ import (
 	"log"
 
 	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
-	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/models"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/utils"
 )
 
@@ -35,27 +34,21 @@ func (c *networkInterface) Read(ctx context.Context, d *utils.Data, meta interfa
 	}
 
 	// Get vmware provision-type id
-	provisionResp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return c.pClient.GetAllProvisioningTypes(ctx, map[string]string{
-			nameKey: vmware,
-		})
+	provision, err := c.pClient.GetAllProvisioningTypes(ctx, map[string]string{
+		nameKey: vmware,
 	})
 	if err != nil {
 		return err
 	}
-	provision := provisionResp.(models.GetAllProvisioningTypes)
 	if len(provision.ProvisionTypes) != 1 {
 		return errors.New("could not find vmware provision type. Please contact administrator to resolve the issue")
 	}
 
-	networkResp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return c.cClient.GetAllCloudNetworks(ctx, cloudID, provision.ProvisionTypes[0].ID)
-	})
+	networkInterface, err := c.cClient.GetAllCloudNetworks(ctx, cloudID, provision.ProvisionTypes[0].ID)
 	if err != nil {
 		return err
 	}
 
-	networkInterface := networkResp.(models.GetAllCloudNetworks)
 	for _, n := range networkInterface.Data.NetworkTypes {
 		if n.Name == name {
 			d.Set("code", n.Code)

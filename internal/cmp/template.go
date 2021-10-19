@@ -8,7 +8,6 @@ import (
 	"log"
 
 	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
-	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/models"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/utils"
 )
 
@@ -29,15 +28,12 @@ func (c *template) Read(ctx context.Context, d *utils.Data, meta interface{}) er
 	if err := d.Error(); err != nil {
 		return err
 	}
-	resp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return c.tClient.GetAllVirtualImages(ctx, map[string]string{
-			nameKey: name,
-		})
+	template, err := c.tClient.GetAllVirtualImages(ctx, map[string]string{
+		nameKey: name,
 	})
 	if err != nil {
 		return err
 	}
-	template := resp.(models.VirtualImages)
 	if len(template.VirtualImages) != 1 {
 		return fmt.Errorf(errExactMatch, "templates")
 	}
