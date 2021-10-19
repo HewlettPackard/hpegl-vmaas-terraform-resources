@@ -95,7 +95,6 @@ func testAccResourceNetwork() string {
 			cidr   			    = "%s"
 			gateway   			= "%s"
 			pool_id 			= %d
-			netmask   			= "%s"
 	}
 `,
 		viper.GetString("vmaas.resource.network.name"),
@@ -106,6 +105,5 @@ func testAccResourceNetwork() string {
 		viper.GetString("vmaas.resource.network.description"),
 		viper.GetString("vmaas.resource.network.cidr"),
 		viper.GetString("vmaas.resource.network.gateway"),
-		viper.GetInt("vmaas.resource.network.pool_id"),
-		viper.GetString("vmaas.resource.network.netmask"))
+		viper.GetInt("vmaas.resource.network.pool_id"))
 }
