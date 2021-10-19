@@ -8,7 +8,6 @@ resource "hpegl_vmaas_network" "test_net" {
   description = "Network created using tf"
   cidr        = "168.72.10.0/18"
   gateway     = "168.72.10.9"
-  netmask     = "255.255.255.255"
   active      = true
   config {
     connected_gateway = data.hpegl_vmaas_router.tf_router.provider_id
