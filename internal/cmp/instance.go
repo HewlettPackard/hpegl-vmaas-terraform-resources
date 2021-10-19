@@ -69,13 +69,11 @@ func (i *instance) Create(ctx context.Context, d *utils.Data, meta interface{}) 
 	}
 
 	// create instance
-	respVM, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return i.iClient.CreateAnInstance(ctx, req)
-	})
+	respVM, err := i.iClient.CreateAnInstance(ctx, req)
 	if err != nil {
 		return err
 	}
-	getInstanceBody := *respVM.(models.GetInstanceResponse).Instance
+	getInstanceBody := *respVM.Instance
 	// Set id just after created the instnance
 	d.SetID(getInstanceBody.ID)
 
@@ -84,7 +82,7 @@ func (i *instance) Create(ctx context.Context, d *utils.Data, meta interface{}) 
 	}
 
 	if snapshot := d.GetListMap("snapshot"); len(snapshot) == 1 {
-		err := createInstanceSnapshot(ctx, i.instanceSharedClient, meta, getInstanceBody.ID, models.SnapshotBody{
+		err := createInstanceSnapshot(ctx, i.instanceSharedClient, getInstanceBody.ID, models.SnapshotBody{
 			Snapshot: &models.SnapshotBodySnapshot{
 				Name:        snapshot[0]["name"].(string),
 				Description: snapshot[0]["description"].(string),
@@ -95,7 +93,7 @@ func (i *instance) Create(ctx context.Context, d *utils.Data, meta interface{}) 
 		}
 	}
 
-	err = instanceSetServerID(ctx, meta, d, i.instanceSharedClient)
+	err = instanceSetServerID(ctx, d, i.instanceSharedClient)
 	if err != nil {
 		return err
 	}
@@ -105,7 +103,7 @@ func (i *instance) Create(ctx context.Context, d *utils.Data, meta interface{}) 
 }
 
 func (i *instance) Update(ctx context.Context, d *utils.Data, meta interface{}) error {
-	return updateInstance(ctx, i.instanceSharedClient, d, meta)
+	return updateInstance(ctx, i.instanceSharedClient, d)
 }
 
 func (i *instance) Delete(ctx context.Context, d *utils.Data, meta interface{}) error {
