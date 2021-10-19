@@ -26,7 +26,7 @@ func (n *networkPool) Read(ctx context.Context, d *utils.Data, meta interface{})
 	}
 
 	for _, p := range poolResp.NetworkPools {
-		if p.DisplayName == name {
+		if p.Name == name {
 			d.SetString("display_name", p.DisplayName)
 			d.SetID(p.ID)
 

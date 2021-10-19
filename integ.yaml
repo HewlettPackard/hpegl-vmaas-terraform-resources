@@ -32,8 +32,7 @@ vmaas:
       description: Network created using tf
       cidr: "168.72.10.0/18"
       gateway: "168.72.10.10"
-      netmask: "255.255.255.255"
-      pool_id: 2
+      pool_id: 6
 
   # Data sources
   datasource:
@@ -95,3 +94,4 @@ vmaas:
 
 skip:
   - vmaas.resource.instance_clone
+  - vmaas.resource.network
