@@ -8,7 +8,6 @@ import (
 	"log"
 
 	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
-	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/models"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/utils"
 )
 
@@ -31,16 +30,13 @@ func (g *layout) Read(ctx context.Context, d *utils.Data, meta interface{}) erro
 	if err := d.Error(); err != nil {
 		return err
 	}
-	resp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return g.gClient.GetAllInstanceTypes(ctx, map[string]string{
-			codeKey:          instanceTypeCode,
-			provisionTypeKey: vmware,
-		})
+	instanceTypes, err := g.gClient.GetAllInstanceTypes(ctx, map[string]string{
+		codeKey:          instanceTypeCode,
+		provisionTypeKey: vmware,
 	})
 	if err != nil {
 		return err
 	}
-	instanceTypes := resp.(models.InstanceTypesResp)
 
 	if len(instanceTypes.InstanceTypes) != 1 {
 		return fmt.Errorf(errExactMatch, "instance type")

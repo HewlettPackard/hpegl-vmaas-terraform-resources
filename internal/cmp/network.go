@@ -8,7 +8,6 @@ import (
 	"log"
 
 	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
-	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/models"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/utils"
 )
 
@@ -28,15 +27,12 @@ func (n *network) Read(ctx context.Context, d *utils.Data, meta interface{}) err
 	if err := d.Error(); err != nil {
 		return err
 	}
-	resp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return n.nClient.GetAllNetworks(ctx, nil)
-	})
+	networks, err := n.nClient.GetAllNetworks(ctx, nil)
 	if err != nil {
 		return err
 	}
 
 	isMatch := false
-	networks := resp.(models.ListNetworksBody)
 	for i, n := range networks.Networks {
 		if n.DisplayName == name {
 			isMatch = true

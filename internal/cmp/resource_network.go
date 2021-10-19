@@ -32,13 +32,10 @@ func (r *resNetwork) Read(ctx context.Context, d *utils.Data, meta interface{}) 
 	}
 
 	// Get network details with ID
-	response, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return r.nClient.GetSpecificNetwork(ctx, tfNetwork.ID)
-	})
+	getNetwork, err := r.nClient.GetSpecificNetwork(ctx, tfNetwork.ID)
 	if err != nil {
 		return err
 	}
-	getNetwork := response.(models.GetSpecificNetworkBody)
 
 	return tftags.Set(d, getNetwork.Network)
 }
@@ -87,17 +84,15 @@ func (r *resNetwork) Create(ctx context.Context, d *utils.Data, meta interface{}
 	alignNetworkReq(&createReq)
 
 	// Create network
-	createResp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return r.nClient.CreateNetwork(ctx, models.CreateNetworkRequest{
-			Network:             createReq,
-			ResourcePermissions: createReq.ResourcePermissions,
-		})
+	createResp, err := r.nClient.CreateNetwork(ctx, models.CreateNetworkRequest{
+		Network:             createReq,
+		ResourcePermissions: createReq.ResourcePermissions,
 	})
 	if err != nil {
 		return err
 	}
 
-	return tftags.Set(d, createResp.(models.CreateNetworkResponse).Network)
+	return tftags.Set(d, createResp.Network)
 }
 
 func (r *resNetwork) Update(ctx context.Context, d *utils.Data, meta interface{}) error {
@@ -107,17 +102,14 @@ func (r *resNetwork) Update(ctx context.Context, d *utils.Data, meta interface{}
 	}
 
 	alignNetworkReq(&networkReq)
-	resp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return r.nClient.UpdateNetwork(ctx, networkReq.ID, models.CreateNetworkRequest{
-			Network:             networkReq,
-			ResourcePermissions: networkReq.ResourcePermissions,
-		})
+	updateResp, err := r.nClient.UpdateNetwork(ctx, networkReq.ID, models.CreateNetworkRequest{
+		Network:             networkReq,
+		ResourcePermissions: networkReq.ResourcePermissions,
 	})
 	if err != nil {
 		return err
 	}
 
-	updateResp := resp.(models.SuccessOrErrorMessage)
 	if !updateResp.Success {
 		return fmt.Errorf("failed to update network, got success = 'false' on update, error: %v", updateResp.Error)
 	}
@@ -128,11 +120,12 @@ func (r *resNetwork) Update(ctx context.Context, d *utils.Data, meta interface{}
 
 func (r *resNetwork) Delete(ctx context.Context, d *utils.Data, meta interface{}) error {
 	networkID := d.GetID()
-	utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return r.nClient.DeleteNetwork(ctx, networkID)
-	})
+	resp, err := r.nClient.DeleteNetwork(ctx, networkID)
+	if !resp.Success {
+		return fmt.Errorf("got success as false on delete network, error: %v", err)
+	}
 
-	return nil
+	return err
 }
 
 func alignNetworkReq(request *models.CreateNetwork) {

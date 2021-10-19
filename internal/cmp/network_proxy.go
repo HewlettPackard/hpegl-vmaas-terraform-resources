@@ -24,15 +24,12 @@ func (n *networkProxy) Read(ctx context.Context, d *utils.Data, meta interface{}
 	tfProxy := models.GetNetworkProxy{}
 	tftags.Get(d, &tfProxy)
 
-	resp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return n.nClient.GetNetworkProxy(ctx, map[string]string{
-			nameKey: tfProxy.Name,
-		})
+	proxyResp, err := n.nClient.GetNetworkProxy(ctx, map[string]string{
+		nameKey: tfProxy.Name,
 	})
 	if err != nil {
 		return err
 	}
-	proxyResp := resp.(models.GetAllNetworkProxies)
 	if len(proxyResp.GetNetworkProxies) != 1 {
 		return fmt.Errorf(errExactMatch, "network proxy")
 	}
