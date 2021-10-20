@@ -35,5 +35,5 @@ data "hpegl_vmaas_network" "local_network" {
 	name = "%s"
 }
 `, providerStanza,
-		viper.GetString("vmaas.data_source.network.name"))
+		viper.GetString("vmaas.datasource.network.name"))
 }
