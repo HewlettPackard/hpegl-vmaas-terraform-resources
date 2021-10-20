@@ -32,19 +32,13 @@ func (n *network) Read(ctx context.Context, d *utils.Data, meta interface{}) err
 		return err
 	}
 
-	isMatch := false
 	for i, n := range networks.Networks {
-		if n.DisplayName == name {
-			isMatch = true
+		if n.Name == name {
 			d.SetID(networks.Networks[i].ID)
 
-			break
+			return nil
 		}
 	}
-	if !isMatch {
-		return fmt.Errorf(errExactMatch, "Network")
-	}
 
-	// post check
-	return d.Error()
+	return fmt.Errorf(errExactMatch, "Network")
 }
