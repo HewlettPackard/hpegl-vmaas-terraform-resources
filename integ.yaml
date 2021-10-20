@@ -58,7 +58,7 @@ vmaas:
       cloud_id: 1
 
     network:
-      name: Test_Network
+      name: NSXT_DHCP
 
     plan:
       name: G1-Small
