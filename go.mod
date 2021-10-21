@@ -3,7 +3,7 @@ module github.com/HewlettPackard/hpegl-vmaas-terraform-resources
 go 1.17
 
 require (
-	github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk v0.1.1-0.20211019050313-8ddf0359a975
+	github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk v0.1.1-0.20211020180719-452f9fda0acc
 	github.com/golang/mock v1.6.0
 	github.com/hashicorp/go-cty v1.4.1-0.20200414143053-d3edf31b6320
 	github.com/hashicorp/terraform-plugin-docs v0.4.0
