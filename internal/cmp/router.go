@@ -48,10 +48,50 @@ func (r *router) Create(ctx context.Context, d *utils.Data, meta interface{}) er
 		return err
 	}
 	if !routerResp.Success {
-		return fmt.Errorf("got success = 'false' while creating router")
+		return fmt.Errorf(successErr, "creating router")
+	}
+	err = tftags.Set(d, routerResp)
+	if err != nil {
+		return err
 	}
 
-	return tftags.Set(d, routerResp)
+	err = r.createNatRule(ctx, d, routerResp.ID)
+	if err != nil {
+
+	}
+	return err
+
+}
+
+func (r *router) createNatRule(ctx context.Context, d *utils.Data, routerID int) error {
+	// Prepare NAT Rule tf struct
+	tfNat := struct {
+		NatRule *models.CreateRouterNat `tf:"nat_rule,sub"`
+	}{}
+	err := tftags.Get(d, &tfNat)
+	if err != nil {
+		return err
+	}
+
+	if tfNat.NatRule != nil {
+		natRes, err := r.routerClient.CreateRouterNat(ctx, routerID,
+			models.CreateRouterNatRequest{CreateRouterNat: *tfNat.NatRule},
+		)
+		if err != nil {
+			return err
+		}
+
+		if !natRes.Success {
+			return fmt.Errorf(successErr, "creating NAT rule for the router")
+		}
+
+		err = tftags.Set(d, tfNat)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func (r *router) Update(ctx context.Context, d *utils.Data, meta interface{}) error {

@@ -46,6 +46,7 @@ func Router() *schema.Resource {
 			},
 			"tier0_config": schemas.RouterTier0ConfigSchema(),
 			"tier1_config": schemas.RouterTier1ConfigSchema(),
+			"nat_rule":     schemas.RouterNatRuleSchema(),
 		},
 		ReadContext:   routerReadContext,
 		CreateContext: routerCreateContext,
