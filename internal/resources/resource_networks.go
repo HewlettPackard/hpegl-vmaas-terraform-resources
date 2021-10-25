@@ -18,32 +18,32 @@ func Network() *schema.Resource {
 			"name": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "Name of the network to be created",
+				Description: "Name of the NSX-T Segment to be created.",
 			},
 			"description": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "Description of the network to be created",
+				Description: "Description of the network to be created.",
 			},
 			"display_name": {
 				Type:        schema.TypeString,
-				Computed:    true,
-				Description: "Display name of the network",
+				Optional:    true,
+				Description: "Display name of the NSX-T network.",
 			},
 			"group_id": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "ID of the group in which network associated. Please use " + DSGroup + " data source to retrieve ID",
+				Description: "Group ID of the Network. Please use " + DSGroup + " data source to retrieve ID or pass `shared`.",
 			},
 			"code": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: "network code",
+				Description: "Network Type code",
 			},
 			"type_id": {
 				Type:        schema.TypeInt,
 				Computed:    true,
-				Description: "Type id for the NSX-T.",
+				Description: "Type ID for the NSX-T Network.",
 			},
 			"pool_id": {
 				Type:        schema.TypeInt,
@@ -68,71 +68,76 @@ func Network() *schema.Resource {
 			"gateway": {
 				Type:             schema.TypeString,
 				Optional:         true,
-				Description:      "Gateway address for the network",
+				Description:      "Gateway IP address of the network",
 				ValidateDiagFunc: validations.ValidateIPAddress,
 			},
 			"primary_dns": {
 				Type:             schema.TypeString,
 				Optional:         true,
-				Description:      "Primary DNS",
+				Description:      "Primary DNS IP Address",
 				ValidateDiagFunc: validations.ValidateIPAddress,
 			},
 			"secondary_dns": {
 				Type:             schema.TypeString,
 				Optional:         true,
-				Description:      "Secondary DNS",
+				Description:      "Secondary DNS IP Address",
 				ValidateDiagFunc: validations.ValidateIPAddress,
 			},
 			"cidr": {
 				Type:             schema.TypeString,
 				RequiredWith:     []string{"pool_id"},
 				Optional:         true,
-				Description:      "CIDR of the network",
+				Description:      "Gateway CIDR of the network",
 				ValidateDiagFunc: validations.ValidateCidr,
 			},
 			"active": {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Description: "Denotes the network is active or not",
+				Default:     true,
+				Description: "Activate (`true`) or disable (`false`) the network",
 			},
 			"scan_network": {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Description: "Dentes whether scan network",
+				Default:     false,
+				Description: "Scan Network",
 			},
 			"dhcp_server": {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Description: "DHCP server address",
+				Default:     false,
+				Description: "Enable DHCP Server.",
 			},
 			"appliance_url_proxy_bypass": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "Addresses of appliances to proxy bypass",
+				Default:     true,
+				Description: "Bypass Proxy for Appliance URL",
 			},
 			"no_proxy": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "No proxy IPs/Adrresses",
+				Description: "List of IP addresses or name servers to exclude proxy traversal for.",
 			},
 			"domain_id": {
 				Type:        schema.TypeInt,
 				Optional:    true,
-				Description: "ID of thr domain. Use " + DSNetworkDomain + " datasource to obtain the id.",
+				Description: "ID of the Network domain. Use " + DSNetworkDomain + " datasource to obtain the id.",
 			},
 			"proxy_id": {
 				Type:        schema.TypeInt,
 				Optional:    true,
-				Description: "Proxy ID. Use " + DSNetworkProxy + " data source to obtain the id.",
+				Description: "Network Proxy ID. Use " + DSNetworkProxy + " data source to obtain the id.",
 			},
 			"search_domains": {
-				Type:     schema.TypeString,
-				Optional: true,
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Search Domains",
 			},
 			"allow_static_override": {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Description: "If set to true, networ will allow static override",
+				Description: "If set to true, network will allow static override",
 			},
 			"config": {
 				Type:        schema.TypeList,
@@ -144,13 +149,13 @@ func Network() *schema.Resource {
 						"connected_gateway": {
 							Type:     schema.TypeString,
 							Required: true,
-							Description: "Provider ID for the gateway connection. Use " + DSRouter +
+							Description: "Connected Gateway. Pass Provider ID of the Tier1 gateway. Use " + DSRouter +
 								".provider_id  here.",
 						},
 						"vlan_id": {
 							Type:        schema.TypeString,
 							Optional:    true,
-							Description: "Comma separated VLAN IDs",
+							Description: "VLAN IDs eg. `0,3-5`. Use this field for VLAN based segments.",
 						},
 					},
 				},
@@ -164,22 +169,25 @@ func Network() *schema.Resource {
 						"all": {
 							Type:        schema.TypeBool,
 							Optional:    true,
-							Description: "Denotes whether provide all permissions",
+							Default:     true,
+							Description: "Pass `true` to allow access all groups.",
 						},
 						"sites": {
 							Type:        schema.TypeList,
 							Optional:    true,
-							Description: "List of site details",
+							Description: "List of sites/groups",
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"id": {
 										Type:        schema.TypeInt,
 										Required:    true,
-										Description: "id for the site",
+										Description: "ID of the site/group",
 									},
 									"default": {
-										Type:     schema.TypeBool,
-										Optional: true,
+										Type:        schema.TypeBool,
+										Optional:    true,
+										Default:     false,
+										Description: "Group Default Selection",
 									},
 								},
 							},
@@ -195,7 +203,7 @@ func Network() *schema.Resource {
 			"scope_id": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "Scope ID",
+				Description: "Transport Zone ID",
 			},
 		},
 		SchemaVersion: 0,
@@ -206,6 +214,8 @@ func Network() *schema.Resource {
 		CreateContext: resNetworkCreateContext,
 		UpdateContext: resNetworkUpdateContext,
 		DeleteContext: resNetworkDeleteContext,
+		Description: `Network resource facilitates creating,
+		updating and deleting NSX-T Networks.`,
 	}
 }
 
