@@ -4,6 +4,8 @@ package cmp
 
 import (
 	"context"
+	"fmt"
+	"log"
 
 	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
 	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/models"
@@ -22,16 +24,50 @@ func newRouterNat(routerNatClient *client.RouterAPIService) *routerNat {
 }
 
 func (r *routerNat) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
-	var tfNat models.GetSpecificRouterNat
+	var tfNat models.CreateRouterNat
 	if err := tftags.Get(d, &tfNat); err != nil {
 		return err
 	}
-	r.routerNatClient.GetSpecificRouterNat(ctx, tfNat.ID, tfNat.ID)
-	return nil
+	// Get the router, if the router not exists, return warning
+	router, err := r.routerNatClient.GetSpecificRouter(ctx, tfNat.RouterID)
+	if err != nil {
+		return err
+	}
+	// if router not found set is_deprecated flag=true
+	if router.ID == 0 {
+		log.Printf("[ERROR] Router with %d id is not found on NAT plan", tfNat.RouterID)
+		tfNat.IsDeprecated = true
+		return tftags.Set(d, tfNat)
+	}
+
+	_, err = r.routerNatClient.GetSpecificRouterNat(ctx, tfNat.ID, tfNat.ID)
+	if err != nil {
+		return err
+	}
+	tfNat.IsDeprecated = false
+
+	return tftags.Set(d, tfNat)
 }
 
 func (r *routerNat) Create(ctx context.Context, d *utils.Data, meta interface{}) error {
-	return nil
+	var tfNat models.CreateRouterNat
+	err := tftags.Get(d, &tfNat)
+	if err != nil {
+		return err
+	}
+	natRes, err := r.routerNatClient.CreateRouterNat(ctx, tfNat.RouterID,
+		models.CreateRouterNatRequest{CreateRouterNat: tfNat},
+	)
+	if err != nil {
+		return err
+	}
+
+	if !natRes.Success {
+		return fmt.Errorf(successErr, "creating NAT rule for the router")
+	}
+	tfNat.ID = natRes.ID
+
+	return tftags.Set(d, tfNat)
 
 }
 
@@ -41,6 +77,17 @@ func (r *routerNat) Update(ctx context.Context, d *utils.Data, meta interface{})
 }
 
 func (r *routerNat) Delete(ctx context.Context, d *utils.Data, meta interface{}) error {
+	var tfNat models.CreateRouterNat
+	if err := tftags.Get(d, &tfNat); err != nil {
+		return err
+	}
 
+	// if parent router got deleted, NAT is already deleted
+	if tfNat.IsDeprecated {
+		log.Printf("[WARNING] NAT already deleted since router is deleted")
+		return nil
+	}
+
+	r.routerNatClient.DeleteRouterNat(ctx, tfNat.RouterID, tfNat.ID)
 	return nil
 }

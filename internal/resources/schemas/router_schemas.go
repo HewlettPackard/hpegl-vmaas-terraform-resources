@@ -290,8 +290,10 @@ func RouterTier1ConfigSchema() *schema.Schema {
 func RouterNatRuleSchema() *schema.Schema {
 	return &schema.Schema{
 		Type:     schema.TypeList,
-		MaxItems: 1,
 		Optional: true,
+		// ValidateDiagFunc: validations.ValidateUniqueNameInList,
+		Description: `NAT Rules for the specific router configuration. Please note that changing
+		order of nat_rule list will result into unwanted behaviour.`,
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
 				"id": {
@@ -382,6 +384,7 @@ func RouterNatRuleSchema() *schema.Schema {
 				},
 				"priority": {
 					Type:             schema.TypeInt,
+					Optional:         true,
 					Default:          100,
 					Description:      "Priority for the rule",
 					ValidateDiagFunc: validations.IntAtLeast(1),

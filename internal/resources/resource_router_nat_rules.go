@@ -16,6 +16,11 @@ import (
 func RouterNatRule() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
+			"router_id": {
+				Type:        schema.TypeInt,
+				Computed:    true,
+				Description: "Parent router ID",
+			},
 			"name": {
 				Type:        schema.TypeString,
 				Required:    true,
@@ -99,16 +104,22 @@ func RouterNatRule() *schema.Resource {
 			},
 			"priority": {
 				Type:             schema.TypeInt,
+				Optional:         true,
 				Default:          100,
 				Description:      "Priority for the rule",
 				ValidateDiagFunc: validations.IntAtLeast(1),
 			},
+			"is_deprecated": {
+				Type:        schema.TypeBool,
+				Computed:    true,
+				Description: "If parent router not found, then is_deprecated will be true",
+			},
 		},
-		CustomizeDiff: routerNatCustomDiff,
 		ReadContext:   routerNatRuleReadContext,
 		CreateContext: routerNatRuleCreateContext,
 		UpdateContext: routerNatRuleUpdateContext,
 		DeleteContext: routerNatRuleDeleteContext,
+		CustomizeDiff: routerNatCustomDiff,
 	}
 }
 
@@ -119,10 +130,18 @@ func routerNatRuleReadContext(ctx context.Context, rd *schema.ResourceData, meta
 	}
 
 	data := utils.NewData(rd)
-	if err := c.CmpClient.Router.Read(ctx, data, meta); err != nil {
+	if err := c.CmpClient.RouterNat.Read(ctx, data, meta); err != nil {
 		return diag.FromErr(err)
 	}
-
+	isDeprecated := data.GetBool("is_deprecated")
+	if isDeprecated {
+		return diag.Diagnostics{
+			{
+				Severity: diag.Warning,
+				Summary:  "Parent router is deleted. This resource is deprecated!!!",
+			},
+		}
+	}
 	return nil
 }
 
@@ -133,7 +152,7 @@ func routerNatRuleCreateContext(ctx context.Context, rd *schema.ResourceData, me
 	}
 
 	data := utils.NewData(rd)
-	if err := c.CmpClient.Router.Create(ctx, data, meta); err != nil {
+	if err := c.CmpClient.RouterNat.Create(ctx, data, meta); err != nil {
 		return diag.FromErr(err)
 	}
 
@@ -147,7 +166,7 @@ func routerNatRuleUpdateContext(ctx context.Context, rd *schema.ResourceData, me
 	}
 
 	data := utils.NewData(rd)
-	if err := c.CmpClient.Router.Update(ctx, data, meta); err != nil {
+	if err := c.CmpClient.RouterNat.Update(ctx, data, meta); err != nil {
 		return diag.FromErr(err)
 	}
 
@@ -161,7 +180,7 @@ func routerNatRuleDeleteContext(ctx context.Context, rd *schema.ResourceData, me
 	}
 
 	data := utils.NewData(rd)
-	if err := c.CmpClient.Router.Delete(ctx, data, meta); err != nil {
+	if err := c.CmpClient.RouterNat.Delete(ctx, data, meta); err != nil {
 		return diag.FromErr(err)
 	}
 
