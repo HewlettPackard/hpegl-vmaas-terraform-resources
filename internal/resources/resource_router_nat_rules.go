@@ -18,8 +18,8 @@ func RouterNatRule() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			"router_id": {
 				Type:        schema.TypeInt,
-				Computed:    true,
-				Description: "Parent router ID",
+				Required:    true,
+				Description: "Parent router ID, router_id can be obtained by using router datasource/resource.",
 			},
 			"name": {
 				Type:        schema.TypeString,

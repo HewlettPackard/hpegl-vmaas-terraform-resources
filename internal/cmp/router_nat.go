@@ -88,6 +88,13 @@ func (r *routerNat) Delete(ctx context.Context, d *utils.Data, meta interface{})
 		return nil
 	}
 
-	r.routerNatClient.DeleteRouterNat(ctx, tfNat.RouterID, tfNat.ID)
+	resp, err := r.routerNatClient.DeleteRouterNat(ctx, tfNat.RouterID, tfNat.ID)
+	if err != nil {
+		return err
+	}
+	if !resp.Success {
+		return fmt.Errorf("got success = 'false' while deleting NAT rule")
+	}
+
 	return nil
 }

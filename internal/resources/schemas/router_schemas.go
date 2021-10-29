@@ -3,6 +3,7 @@ package schemas
 import (
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/resources/validations"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 func RouterTier0ConfigSchema() *schema.Schema {
@@ -289,113 +290,6 @@ func RouterTier1ConfigSchema() *schema.Schema {
 							},
 						},
 					},
-				},
-			},
-		},
-	}
-}
-
-func RouterNatRuleSchema() *schema.Schema {
-	return &schema.Schema{
-		Type:     schema.TypeList,
-		Optional: true,
-		// ValidateDiagFunc: validations.ValidateUniqueNameInList,
-		Description: `NAT Rules for the specific router configuration. Please note that changing
-		order of nat_rule list will result into unwanted behaviour.`,
-		Elem: &schema.Resource{
-			Schema: map[string]*schema.Schema{
-				"id": {
-					Type:        schema.TypeInt,
-					Computed:    true,
-					Description: "ID of the NAT rule.",
-				},
-				"name": {
-					Type:        schema.TypeString,
-					Required:    true,
-					Description: "Name of the NAT rule.",
-				},
-				"description": {
-					Type:        schema.TypeString,
-					Optional:    true,
-					Description: "Description for the NAT rule.",
-				},
-				"enabled": {
-					Type:        schema.TypeBool,
-					Default:     false,
-					Optional:    true,
-					Description: "If true then NAT rule will be active/enabled.",
-				},
-				"config": {
-					Type:        schema.TypeList,
-					MaxItems:    1,
-					Required:    true,
-					Description: "NAT configurations",
-					Elem: &schema.Resource{
-						Schema: map[string]*schema.Schema{
-							"action": {
-								Type: schema.TypeString,
-								ValidateDiagFunc: validations.StringInSlice([]string{
-									"DNAT", "SNAT",
-								}, false),
-								Required:    true,
-								Description: "Supported values are DNAT and SNAT",
-							},
-							"service": {
-								Type:        schema.TypeString,
-								Optional:    true,
-								Description: "Type of the service",
-							},
-							"firewall": {
-								Type:     schema.TypeString,
-								Optional: true,
-								Default:  "MATCH_INTERNAL_ADDRESS",
-								ValidateDiagFunc: validations.StringInSlice([]string{
-									"MATCH_EXTERNAL_ADDRESS", "MATCH_INTERNAL_ADDRESS", "BYPASS",
-								}, false),
-								// "MATCH_INTERNAL_ADDRESS",
-							},
-							// This field will added on later versions
-							// "scope": {
-							// 	Type:        schema.TypeString,
-							// 	Optional:    true,
-							// 	Description: "Scope to particular router interface",
-							// },
-							"logging": {
-								Type:     schema.TypeBool,
-								Optional: true,
-							},
-						},
-					},
-				},
-				"source_network": {
-					Type:             schema.TypeString,
-					Optional:         true,
-					ValidateDiagFunc: validations.ValidateCidr,
-					Description:      "Source Network CIDR Address",
-				},
-				"destination_network": {
-					Type:             schema.TypeString,
-					Optional:         true,
-					ValidateDiagFunc: validations.ValidateCidr,
-					Description:      "Destination Network CIDR Address",
-				},
-				"translated_network": {
-					Type:             schema.TypeString,
-					Required:         true,
-					ValidateDiagFunc: validations.ValidateCidr,
-					Description:      "Translated Network CIDR Address",
-				},
-				"translated_ports": {
-					Type:        schema.TypeInt,
-					Optional:    true,
-					Description: "Translated Network Port",
-				},
-				"priority": {
-					Type:             schema.TypeInt,
-					Optional:         true,
-					Default:          100,
-					Description:      "Priority for the rule",
-					ValidateDiagFunc: validations.IntAtLeast(1),
 				},
 			},
 		},
