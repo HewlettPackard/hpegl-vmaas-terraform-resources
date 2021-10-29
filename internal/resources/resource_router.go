@@ -51,6 +51,8 @@ func Router() *schema.Resource {
 		CreateContext: routerCreateContext,
 		UpdateContext: routerUpdateContext,
 		DeleteContext: routerDeleteContext,
+		Description: `Router resource facilitates creating,
+		updating and deleting NSX-T Tier0/Tier1 Network Routers.`,
 	}
 }
 

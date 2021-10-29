@@ -74,6 +74,7 @@ vmaas:
         enable: true
         group_id: shared
         tier1_config:
+          fail_over: NON_PREEMPTIVE
           route_advertisement:
             tier1_connected: true
             tier1_static_routes: false

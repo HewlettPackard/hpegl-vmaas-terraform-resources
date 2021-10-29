@@ -129,6 +129,7 @@ func (r *router) routerAlignRouterRequest(ctx context.Context, meta interface{},
 		routerReq.NetworkRouter.Config.CreateRouterTier0Config.RouteRedistributionTier1.RouteAdvertisement =
 			routerReq.NetworkRouter.TfTier1Config.TfRouteAdvertisement
 		routerReq.NetworkRouter.Config.EdgeCluster = routerReq.NetworkRouter.TfTier1Config.TfEdgeCluster
+		routerReq.NetworkRouter.Config.FailOver = routerReq.NetworkRouter.TfTier1Config.TfFailOver
 		routerReq.NetworkRouter.Config.Tier0Gateways = routerReq.NetworkRouter.TfTier1Config.TfTier0Gateways
 		queryParam[nameKey] = tier1GatewayType
 	}

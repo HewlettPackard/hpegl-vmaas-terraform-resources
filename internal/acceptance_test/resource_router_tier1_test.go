@@ -91,6 +91,7 @@ func testAccResourceTier1Router() string {
 		enable   = %t
 		group_id = "%s"
 		tier1_config {
+			fail_over = "%s"
 			route_advertisement {
 				tier1_connected = %t
 				tier1_static_routes = %t
@@ -107,6 +108,7 @@ func testAccResourceTier1Router() string {
 		r.Int63n(999999),
 		viper.GetBool("vmaas.resource.router.tier1.enable"),
 		viper.GetString("vmaas.resource.router.tier1.group_id"),
+		viper.GetString("vmaas.resource.router.tier1.tier1_config.fail_over"),
 		viper.GetBool("vmaas.resource.router.tier1.tier1_config.route_advertisement.tier1_connected"),
 		viper.GetBool("vmaas.resource.router.tier1.tier1_config.route_advertisement.tier1_static_routes"),
 		viper.GetBool("vmaas.resource.router.tier1.tier1_config.route_advertisement.tier1_dns_forwarder_ip"),
