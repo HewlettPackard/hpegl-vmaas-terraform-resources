@@ -37,6 +37,7 @@ func (r *routerNat) Read(ctx context.Context, d *utils.Data, meta interface{}) e
 	if router.ID == 0 {
 		log.Printf("[ERROR] Router with %d id is not found on NAT plan", tfNat.RouterID)
 		tfNat.IsDeprecated = true
+
 		return tftags.Set(d, tfNat)
 	}
 
@@ -68,7 +69,6 @@ func (r *routerNat) Create(ctx context.Context, d *utils.Data, meta interface{})
 	tfNat.ID = natRes.ID
 
 	return tftags.Set(d, tfNat)
-
 }
 
 func (r *routerNat) Update(ctx context.Context, d *utils.Data, meta interface{}) error {
@@ -85,6 +85,7 @@ func (r *routerNat) Delete(ctx context.Context, d *utils.Data, meta interface{})
 	// if parent router got deleted, NAT is already deleted
 	if tfNat.IsDeprecated {
 		log.Printf("[WARNING] NAT already deleted since router is deleted")
+
 		return nil
 	}
 

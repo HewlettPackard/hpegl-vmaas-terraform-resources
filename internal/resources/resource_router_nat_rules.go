@@ -142,6 +142,7 @@ func routerNatRuleReadContext(ctx context.Context, rd *schema.ResourceData, meta
 			},
 		}
 	}
+
 	return nil
 }
 
