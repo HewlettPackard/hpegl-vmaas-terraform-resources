@@ -72,7 +72,7 @@ func (r *routerNat) Create(ctx context.Context, d *utils.Data, meta interface{})
 }
 
 func (r *routerNat) Update(ctx context.Context, d *utils.Data, meta interface{}) error {
-
+	// to be implemented
 	return nil
 }
 
