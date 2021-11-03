@@ -3,15 +3,11 @@
 package acceptancetest
 
 import (
-	"context"
 	"fmt"
 	"math/rand"
-	"net/http"
-	"strconv"
 	"testing"
 	"time"
 
-	api_client "github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
 	pkgutils "github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
@@ -41,7 +37,7 @@ func TestAccResourceInstanceCreate(t *testing.T) {
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: resource.ComposeTestCheckFunc(testVmaasInstanceDestroy("hpegl_vmaas_instance.tf_instance")),
+		CheckDestroy: resource.ComposeTestCheckFunc(checkResourceDestroy("hpegl_vmaas_instance.tf_instance")),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceInstance(),
@@ -62,33 +58,6 @@ func validateVmaasInstanceStatus(rs *terraform.ResourceState) error {
 	}
 
 	return nil
-}
-
-func testVmaasInstanceDestroy(name string) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		rs, ok := s.RootModule().Resources[name]
-		if !ok {
-			return fmt.Errorf("resource %s not found", name)
-		}
-		id, err := strconv.Atoi(rs.Primary.Attributes["id"])
-		if err != nil {
-			return fmt.Errorf("error while converting id into int, %w", err)
-		}
-
-		apiClient, cfg := getAPIClient()
-		iClient := api_client.InstancesAPIService{
-			Client: apiClient,
-			Cfg:    cfg,
-		}
-		_, err = iClient.GetASpecificInstance(context.Background(), id)
-
-		statusCode := pkgutils.GetStatusCode(err)
-		if statusCode != http.StatusNotFound {
-			return fmt.Errorf("Expected %d statuscode, but got %d", 404, statusCode)
-		}
-
-		return nil
-	}
 }
 
 func testAccResourceInstance() string {

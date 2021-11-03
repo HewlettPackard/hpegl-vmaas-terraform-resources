@@ -3,14 +3,17 @@
 package acceptancetest
 
 import (
+	"context"
 	"fmt"
 	"math/rand"
+	"net/http"
 	"os"
 	"strconv"
 	"time"
 
 	api_client "github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/constants"
+	pkgutils "github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/spf13/viper"
@@ -118,4 +121,31 @@ func getVolumeStanza() string {
 	}
 
 	return volumeStanza
+}
+
+func checkResourceDestroy(name string) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		rs, ok := s.RootModule().Resources[name]
+		if !ok {
+			return fmt.Errorf("resource %s not found", name)
+		}
+		id, err := strconv.Atoi(rs.Primary.Attributes["id"])
+		if err != nil {
+			return fmt.Errorf("error while converting id into int, %w", err)
+		}
+
+		apiClient, cfg := getAPIClient()
+		iClient := api_client.RouterAPIService{
+			Client: apiClient,
+			Cfg:    cfg,
+		}
+		_, err = iClient.GetSpecificRouter(context.Background(), id)
+
+		statusCode := pkgutils.GetStatusCode(err)
+		if statusCode != http.StatusNotFound {
+			return fmt.Errorf("Expected %d statuscode, but got %d", 404, statusCode)
+		}
+
+		return nil
+	}
 }
