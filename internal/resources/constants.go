@@ -26,6 +26,7 @@ const (
 	ResInstanceClone = "hpegl_vmaas_instance_clone"
 	ResNetwork       = "hpegl_vmaas_network"
 	ResRouter        = "hpegl_vmaas_router"
+	ResRouterNat     = "hpegl_vmaas_router_nat_rule"
 
 	// documentation related constants
 	generalNamedesc = "Name of the %s as it appears on GLPC Portal. " +

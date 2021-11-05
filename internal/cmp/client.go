@@ -11,6 +11,7 @@ type Client struct {
 	InstanceClone    Resource
 	Router           Resource
 	ResNetwork       Resource
+	RouterNat        Resource
 	Network          DataSource
 	NetworkType      DataSource
 	NetworkPool      DataSource
@@ -46,6 +47,7 @@ func NewClient(client *apiClient.APIClient, cfg apiClient.Configuration) *Client
 			&apiClient.RouterAPIService{Client: client, Cfg: cfg},
 		),
 		Router:        newRouter(&apiClient.RouterAPIService{Client: client, Cfg: cfg}),
+		RouterNat:     newRouterNat(&apiClient.RouterAPIService{Client: client, Cfg: cfg}),
 		Network:       newNetwork(&apiClient.NetworksAPIService{Client: client, Cfg: cfg}),
 		NetworkType:   newNetworkType(&apiClient.NetworksAPIService{Client: client, Cfg: cfg}),
 		NetworkPool:   newNetworkPool(&apiClient.NetworksAPIService{Client: client, Cfg: cfg}),

@@ -48,7 +48,7 @@ func (r *router) Create(ctx context.Context, d *utils.Data, meta interface{}) er
 		return err
 	}
 	if !routerResp.Success {
-		return fmt.Errorf("got success = 'false' while creating router")
+		return fmt.Errorf(successErr, "creating router")
 	}
 
 	return tftags.Set(d, routerResp)
@@ -75,6 +75,7 @@ func (r *router) Update(ctx context.Context, d *utils.Data, meta interface{}) er
 	if !routerResp.Success {
 		return fmt.Errorf("got success = 'false' while updating router")
 	}
+
 	d.SetID(createReq.NetworkRouter.ID)
 
 	return nil

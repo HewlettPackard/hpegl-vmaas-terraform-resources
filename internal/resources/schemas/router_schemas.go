@@ -1,6 +1,7 @@
 package schemas
 
 import (
+	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/resources/validations"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
@@ -24,7 +25,7 @@ func RouterTier0ConfigSchema() *schema.Schema {
 							"local_as_num": {
 								Type:             schema.TypeInt,
 								Required:         true,
-								ValidateDiagFunc: validation.ToDiagFunc(validation.IntAtLeast(1)),
+								ValidateDiagFunc: validations.IntAtLeast(1),
 								Description:      "Local AS Number",
 							},
 							"ecmp": {
@@ -49,23 +50,23 @@ func RouterTier0ConfigSchema() *schema.Schema {
 								Type:         schema.TypeString,
 								Required:     true,
 								InputDefault: "HELPER_ONLY",
-								ValidateDiagFunc: validation.ToDiagFunc(validation.StringInSlice([]string{
+								ValidateDiagFunc: validations.StringInSlice([]string{
 									"HELPER_ONLY",
 									"GRACEFUL_RESTART_AND_HELPER",
 									"DISABLE",
-								}, false)),
+								}, false),
 								Description: "Graceful Restart",
 							},
 							"restart_time": {
 								Type:             schema.TypeInt,
 								Required:         true,
-								ValidateDiagFunc: validation.ToDiagFunc(validation.IntBetween(1, 3600)),
+								ValidateDiagFunc: validations.IntBetween(1, 3600),
 								Description:      "Graceful Restart Timer",
 							},
 							"stale_route_time": {
 								Required:         true,
 								Type:             schema.TypeInt,
-								ValidateDiagFunc: validation.ToDiagFunc(validation.IntBetween(1, 3600)),
+								ValidateDiagFunc: validations.IntBetween(1, 3600),
 								Description:      "Graceful Restart Stale Timer",
 							},
 							"enable_bgp": {
@@ -79,17 +80,17 @@ func RouterTier0ConfigSchema() *schema.Schema {
 				"fail_over": {
 					Type:     schema.TypeString,
 					Required: true,
-					ValidateDiagFunc: validation.ToDiagFunc(validation.StringInSlice([]string{
+					ValidateDiagFunc: validations.StringInSlice([]string{
 						"NON_PREEMPTIVE", "PREEMPTIVE",
-					}, false)),
+					}, false),
 					Description: "Failover. Available values are 'PREEMPTIVE' or 'NON_PREEMPTIVE'",
 				},
 				"ha_mode": {
 					Type:     schema.TypeString,
 					Required: true,
-					ValidateDiagFunc: validation.ToDiagFunc(validation.StringInSlice([]string{
+					ValidateDiagFunc: validations.StringInSlice([]string{
 						"ACTIVE_ACTIVE", "ACTIVE_STANDBY",
-					}, false)),
+					}, false),
 					Description: "HA Mode. Available values are 'ACTIVE_ACTIVE' or 'ACTIVE_STANDBY'",
 					ForceNew:    true,
 				},
