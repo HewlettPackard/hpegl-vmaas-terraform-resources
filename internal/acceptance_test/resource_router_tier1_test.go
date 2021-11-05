@@ -47,6 +47,7 @@ func TestAccResourceTier1RouterCreate(t *testing.T) {
 						Client: cl,
 						Cfg:    cfg,
 					}
+
 					return iClient.GetSpecificRouter(context.Background(), id)
 				},
 			),

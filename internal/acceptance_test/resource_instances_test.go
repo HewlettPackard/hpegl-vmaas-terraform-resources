@@ -47,6 +47,7 @@ func TestAccResourceInstanceCreate(t *testing.T) {
 						Client: cl,
 						Cfg:    cfg,
 					}
+
 					return iClient.GetASpecificInstance(context.Background(), id)
 				},
 			),

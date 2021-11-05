@@ -47,6 +47,7 @@ func TestAccResourceNetworkCreate(t *testing.T) {
 						Client: cl,
 						Cfg:    cfg,
 					}
+
 					return iClient.GetSpecificNetwork(context.Background(), id)
 				},
 			),

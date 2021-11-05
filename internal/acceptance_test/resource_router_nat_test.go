@@ -53,6 +53,7 @@ func TestAccResourceRouterNatCreate(t *testing.T) {
 					if err != nil {
 						return nil, err
 					}
+
 					return iClient.GetSpecificRouterNat(context.Background(), routerID, id)
 				},
 			),
