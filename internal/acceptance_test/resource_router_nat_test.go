@@ -3,11 +3,14 @@
 package acceptancetest
 
 import (
+	"context"
 	"fmt"
 	"math/rand"
+	"strconv"
 	"testing"
 	"time"
 
+	api_client "github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
 	pkgutils "github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/spf13/viper"
@@ -34,9 +37,26 @@ func TestAccResourceRouterNatCreate(t *testing.T) {
 		t.Skip("Skipping router resource creation in short mode")
 	}
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: resource.ComposeTestCheckFunc(checkResourceDestroy("hpegl_vmaas_router_nat_rule.tf_nat")),
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		CheckDestroy: resource.ComposeTestCheckFunc(
+			checkResourceDestroy(
+				"hpegl_vmaas_router_nat_rule.tf_nat",
+				func(cl *api_client.APIClient, cfg api_client.Configuration, id int, attr map[string]string,
+				) (interface{}, error) {
+					iClient := api_client.RouterAPIService{
+						Client: cl,
+						Cfg:    cfg,
+					}
+					routerStr := attr["router_id"]
+					routerID, err := strconv.Atoi(routerStr)
+					if err != nil {
+						return nil, err
+					}
+					return iClient.GetSpecificRouterNat(context.Background(), routerID, id)
+				},
+			),
+		),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceRouterNat(),

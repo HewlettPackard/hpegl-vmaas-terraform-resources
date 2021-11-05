@@ -3,11 +3,13 @@
 package acceptancetest
 
 import (
+	"context"
 	"fmt"
 	"math/rand"
 	"testing"
 	"time"
 
+	api_client "github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
 	pkgutils "github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/spf13/viper"
@@ -34,9 +36,20 @@ func TestAccResourceTier0RouterCreate(t *testing.T) {
 		t.Skip("Skipping router resource creation in short mode")
 	}
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: resource.ComposeTestCheckFunc(checkResourceDestroy("hpegl_vmaas_router.tf_tier0")),
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		CheckDestroy: resource.ComposeTestCheckFunc(
+			checkResourceDestroy("hpegl_vmaas_router.tf_tier0",
+				func(cl *api_client.APIClient, cfg api_client.Configuration, id int, attr map[string]string,
+				) (interface{}, error) {
+					iClient := api_client.RouterAPIService{
+						Client: cl,
+						Cfg:    cfg,
+					}
+					return iClient.GetSpecificRouter(context.Background(), id)
+				},
+			),
+		),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceTier0Router(),

@@ -3,11 +3,13 @@
 package acceptancetest
 
 import (
+	"context"
 	"fmt"
 	"math/rand"
 	"testing"
 	"time"
 
+	api_client "github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
 	pkgutils "github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
@@ -35,9 +37,20 @@ func TestAccResourceInstanceCreate(t *testing.T) {
 		t.Skip("Skipping instance resource creation in short mode")
 	}
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: resource.ComposeTestCheckFunc(checkResourceDestroy("hpegl_vmaas_instance.tf_instance")),
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		CheckDestroy: resource.ComposeTestCheckFunc(
+			checkResourceDestroy("hpegl_vmaas_instance.tf_instance",
+				func(cl *api_client.APIClient, cfg api_client.Configuration, id int, attr map[string]string,
+				) (interface{}, error) {
+					iClient := api_client.InstancesAPIService{
+						Client: cl,
+						Cfg:    cfg,
+					}
+					return iClient.GetASpecificInstance(context.Background(), id)
+				},
+			),
+		),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceInstance(),

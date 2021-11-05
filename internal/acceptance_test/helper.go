@@ -3,7 +3,6 @@
 package acceptancetest
 
 import (
-	"context"
 	"fmt"
 	"math/rand"
 	"net/http"
@@ -123,7 +122,14 @@ func getVolumeStanza() string {
 	return volumeStanza
 }
 
-func checkResourceDestroy(name string) resource.TestCheckFunc {
+func checkResourceDestroy(
+	name string,
+	fn func(
+		apiClient *api_client.APIClient,
+		cfg api_client.Configuration,
+		id int,
+		attribs map[string]string,
+	) (interface{}, error)) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[name]
 		if !ok {
@@ -135,15 +141,11 @@ func checkResourceDestroy(name string) resource.TestCheckFunc {
 		}
 
 		apiClient, cfg := getAPIClient()
-		iClient := api_client.RouterAPIService{
-			Client: apiClient,
-			Cfg:    cfg,
-		}
-		_, err = iClient.GetSpecificRouter(context.Background(), id)
+		_, err = fn(apiClient, cfg, id, rs.Primary.Attributes)
 
 		statusCode := pkgutils.GetStatusCode(err)
 		if statusCode != http.StatusNotFound {
-			return fmt.Errorf("Expected %d statuscode, but got %d", 404, statusCode)
+			return fmt.Errorf("expected %d statuscode, but got %d", 404, statusCode)
 		}
 
 		return nil
