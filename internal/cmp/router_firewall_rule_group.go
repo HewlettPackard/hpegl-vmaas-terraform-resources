@@ -41,7 +41,8 @@ func (r *routerFirewallRuleGroup) Read(ctx context.Context, d *utils.Data, meta 
 		return tftags.Set(d, tfFirewallRuleGroup)
 	}
 
-	_, err = r.routerFirewallRuleGroupClient.GetSpecificRouterFirewallRuleGroup(ctx, tfFirewallRuleGroup.RouterID, tfFirewallRuleGroup.ID)
+	_, err = r.routerFirewallRuleGroupClient.GetSpecificRouterFirewallRuleGroup(ctx, tfFirewallRuleGroup.RouterID,
+		tfFirewallRuleGroup.ID)
 	if err != nil {
 		return err
 	}
@@ -89,7 +90,8 @@ func (r *routerFirewallRuleGroup) Delete(ctx context.Context, d *utils.Data, met
 		return nil
 	}
 
-	resp, err := r.routerFirewallRuleGroupClient.DeleteRouterFirewallRuleGroup(ctx, tfFirewallRuleGroup.RouterID, tfFirewallRuleGroup.ID)
+	resp, err := r.routerFirewallRuleGroupClient.DeleteRouterFirewallRuleGroup(ctx, tfFirewallRuleGroup.RouterID,
+		tfFirewallRuleGroup.ID)
 	if err != nil {
 		return err
 	}
