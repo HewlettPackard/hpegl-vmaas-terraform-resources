@@ -6,8 +6,6 @@ import (
 	"context"
 	"fmt"
 	"math/rand"
-	"net/http"
-	"strconv"
 	"testing"
 	"time"
 
@@ -39,9 +37,21 @@ func TestAccResourceInstanceCreate(t *testing.T) {
 		t.Skip("Skipping instance resource creation in short mode")
 	}
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: resource.ComposeTestCheckFunc(testVmaasInstanceDestroy("hpegl_vmaas_instance.tf_instance")),
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		CheckDestroy: resource.ComposeTestCheckFunc(
+			checkResourceDestroy("hpegl_vmaas_instance.tf_instance",
+				func(cl *api_client.APIClient, cfg api_client.Configuration, id int, attr map[string]string,
+				) (interface{}, error) {
+					iClient := api_client.InstancesAPIService{
+						Client: cl,
+						Cfg:    cfg,
+					}
+
+					return iClient.GetASpecificInstance(context.Background(), id)
+				},
+			),
+		),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceInstance(),
@@ -62,33 +72,6 @@ func validateVmaasInstanceStatus(rs *terraform.ResourceState) error {
 	}
 
 	return nil
-}
-
-func testVmaasInstanceDestroy(name string) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		rs, ok := s.RootModule().Resources[name]
-		if !ok {
-			return fmt.Errorf("resource %s not found", name)
-		}
-		id, err := strconv.Atoi(rs.Primary.Attributes["id"])
-		if err != nil {
-			return fmt.Errorf("error while converting id into int, %w", err)
-		}
-
-		apiClient, cfg := getAPIClient()
-		iClient := api_client.InstancesAPIService{
-			Client: apiClient,
-			Cfg:    cfg,
-		}
-		_, err = iClient.GetASpecificInstance(context.Background(), id)
-
-		statusCode := pkgutils.GetStatusCode(err)
-		if statusCode != http.StatusNotFound {
-			return fmt.Errorf("Expected %d statuscode, but got %d", 404, statusCode)
-		}
-
-		return nil
-	}
 }
 
 func testAccResourceInstance() string {
