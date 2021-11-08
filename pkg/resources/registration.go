@@ -43,11 +43,12 @@ func (r Registration) SupportedDataSources() map[string]*schema.Resource {
 
 func (r Registration) SupportedResources() map[string]*schema.Resource {
 	return map[string]*schema.Resource{
-		resources.ResInstance:      resources.Instances(),
-		resources.ResInstanceClone: resources.InstancesClone(),
-		resources.ResNetwork:       resources.Network(),
-		resources.ResRouter:        resources.Router(),
-		resources.ResRouterNat:     resources.RouterNatRule(),
+		resources.ResInstance:                resources.Instances(),
+		resources.ResInstanceClone:           resources.InstancesClone(),
+		resources.ResNetwork:                 resources.Network(),
+		resources.ResRouter:                  resources.Router(),
+		resources.ResRouterNat:               resources.RouterNatRule(),
+		resources.ResRouterFirewallRuleGroup: resources.RouterFirewallRuleGroup(),
 	}
 }
 
