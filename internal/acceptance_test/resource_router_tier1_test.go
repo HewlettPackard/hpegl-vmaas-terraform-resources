@@ -6,15 +6,12 @@ import (
 	"context"
 	"fmt"
 	"math/rand"
-	"net/http"
-	"strconv"
 	"testing"
 	"time"
 
 	api_client "github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
 	pkgutils "github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/spf13/viper"
 )
 
@@ -39,9 +36,22 @@ func TestAccResourceTier1RouterCreate(t *testing.T) {
 		t.Skip("Skipping router resource creation in short mode")
 	}
 	resource.ParallelTest(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: resource.ComposeTestCheckFunc(testVmaasTier1RouterDestroy("hpegl_vmaas_router.tf_tier1")),
+		PreCheck:  func() { testAccPreCheck(t) },
+		Providers: testAccProviders,
+		CheckDestroy: resource.ComposeTestCheckFunc(
+			checkResourceDestroy(
+				"hpegl_vmaas_router.tf_tier1",
+				func(cl *api_client.APIClient, cfg api_client.Configuration, id int, attr map[string]string,
+				) (interface{}, error) {
+					iClient := api_client.RouterAPIService{
+						Client: cl,
+						Cfg:    cfg,
+					}
+
+					return iClient.GetSpecificRouter(context.Background(), id)
+				},
+			),
+		),
 		Steps: []resource.TestStep{
 			{
 				Config: testAccResourceTier1Router(),
@@ -53,33 +63,6 @@ func TestAccResourceTier1RouterCreate(t *testing.T) {
 			},
 		},
 	})
-}
-
-func testVmaasTier1RouterDestroy(name string) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		rs, ok := s.RootModule().Resources[name]
-		if !ok {
-			return fmt.Errorf("resource %s not found", name)
-		}
-		id, err := strconv.Atoi(rs.Primary.Attributes["id"])
-		if err != nil {
-			return fmt.Errorf("error while converting id into int, %w", err)
-		}
-
-		apiClient, cfg := getAPIClient()
-		iClient := api_client.RouterAPIService{
-			Client: apiClient,
-			Cfg:    cfg,
-		}
-		_, err = iClient.GetSpecificRouter(context.Background(), id)
-
-		statusCode := pkgutils.GetStatusCode(err)
-		if statusCode != http.StatusNotFound {
-			return fmt.Errorf("Expected %d statuscode, but got %d", 404, statusCode)
-		}
-
-		return nil
-	}
 }
 
 func testAccResourceTier1Router() string {

@@ -33,7 +33,7 @@ vmaas:
       cidr: "168.72.10.0/18"
       gateway: "168.72.10.10"
       pool_id: 6
-    
+
     router:
       tier0:
         name: tf_tier0_gateway
@@ -84,6 +84,20 @@ vmaas:
             tier1_lb_snat: false
             tier1_ipsec_local_endpoint: true
 
+    router_nat:
+      router_id: 31
+      name: "tf_nat_rule"
+      enabled: true
+      description: "NAT rule created via terraform"
+      config:
+        action: "DNAT"
+        logging: true
+        firewall: "MATCH_EXTERNAL_ADDRESS"
+      source_network: "1.1.3.0/24"
+      translated_network: "1.1.1.0/24"
+      destination_network: "1.1.2.0/24"
+      translated_ports: 22
+      priority: 120
   # Data sources
   datasource:
     cloud:
