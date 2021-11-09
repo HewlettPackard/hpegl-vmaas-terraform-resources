@@ -40,7 +40,7 @@ func RouterFirewallRuleGroup() *schema.Resource {
 				Type:         schema.TypeString,
 				Required:     true,
 				InputDefault: "GatewayPolicy",
-				Description:  "Platform / vendor specific type. Pass `GatewayPolicy`.",
+				Description:  "Platform/vendor specific type. Pass `GatewayPolicy`.",
 			},
 			"group_layer": {
 				Type:     schema.TypeString,
@@ -50,7 +50,7 @@ func RouterFirewallRuleGroup() *schema.Resource {
 					"SharedPreRules",
 					"LocalGatewayRules",
 				}, false),
-				Description: "Platform / vendor specific category",
+				Description: "Platform/vendor specific category",
 			},
 			"is_deprecated": {
 				Type:        schema.TypeBool,
