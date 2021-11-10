@@ -37,12 +37,6 @@ func RouterFirewallRuleGroup() *schema.Resource {
 				Description:      "Firewall rule group priority",
 				ValidateDiagFunc: validations.IntAtLeast(1),
 			},
-			"external_type": {
-				Type:         schema.TypeString,
-				Required:     true,
-				InputDefault: "GatewayPolicy",
-				Description:  "Platform/vendor specific type. Pass `GatewayPolicy`.",
-			},
 			"group_layer": {
 				Type:     schema.TypeString,
 				Required: true,

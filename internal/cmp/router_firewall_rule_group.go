@@ -57,6 +57,8 @@ func (r *routerFirewallRuleGroup) Create(ctx context.Context, d *utils.Data, met
 	if err != nil {
 		return err
 	}
+	//Setting to Default value "GatewayPolicy"
+	tfFirewallRuleGroup.ExternalType = routerFirewallExternalPolicy
 	firewallGroupRes, err := r.routerFirewallRuleGroupClient.CreateRouterFirewallRuleGroup(ctx, tfFirewallRuleGroup.RouterID,
 		models.CreateRouterFirewallRuleGroupRequest{CreateRouterFirewallRuleGroup: tfFirewallRuleGroup},
 	)

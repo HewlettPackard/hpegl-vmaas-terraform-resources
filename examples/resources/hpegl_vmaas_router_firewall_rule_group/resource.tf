@@ -5,7 +5,5 @@ resource "hpegl_vmaas_router_firewall_rule_group" "tf_router_firewall_rule_group
   router_id   = data.hpegl_vmaas_router.tf_router.id
   description = "Router Firewall rule group created via terraform"
   priority = 120
-  external_type = "GatewayPolicy"
   group_layer = "LocalGatewayRules"
-
 }
