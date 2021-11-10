@@ -22,11 +22,12 @@ const (
 	DSCloudFolder      = "hpegl_vmaas_cloud_folder"
 	DSRouter           = "hpegl_vmaas_router"
 	// resource key
-	ResInstance      = "hpegl_vmaas_instance"
-	ResInstanceClone = "hpegl_vmaas_instance_clone"
-	ResNetwork       = "hpegl_vmaas_network"
-	ResRouter        = "hpegl_vmaas_router"
-	ResRouterNat     = "hpegl_vmaas_router_nat_rule"
+	ResInstance                = "hpegl_vmaas_instance"
+	ResInstanceClone           = "hpegl_vmaas_instance_clone"
+	ResNetwork                 = "hpegl_vmaas_network"
+	ResRouter                  = "hpegl_vmaas_router"
+	ResRouterNat               = "hpegl_vmaas_router_nat_rule"
+	ResRouterFirewallRuleGroup = "hpegl_vmaas_router_firewall_rule_group"
 
 	// documentation related constants
 	generalNamedesc = "Name of the %s as it appears on GLPC Portal. " +
