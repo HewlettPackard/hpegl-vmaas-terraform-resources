@@ -18,6 +18,7 @@ func RouterFirewallRuleGroup() *schema.Resource {
 			"router_id": {
 				Type:        schema.TypeInt,
 				Required:    true,
+				ForceNew:    true,
 				Description: "Parent router ID, router_id can be obtained by using router datasource/resource.",
 			},
 			"name": {
