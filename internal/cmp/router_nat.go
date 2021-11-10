@@ -72,8 +72,24 @@ func (r *routerNat) Create(ctx context.Context, d *utils.Data, meta interface{})
 }
 
 func (r *routerNat) Update(ctx context.Context, d *utils.Data, meta interface{}) error {
-	// to be implemented
-	return nil
+	var tfNat models.CreateRouterNat
+	err := tftags.Get(d, &tfNat)
+	if err != nil {
+		return err
+	}
+	natRes, err := r.routerNatClient.UpdateRouterNat(ctx, tfNat.RouterID, tfNat.ID,
+		models.CreateRouterNatRequest{CreateRouterNat: tfNat},
+	)
+	if err != nil {
+		return err
+	}
+
+	if !natRes.Success {
+		return fmt.Errorf(successErr, "creating NAT rule for the router")
+	}
+	tfNat.ID = natRes.ID
+
+	return tftags.Set(d, tfNat)
 }
 
 func (r *routerNat) Delete(ctx context.Context, d *utils.Data, meta interface{}) error {

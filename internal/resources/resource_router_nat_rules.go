@@ -20,6 +20,7 @@ func RouterNatRule() *schema.Resource {
 				Type:        schema.TypeInt,
 				Required:    true,
 				Description: "Parent router ID, router_id can be obtained by using router datasource/resource.",
+				ForceNew:    true,
 			},
 			"name": {
 				Type:        schema.TypeString,
