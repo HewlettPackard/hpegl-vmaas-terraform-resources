@@ -166,6 +166,7 @@ func (r *router) routerAlignRouterRequest(ctx context.Context, meta interface{},
 		if n.TypeName == "NSX-T" {
 			routerReq.NetworkRouter.NetworkServer.ID = networkService.NetworkServices[i].ID
 			routerReq.NetworkRouter.NetworkServerID = networkService.NetworkServices[i].ID
+
 			break
 		}
 	}

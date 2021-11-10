@@ -82,6 +82,7 @@ func (r *resNetwork) Create(ctx context.Context, d *utils.Data, meta interface{}
 	for i, n := range networkService.NetworkServices {
 		if n.TypeName == "NSX-T" {
 			createReq.NetworkServer.ID = networkService.NetworkServices[i].ID
+
 			break
 		}
 	}
