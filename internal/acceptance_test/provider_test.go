@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	testutils "github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/test-utils"
+	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/constants"
 	pkgutils "github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	libUtils "github.com/hewlettpackard/hpegl-provider-lib/pkg/utils"
@@ -26,10 +27,12 @@ func init() {
 
 func testAccPreCheck(t *testing.T) {
 	// validate all required envs are present, if not then throws error
-	requiredenvs := []string{"CMP_SUBJECT"}
-	for _, r := range requiredenvs {
-		if os.Getenv(r) == "" {
-			panic(r + " env is required, but not found")
+	if pkgutils.GetEnvBool(constants.MockIAMKey) {
+		requiredenvs := []string{"CMP_SUBJECT"}
+		for _, r := range requiredenvs {
+			if os.Getenv(r) == "" {
+				panic(r + " env is required, but not found")
+			}
 		}
 	}
 

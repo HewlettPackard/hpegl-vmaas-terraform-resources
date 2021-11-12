@@ -22,6 +22,7 @@ func newEnvironment(eClient *client.EnvironmentAPIService) *environment {
 }
 
 func (c *environment) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
+	setMeta(meta, c.eClient.Client)
 	log.Printf("[DEBUG] Get Environments")
 
 	name := d.GetString("name")

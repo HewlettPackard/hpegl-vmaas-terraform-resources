@@ -4,6 +4,9 @@ package utils
 
 import (
 	"encoding/json"
+	"log"
+	"os"
+	"strconv"
 	"testing"
 
 	api_client "github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
@@ -48,4 +51,14 @@ func SkipAcc(t *testing.T, param string) {
 	if ok {
 		t.Skip("Acceptance test for " + param + " has been skipped...")
 	}
+}
+
+func GetEnvBool(key string) bool {
+	value, err := strconv.ParseBool(os.Getenv(key))
+	if err != nil {
+		log.Printf("[ERROR] failed to parse env %s, got error %v", key, err)
+		return false
+	}
+
+	return value
 }

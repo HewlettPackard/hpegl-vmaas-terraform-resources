@@ -37,6 +37,7 @@ func newInstanceClone(iClient *client.InstancesAPIService, sClient *client.Serve
 
 // Create instanceClone
 func (i *instanceClone) Create(ctx context.Context, d *utils.Data, meta interface{}) error {
+	setMeta(meta, i.iClient.Client)
 	log.Printf("[INFO] Cloning instance")
 
 	req := models.CreateInstanceCloneBody{
@@ -142,16 +143,19 @@ func (i *instanceClone) Create(ctx context.Context, d *utils.Data, meta interfac
 // changing volumes and instance properties such as labels
 // groups and tags
 func (i *instanceClone) Update(ctx context.Context, d *utils.Data, meta interface{}) error {
+	setMeta(meta, i.iClient.Client)
 	return updateInstance(ctx, i.instanceSharedClient, d)
 }
 
 // Delete instance and set ID as ""
 func (i *instanceClone) Delete(ctx context.Context, d *utils.Data, meta interface{}) error {
+	setMeta(meta, i.iClient.Client)
 	return deleteInstance(ctx, i.instanceSharedClient, d, meta)
 }
 
 // Read instance and set state values accordingly
 func (i *instanceClone) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
+	setMeta(meta, i.iClient.Client)
 	return readInstance(ctx, i.instanceSharedClient, d, meta, true)
 }
 

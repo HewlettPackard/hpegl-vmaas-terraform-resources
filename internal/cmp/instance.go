@@ -29,6 +29,7 @@ func newInstance(iClient *client.InstancesAPIService, sClient *client.ServersAPI
 
 // Create instance
 func (i *instance) Create(ctx context.Context, d *utils.Data, meta interface{}) error {
+	setMeta(meta, i.iClient.Client)
 	log.Printf("[DEBUG] Creating new instance")
 
 	c := d.GetListMap("config")[0]
@@ -74,8 +75,6 @@ func (i *instance) Create(ctx context.Context, d *utils.Data, meta interface{}) 
 		return err
 	}
 	getInstanceBody := *respVM.Instance
-	// Set id just after created the instnance
-	d.SetID(getInstanceBody.ID)
 
 	if err := instanceWaitUntilCreated(ctx, i.instanceSharedClient, meta, getInstanceBody.ID); err != nil {
 		return err
@@ -98,18 +97,22 @@ func (i *instance) Create(ctx context.Context, d *utils.Data, meta interface{}) 
 		return err
 	}
 
+	d.SetID(getInstanceBody.ID)
 	// post check
 	return d.Error()
 }
 
 func (i *instance) Update(ctx context.Context, d *utils.Data, meta interface{}) error {
+	setMeta(meta, i.iClient.Client)
 	return updateInstance(ctx, i.instanceSharedClient, d)
 }
 
 func (i *instance) Delete(ctx context.Context, d *utils.Data, meta interface{}) error {
+	setMeta(meta, i.iClient.Client)
 	return deleteInstance(ctx, i.instanceSharedClient, d, meta)
 }
 
 func (i *instance) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
+	setMeta(meta, i.iClient.Client)
 	return readInstance(ctx, i.instanceSharedClient, d, meta, false)
 }

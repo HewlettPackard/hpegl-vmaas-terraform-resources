@@ -14,22 +14,23 @@ import (
 )
 
 type routerNat struct {
-	routerNatClient *client.RouterAPIService
+	rClient *client.RouterAPIService
 }
 
 func newRouterNat(routerNatClient *client.RouterAPIService) *routerNat {
 	return &routerNat{
-		routerNatClient: routerNatClient,
+		rClient: routerNatClient,
 	}
 }
 
 func (r *routerNat) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
+	setMeta(meta, r.rClient.Client)
 	var tfNat models.CreateRouterNat
 	if err := tftags.Get(d, &tfNat); err != nil {
 		return err
 	}
 	// Get the router, if the router not exists, return warning
-	router, err := r.routerNatClient.GetSpecificRouter(ctx, tfNat.RouterID)
+	router, err := r.rClient.GetSpecificRouter(ctx, tfNat.RouterID)
 	if err != nil {
 		return err
 	}
@@ -41,7 +42,7 @@ func (r *routerNat) Read(ctx context.Context, d *utils.Data, meta interface{}) e
 		return tftags.Set(d, tfNat)
 	}
 
-	_, err = r.routerNatClient.GetSpecificRouterNat(ctx, tfNat.ID, tfNat.ID)
+	_, err = r.rClient.GetSpecificRouterNat(ctx, tfNat.ID, tfNat.ID)
 	if err != nil {
 		return err
 	}
@@ -51,12 +52,13 @@ func (r *routerNat) Read(ctx context.Context, d *utils.Data, meta interface{}) e
 }
 
 func (r *routerNat) Create(ctx context.Context, d *utils.Data, meta interface{}) error {
+	setMeta(meta, r.rClient.Client)
 	var tfNat models.CreateRouterNat
 	err := tftags.Get(d, &tfNat)
 	if err != nil {
 		return err
 	}
-	natRes, err := r.routerNatClient.CreateRouterNat(ctx, tfNat.RouterID,
+	natRes, err := r.rClient.CreateRouterNat(ctx, tfNat.RouterID,
 		models.CreateRouterNatRequest{CreateRouterNat: tfNat},
 	)
 	if err != nil {
@@ -72,12 +74,13 @@ func (r *routerNat) Create(ctx context.Context, d *utils.Data, meta interface{})
 }
 
 func (r *routerNat) Update(ctx context.Context, d *utils.Data, meta interface{}) error {
+	setMeta(meta, r.rClient.Client)
 	var tfNat models.CreateRouterNat
 	err := tftags.Get(d, &tfNat)
 	if err != nil {
 		return err
 	}
-	natRes, err := r.routerNatClient.UpdateRouterNat(ctx, tfNat.RouterID, tfNat.ID,
+	natRes, err := r.rClient.UpdateRouterNat(ctx, tfNat.RouterID, tfNat.ID,
 		models.CreateRouterNatRequest{CreateRouterNat: tfNat},
 	)
 	if err != nil {
@@ -93,6 +96,7 @@ func (r *routerNat) Update(ctx context.Context, d *utils.Data, meta interface{})
 }
 
 func (r *routerNat) Delete(ctx context.Context, d *utils.Data, meta interface{}) error {
+	setMeta(meta, r.rClient.Client)
 	var tfNat models.CreateRouterNat
 	if err := tftags.Get(d, &tfNat); err != nil {
 		return err
@@ -105,7 +109,7 @@ func (r *routerNat) Delete(ctx context.Context, d *utils.Data, meta interface{})
 		return nil
 	}
 
-	resp, err := r.routerNatClient.DeleteRouterNat(ctx, tfNat.RouterID, tfNat.ID)
+	resp, err := r.rClient.DeleteRouterNat(ctx, tfNat.RouterID, tfNat.ID)
 	if err != nil {
 		return err
 	}

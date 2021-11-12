@@ -25,6 +25,7 @@ func newNetworkInterface(cClient *client.CloudsAPIService, pClient *client.Provi
 }
 
 func (c *networkInterface) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
+	setMeta(meta, c.cClient.Client)
 	log.Printf("[DEBUG] Get Network interface")
 
 	cloudID := d.GetInt("cloud_id")

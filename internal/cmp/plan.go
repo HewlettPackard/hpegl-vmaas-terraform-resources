@@ -20,6 +20,7 @@ func newPlan(pClient *client.PlansAPIService) *plan {
 }
 
 func (n *plan) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
+	setMeta(meta, n.pClient.Client)
 	log.Printf("[DEBUG] Get plan")
 
 	name := d.GetString("name")

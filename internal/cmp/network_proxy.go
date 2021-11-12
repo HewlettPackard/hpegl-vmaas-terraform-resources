@@ -21,6 +21,7 @@ func newNetworkProxy(nClient *client.NetworksAPIService) *networkProxy {
 }
 
 func (n *networkProxy) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
+	setMeta(meta, n.nClient.Client)
 	tfProxy := models.GetNetworkProxy{}
 	tftags.Get(d, &tfProxy)
 

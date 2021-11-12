@@ -19,6 +19,7 @@ func newNetworkPool(nClient *client.NetworksAPIService) *networkPool {
 }
 
 func (n *networkPool) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
+	setMeta(meta, n.nClient.Client)
 	name := d.GetString("name")
 	poolResp, err := n.nClient.GetNetworkPool(ctx, nil)
 	if err != nil {

@@ -13,21 +13,22 @@ import (
 )
 
 type router struct {
-	routerClient *client.RouterAPIService
+	rClient *client.RouterAPIService
 }
 
 func newRouter(routerClient *client.RouterAPIService) *router {
 	return &router{
-		routerClient: routerClient,
+		rClient: routerClient,
 	}
 }
 
 func (r *router) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
+	setMeta(meta, r.rClient.Client)
 	var tfRouter models.GetNetworkRouter
 	if err := tftags.Get(d, &tfRouter); err != nil {
 		return err
 	}
-	getRouter, err := r.routerClient.GetSpecificRouter(ctx, tfRouter.ID)
+	getRouter, err := r.rClient.GetSpecificRouter(ctx, tfRouter.ID)
 	if err != nil {
 		return err
 	}
@@ -36,6 +37,7 @@ func (r *router) Read(ctx context.Context, d *utils.Data, meta interface{}) erro
 }
 
 func (r *router) Create(ctx context.Context, d *utils.Data, meta interface{}) error {
+	setMeta(meta, r.rClient.Client)
 	createReq := models.CreateRouterRequest{}
 	if err := tftags.Get(d, &createReq.NetworkRouter); err != nil {
 		return err
@@ -43,7 +45,7 @@ func (r *router) Create(ctx context.Context, d *utils.Data, meta interface{}) er
 	// align createReq and fill json related fields
 	r.routerAlignRouterRequest(ctx, meta, &createReq)
 
-	routerResp, err := r.routerClient.CreateRouter(ctx, createReq)
+	routerResp, err := r.rClient.CreateRouter(ctx, createReq)
 	if err != nil {
 		return err
 	}
@@ -55,6 +57,7 @@ func (r *router) Create(ctx context.Context, d *utils.Data, meta interface{}) er
 }
 
 func (r *router) Update(ctx context.Context, d *utils.Data, meta interface{}) error {
+	setMeta(meta, r.rClient.Client)
 	createReq := models.CreateRouterRequest{}
 	if err := tftags.Get(d, &createReq.NetworkRouter); err != nil {
 		return err
@@ -66,7 +69,7 @@ func (r *router) Update(ctx context.Context, d *utils.Data, meta interface{}) er
 	createReq.NetworkRouter.Config.HaMode = ""
 
 	resp, err := utils.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return r.routerClient.UpdateRouter(ctx, createReq.NetworkRouter.ID, createReq)
+		return r.rClient.UpdateRouter(ctx, createReq.NetworkRouter.ID, createReq)
 	})
 	if err != nil {
 		return err
@@ -82,8 +85,9 @@ func (r *router) Update(ctx context.Context, d *utils.Data, meta interface{}) er
 }
 
 func (r *router) Delete(ctx context.Context, d *utils.Data, meta interface{}) error {
+	setMeta(meta, r.rClient.Client)
 	routerID := d.GetID()
-	_, err := r.routerClient.DeleteRouter(ctx, routerID)
+	_, err := r.rClient.DeleteRouter(ctx, routerID)
 	if err != nil {
 		return err
 	}
@@ -136,12 +140,12 @@ func (r *router) routerAlignRouterRequest(ctx context.Context, meta interface{},
 	// Get router type
 	rtRetry := utils.CustomRetry{}
 	rtRetry.RetryParallel(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return r.routerClient.GetRouterTypes(ctx, queryParam)
+		return r.rClient.GetRouterTypes(ctx, queryParam)
 	})
 	// Get network service ID
 	nsRetry := utils.CustomRetry{}
 	nsRetry.RetryParallel(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return r.routerClient.GetNetworkServices(ctx, map[string]string{
+		return r.rClient.GetNetworkServices(ctx, map[string]string{
 			nameKey: "NSX-T",
 		})
 	})

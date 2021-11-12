@@ -20,6 +20,7 @@ func newDatastore(nClient *client.CloudsAPIService) *datastore {
 }
 
 func (n *datastore) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
+	setMeta(meta, n.nClient.Client)
 	log.Printf("[INFO] Get Datastore")
 
 	// name := d.GetString("name")

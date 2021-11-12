@@ -16,6 +16,8 @@ const (
 	SpaceKey    = "space"
 	LocationKey = "location"
 
-	AccLocation = "mock_location"
-	AccSpace    = "mock_space"
+	AccLocation = "HPEGL-VMAAS-TERRAFORM"
+	AccSpace    = "Default"
+
+	MockIAMKey = "TF_MOCK_IAM"
 )

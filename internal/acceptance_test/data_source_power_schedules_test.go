@@ -31,9 +31,9 @@ func TestAccDataSourcePowerSchedule(t *testing.T) {
 
 func testAccDataSourcePowerScheduleConfig() string {
 	return fmt.Sprintf(`%s
-data "hpegl_vmaas_power_schedule" "workday" {
-	name = "%s"
-}
+		data "hpegl_vmaas_power_schedule" "workday" {
+		name = "%s"
+	}
 `,
 		providerStanza,
 		viper.GetString("vmaas.datasource.power_schedule.name"))

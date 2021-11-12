@@ -12,23 +12,24 @@ import (
 )
 
 type powerSchedule struct {
-	powerScheduleClient *client.PowerSchedulesAPIService
+	pClient *client.PowerSchedulesAPIService
 }
 
 func newPowerSchedule(powerScheduleClient *client.PowerSchedulesAPIService) *powerSchedule {
 	return &powerSchedule{
-		powerScheduleClient: powerScheduleClient,
+		pClient: powerScheduleClient,
 	}
 }
 
 func (c *powerSchedule) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
+	setMeta(meta, c.pClient.Client)
 	log.Printf("[DEBUG] Get Power Schedule")
 
 	name := d.GetString("name")
 	if err := d.Error(); err != nil {
 		return err
 	}
-	powerSchedule, err := c.powerScheduleClient.GetAllPowerSchedules(ctx, map[string]string{
+	powerSchedule, err := c.pClient.GetAllPowerSchedules(ctx, map[string]string{
 		nameKey: name,
 	})
 	if err != nil {

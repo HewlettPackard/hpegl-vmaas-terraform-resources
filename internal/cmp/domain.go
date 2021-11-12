@@ -21,6 +21,7 @@ func newDomain(dClient *client.DomainAPIService) *domain {
 }
 
 func (n *domain) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
+	setMeta(meta, n.dClient.Client)
 	log.Printf("[INFO] Get Domain")
 
 	name := d.GetString("name")
