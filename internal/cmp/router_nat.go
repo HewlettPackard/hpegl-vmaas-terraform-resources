@@ -42,7 +42,7 @@ func (r *routerNat) Read(ctx context.Context, d *utils.Data, meta interface{}) e
 		return tftags.Set(d, tfNat)
 	}
 
-	_, err = r.rClient.GetSpecificRouterNat(ctx, tfNat.ID, tfNat.ID)
+	_, err = r.rClient.GetSpecificRouterNat(ctx, tfNat.RouterID, tfNat.ID)
 	if err != nil {
 		return err
 	}
