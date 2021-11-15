@@ -22,6 +22,7 @@ func newGroup(gClient *client.GroupsAPIService) *group {
 }
 
 func (g *group) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
+	setMeta(meta, g.gClient.Client)
 	log.Printf("[DEBUG] Get Group")
 
 	name := d.GetString("name")

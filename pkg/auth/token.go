@@ -5,9 +5,10 @@ package auth
 import (
 	"context"
 	"log"
-	"os"
 
 	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
+	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/constants"
+	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/utils"
 	"github.com/hewlettpackard/hpegl-provider-lib/pkg/token/common"
 	"github.com/hewlettpackard/hpegl-provider-lib/pkg/token/retrieve"
 )
@@ -23,7 +24,7 @@ func GetToken(ctx context.Context, meta interface{}) (string, error) {
 // SetScmClientToken fetches and sets the token  in context for scm client.
 // Provided the client id and secret in provider
 func SetScmClientToken(ctx *context.Context, meta interface{}) {
-	if os.Getenv("TF_ACC") == "true" {
+	if utils.GetEnvBool(constants.MockIAMKey) {
 		return
 	}
 

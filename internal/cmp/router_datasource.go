@@ -21,6 +21,7 @@ func newRouterDS(nClient *client.RouterAPIService) *routerds {
 }
 
 func (n *routerds) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
+	setMeta(meta, n.nClient.Client)
 	log.Printf("[DEBUG] Get Router")
 	name := d.GetString("name")
 

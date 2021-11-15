@@ -19,6 +19,7 @@ func newNetworkType(nClient *client.NetworksAPIService) *networkType {
 }
 
 func (n *networkType) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
+	setMeta(meta, n.nClient.Client)
 	name := d.GetString("name")
 	networkResp, err := n.nClient.GetNetworkType(ctx, map[string]string{
 		nameKey: name,

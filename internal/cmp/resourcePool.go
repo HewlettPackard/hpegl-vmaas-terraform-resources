@@ -20,6 +20,7 @@ func newResourcePool(rClient *client.CloudsAPIService) *resourcePool {
 }
 
 func (n *resourcePool) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
+	setMeta(meta, n.rClient.Client)
 	log.Printf("[DEBUG] Get ResourcePool")
 
 	name := d.GetString("name")

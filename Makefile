@@ -93,6 +93,7 @@ install: build $(NAME)
 
 v := latest
 sdk:
+	rm -rf vendor
 	@go get github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk@$v
 	go mod vendor
 .PHONY: v

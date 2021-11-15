@@ -8,10 +8,13 @@ import (
 	"strings"
 
 	api_client "github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
+	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/models"
 	cmp_client "github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/cmp"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/constants"
+	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hewlettpackard/hpegl-provider-lib/pkg/client"
+	"github.com/tshihad/tftags"
 )
 
 // keyForGLClientMap is the key in the map[string]interface{} that is passed down by hpegl used to store *Client
@@ -32,9 +35,9 @@ type Client struct {
 func getHeaders(token string) map[string]string {
 	header := make(map[string]string)
 	serviceURL = constants.ServiceURL
-	if strings.ToLower(os.Getenv("TF_ACC")) == "true" {
+	if utils.GetEnvBool(constants.MockIAMKey) {
 		serviceURL = constants.AccServiceURL
-		header["subject"] = os.Getenv("CMP_SUBJECT")
+		header["subject"] = os.Getenv(constants.CmpSubjectKey)
 		header["Authorization"] = token
 	}
 	if strings.ToLower(os.Getenv("SERVICE_ACCOUNT")) == "intg" {
@@ -52,15 +55,10 @@ type InitialiseClient struct{}
 // The hpegl provider will put *Client at the value of keyForGLClientMap (returned by ServiceName) in
 // the map of clients that it creates and passes down to provider code.  hpegl executes NewClient for each service.
 func (i InitialiseClient) NewClient(r *schema.ResourceData) (interface{}, error) {
-	vmaasProviderSettings, err := client.GetServiceSettingsMap(constants.ServiceName, r)
-	if err != nil {
-		return nil, nil
+	var tfprovider models.TFProvider
+	if err := tftags.Get(r, &tfprovider); err != nil {
+		return nil, err
 	}
-
-	// Read the value supplied in the tf file
-	location := vmaasProviderSettings[constants.LOCATION].(string)
-	spaceName := vmaasProviderSettings[constants.SPACENAME].(string)
-
 	// Create VMaas Client
 	client := new(Client)
 
@@ -70,8 +68,8 @@ func (i InitialiseClient) NewClient(r *schema.ResourceData) (interface{}, error)
 		Host:          serviceURL,
 		DefaultHeader: getHeaders(token),
 		DefaultQueryParams: map[string]string{
-			constants.SpaceKey:    spaceName,
-			constants.LocationKey: location,
+			constants.SpaceKey:    tfprovider.Vmaas.SpaceName,
+			constants.LocationKey: tfprovider.Vmaas.Location,
 		},
 	}
 	apiClient := api_client.NewAPIClient(&cfg)
