@@ -104,15 +104,18 @@ func (i *instance) Create(ctx context.Context, d *utils.Data, meta interface{}) 
 
 func (i *instance) Update(ctx context.Context, d *utils.Data, meta interface{}) error {
 	setMeta(meta, i.iClient.Client)
+
 	return updateInstance(ctx, i.instanceSharedClient, d)
 }
 
 func (i *instance) Delete(ctx context.Context, d *utils.Data, meta interface{}) error {
 	setMeta(meta, i.iClient.Client)
+
 	return deleteInstance(ctx, i.instanceSharedClient, d, meta)
 }
 
 func (i *instance) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
 	setMeta(meta, i.iClient.Client)
+
 	return readInstance(ctx, i.instanceSharedClient, d, meta, false)
 }

@@ -57,6 +57,7 @@ func GetEnvBool(key string) bool {
 	value, err := strconv.ParseBool(os.Getenv(key))
 	if err != nil {
 		log.Printf("[ERROR] failed to parse env %s, got error %v", key, err)
+
 		return false
 	}
 
