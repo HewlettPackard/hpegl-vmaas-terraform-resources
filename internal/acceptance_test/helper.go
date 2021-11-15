@@ -11,6 +11,7 @@ import (
 	"time"
 
 	api_client "github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
+	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/auth"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/constants"
 	pkgutils "github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -70,7 +71,7 @@ func validateResource(name string, v ...validators) resource.TestCheckFunc {
 func getAPIClient() (*api_client.APIClient, api_client.Configuration) {
 	headers := make(map[string]string)
 	headers["Authorization"] = os.Getenv("HPEGL_IAM_TOKEN")
-	headers["subject"] = os.Getenv("CMP_SUBJECT")
+	headers["subject"] = os.Getenv(constants.CmpSubjectKey)
 
 	cfg := api_client.Configuration{
 		Host:          constants.AccServiceURL,
@@ -81,6 +82,7 @@ func getAPIClient() (*api_client.APIClient, api_client.Configuration) {
 		},
 	}
 	apiClient := api_client.NewAPIClient(&cfg)
+	apiClient.SetMeta(nil, auth.SetScmClientToken)
 
 	return apiClient, cfg
 }

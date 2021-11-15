@@ -37,7 +37,7 @@ func getHeaders(token string) map[string]string {
 	serviceURL = constants.ServiceURL
 	if utils.GetEnvBool(constants.MockIAMKey) {
 		serviceURL = constants.AccServiceURL
-		header["subject"] = os.Getenv("CMP_SUBJECT")
+		header["subject"] = os.Getenv(constants.CmpSubjectKey)
 		header["Authorization"] = token
 	}
 	if strings.ToLower(os.Getenv("SERVICE_ACCOUNT")) == "intg" {

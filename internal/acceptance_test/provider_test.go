@@ -28,7 +28,7 @@ func init() {
 func testAccPreCheck(t *testing.T) {
 	// validate all required envs are present, if not then throws error
 	if pkgutils.GetEnvBool(constants.MockIAMKey) {
-		requiredenvs := []string{"CMP_SUBJECT"}
+		requiredenvs := []string{constants.CmpSubjectKey}
 		for _, r := range requiredenvs {
 			if os.Getenv(r) == "" {
 				panic(r + " env is required, but not found")
