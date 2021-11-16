@@ -145,7 +145,7 @@ func (r *router) routerAlignRouterRequest(ctx context.Context, meta interface{},
 	// Get network service ID
 	nsRetry := utils.CustomRetry{}
 	nsRetry.RetryParallel(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return r.routerClient.GetNetworkServices(ctx, nil)
+		return r.rClient.GetNetworkServices(ctx, nil)
 	})
 	// Align Router Type
 	rtResp, err := rtRetry.Wait()
