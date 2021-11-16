@@ -24,6 +24,7 @@ jobs:
       - name: Run Acceptance test
         env:
           HPEGL_IAM_TOKEN: ${{secrets.HPEGL_IAM_TOKEN}}
-          CMP_SUBJECT: ${{secrets.CMP_SUBJECT}}
+          TF_ACC_CMP_SUBJECT: ${{secrets.CMP_SUBJECT}}
           TF_ACC_CONFIG: ${{secrets.TF_ACC_CONFIG}}
+          TF_ACC_MOCK_IAM: true
         run: make acceptance

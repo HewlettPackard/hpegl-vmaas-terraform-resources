@@ -22,6 +22,7 @@ func newCloudFolder(fClient *client.CloudsAPIService) *cloudFolder {
 }
 
 func (f *cloudFolder) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
+	setMeta(meta, f.fClient.Client)
 	log.Printf("[INFO] Get cloud folder")
 
 	name := d.GetString("name")

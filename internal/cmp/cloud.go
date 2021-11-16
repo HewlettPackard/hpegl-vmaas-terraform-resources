@@ -22,6 +22,7 @@ func newCloud(cloudClient *client.CloudsAPIService) *cloud {
 }
 
 func (c *cloud) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
+	setMeta(meta, c.cloudClient.Client)
 	log.Printf("[INFO] Get Cloud")
 
 	name := d.GetString("name")

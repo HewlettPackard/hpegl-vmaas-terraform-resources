@@ -21,14 +21,15 @@ func newTemplate(tClient *client.VirtualImagesAPIService) *template {
 	}
 }
 
-func (c *template) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
+func (t *template) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
+	setMeta(meta, t.tClient.Client)
 	log.Printf("[DEBUG] Get Templates")
 
 	name := d.GetString("name")
 	if err := d.Error(); err != nil {
 		return err
 	}
-	template, err := c.tClient.GetAllVirtualImages(ctx, map[string]string{
+	template, err := t.tClient.GetAllVirtualImages(ctx, map[string]string{
 		nameKey: name,
 	})
 	if err != nil {

@@ -25,6 +25,7 @@ func newResNetwork(nclient *client.NetworksAPIService, rclient *client.RouterAPI
 }
 
 func (r *resNetwork) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
+	setMeta(meta, r.rClient.Client)
 	// get network details
 	var tfNetwork models.GetSpecificNetwork
 	if err := tftags.Get(d, &tfNetwork); err != nil {
@@ -41,6 +42,7 @@ func (r *resNetwork) Read(ctx context.Context, d *utils.Data, meta interface{}) 
 }
 
 func (r *resNetwork) Create(ctx context.Context, d *utils.Data, meta interface{}) error {
+	setMeta(meta, r.rClient.Client)
 	var createReq models.CreateNetwork
 	if err := tftags.Get(d, &createReq); err != nil {
 		return err
@@ -102,6 +104,7 @@ func (r *resNetwork) Create(ctx context.Context, d *utils.Data, meta interface{}
 }
 
 func (r *resNetwork) Update(ctx context.Context, d *utils.Data, meta interface{}) error {
+	setMeta(meta, r.rClient.Client)
 	var networkReq models.CreateNetwork
 	if err := tftags.Get(d, &networkReq); err != nil {
 		return err
@@ -125,6 +128,7 @@ func (r *resNetwork) Update(ctx context.Context, d *utils.Data, meta interface{}
 }
 
 func (r *resNetwork) Delete(ctx context.Context, d *utils.Data, meta interface{}) error {
+	setMeta(meta, r.rClient.Client)
 	networkID := d.GetID()
 	resp, err := r.nClient.DeleteNetwork(ctx, networkID)
 	if !resp.Success {

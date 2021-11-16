@@ -22,6 +22,7 @@ func newLayout(gClient *client.LibraryAPIService) *layout {
 }
 
 func (g *layout) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
+	setMeta(meta, g.gClient.Client)
 	log.Printf("[DEBUG] Get Layout")
 
 	name := d.GetString("name")
