@@ -137,7 +137,7 @@ func (r *router) routerAlignRouterRequest(ctx context.Context, meta interface{},
 		routerReq.NetworkRouter.Config.Tier0Gateways = routerReq.NetworkRouter.TfTier1Config.TfTier0Gateways
 		queryParam[nameKey] = tier1GatewayType
 	}
-	// Get router type
+	// Get Router type
 	rtRetry := utils.CustomRetry{}
 	rtRetry.RetryParallel(ctx, meta, func(ctx context.Context) (interface{}, error) {
 		return r.rClient.GetRouterTypes(ctx, queryParam)
@@ -145,11 +145,9 @@ func (r *router) routerAlignRouterRequest(ctx context.Context, meta interface{},
 	// Get network service ID
 	nsRetry := utils.CustomRetry{}
 	nsRetry.RetryParallel(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return r.rClient.GetNetworkServices(ctx, map[string]string{
-			nameKey: "NSX-T",
-		})
+		return r.rClient.GetNetworkServices(ctx, nil)
 	})
-
+	// Align Router Type
 	rtResp, err := rtRetry.Wait()
 	if err != nil {
 		return err
@@ -159,18 +157,23 @@ func (r *router) routerAlignRouterRequest(ctx context.Context, meta interface{},
 		return fmt.Errorf(errExactMatch, "router-type")
 	}
 	routerReq.NetworkRouter.Type.ID = routerTypes.NetworkRouterTypes[0].ID
-
+	// Align Network Server
 	nsResp, err := nsRetry.Wait()
 	if err != nil {
 		return err
 	}
 	networkService := nsResp.(models.GetNetworkServicesResp)
-	if len(routerTypes.NetworkRouterTypes) != 1 {
+	if len(routerTypes.NetworkRouterTypes) == 0 {
 		return fmt.Errorf(errExactMatch, "network-service")
 	}
-	routerReq.NetworkRouter.NetworkServer.ID = networkService.NetworkServices[0].ID
-	routerReq.NetworkRouter.NetworkServerID = networkService.NetworkServices[0].ID
+	for i, n := range networkService.NetworkServices {
+		if n.TypeName == "NSX-T" {
+			routerReq.NetworkRouter.NetworkServer.ID = networkService.NetworkServices[i].ID
+			routerReq.NetworkRouter.NetworkServerID = networkService.NetworkServices[i].ID
 
+			break
+		}
+	}
 	routerReq.NetworkRouter.Site.ID = routerReq.NetworkRouter.GroupID
 
 	return nil

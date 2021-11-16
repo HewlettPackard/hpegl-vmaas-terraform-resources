@@ -58,9 +58,7 @@ func (r *resNetwork) Create(ctx context.Context, d *utils.Data, meta interface{}
 	// Get network server ID for nsx-t
 	serverRetry := utils.CustomRetry{}
 	serverRetry.RetryParallel(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return r.rClient.GetNetworkServices(ctx, map[string]string{
-			nameKey: "NSX-T",
-		})
+		return r.rClient.GetNetworkServices(ctx, nil)
 	})
 	typeResp, err := typeRetry.Wait()
 	if err != nil {
@@ -70,19 +68,27 @@ func (r *resNetwork) Create(ctx context.Context, d *utils.Data, meta interface{}
 	if len(networkTypeResp.NetworkTypes) != 1 {
 		return fmt.Errorf(errExactMatch, "network type")
 	}
+	// Align request for Network Type
+	createReq.Type.ID = networkTypeResp.NetworkTypes[0].ID
 
 	serverResp, err := serverRetry.Wait()
 	if err != nil {
 		return err
 	}
-	networkServer := serverResp.(models.GetNetworkServicesResp)
-	if len(networkServer.NetworkServices) != 1 {
+
+	// Align request for Network Server
+	networkService := serverResp.(models.GetNetworkServicesResp)
+	if len(networkService.NetworkServices) == 0 {
 		return fmt.Errorf(errExactMatch, "network server")
 	}
+	for i, n := range networkService.NetworkServices {
+		if n.TypeName == "NSX-T" {
+			createReq.NetworkServer.ID = networkService.NetworkServices[i].ID
 
-	// Align request
-	createReq.NetworkServer.ID = networkServer.NetworkServices[0].ID
-	createReq.Type.ID = networkTypeResp.NetworkTypes[0].ID
+			break
+		}
+	}
+
 	alignNetworkReq(&createReq)
 
 	// Create network
