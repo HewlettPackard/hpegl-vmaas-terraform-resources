@@ -125,8 +125,8 @@ func RouterNatRule() *schema.Resource {
 		UpdateContext: routerNatRuleUpdateContext,
 		DeleteContext: routerNatRuleDeleteContext,
 		CustomizeDiff: routerNatCustomDiff,
-		Description: `Router resource facilitates creating,
-		updating and deleting NSX-T Network Router NAT rules`,
+		Description: `Router NAT rule resource facilitates creating,
+		updating and deleting NSX-T Network Router NAT rules.`,
 	}
 }
 
