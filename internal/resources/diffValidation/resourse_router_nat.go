@@ -33,7 +33,7 @@ func (r *RouterNat) validateDandSnat() error {
 			}
 		case "SNAT":
 			if r.diff.Get("source_network") == "" {
-				return fmt.Errorf("source_network should be set for DNAT")
+				return fmt.Errorf("source_network should be set for SNAT")
 			}
 		}
 	}

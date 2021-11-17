@@ -83,20 +83,20 @@ func RouterNatRule() *schema.Resource {
 			"source_network": {
 				Type:             schema.TypeString,
 				Optional:         true,
-				ValidateDiagFunc: validations.ValidateCidr,
-				Description:      "Source Network CIDR Address",
+				ValidateDiagFunc: validations.ValidateIPorCidr,
+				Description:      "Source Network CIDR/IPv4 Address",
 			},
 			"destination_network": {
 				Type:             schema.TypeString,
 				Optional:         true,
-				ValidateDiagFunc: validations.ValidateCidr,
-				Description:      "Destination Network CIDR Address",
+				ValidateDiagFunc: validations.ValidateIPorCidr,
+				Description:      "Destination Network CIDR/IPv4 Address",
 			},
 			"translated_network": {
 				Type:             schema.TypeString,
 				Required:         true,
-				ValidateDiagFunc: validations.ValidateCidr,
-				Description:      "Translated Network CIDR Address",
+				ValidateDiagFunc: validations.ValidateIPorCidr,
+				Description:      "Translated Network CIDR/IPv4 Address",
 			},
 			"translated_ports": {
 				Type:        schema.TypeInt,
@@ -121,6 +121,8 @@ func RouterNatRule() *schema.Resource {
 		UpdateContext: routerNatRuleUpdateContext,
 		DeleteContext: routerNatRuleDeleteContext,
 		CustomizeDiff: routerNatCustomDiff,
+		Description: `Router resource facilitates creating,
+		updating and deleting NSX-T Network Routers NAT rules`,
 	}
 }
 
