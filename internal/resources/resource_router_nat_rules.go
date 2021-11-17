@@ -65,7 +65,8 @@ func RouterNatRule() *schema.Resource {
 							ValidateDiagFunc: validations.StringInSlice([]string{
 								"MATCH_EXTERNAL_ADDRESS", "MATCH_INTERNAL_ADDRESS", "BYPASS",
 							}, false),
-							Description: "Firewall Type. Can take any of these values: (`MATCH_EXTERNAL_ADDRESS`, `MATCH_INTERNAL_ADDRESS`, `BYPASS`)",
+							Description: `Firewall Type. Can take any of these values: MATCH_EXTERNAL_ADDRESS,
+							MATCH_INTERNAL_ADDRESS, BYPASS`,
 							// "MATCH_INTERNAL_ADDRESS",
 						},
 						// This field will added on later versions
