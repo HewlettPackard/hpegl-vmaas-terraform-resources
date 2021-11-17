@@ -36,7 +36,7 @@ func RouterNatRule() *schema.Resource {
 				Type:        schema.TypeBool,
 				Default:     false,
 				Optional:    true,
-				Description: "If true then NAT rule will be active/enabled.",
+				Description: "If `true` then NAT rule will be active/enabled.",
 			},
 			"config": {
 				Type:        schema.TypeList,
@@ -51,7 +51,7 @@ func RouterNatRule() *schema.Resource {
 								"DNAT", "SNAT",
 							}, false),
 							Required:    true,
-							Description: "Supported values are DNAT and SNAT",
+							Description: "NAT Rule Type. Supported values are `DNAT` and `SNAT`",
 						},
 						"service": {
 							Type:        schema.TypeString,
@@ -65,6 +65,7 @@ func RouterNatRule() *schema.Resource {
 							ValidateDiagFunc: validations.StringInSlice([]string{
 								"MATCH_EXTERNAL_ADDRESS", "MATCH_INTERNAL_ADDRESS", "BYPASS",
 							}, false),
+							Description: "Firewall Type. Can take any of these values: (`MATCH_EXTERNAL_ADDRESS`, `MATCH_INTERNAL_ADDRESS`, `BYPASS`)",
 							// "MATCH_INTERNAL_ADDRESS",
 						},
 						// This field will added on later versions
@@ -74,8 +75,10 @@ func RouterNatRule() *schema.Resource {
 						// 	Description: "Scope to particular router interface",
 						// },
 						"logging": {
-							Type:     schema.TypeBool,
-							Optional: true,
+							Type:        schema.TypeBool,
+							Optional:    true,
+							Default:     false,
+							Description: "Enable/Disable Logging",
 						},
 					},
 				},
@@ -122,7 +125,7 @@ func RouterNatRule() *schema.Resource {
 		DeleteContext: routerNatRuleDeleteContext,
 		CustomizeDiff: routerNatCustomDiff,
 		Description: `Router resource facilitates creating,
-		updating and deleting NSX-T Network Routers NAT rules`,
+		updating and deleting NSX-T Network Router NAT rules`,
 	}
 }
 
