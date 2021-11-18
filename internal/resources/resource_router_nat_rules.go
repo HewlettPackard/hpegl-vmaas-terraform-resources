@@ -36,7 +36,7 @@ func RouterNatRule() *schema.Resource {
 				Type:        schema.TypeBool,
 				Default:     false,
 				Optional:    true,
-				Description: "If true then NAT rule will be active/enabled.",
+				Description: "If `true` then NAT rule will be active/enabled.",
 			},
 			"config": {
 				Type:        schema.TypeList,
@@ -51,7 +51,7 @@ func RouterNatRule() *schema.Resource {
 								"DNAT", "SNAT",
 							}, false),
 							Required:    true,
-							Description: "Supported values are DNAT and SNAT",
+							Description: "NAT Rule Type. Supported values are `DNAT` and `SNAT`",
 						},
 						"service": {
 							Type:        schema.TypeString,
@@ -65,6 +65,8 @@ func RouterNatRule() *schema.Resource {
 							ValidateDiagFunc: validations.StringInSlice([]string{
 								"MATCH_EXTERNAL_ADDRESS", "MATCH_INTERNAL_ADDRESS", "BYPASS",
 							}, false),
+							Description: `Firewall Type. Supported values are : MATCH_EXTERNAL_ADDRESS,
+							MATCH_INTERNAL_ADDRESS, BYPASS`,
 							// "MATCH_INTERNAL_ADDRESS",
 						},
 						// This field will added on later versions
@@ -74,8 +76,10 @@ func RouterNatRule() *schema.Resource {
 						// 	Description: "Scope to particular router interface",
 						// },
 						"logging": {
-							Type:     schema.TypeBool,
-							Optional: true,
+							Type:        schema.TypeBool,
+							Optional:    true,
+							Default:     false,
+							Description: "Enable/Disable Logging",
 						},
 					},
 				},
@@ -83,20 +87,20 @@ func RouterNatRule() *schema.Resource {
 			"source_network": {
 				Type:             schema.TypeString,
 				Optional:         true,
-				ValidateDiagFunc: validations.ValidateCidr,
-				Description:      "Source Network CIDR Address",
+				ValidateDiagFunc: validations.ValidateIPorCidr,
+				Description:      "Source Network CIDR/IPv4 Address",
 			},
 			"destination_network": {
 				Type:             schema.TypeString,
 				Optional:         true,
-				ValidateDiagFunc: validations.ValidateCidr,
-				Description:      "Destination Network CIDR Address",
+				ValidateDiagFunc: validations.ValidateIPorCidr,
+				Description:      "Destination Network CIDR/IPv4 Address",
 			},
 			"translated_network": {
 				Type:             schema.TypeString,
 				Required:         true,
-				ValidateDiagFunc: validations.ValidateCidr,
-				Description:      "Translated Network CIDR Address",
+				ValidateDiagFunc: validations.ValidateIPorCidr,
+				Description:      "Translated Network CIDR/IPv4 Address",
 			},
 			"translated_ports": {
 				Type:        schema.TypeInt,
@@ -121,6 +125,8 @@ func RouterNatRule() *schema.Resource {
 		UpdateContext: routerNatRuleUpdateContext,
 		DeleteContext: routerNatRuleDeleteContext,
 		CustomizeDiff: routerNatCustomDiff,
+		Description: `Router NAT rule resource facilitates creating,
+		updating and deleting NSX-T Network Router NAT rules.`,
 	}
 }
 

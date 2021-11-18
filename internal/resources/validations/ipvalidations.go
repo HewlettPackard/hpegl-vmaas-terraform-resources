@@ -3,6 +3,8 @@
 package validations
 
 import (
+	"fmt"
+
 	"github.com/hashicorp/go-cty/cty"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
@@ -37,4 +39,23 @@ func ValidateCidr(i interface{}, p cty.Path) diag.Diagnostics {
 	_, errs := validation.IsCIDR(i, "")
 
 	return errsTodiags(errs)
+}
+
+// ValidateIPorCidr validate cidr or IP Address
+func ValidateIPorCidr(i interface{}, p cty.Path) diag.Diagnostics {
+	var errors []error
+	if i == nil {
+		return nil
+	}
+
+	_, errsCidr := validation.IsCIDR(i, "")
+
+	if errsCidr != nil {
+		_, errsIpv4 := validation.IsIPv4Address(i, "")
+		if errsIpv4 != nil {
+			errors = append(errors, fmt.Errorf("expected %s to contain a valid IPv4 address or CIDR", i.(string)))
+		}
+	}
+
+	return errsTodiags(errors)
 }
