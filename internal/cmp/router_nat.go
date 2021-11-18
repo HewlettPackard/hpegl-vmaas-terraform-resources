@@ -30,19 +30,13 @@ func (r *routerNat) Read(ctx context.Context, d *utils.Data, meta interface{}) e
 		return err
 	}
 	// Get the router, if the router not exists, return warning
-	router, err := r.rClient.GetSpecificRouter(ctx, tfNat.RouterID)
-	if err != nil {
+	if check, err := checkRouterDeprecated(
+		ctx, r.rClient, d, tfNat.RouterID, &tfNat.IsDeprecated, tfNat,
+	); err != nil || check {
 		return err
 	}
-	// if router not found set is_deprecated flag=true
-	if router.ID == 0 {
-		log.Printf("[ERROR] Router with %d id is not found on NAT plan", tfNat.RouterID)
-		tfNat.IsDeprecated = true
 
-		return tftags.Set(d, tfNat)
-	}
-
-	_, err = r.rClient.GetSpecificRouterNat(ctx, tfNat.RouterID, tfNat.ID)
+	_, err := r.rClient.GetSpecificRouterNat(ctx, tfNat.RouterID, tfNat.ID)
 	if err != nil {
 		return err
 	}

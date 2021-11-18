@@ -45,13 +45,13 @@ func RouterRoute() *schema.Resource {
 			},
 			"network": {
 				Type:             schema.TypeString,
-				Optional:         true,
+				Required:         true,
 				ValidateDiagFunc: validations.ValidateCidr,
 				Description:      "Source Network CIDR Address",
 			},
 			"next_hop": {
 				Type:             schema.TypeString,
-				Optional:         true,
+				Required:         true,
 				ValidateDiagFunc: validations.ValidateIPAddress,
 				Description:      "Next Hop/Destination IPv4 Address",
 			},
@@ -97,7 +97,6 @@ func RouterRoute() *schema.Resource {
 		CreateContext: routerRouteCreateContext,
 		UpdateContext: routerRouteUpdateContext,
 		DeleteContext: routerRouteDeleteContext,
-		CustomizeDiff: routerNatCustomDiff,
 		Description: `Router route resource facilitates creating,
 		updating and deleting NSX-T Network Router routes.`,
 	}
@@ -110,7 +109,7 @@ func routerRouteReadContext(ctx context.Context, rd *schema.ResourceData, meta i
 	}
 
 	data := utils.NewData(rd)
-	if err := c.CmpClient.RouterNat.Read(ctx, data, meta); err != nil {
+	if err := c.CmpClient.RouterRoute.Read(ctx, data, meta); err != nil {
 		return diag.FromErr(err)
 	}
 	isDeprecated := data.GetBool("is_deprecated")
@@ -133,7 +132,7 @@ func routerRouteCreateContext(ctx context.Context, rd *schema.ResourceData, meta
 	}
 
 	data := utils.NewData(rd)
-	if err := c.CmpClient.RouterNat.Create(ctx, data, meta); err != nil {
+	if err := c.CmpClient.RouterRoute.Create(ctx, data, meta); err != nil {
 		return diag.FromErr(err)
 	}
 
@@ -147,7 +146,7 @@ func routerRouteUpdateContext(ctx context.Context, rd *schema.ResourceData, meta
 	}
 
 	data := utils.NewData(rd)
-	if err := c.CmpClient.RouterNat.Update(ctx, data, meta); err != nil {
+	if err := c.CmpClient.RouterRoute.Update(ctx, data, meta); err != nil {
 		return diag.FromErr(err)
 	}
 
@@ -161,7 +160,7 @@ func routerRouteDeleteContext(ctx context.Context, rd *schema.ResourceData, meta
 	}
 
 	data := utils.NewData(rd)
-	if err := c.CmpClient.RouterNat.Delete(ctx, data, meta); err != nil {
+	if err := c.CmpClient.RouterRoute.Delete(ctx, data, meta); err != nil {
 		return diag.FromErr(err)
 	}
 

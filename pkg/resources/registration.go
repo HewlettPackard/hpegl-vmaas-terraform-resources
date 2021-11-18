@@ -38,7 +38,6 @@ func (r Registration) SupportedDataSources() map[string]*schema.Resource {
 		resources.DSRouter:           resources.RouterData(),
 		resources.DSNetworkDomain:    resources.DomainData(),
 		resources.DSNetworkProxy:     resources.NetworkProxyData(),
-		resources.ResRouterRoute:     resources.RouterRoute(),
 	}
 }
 
@@ -50,6 +49,7 @@ func (r Registration) SupportedResources() map[string]*schema.Resource {
 		resources.ResRouter:                  resources.Router(),
 		resources.ResRouterNat:               resources.RouterNatRule(),
 		resources.ResRouterFirewallRuleGroup: resources.RouterFirewallRuleGroup(),
+		resources.ResRouterRoute:             resources.RouterRoute(),
 	}
 }
 
