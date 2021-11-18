@@ -16,7 +16,7 @@ For creating an NSX-T network router NAT rule, please refer following examples.
 
 {{tffile "examples/resources/hpegl_vmaas_router_nat_rule/resource.tf"}}
 
--> `destination_network` should be set when `action` is set to `DNAT`. Similaraly `source_network`
+-> `destination_network` should be set when `action` is set to `DNAT`. Similarly `source_network`
 should be set when `action` is set to `SNAT`.
 
 {{ .SchemaMarkdown | trimspace }}

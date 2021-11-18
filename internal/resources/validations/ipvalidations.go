@@ -41,7 +41,7 @@ func ValidateCidr(i interface{}, p cty.Path) diag.Diagnostics {
 	return errsTodiags(errs)
 }
 
-// ValidateCidr validate cidr or IP Address
+// ValidateIPorCidr validate cidr or IP Address
 func ValidateIPorCidr(i interface{}, p cty.Path) diag.Diagnostics {
 	var errors []error
 	if i == nil {
