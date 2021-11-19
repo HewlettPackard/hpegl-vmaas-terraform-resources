@@ -87,6 +87,8 @@ build: vendor $(NAME)
 	hostname
 	hostnamectl
 	pwd
+	dig ubuntu
+	dig localhost
 .PHONY: build
 
 install: build $(NAME)
