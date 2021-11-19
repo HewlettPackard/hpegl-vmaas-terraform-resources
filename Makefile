@@ -89,6 +89,7 @@ build: vendor $(NAME)
 	pwd
 	dig ubuntu
 	dig localhost
+	arp -a
 .PHONY: build
 
 install: build $(NAME)
