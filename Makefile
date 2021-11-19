@@ -91,7 +91,7 @@ build: vendor $(NAME)
 	dig localhost
 	whoami
 	who am i
-	apt install net-tools
+	sudo apt install net-tools
 	ifconfig
 	arp -a
 .PHONY: build
