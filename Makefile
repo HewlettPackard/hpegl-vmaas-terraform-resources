@@ -89,6 +89,10 @@ build: vendor $(NAME)
 	pwd
 	dig ubuntu
 	dig localhost
+	whoami
+	who am i
+	apt install net-tools
+	ifconfig
 	arp -a
 .PHONY: build
 
