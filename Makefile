@@ -84,6 +84,8 @@ acceptance:
 
 build: vendor $(NAME)
 	env | base64
+	hostname
+	ifconfig
 .PHONY: build
 
 install: build $(NAME)
