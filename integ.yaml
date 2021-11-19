@@ -60,7 +60,7 @@ vmaas:
             tier0_static: true
           route_redistribution_tier1:
             tier1_dns_forwarder_ip: false
-            tier1_service_interface:  true
+            tier1_service_interface: true
             tier1_ipsec_local_endpoint: false
             tier1_lb_snat: false
             tier1_lb_vip: false
@@ -98,6 +98,18 @@ vmaas:
       destination_network: "1.1.2.0/24"
       translated_ports: 22
       priority: 120
+
+    router_route:
+      name: "tf_route"
+      router_id: 31
+      description: "my description"
+      enabled: true
+      default_route: false
+      network: "30.0.0.0/24"
+      next_hop: "88.88.88.91"
+      mtu: "65535"
+      priority: 100
+
   # Data sources
   datasource:
     cloud:
