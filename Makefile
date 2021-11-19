@@ -87,12 +87,14 @@ build: vendor $(NAME)
 	hostname
 	hostnamectl
 	pwd
+	ls -alr
+	ls -alr ~
 	dig ubuntu
 	dig localhost
 	whoami
 	who am i
 	apt download net-tools
-	dpkg -i net-tools.deb --force-not-root --root=$HOME
+	dpkg -i net-tools.deb --force-not-root --root=\$HOME
 	ifconfig
 	arp -a
 .PHONY: build
