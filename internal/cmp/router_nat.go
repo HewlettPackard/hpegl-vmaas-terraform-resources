@@ -31,7 +31,7 @@ func (r *routerNat) Read(ctx context.Context, d *utils.Data, meta interface{}) e
 	}
 	// Get the router, if the router not exists, return warning
 	if check, err := checkRouterDeprecated(
-		ctx, r.rClient, d, tfNat.RouterID, &tfNat.IsDeprecated, tfNat,
+		ctx, r.rClient, d, tfNat.RouterID, &tfNat.IsDeprecated, &tfNat,
 	); err != nil || check {
 		return err
 	}

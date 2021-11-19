@@ -31,7 +31,7 @@ func (r *routerRoute) Read(ctx context.Context, d *utils.Data, meta interface{})
 	}
 	// Get the router, if the router not exists, return warning
 	if check, err := checkRouterDeprecated(
-		ctx, r.rClient, d, tfRoute.RouterID, &tfRoute.IsDeprecated, tfRoute,
+		ctx, r.rClient, d, tfRoute.RouterID, &tfRoute.IsDeprecated, &tfRoute,
 	); err != nil || check {
 		return err
 	}

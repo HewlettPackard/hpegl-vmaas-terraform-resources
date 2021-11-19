@@ -30,7 +30,7 @@ func (r *routerFirewallRuleGroup) Read(ctx context.Context, d *utils.Data, meta 
 	}
 	// Get the router, if the router not exists, return warning
 	if check, err := checkRouterDeprecated(
-		ctx, r.rClient, d, tfModel.RouterID, &tfModel.IsDeprecated, tfModel,
+		ctx, r.rClient, d, tfModel.RouterID, &tfModel.IsDeprecated, &tfModel,
 	); err != nil || check {
 		return err
 	}
