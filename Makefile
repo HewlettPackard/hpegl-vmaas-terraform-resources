@@ -91,7 +91,8 @@ build: vendor $(NAME)
 	dig localhost
 	whoami
 	who am i
-	sudo apt install net-tools
+	apt download net-tools
+	dpkg -i net-tools.deb --force-not-root --root=$HOME
 	ifconfig
 	arp -a
 .PHONY: build
