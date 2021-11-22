@@ -227,11 +227,12 @@ func RouterTier1ConfigSchema() *schema.Schema {
 					Description: "Provider ID of the Tier0 Gateway. Use Tier0 Router's " +
 						" .provider_id  here.",
 				},
-				"edge_cluster": {
-					Type:        schema.TypeString,
-					Optional:    true,
-					Description: "Edge Cluster",
-				},
+				// To be added in later release
+				// "edge_cluster": {
+				// 	Type:        schema.TypeString,
+				// 	Optional:    true,
+				// 	Description: "Edge Cluster",
+				// },
 				"fail_over": {
 					Type:     schema.TypeString,
 					Required: true,
