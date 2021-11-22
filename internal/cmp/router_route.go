@@ -17,9 +17,9 @@ type routerRoute struct {
 	rClient *client.RouterAPIService
 }
 
-func newRouterRoute(routerNatClient *client.RouterAPIService) *routerRoute {
+func newRouterRoute(routeClient *client.RouterAPIService) *routerRoute {
 	return &routerRoute{
-		rClient: routerNatClient,
+		rClient: routeClient,
 	}
 }
 
@@ -51,7 +51,7 @@ func (r *routerRoute) Create(ctx context.Context, d *utils.Data, meta interface{
 	if err != nil {
 		return err
 	}
-	natRes, err := r.rClient.CreateRouterRoute(ctx, tfRoute.RouterID,
+	routeRes, err := r.rClient.CreateRouterRoute(ctx, tfRoute.RouterID,
 		models.CreateRouterRoute{
 			NetworkRoute: tfRoute,
 		},
@@ -60,10 +60,10 @@ func (r *routerRoute) Create(ctx context.Context, d *utils.Data, meta interface{
 		return err
 	}
 
-	if !natRes.Success {
+	if !routeRes.Success {
 		return fmt.Errorf(successErr, "creating route for the router")
 	}
-	tfRoute.ID = natRes.ID
+	tfRoute.ID = routeRes.ID
 
 	return tftags.Set(d, tfRoute)
 }
@@ -79,7 +79,7 @@ func (r *routerRoute) Delete(ctx context.Context, d *utils.Data, meta interface{
 		return err
 	}
 
-	// if parent router got deleted, NAT is already deleted
+	// if parent router got deleted, Route is already deleted
 	if tfRoute.IsDeprecated {
 		log.Printf("[WARNING] Router route already deleted since router is deleted")
 
@@ -91,7 +91,7 @@ func (r *routerRoute) Delete(ctx context.Context, d *utils.Data, meta interface{
 		return err
 	}
 	if !resp.Success {
-		return fmt.Errorf("got success = 'false' while deleting NAT rule")
+		return fmt.Errorf("got success = 'false' while deleting Route rule")
 	}
 
 	return nil
