@@ -31,18 +31,19 @@ func (f *cloudFolder) Read(ctx context.Context, d *utils.Data, meta interface{})
 	if err := d.Error(); err != nil {
 		return err
 	}
-	folders, err := f.fClient.GetAllCloudFolders(ctx, cloudID, map[string]string{
-		nameKey: name,
-	})
+	folders, err := f.fClient.GetAllCloudFolders(ctx, cloudID, nil)
 	if err != nil {
 		return err
 	}
 
-	if len(folders.Folders) != 1 {
-		return fmt.Errorf(errExactMatch, "folder")
+	for _, cf := range folders.Folders {
+		if cf.Name == name {
+			d.Set("code", cf.ExternalID)
+			d.SetID(cf.ID)
+
+			return nil
+		}
 	}
-	d.Set("code", folders.Folders[0].ExternalID)
-	d.SetID(folders.Folders[0].ID)
-	// post check
-	return d.Error()
+
+	return fmt.Errorf(errExactMatch, "Folder")
 }
