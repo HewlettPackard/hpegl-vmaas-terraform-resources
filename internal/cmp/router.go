@@ -33,7 +33,7 @@ func (r *router) Read(ctx context.Context, d *utils.Data, meta interface{}) erro
 		return err
 	}
 
-	return tftags.Set(d, getRouter)
+	return tftags.Set(d, getRouter.NetworkRouter)
 }
 
 func (r *router) Create(ctx context.Context, d *utils.Data, meta interface{}) error {
