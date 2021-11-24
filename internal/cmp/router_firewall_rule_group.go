@@ -5,7 +5,6 @@ package cmp
 import (
 	"context"
 	"fmt"
-	"log"
 
 	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
 	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/models"
@@ -24,6 +23,7 @@ func newRouterFirewallRuleGroup(routerFirewallRuleGroupClient *client.RouterAPIS
 }
 
 func (r *routerFirewallRuleGroup) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
+	setMeta(meta, r.routerFirewallRuleGroupClient.Client)
 	var tfFirewallRuleGroup models.CreateRouterFirewallRuleGroup
 	if err := tftags.Get(d, &tfFirewallRuleGroup); err != nil {
 		return err
@@ -39,6 +39,7 @@ func (r *routerFirewallRuleGroup) Read(ctx context.Context, d *utils.Data, meta 
 }
 
 func (r *routerFirewallRuleGroup) Create(ctx context.Context, d *utils.Data, meta interface{}) error {
+	setMeta(meta, r.routerFirewallRuleGroupClient.Client)
 	var tfFirewallRuleGroup models.CreateRouterFirewallRuleGroup
 	err := tftags.Get(d, &tfFirewallRuleGroup)
 	if err != nil {
@@ -67,16 +68,10 @@ func (r *routerFirewallRuleGroup) Update(ctx context.Context, d *utils.Data, met
 }
 
 func (r *routerFirewallRuleGroup) Delete(ctx context.Context, d *utils.Data, meta interface{}) error {
+	setMeta(meta, r.routerFirewallRuleGroupClient.Client)
 	var tfFirewallRuleGroup models.CreateRouterFirewallRuleGroup
 	if err := tftags.Get(d, &tfFirewallRuleGroup); err != nil {
 		return err
-	}
-
-	// if parent router got deleted, NAT is already deleted
-	if tfFirewallRuleGroup.IsDeprecated {
-		log.Printf("[WARNING] Firewall rule group already deleted since router is deleted")
-
-		return nil
 	}
 
 	resp, err := r.routerFirewallRuleGroupClient.DeleteRouterFirewallRuleGroup(ctx, tfFirewallRuleGroup.RouterID,
