@@ -153,3 +153,8 @@ func checkResourceDestroy(
 		return nil
 	}
 }
+
+func toInt(s string) int {
+	i, _ := strconv.Atoi(s)
+	return i
+}
