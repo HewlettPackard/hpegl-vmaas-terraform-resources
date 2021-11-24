@@ -114,11 +114,6 @@ func RouterNatRule() *schema.Resource {
 				Description:      "Priority for the rule",
 				ValidateDiagFunc: validations.IntAtLeast(1),
 			},
-			"is_deprecated": {
-				Type:        schema.TypeBool,
-				Computed:    true,
-				Description: "If parent router not found, then is_deprecated will be true",
-			},
 		},
 		ReadContext:   routerNatRuleReadContext,
 		CreateContext: routerNatRuleCreateContext,
@@ -139,15 +134,6 @@ func routerNatRuleReadContext(ctx context.Context, rd *schema.ResourceData, meta
 	data := utils.NewData(rd)
 	if err := c.CmpClient.RouterNat.Read(ctx, data, meta); err != nil {
 		return diag.FromErr(err)
-	}
-	isDeprecated := data.GetBool("is_deprecated")
-	if isDeprecated {
-		return diag.Diagnostics{
-			{
-				Severity: diag.Warning,
-				Summary:  "Parent router is deleted. This resource is deprecated!!!",
-			},
-		}
 	}
 
 	return nil

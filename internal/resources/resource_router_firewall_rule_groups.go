@@ -47,11 +47,6 @@ func RouterFirewallRuleGroup() *schema.Resource {
 				}, false),
 				Description: "Platform/vendor specific category",
 			},
-			"is_deprecated": {
-				Type:        schema.TypeBool,
-				Computed:    true,
-				Description: "If parent router not found, then is_deprecated will be true",
-			},
 		},
 		ReadContext:   routerFirewallRuleGroupReadContext,
 		CreateContext: routerFirewallRuleGroupCreateContext,
@@ -69,15 +64,6 @@ func routerFirewallRuleGroupReadContext(ctx context.Context, rd *schema.Resource
 	data := utils.NewData(rd)
 	if err := c.CmpClient.RouterFirewallRuleGroup.Read(ctx, data, meta); err != nil {
 		return diag.FromErr(err)
-	}
-	isDeprecated := data.GetBool("is_deprecated")
-	if isDeprecated {
-		return diag.Diagnostics{
-			{
-				Severity: diag.Warning,
-				Summary:  "Parent router is deleted. This resource is deprecated!!!",
-			},
-		}
 	}
 
 	return nil
