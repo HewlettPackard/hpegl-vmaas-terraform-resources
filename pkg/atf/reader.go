@@ -16,19 +16,21 @@ type accConfig struct {
 	Validations map[string]interface{}
 }
 
-func getResourceConfig(resourceName string) []accConfig {
-	tfResKey := getLocalName(resourceName)
-	resKey := "vmaas.resource." + tfResKey
+// parseConfig populates terraform configuration and parse to accConfig
+func parseConfig(name string, isResource bool) []accConfig {
+	tfKey := getLocalName(name)
+
+	resKey := fmt.Sprintf("vmaas.%s.%s", getTag(isResource), tfKey)
 	testCases := viper.Get(resKey).([]interface{})
 	configs := make([]accConfig, len(testCases))
 	for i := range testCases {
 		configs[i].Config = fmt.Sprintf(`
 		%s
-		resource "%s" "tf_%s" {
+		%s "%s" "tf_%s" {
 			%s
 		}
 		`,
-			providerStanza, resourceName, tfResKey,
+			providerStanza, getTag(isResource), name, tfKey,
 			viper.GetString(fmt.Sprintf(`%s.%d.config`, resKey, i)),
 		)
 
@@ -45,15 +47,18 @@ func getResourceConfig(resourceName string) []accConfig {
 	return configs
 }
 
-func getTestCases(t *testing.T, resourceName string) []resource.TestStep {
-	configs := getResourceConfig(resourceName)
+// getTestCases populate TestSteps
+func getTestCases(t *testing.T, name string, getAPI GetAPIFunc, isResource bool) []resource.TestStep {
+	configs := parseConfig(name, isResource)
 	testSteps := make([]resource.TestStep, 0, len(configs))
 	for _, c := range configs {
 		testSteps = append(testSteps, resource.TestStep{
 			Config: c.Config,
 			Check: resource.ComposeTestCheckFunc(
 				validateResource(
-					fmt.Sprintf("%s.tf_%s", resourceName, getLocalName(resourceName)),
+					fmt.Sprintf("%s.tf_%s", name, getLocalName(name)),
+					c.Validations,
+					getAPI,
 				),
 			),
 		})

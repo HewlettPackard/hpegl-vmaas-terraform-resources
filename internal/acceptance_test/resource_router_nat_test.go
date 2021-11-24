@@ -32,9 +32,10 @@ func TestAccResourceRouterNatCreate(t *testing.T) {
 			}
 			id := toInt(attr["id"])
 			routerID := toInt(attr["router_id"])
+
 			return iClient.GetSpecificRouterNat(context.Background(), routerID, id)
 		},
 	}
 
-	acc.RunCreateTests(t)
+	acc.RunTests(t)
 }

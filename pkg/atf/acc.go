@@ -11,22 +11,33 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
+// GetAPIFunc accepts terraform states attribures as params and
+// expects response and error as return values
+type GetAPIFunc func(attr map[string]string) (interface{}, error)
+
 type Acc struct {
 	PreCheck     func(t *testing.T)
 	Providers    map[string]*schema.Provider
-	GetApi       func(attr map[string]string) (interface{}, error)
+	GetApi       GetAPIFunc
 	ResourceName string
 }
 
+// RunResourcePlanTest to run resource plan only test case. This will take first
+// config from specific resource
 func (a *Acc) RunResourcePlanTest(t *testing.T) {
 	a.runPlanTest(t, true)
 }
 
+// RunDataSourcePlanTest to run data source plan only test case. This will take first
+// config from specific data source
 func (a *Acc) RunDataSourcePlanTest(t *testing.T) {
 	a.runPlanTest(t, false)
 }
-func (a *Acc) RunCreateTests(t *testing.T) {
-	testSteps := getTestCases(t, a.ResourceName)
+
+// RunTests creates test cases and run tests which includes create/update/delete/read
+func (a *Acc) RunTests(t *testing.T) {
+	// populate test cases
+	testSteps := getTestCases(t, a.ResourceName, a.GetApi, true)
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:  func() { a.PreCheck(t) },
@@ -38,6 +49,8 @@ func (a *Acc) RunCreateTests(t *testing.T) {
 	})
 }
 
+// checkResourceDestroy checks resource destroy conditions. This function will parse error
+// and check status code is 404 or not
 func (a *Acc) checkResourceDestroy(s *terraform.State) error {
 	rs, ok := s.RootModule().Resources[fmt.Sprintf("%s.tf_%s", a.ResourceName, getLocalName(a.ResourceName))]
 	if !ok {
@@ -52,26 +65,21 @@ func (a *Acc) checkResourceDestroy(s *terraform.State) error {
 	return nil
 }
 
+// runs plan test for resource or data source. only first config from test case
+// will considered on plan test
 func (a *Acc) runPlanTest(t *testing.T, isResource bool) {
-	pkgutils.SkipAcc(t, "vmaas.resource."+getLocalName(a.ResourceName))
-	if testing.Short() {
-		t.Skip("Skipping ", a.ResourceName, " resource creation in short mode")
-	}
+	pkgutils.SkipAcc(t, fmt.Sprintf("vmaas.%s.%s", getTag(isResource), getLocalName(a.ResourceName)))
 
-	tag := "resource"
-	if !isResource {
-		tag = "datasource"
-	}
-	pkgutils.SkipAcc(t, fmt.Sprintf("vmaas.%s.%s", tag, getLocalName(a.ResourceName)))
-	configs := getResourceConfig(a.ResourceName)
+	testSteps := getTestCases(t, a.ResourceName, a.GetApi, true)
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:  func() { a.PreCheck(t) },
 		Providers: a.Providers,
 		Steps: []resource.TestStep{
 			{
-				Config:             configs[0].Config,
+				Config:             testSteps[0].Config,
 				PlanOnly:           true,
 				ExpectNonEmptyPlan: true,
+				Check:              testSteps[0].Check,
 			},
 		},
 	})
