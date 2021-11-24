@@ -44,6 +44,11 @@ func Router() *schema.Resource {
 				Description: "NSX-T Integration ID",
 				ForceNew:    true,
 			},
+			"provider_id": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Provider ID of the Network Router",
+			},
 			"tier0_config": schemas.RouterTier0ConfigSchema(),
 			"tier1_config": schemas.RouterTier1ConfigSchema(),
 		},
