@@ -10,7 +10,7 @@ import (
 )
 
 // validateResource validates the resource exists in state file
-func validateResource(name string, validations map[string]interface{}, getApi GetAPIFunc) resource.TestCheckFunc {
+func validateResource(name string, validations []validation, getApi GetAPIFunc) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[name]
 		if !ok {
@@ -32,11 +32,16 @@ func validateResource(name string, validations map[string]interface{}, getApi Ge
 			return err
 		}
 		jsonStr := string(jsonBody)
-		for requestKey, stateValue := range validations {
-			result := gjson.Get(jsonStr, requestKey)
-			if result.String() != fmt.Sprint(stateValue) {
-				return fmt.Errorf("validation failed for %s. On API response, expected %s = %s, but got %s",
-					name, requestKey, result.String(), stateValue)
+		for _, v := range validations {
+			var result string
+			if v.isJson {
+				result = gjson.Get(jsonStr, v.key).String()
+			} else {
+				result = rs.Primary.Attributes[v.key]
+			}
+			if result != fmt.Sprint(v.value) {
+				return fmt.Errorf("validation failed for %s. On API response, expected %s = %s, but got %v",
+					name, v.key, result, v.value)
 			}
 		}
 
@@ -50,6 +55,13 @@ func getLocalName(res string) string {
 }
 
 func getTag(isResource bool) string {
+	if isResource {
+		return "resources"
+	}
+	return "data-sources"
+}
+
+func getType(isResource bool) string {
 	if isResource {
 		return "resource"
 	}

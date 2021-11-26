@@ -9,5 +9,12 @@ const providerStanza = `
 			location = "` + constants.AccLocation + `"
 		}
 	}
-
 `
+
+var accTestPath = "acc-testcases"
+
+const (
+	accKey  = "acc"
+	jsonKey = "json"
+	tfKey   = "tf"
+)

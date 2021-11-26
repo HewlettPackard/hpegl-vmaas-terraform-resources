@@ -3,35 +3,29 @@
 package acceptancetest
 
 import (
-	"fmt"
+	"context"
 	"testing"
 
-	pkgutils "github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/utils"
-	"github.com/spf13/viper"
-
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	api_client "github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
+	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/atf"
 )
 
 func TestAccDataSourceCloud(t *testing.T) {
-	pkgutils.SkipAcc(t, "vmaas.datasource.cloud")
+	acc := &atf.Acc{
+		PreCheck:     testAccPreCheck,
+		Providers:    testAccProviders,
+		ResourceName: "hpegl_vmaas_cloud",
+		GetApi: func(attr map[string]string) (interface{}, error) {
+			cl, cfg := getAPIClient()
+			iClient := api_client.CloudsAPIService{
+				Client: cl,
+				Cfg:    cfg,
+			}
+			id := toInt(attr["id"])
 
-	resource.ParallelTest(t, resource.TestCase{
-		IsUnitTest: false,
-		PreCheck:   func() { testAccPreCheck(t) },
-		Providers:  testAccProviders,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccDataSourceCloudConfig(),
-				Check:  validateDataSourceID("data.hpegl_vmaas_cloud.cloud"),
-			},
+			return iClient.GetSpecificCloud(context.Background(), id)
 		},
-	})
-}
-
-func testAccDataSourceCloudConfig() string {
-	return providerStanza + fmt.Sprintf(`
-	data "hpegl_vmaas_cloud" cloud {
-		name = "%s"
 	}
-`, viper.GetString("vmaas.datasource.cloud.name"))
+
+	acc.RunDataSourceTests(t)
 }

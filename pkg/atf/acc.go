@@ -28,14 +28,21 @@ func (a *Acc) RunResourcePlanTest(t *testing.T) {
 	a.runPlanTest(t, true)
 }
 
-// RunDataSourcePlanTest to run data source plan only test case. This will take first
+// RunDataSourceTests to run data source plan only test case. This will take first
 // config from specific data source
-func (a *Acc) RunDataSourcePlanTest(t *testing.T) {
-	a.runPlanTest(t, false)
+func (a *Acc) RunDataSourceTests(t *testing.T) {
+	testSteps := getTestCases(t, a.ResourceName, a.GetApi, false)
+
+	resource.ParallelTest(t, resource.TestCase{
+		IsUnitTest: false,
+		PreCheck:   func() { a.PreCheck(t) },
+		Providers:  a.Providers,
+		Steps:      testSteps,
+	})
 }
 
-// RunTests creates test cases and run tests which includes create/update/delete/read
-func (a *Acc) RunTests(t *testing.T) {
+// RunResourceTests creates test cases and run tests which includes create/update/delete/read
+func (a *Acc) RunResourceTests(t *testing.T) {
 	// populate test cases
 	testSteps := getTestCases(t, a.ResourceName, a.GetApi, true)
 
@@ -70,7 +77,7 @@ func (a *Acc) checkResourceDestroy(s *terraform.State) error {
 func (a *Acc) runPlanTest(t *testing.T, isResource bool) {
 	pkgutils.SkipAcc(t, fmt.Sprintf("vmaas.%s.%s", getTag(isResource), getLocalName(a.ResourceName)))
 
-	testSteps := getTestCases(t, a.ResourceName, a.GetApi, true)
+	testSteps := getTestCases(t, a.ResourceName, a.GetApi, isResource)
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:  func() { a.PreCheck(t) },
 		Providers: a.Providers,

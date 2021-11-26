@@ -37,5 +37,5 @@ func TestAccResourceRouterNatCreate(t *testing.T) {
 		},
 	}
 
-	acc.RunTests(t)
+	acc.RunResourceTests(t)
 }
