@@ -21,18 +21,18 @@ func TestVmaasNetworkPlan(t *testing.T) {
 
 func TestAccResourceNetworkCreate(t *testing.T) {
 	acc := &atf.Acc{
-		ResourceName: "hpegl_vmaas_instance",
+		ResourceName: "hpegl_vmaas_network",
 		PreCheck:     testAccPreCheck,
 		Providers:    testAccProviders,
 		GetAPI: func(attr map[string]string) (interface{}, error) {
 			cl, cfg := getAPIClient()
-			iClient := api_client.InstancesAPIService{
+			iClient := api_client.NetworksAPIService{
 				Client: cl,
 				Cfg:    cfg,
 			}
 			id := toInt(attr["id"])
 
-			return iClient.GetASpecificInstance(context.Background(), id)
+			return iClient.GetSpecificNetwork(context.Background(), id)
 		},
 	}
 
