@@ -1,0 +1,5 @@
+acc:
+- config: |
+    name = "GLHC-Vol10"
+  validations:
+    json.zone.id: 1

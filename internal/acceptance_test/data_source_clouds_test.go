@@ -3,7 +3,6 @@
 package acceptancetest
 
 import (
-	"context"
 	"testing"
 
 	api_client "github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
@@ -23,7 +22,7 @@ func TestAccDataSourceCloud(t *testing.T) {
 			}
 			id := toInt(attr["id"])
 
-			return iClient.GetSpecificCloud(context.Background(), id)
+			return iClient.GetSpecificCloud(getAccContext(), id)
 		},
 	}
 

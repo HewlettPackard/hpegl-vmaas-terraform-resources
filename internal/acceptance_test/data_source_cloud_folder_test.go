@@ -3,37 +3,29 @@
 package acceptancetest
 
 import (
-	"fmt"
 	"testing"
 
-	pkgutils "github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/utils"
-	"github.com/spf13/viper"
-
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	api_client "github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
+	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/atf"
 )
 
 func TestAccDataSourceCloudFolder(t *testing.T) {
-	pkgutils.SkipAcc(t, "vmaas.datasource.cloud_folder")
+	acc := &atf.Acc{
+		PreCheck:     testAccPreCheck,
+		Providers:    testAccProviders,
+		ResourceName: "hpegl_vmaas_cloud_folder",
+		GetApi: func(attr map[string]string) (interface{}, error) {
+			cl, cfg := getAPIClient()
+			iClient := api_client.CloudsAPIService{
+				Client: cl,
+				Cfg:    cfg,
+			}
+			id := toInt(attr["id"])
+			cloudID := toInt(attr["cloud_id"])
 
-	resource.ParallelTest(t, resource.TestCase{
-		IsUnitTest: false,
-		PreCheck:   func() { testAccPreCheck(t) },
-		Providers:  testAccProviders,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccDataSourceCloudFolderConfig(),
-				Check:  validateDataSourceID("data.hpegl_vmaas_cloud_folder.compute_folder"),
-			},
+			return iClient.GetSpecificCloudFolder(getAccContext(), cloudID, id)
 		},
-	})
-}
+	}
 
-func testAccDataSourceCloudFolderConfig() string {
-	return providerStanza + fmt.Sprintf(`
-	data "hpegl_vmaas_cloud_folder" "compute_folder" {
-		cloud_id = %d
-		name     = "%s"
-	  }
-`, viper.GetInt("vmaas.datasource.cloud_folder.cloud_id"),
-		viper.GetString("vmaas.datasource.cloud_folder.name"))
+	acc.RunDataSourceTests(t)
 }

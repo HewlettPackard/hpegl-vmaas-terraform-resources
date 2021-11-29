@@ -3,6 +3,7 @@
 package acceptancetest
 
 import (
+	"context"
 	"fmt"
 	"math/rand"
 	"net/http"
@@ -157,4 +158,8 @@ func checkResourceDestroy(
 func toInt(s string) int {
 	i, _ := strconv.Atoi(s)
 	return i
+}
+
+func getAccContext() context.Context {
+	return context.Background()
 }
