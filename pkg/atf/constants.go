@@ -11,7 +11,7 @@ const providerStanza = `
 	}
 `
 
-var accTestPath = "acc-testcases"
+var accTestPath = "../../acc-testcases"
 
 const (
 	accKey  = "acc"

@@ -52,10 +52,10 @@ func parseMeta(data string) string {
 	reg := regexp.MustCompile(exp)
 
 	matches := reg.FindAllString(data, -1)
-	src := rand.NewSource(time.Now().Unix())
-	r := rand.New(src)
 	var randInt int
 	for _, m := range matches {
+		src := rand.NewSource(time.Now().Unix())
+		r := rand.New(src)
 		offReg := regexp.MustCompile(`[0-9]+,[0-9]`)
 		numStr := offReg.FindString(m)
 		if numStr != "" {
