@@ -3,6 +3,7 @@ package atf
 import (
 	"encoding/json"
 	"fmt"
+	"strconv"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
@@ -68,4 +69,13 @@ func getType(isResource bool) string {
 	}
 
 	return "data"
+}
+
+func toInt(str string) int {
+	i, err := strconv.Atoi(str)
+	if err != nil {
+		panic(fmt.Sprint("[regex] error on converting offset, ", err))
+	}
+
+	return i
 }

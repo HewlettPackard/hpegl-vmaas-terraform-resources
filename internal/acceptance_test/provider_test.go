@@ -10,7 +10,6 @@ import (
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/constants"
 	pkgutils "github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	libUtils "github.com/hewlettpackard/hpegl-provider-lib/pkg/utils"
 )
 
 var (
@@ -44,15 +43,4 @@ func TestProvider(t *testing.T) {
 		t.Fatalf("%s\n", err)
 	}
 	testAccPreCheck(t)
-}
-
-// TestMain is configure so that individual test cases can be ran
-// nolint
-func TestMain(m *testing.M) {
-	// TF_ACC_CONFIG_PATH set in make acceptance
-	libUtils.ReadAccConfig(os.Getenv("TF_ACC_CONFIG_PATH"))
-	// Read skip
-	pkgutils.ReadSkip()
-	m.Run()
-	// os.Exit(0)
 }

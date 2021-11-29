@@ -3,7 +3,6 @@
 package acceptancetest
 
 import (
-	"context"
 	"testing"
 
 	api_client "github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
@@ -33,7 +32,7 @@ func TestAccResourceRouterNatCreate(t *testing.T) {
 			id := toInt(attr["id"])
 			routerID := toInt(attr["router_id"])
 
-			return iClient.GetSpecificRouterNat(context.Background(), routerID, id)
+			return iClient.GetSpecificRouterNat(getAccContext(), routerID, id)
 		},
 	}
 

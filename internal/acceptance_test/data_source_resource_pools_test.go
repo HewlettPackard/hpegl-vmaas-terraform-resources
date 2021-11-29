@@ -3,40 +3,29 @@
 package acceptancetest
 
 import (
-	"fmt"
 	"testing"
 
-	pkgutils "github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/utils"
-	"github.com/spf13/viper"
-
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	api_client "github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
+	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/atf"
 )
 
 func TestAccDataSourceResourcePool(t *testing.T) {
-	pkgutils.SkipAcc(t, "vmaas.datasource.resource_pool")
-	resource.ParallelTest(t, resource.TestCase{
-		IsUnitTest: false,
-		PreCheck:   func() { testAccPreCheck(t) },
-		Providers:  testAccProviders,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccDataSourceResourcePoolConfig(),
-				Check: resource.ComposeTestCheckFunc(
-					validateDataSourceID("data.hpegl_vmaas_resource_pool.compute"),
-				),
-			},
-		},
-	})
-}
+	acc := &atf.Acc{
+		PreCheck:     testAccPreCheck,
+		Providers:    testAccProviders,
+		ResourceName: "hpegl_vmaas_resource_pool",
+		GetAPI: func(attr map[string]string) (interface{}, error) {
+			cl, cfg := getAPIClient()
+			iClient := api_client.CloudsAPIService{
+				Client: cl,
+				Cfg:    cfg,
+			}
+			id := toInt(attr["id"])
+			cloudID := toInt(attr["cloud_id"])
 
-func testAccDataSourceResourcePoolConfig() string {
-	return fmt.Sprintf(`%s
-data "hpegl_vmaas_resource_pool" "compute" {
-	cloud_id = %d
-	name     = "%s"
-}
-`,
-		providerStanza,
-		viper.GetInt("vmaas.datasource.resource_pool.cloud_id"),
-		viper.GetString("vmaas.datasource.resource_pool.name"))
+			return iClient.GetSpecificCloudResourcePool(getAccContext(), cloudID, id)
+		},
+	}
+
+	acc.RunDataSourceTests(t)
 }

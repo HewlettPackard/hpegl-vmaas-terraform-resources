@@ -17,4 +17,6 @@ const (
 	accKey  = "acc"
 	jsonKey = "json"
 	tfKey   = "tf"
+
+	randMaxLimit = 999999
 )

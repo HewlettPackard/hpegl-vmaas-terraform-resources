@@ -1,0 +1,9 @@
+acc:
+- config: |
+    source_instance_id = 11
+    name = "tf_acc_clone_%rand_int"
+    network {
+      id = 3
+    }
+
+ignore: true

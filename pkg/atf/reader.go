@@ -5,8 +5,13 @@ package atf
 
 import (
 	"fmt"
+	"math/rand"
 	"os"
+	"regexp"
+	"strconv"
 	"strings"
+	"testing"
+	"time"
 
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/constants"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -24,19 +29,47 @@ type validation struct {
 	value  interface{}
 }
 
-func getViperConfig(name string, isResource bool) *viper.Viper {
+func getViperConfig(name, version string, isResource bool) *viper.Viper {
 	if path := os.Getenv(constants.AccTestPathKey); path != "" {
 		accTestPath = path
 	}
-
+	var postfix string
+	if version != "" {
+		postfix = fmt.Sprintf("-%s", version)
+	}
 	v := viper.New()
-	v.SetConfigFile(fmt.Sprintf("%s/%s/%s.yaml", accTestPath, getTag(isResource), name))
+	v.SetConfigFile(fmt.Sprintf("%s/%s/%s%s.yaml", accTestPath, getTag(isResource), name, postfix))
 	err := v.ReadInConfig()
 	if err != nil {
 		panic(fmt.Sprint("error while reading config, ", err))
 	}
 
 	return v
+}
+
+func parseMeta(data string) string {
+	exp := `%(rand_int)(\{[0-9]+,[0-9]+\})?`
+	reg := regexp.MustCompile(exp)
+
+	matches := reg.FindAllString(data, -1)
+	src := rand.NewSource(time.Now().Unix())
+	r := rand.New(src)
+	var randInt int
+	for _, m := range matches {
+		offReg := regexp.MustCompile(`[0-9]+,[0-9]`)
+		numStr := offReg.FindString(m)
+		if numStr != "" {
+			intSplit := strings.Split(numStr, ",")
+			n1 := toInt(intSplit[0])
+			n2 := toInt(intSplit[1])
+			randInt = r.Intn(n2-n1) + n1
+		} else {
+			randInt = r.Intn(randMaxLimit)
+		}
+		data = strings.Replace(data, m, strconv.Itoa(randInt), 1)
+	}
+
+	return data
 }
 
 func parseValidations(vls map[interface{}]interface{}) []validation {
@@ -64,21 +97,20 @@ func parseValidations(vls map[interface{}]interface{}) []validation {
 }
 
 // parseConfig populates terraform configuration and parse to accConfig
-func parseConfig(name string, isResource bool) []accConfig {
+func parseConfig(v *viper.Viper, name string, isResource bool) []accConfig {
 	tfKey := getLocalName(name)
-	v := getViperConfig(tfKey, isResource)
 
 	testCases := v.Get(accKey).([]interface{})
 	configs := make([]accConfig, len(testCases))
 	for i := range testCases {
+		tfConfig := parseMeta(v.GetString(fmt.Sprintf(`%s.%d.config`, accKey, i)))
 		configs[i].config = fmt.Sprintf(`
 		%s
 		%s "%s" "tf_%s" {
 			%s
 		}
 		`,
-			providerStanza, getType(isResource), name, tfKey,
-			v.GetString(fmt.Sprintf(`%s.%d.config`, accKey, i)),
+			providerStanza, getType(isResource), name, tfKey, tfConfig,
 		)
 
 		validations, ok := v.Get(fmt.Sprintf("%s.%d.validations", accKey, i)).(map[interface{}]interface{})
@@ -92,8 +124,13 @@ func parseConfig(name string, isResource bool) []accConfig {
 }
 
 // getTestCases populate TestSteps
-func getTestCases(name string, getAPI GetAPIFunc, isResource bool) []resource.TestStep {
-	configs := parseConfig(name, isResource)
+func getTestCases(t *testing.T, name, version string, getAPI GetAPIFunc, isResource bool) []resource.TestStep {
+	v := getViperConfig(getLocalName(name), version, isResource)
+	if v.GetBool("ignore") {
+		t.Skip("ignoring tests for resource ", name)
+	}
+
+	configs := parseConfig(v, name, isResource)
 	testSteps := make([]resource.TestStep, 0, len(configs))
 
 	tag := ""
