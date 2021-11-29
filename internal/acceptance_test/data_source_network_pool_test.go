@@ -3,35 +3,28 @@
 package acceptancetest
 
 import (
-	"fmt"
 	"testing"
 
-	pkgutils "github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/utils"
-	"github.com/spf13/viper"
-
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	api_client "github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
+	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/atf"
 )
 
 func TestAccDataSourceNetworkPool(t *testing.T) {
-	pkgutils.SkipAcc(t, "vmaas.datasource.network_pool")
+	acc := &atf.Acc{
+		PreCheck:     testAccPreCheck,
+		Providers:    testAccProviders,
+		ResourceName: "hpegl_vmaas_network_pool",
+		GetAPI: func(attr map[string]string) (interface{}, error) {
+			cl, cfg := getAPIClient()
+			iClient := api_client.NetworksAPIService{
+				Client: cl,
+				Cfg:    cfg,
+			}
+			id := toInt(attr["id"])
 
-	resource.ParallelTest(t, resource.TestCase{
-		IsUnitTest: false,
-		PreCheck:   func() { testAccPreCheck(t) },
-		Providers:  testAccProviders,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccDataSourceNetworkPoolConfig(),
-				Check:  validateDataSourceID("data.hpegl_vmaas_network_pool.tf_pool"),
-			},
+			return iClient.GetSpecificNetworkPool(getAccContext(), id)
 		},
-	})
-}
+	}
 
-func testAccDataSourceNetworkPoolConfig() string {
-	return providerStanza + fmt.Sprintf(`
-	data "hpegl_vmaas_network_pool" "tf_pool" {
-		name = "%s"
-	  }
-`, viper.GetString("vmaas.datasource.network_pool.name"))
+	acc.RunDataSourceTests(t)
 }

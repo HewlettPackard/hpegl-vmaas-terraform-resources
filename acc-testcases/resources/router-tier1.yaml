@@ -1,0 +1,17 @@
+acc:
+- config: |
+    name = "tf_tier1_gateway_%rand_int"
+    enable = true
+    group_id = "shared"
+    tier1_config {
+      fail_over = "NON_PREEMPTIVE"
+      route_advertisement {
+        tier1_connected = true
+        tier1_static_routes = false
+        tier1_dns_forwarder_ip = true
+        tier1_lb_vip = false
+        tier1_nat = false
+        tier1_lb_snat = false
+        tier1_ipsec_local_endpoint = true
+      }
+    }
