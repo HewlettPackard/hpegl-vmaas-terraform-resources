@@ -10,7 +10,7 @@ import (
 )
 
 // validateResource validates the resource exists in state file
-func validateResource(name string, validations []validation, getApi GetAPIFunc) resource.TestCheckFunc {
+func validateResource(name string, validations []validation, getAPI GetAPIFunc) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[name]
 		if !ok {
@@ -22,7 +22,7 @@ func validateResource(name string, validations []validation, getApi GetAPIFunc) 
 			return fmt.Errorf("resource %s ID is not set", name)
 		}
 
-		resp, err := getApi(rs.Primary.Attributes)
+		resp, err := getAPI(rs.Primary.Attributes)
 		if err != nil {
 			return err
 		}
@@ -34,7 +34,7 @@ func validateResource(name string, validations []validation, getApi GetAPIFunc) 
 		jsonStr := string(jsonBody)
 		for _, v := range validations {
 			var result string
-			if v.isJson {
+			if v.isJSON {
 				result = gjson.Get(jsonStr, v.key).String()
 			} else {
 				result = rs.Primary.Attributes[v.key]
@@ -58,6 +58,7 @@ func getTag(isResource bool) string {
 	if isResource {
 		return "resources"
 	}
+
 	return "data-sources"
 }
 
@@ -65,5 +66,6 @@ func getType(isResource bool) string {
 	if isResource {
 		return "resource"
 	}
+
 	return "data"
 }

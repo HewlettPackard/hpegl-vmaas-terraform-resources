@@ -14,7 +14,7 @@ func TestAccDataSourceEnvironment(t *testing.T) {
 		PreCheck:     testAccPreCheck,
 		Providers:    testAccProviders,
 		ResourceName: "hpegl_vmaas_environment",
-		GetApi: func(attr map[string]string) (interface{}, error) {
+		GetAPI: func(attr map[string]string) (interface{}, error) {
 			cl, cfg := getAPIClient()
 			iClient := api_client.EnvironmentAPIService{
 				Client: cl,

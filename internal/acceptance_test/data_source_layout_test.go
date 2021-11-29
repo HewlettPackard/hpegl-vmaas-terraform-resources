@@ -14,7 +14,7 @@ func TestAccDataSourceLayout(t *testing.T) {
 		PreCheck:     testAccPreCheck,
 		Providers:    testAccProviders,
 		ResourceName: "hpegl_vmaas_layout",
-		GetApi: func(attr map[string]string) (interface{}, error) {
+		GetAPI: func(attr map[string]string) (interface{}, error) {
 			cl, cfg := getAPIClient()
 			iClient := api_client.LibraryAPIService{
 				Client: cl,

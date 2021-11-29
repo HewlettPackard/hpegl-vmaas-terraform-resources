@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"os"
 	"strings"
-	"testing"
 
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/constants"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -20,7 +19,7 @@ type accConfig struct {
 }
 
 type validation struct {
-	isJson bool
+	isJSON bool
 	key    string
 	value  interface{}
 }
@@ -46,13 +45,13 @@ func parseValidations(vls map[interface{}]interface{}) []validation {
 		kStr := k.(string)
 		kSplit := strings.Split(kStr, ".")
 		if len(kSplit) > 1 && (kSplit[0] == jsonKey || kSplit[0] == tfKey) {
-			isJson := false
+			isJSON := false
 			if kSplit[0] == jsonKey {
-				isJson = true
+				isJSON = true
 			}
 
 			m = append(m, validation{
-				isJson: isJson,
+				isJSON: isJSON,
 				key:    kStr[len(kSplit[0])+1:],
 				value:  v,
 			})
@@ -93,7 +92,7 @@ func parseConfig(name string, isResource bool) []accConfig {
 }
 
 // getTestCases populate TestSteps
-func getTestCases(t *testing.T, name string, getAPI GetAPIFunc, isResource bool) []resource.TestStep {
+func getTestCases(name string, getAPI GetAPIFunc, isResource bool) []resource.TestStep {
 	configs := parseConfig(name, isResource)
 	testSteps := make([]resource.TestStep, 0, len(configs))
 

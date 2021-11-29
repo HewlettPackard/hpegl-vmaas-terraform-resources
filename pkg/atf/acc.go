@@ -18,7 +18,7 @@ type GetAPIFunc func(attr map[string]string) (interface{}, error)
 type Acc struct {
 	PreCheck     func(t *testing.T)
 	Providers    map[string]*schema.Provider
-	GetApi       GetAPIFunc
+	GetAPI       GetAPIFunc
 	ResourceName string
 }
 
@@ -31,7 +31,7 @@ func (a *Acc) RunResourcePlanTest(t *testing.T) {
 // RunDataSourceTests to run data source plan only test case. This will take first
 // config from specific data source
 func (a *Acc) RunDataSourceTests(t *testing.T) {
-	testSteps := getTestCases(t, a.ResourceName, a.GetApi, false)
+	testSteps := getTestCases(a.ResourceName, a.GetAPI, false)
 
 	resource.ParallelTest(t, resource.TestCase{
 		IsUnitTest: false,
@@ -44,7 +44,7 @@ func (a *Acc) RunDataSourceTests(t *testing.T) {
 // RunResourceTests creates test cases and run tests which includes create/update/delete/read
 func (a *Acc) RunResourceTests(t *testing.T) {
 	// populate test cases
-	testSteps := getTestCases(t, a.ResourceName, a.GetApi, true)
+	testSteps := getTestCases(a.ResourceName, a.GetAPI, true)
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:  func() { a.PreCheck(t) },
@@ -63,7 +63,7 @@ func (a *Acc) checkResourceDestroy(s *terraform.State) error {
 	if !ok {
 		return fmt.Errorf("[Check Destroy] resource %s not found", a.ResourceName)
 	}
-	_, err := a.GetApi(rs.Primary.Attributes)
+	_, err := a.GetAPI(rs.Primary.Attributes)
 	statusCode := pkgutils.GetStatusCode(err)
 	if statusCode != http.StatusNotFound {
 		return fmt.Errorf("expected %d statuscode, but got %d", 404, statusCode)
@@ -75,9 +75,7 @@ func (a *Acc) checkResourceDestroy(s *terraform.State) error {
 // runs plan test for resource or data source. only first config from test case
 // will considered on plan test
 func (a *Acc) runPlanTest(t *testing.T, isResource bool) {
-	pkgutils.SkipAcc(t, fmt.Sprintf("vmaas.%s.%s", getTag(isResource), getLocalName(a.ResourceName)))
-
-	testSteps := getTestCases(t, a.ResourceName, a.GetApi, isResource)
+	testSteps := getTestCases(a.ResourceName, a.GetAPI, isResource)
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:  func() { a.PreCheck(t) },
 		Providers: a.Providers,

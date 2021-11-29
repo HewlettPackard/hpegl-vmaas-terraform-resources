@@ -24,7 +24,7 @@ func TestAccResourceRouterNatCreate(t *testing.T) {
 		ResourceName: "hpegl_vmaas_router_nat_rule",
 		PreCheck:     testAccPreCheck,
 		Providers:    testAccProviders,
-		GetApi: func(attr map[string]string) (interface{}, error) {
+		GetAPI: func(attr map[string]string) (interface{}, error) {
 			cl, cfg := getAPIClient()
 			iClient := api_client.RouterAPIService{
 				Client: cl,

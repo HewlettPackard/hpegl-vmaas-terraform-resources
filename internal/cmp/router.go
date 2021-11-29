@@ -53,6 +53,7 @@ func (r *router) Create(ctx context.Context, d *utils.Data, meta interface{}) er
 		return fmt.Errorf(successErr, "creating router")
 	}
 	createReq.NetworkRouter.ID = routerResp.ID
+
 	return tftags.Set(d, createReq.NetworkRouter)
 }
 

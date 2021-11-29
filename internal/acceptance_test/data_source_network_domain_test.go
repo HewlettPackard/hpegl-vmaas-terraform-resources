@@ -14,7 +14,7 @@ func TestAccDataSourceNetworkDomain(t *testing.T) {
 		PreCheck:     testAccPreCheck,
 		Providers:    testAccProviders,
 		ResourceName: "hpegl_vmaas_network_domain",
-		GetApi: func(attr map[string]string) (interface{}, error) {
+		GetAPI: func(attr map[string]string) (interface{}, error) {
 			cl, cfg := getAPIClient()
 			iClient := api_client.DomainAPIService{
 				Client: cl,

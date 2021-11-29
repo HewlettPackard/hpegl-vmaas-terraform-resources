@@ -14,7 +14,7 @@ func TestAccDataSourceCloudFolder(t *testing.T) {
 		PreCheck:     testAccPreCheck,
 		Providers:    testAccProviders,
 		ResourceName: "hpegl_vmaas_cloud_folder",
-		GetApi: func(attr map[string]string) (interface{}, error) {
+		GetAPI: func(attr map[string]string) (interface{}, error) {
 			cl, cfg := getAPIClient()
 			iClient := api_client.CloudsAPIService{
 				Client: cl,
