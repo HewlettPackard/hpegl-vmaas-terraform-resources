@@ -13,42 +13,42 @@ import (
 )
 
 type routerFirewallRuleGroup struct {
-	routerFirewallRuleGroupClient *client.RouterAPIService
+	rClient *client.RouterAPIService
 }
 
-func newRouterFirewallRuleGroup(routerFirewallRuleGroupClient *client.RouterAPIService) *routerFirewallRuleGroup {
+func newRouterFirewallRuleGroup(rClient *client.RouterAPIService) *routerFirewallRuleGroup {
 	return &routerFirewallRuleGroup{
-		routerFirewallRuleGroupClient: routerFirewallRuleGroupClient,
+		rClient: rClient,
 	}
 }
 
 func (r *routerFirewallRuleGroup) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
-	setMeta(meta, r.routerFirewallRuleGroupClient.Client)
-	var tfFirewallRuleGroup models.CreateRouterFirewallRuleGroup
-	if err := tftags.Get(d, &tfFirewallRuleGroup); err != nil {
+	setMeta(meta, r.rClient.Client)
+	var tfModel models.CreateRouterFirewallRuleGroup
+	if err := tftags.Get(d, &tfModel); err != nil {
 		return err
 	}
 
-	_, err := r.routerFirewallRuleGroupClient.GetSpecificRouterFirewallRuleGroup(ctx, tfFirewallRuleGroup.RouterID,
-		tfFirewallRuleGroup.ID)
+	_, err := r.rClient.GetSpecificRouterFirewallRuleGroup(ctx, tfModel.RouterID,
+		tfModel.ID)
 	if err != nil {
 		return err
 	}
 
-	return tftags.Set(d, tfFirewallRuleGroup)
+	return tftags.Set(d, tfModel)
 }
 
 func (r *routerFirewallRuleGroup) Create(ctx context.Context, d *utils.Data, meta interface{}) error {
-	setMeta(meta, r.routerFirewallRuleGroupClient.Client)
-	var tfFirewallRuleGroup models.CreateRouterFirewallRuleGroup
-	err := tftags.Get(d, &tfFirewallRuleGroup)
+	setMeta(meta, r.rClient.Client)
+	var tfModel models.CreateRouterFirewallRuleGroup
+	err := tftags.Get(d, &tfModel)
 	if err != nil {
 		return err
 	}
 	// Setting to Default value "GatewayPolicy"
-	tfFirewallRuleGroup.ExternalType = routerFirewallExternalPolicy
-	firewallGroupRes, err := r.routerFirewallRuleGroupClient.CreateRouterFirewallRuleGroup(ctx, tfFirewallRuleGroup.RouterID,
-		models.CreateRouterFirewallRuleGroupRequest{CreateRouterFirewallRuleGroup: tfFirewallRuleGroup},
+	tfModel.ExternalType = routerFirewallExternalPolicy
+	firewallGroupRes, err := r.rClient.CreateRouterFirewallRuleGroup(ctx, tfModel.RouterID,
+		models.CreateRouterFirewallRuleGroupRequest{CreateRouterFirewallRuleGroup: tfModel},
 	)
 	if err != nil {
 		return err
@@ -57,9 +57,9 @@ func (r *routerFirewallRuleGroup) Create(ctx context.Context, d *utils.Data, met
 	if !firewallGroupRes.Success {
 		return fmt.Errorf(successErr, "creating firewall rule group for the router")
 	}
-	tfFirewallRuleGroup.ID = firewallGroupRes.ID
+	tfModel.ID = firewallGroupRes.ID
 
-	return tftags.Set(d, tfFirewallRuleGroup)
+	return tftags.Set(d, tfModel)
 }
 
 func (r *routerFirewallRuleGroup) Update(ctx context.Context, d *utils.Data, meta interface{}) error {
@@ -68,13 +68,13 @@ func (r *routerFirewallRuleGroup) Update(ctx context.Context, d *utils.Data, met
 }
 
 func (r *routerFirewallRuleGroup) Delete(ctx context.Context, d *utils.Data, meta interface{}) error {
-	setMeta(meta, r.routerFirewallRuleGroupClient.Client)
+	setMeta(meta, r.rClient.Client)
 	var tfFirewallRuleGroup models.CreateRouterFirewallRuleGroup
 	if err := tftags.Get(d, &tfFirewallRuleGroup); err != nil {
 		return err
 	}
 
-	resp, err := r.routerFirewallRuleGroupClient.DeleteRouterFirewallRuleGroup(ctx, tfFirewallRuleGroup.RouterID,
+	resp, err := r.rClient.DeleteRouterFirewallRuleGroup(ctx, tfFirewallRuleGroup.RouterID,
 		tfFirewallRuleGroup.ID)
 	if err != nil {
 		return err

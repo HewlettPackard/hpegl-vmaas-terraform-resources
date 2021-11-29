@@ -1,0 +1,11 @@
+acc:
+- config: |
+    name          = "tf_route_%rand_int"
+    router_id     = 31
+    description   = "router route created using terraform"
+    enabled       = true
+    default_route = false
+    network       = "30.0.0.0/24"
+    next_hop      = "88.88.88.91"
+    mtu           = "65535"
+    priority      = 100

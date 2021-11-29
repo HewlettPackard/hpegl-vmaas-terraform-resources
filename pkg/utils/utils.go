@@ -54,7 +54,12 @@ func SkipAcc(t *testing.T, param string) {
 }
 
 func GetEnvBool(key string) bool {
-	value, err := strconv.ParseBool(os.Getenv(key))
+	envVal := os.Getenv(key)
+	if envVal == "" {
+		return false
+	}
+
+	value, err := strconv.ParseBool(envVal)
 	if err != nil {
 		log.Printf("[ERROR] failed to parse env %s, got error %v", key, err)
 

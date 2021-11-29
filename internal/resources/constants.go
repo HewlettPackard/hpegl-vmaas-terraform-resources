@@ -28,6 +28,7 @@ const (
 	ResRouter                  = "hpegl_vmaas_router"
 	ResRouterNat               = "hpegl_vmaas_router_nat_rule"
 	ResRouterFirewallRuleGroup = "hpegl_vmaas_router_firewall_rule_group"
+	ResRouterRoute             = "hpegl_vmaas_router_route"
 
 	// documentation related constants
 	generalNamedesc = "Name of the %s as it appears on GLPC Portal. " +
