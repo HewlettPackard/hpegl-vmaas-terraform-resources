@@ -3,35 +3,28 @@
 package acceptancetest
 
 import (
-	"fmt"
 	"testing"
 
-	pkgutils "github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/utils"
-	"github.com/spf13/viper"
-
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	api_client "github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
+	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/atf"
 )
 
 func TestAccDataSourceNetworkDomain(t *testing.T) {
-	pkgutils.SkipAcc(t, "vmaas.datasource.network_domain")
+	acc := &atf.Acc{
+		PreCheck:     testAccPreCheck,
+		Providers:    testAccProviders,
+		ResourceName: "hpegl_vmaas_network_domain",
+		GetAPI: func(attr map[string]string) (interface{}, error) {
+			cl, cfg := getAPIClient()
+			iClient := api_client.DomainAPIService{
+				Client: cl,
+				Cfg:    cfg,
+			}
+			id := toInt(attr["id"])
 
-	resource.ParallelTest(t, resource.TestCase{
-		IsUnitTest: false,
-		PreCheck:   func() { testAccPreCheck(t) },
-		Providers:  testAccProviders,
-		Steps: []resource.TestStep{
-			{
-				Config: testAccDataSourceNetworkDomainConfig(),
-				Check:  validateDataSourceID("data.hpegl_vmaas_network_domain.tf_domain"),
-			},
+			return iClient.GetSpecificDomain(getAccContext(), id)
 		},
-	})
-}
+	}
 
-func testAccDataSourceNetworkDomainConfig() string {
-	return providerStanza + fmt.Sprintf(`
-	data "hpegl_vmaas_network_domain" "tf_domain" {
-		name = "%s"
-	  }
-`, viper.GetString("vmaas.datasource.network_domain.name"))
+	acc.RunDataSourceTests(t)
 }

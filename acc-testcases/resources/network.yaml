@@ -1,0 +1,12 @@
+acc:
+- config: |
+    name = "tf_acc_net_%rand_int"
+    group_id = "shared"
+    active = true
+    dhcp_server = true
+    description = "Network created using tf"
+    cidr = "168.72.10.0/18"
+    gateway = "168.72.10.10"
+    pool_id = 6
+
+ignore: true

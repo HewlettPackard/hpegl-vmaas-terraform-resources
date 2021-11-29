@@ -1,0 +1,3 @@
+acc:
+- config: |
+    name = "TF_Weekday"

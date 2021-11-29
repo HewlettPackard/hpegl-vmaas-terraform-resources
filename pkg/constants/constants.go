@@ -19,6 +19,7 @@ const (
 	AccLocation = "HPEGL-VMAAS-TERRAFORM"
 	AccSpace    = "Default"
 
-	MockIAMKey    = "TF_ACC_MOCK_IAM"
-	CmpSubjectKey = "TF_ACC_CMP_SUBJECT"
+	MockIAMKey     = "TF_ACC_MOCK_IAM"
+	CmpSubjectKey  = "TF_ACC_CMP_SUBJECT"
+	AccTestPathKey = "TF_ACC_TEST_PATH"
 )
