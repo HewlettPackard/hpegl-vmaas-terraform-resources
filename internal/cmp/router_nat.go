@@ -5,7 +5,6 @@ package cmp
 import (
 	"context"
 	"fmt"
-	"log"
 
 	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
 	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/models"
@@ -29,18 +28,11 @@ func (r *routerNat) Read(ctx context.Context, d *utils.Data, meta interface{}) e
 	if err := tftags.Get(d, &tfNat); err != nil {
 		return err
 	}
-	// Get the router, if the router not exists, return warning
-	if check, err := checkRouterDeprecated(
-		ctx, r.rClient, d, tfNat.RouterID, &tfNat.IsDeprecated, &tfNat,
-	); err != nil || check {
-		return err
-	}
 
 	_, err := r.rClient.GetSpecificRouterNat(ctx, tfNat.RouterID, tfNat.ID)
 	if err != nil {
 		return err
 	}
-	tfNat.IsDeprecated = false
 
 	return tftags.Set(d, tfNat)
 }
@@ -94,13 +86,6 @@ func (r *routerNat) Delete(ctx context.Context, d *utils.Data, meta interface{})
 	var tfNat models.CreateRouterNat
 	if err := tftags.Get(d, &tfNat); err != nil {
 		return err
-	}
-
-	// if parent router got deleted, NAT is already deleted
-	if tfNat.IsDeprecated {
-		log.Printf("[WARNING] NAT already deleted since router is deleted")
-
-		return nil
 	}
 
 	resp, err := r.rClient.DeleteRouterNat(ctx, tfNat.RouterID, tfNat.ID)

@@ -33,7 +33,7 @@ func (r *router) Read(ctx context.Context, d *utils.Data, meta interface{}) erro
 		return err
 	}
 
-	return tftags.Set(d, getRouter)
+	return tftags.Set(d, getRouter.NetworkRouter)
 }
 
 func (r *router) Create(ctx context.Context, d *utils.Data, meta interface{}) error {
@@ -52,8 +52,8 @@ func (r *router) Create(ctx context.Context, d *utils.Data, meta interface{}) er
 	if !routerResp.Success {
 		return fmt.Errorf(successErr, "creating router")
 	}
-
-	return tftags.Set(d, routerResp)
+	createReq.NetworkRouter.ID = routerResp.ID
+	return tftags.Set(d, createReq.NetworkRouter)
 }
 
 func (r *router) Update(ctx context.Context, d *utils.Data, meta interface{}) error {
@@ -157,6 +157,7 @@ func (r *router) routerAlignRouterRequest(ctx context.Context, meta interface{},
 		return fmt.Errorf(errExactMatch, "router-type")
 	}
 	routerReq.NetworkRouter.Type.ID = routerTypes.NetworkRouterTypes[0].ID
+	routerReq.NetworkRouter.TypeID = routerTypes.NetworkRouterTypes[0].ID
 	// Align Network Server
 	nsResp, err := nsRetry.Wait()
 	if err != nil {

@@ -5,7 +5,6 @@ package cmp
 import (
 	"context"
 	"fmt"
-	"log"
 
 	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
 	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/models"
@@ -17,21 +16,16 @@ type routerFirewallRuleGroup struct {
 	rClient *client.RouterAPIService
 }
 
-func newRouterFirewallRuleGroup(routerFirewallRuleGroupClient *client.RouterAPIService) *routerFirewallRuleGroup {
+func newRouterFirewallRuleGroup(rClient *client.RouterAPIService) *routerFirewallRuleGroup {
 	return &routerFirewallRuleGroup{
-		rClient: routerFirewallRuleGroupClient,
+		rClient: rClient,
 	}
 }
 
 func (r *routerFirewallRuleGroup) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
+	setMeta(meta, r.rClient.Client)
 	var tfModel models.CreateRouterFirewallRuleGroup
 	if err := tftags.Get(d, &tfModel); err != nil {
-		return err
-	}
-	// Get the router, if the router not exists, return warning
-	if check, err := checkRouterDeprecated(
-		ctx, r.rClient, d, tfModel.RouterID, &tfModel.IsDeprecated, &tfModel,
-	); err != nil || check {
 		return err
 	}
 
@@ -40,12 +34,12 @@ func (r *routerFirewallRuleGroup) Read(ctx context.Context, d *utils.Data, meta 
 	if err != nil {
 		return err
 	}
-	tfModel.IsDeprecated = false
 
 	return tftags.Set(d, tfModel)
 }
 
 func (r *routerFirewallRuleGroup) Create(ctx context.Context, d *utils.Data, meta interface{}) error {
+	setMeta(meta, r.rClient.Client)
 	var tfModel models.CreateRouterFirewallRuleGroup
 	err := tftags.Get(d, &tfModel)
 	if err != nil {
@@ -74,20 +68,14 @@ func (r *routerFirewallRuleGroup) Update(ctx context.Context, d *utils.Data, met
 }
 
 func (r *routerFirewallRuleGroup) Delete(ctx context.Context, d *utils.Data, meta interface{}) error {
-	var tfModel models.CreateRouterFirewallRuleGroup
-	if err := tftags.Get(d, &tfModel); err != nil {
+	setMeta(meta, r.rClient.Client)
+	var tfFirewallRuleGroup models.CreateRouterFirewallRuleGroup
+	if err := tftags.Get(d, &tfFirewallRuleGroup); err != nil {
 		return err
 	}
 
-	// if parent router got deleted, NAT is already deleted
-	if tfModel.IsDeprecated {
-		log.Printf("[WARNING] Firewall rule group already deleted since router is deleted")
-
-		return nil
-	}
-
-	resp, err := r.rClient.DeleteRouterFirewallRuleGroup(ctx, tfModel.RouterID,
-		tfModel.ID)
+	resp, err := r.rClient.DeleteRouterFirewallRuleGroup(ctx, tfFirewallRuleGroup.RouterID,
+		tfFirewallRuleGroup.ID)
 	if err != nil {
 		return err
 	}
