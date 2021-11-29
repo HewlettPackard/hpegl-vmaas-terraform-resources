@@ -50,6 +50,7 @@ func (r Registration) SupportedResources() map[string]*schema.Resource {
 		resources.ResRouterNat:               resources.RouterNatRule(),
 		resources.ResRouterFirewallRuleGroup: resources.RouterFirewallRuleGroup(),
 		resources.ResRouterRoute:             resources.RouterRoute(),
+		resources.ResRouterBgpNeighbor:       resources.RouterBgpNeighbor(),
 	}
 }
 

@@ -49,6 +49,30 @@ func Router() *schema.Resource {
 				Computed:    true,
 				Description: "Provider ID of the Network Router",
 			},
+			"interfaces": {
+				Type:        schema.TypeList,
+				Computed:    true,
+				Description: "Interface Configuration",
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"id": {
+							Type:        schema.TypeInt,
+							Computed:    true,
+							Description: "ID of the Uplink Interface",
+						},
+						"source_addresses": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "Interface IP Address of the Uplink Interface",
+						},
+						"cidr": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "CIDR of the network the Uplink Interface",
+						},
+					},
+				},
+			},
 			"tier0_config": schemas.RouterTier0ConfigSchema(),
 			"tier1_config": schemas.RouterTier1ConfigSchema(),
 		},

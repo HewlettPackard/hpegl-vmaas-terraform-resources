@@ -25,6 +25,30 @@ func RouterData() *schema.Resource {
 				Description: "Provider ID of the given router/gateway. This field can be used as connected_gateway in " +
 					ResNetwork,
 			},
+			"interfaces": {
+				Type:        schema.TypeList,
+				Computed:    true,
+				Description: "Interface Configuration",
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"id": {
+							Type:        schema.TypeInt,
+							Computed:    true,
+							Description: "ID of the Uplink Interface",
+						},
+						"source_addresses": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "Interface IP Address of the Uplink Interface",
+						},
+						"cidr": {
+							Type:        schema.TypeString,
+							Computed:    true,
+							Description: "CIDR of the network the Uplink Interface",
+						},
+					},
+				},
+			},
 		},
 		ReadContext: RouterReadContext,
 		Description: `The ` + DSRouter + ` data source can be used to discover the ID of a hpegl vmaas router.
