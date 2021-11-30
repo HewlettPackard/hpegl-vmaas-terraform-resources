@@ -14,6 +14,7 @@ type Client struct {
 	RouterNat               Resource
 	RouterFirewallRuleGroup Resource
 	RouterRoute             Resource
+	RouterBgpNeighbor       Resource
 	Network                 DataSource
 	NetworkType             DataSource
 	NetworkPool             DataSource
@@ -53,6 +54,7 @@ func NewClient(client *apiClient.APIClient, cfg apiClient.Configuration) *Client
 		RouterNat:               newRouterNat(&apiClient.RouterAPIService{Client: client, Cfg: cfg}),
 		RouterFirewallRuleGroup: newRouterFirewallRuleGroup(&apiClient.RouterAPIService{Client: client, Cfg: cfg}),
 		RouterRoute:             newRouterRoute(&apiClient.RouterAPIService{Client: client, Cfg: cfg}),
+		RouterBgpNeighbor:       newRouterBgpNeighbor(&apiClient.RouterAPIService{Client: client, Cfg: cfg}),
 		// Datasource
 		Network:       newNetwork(&apiClient.NetworksAPIService{Client: client, Cfg: cfg}),
 		NetworkType:   newNetworkType(&apiClient.NetworksAPIService{Client: client, Cfg: cfg}),
