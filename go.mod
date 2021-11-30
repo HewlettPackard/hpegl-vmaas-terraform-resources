@@ -10,7 +10,7 @@ require (
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.9.0
 	github.com/hewlettpackard/hpegl-provider-lib v0.0.9
 	github.com/spf13/viper v1.8.1
-	github.com/tidwall/gjson v1.11.0
+	github.com/tidwall/gjson v1.12.0
 	github.com/tshihad/tftags v0.0.8-1
 )
 
