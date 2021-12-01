@@ -5,13 +5,11 @@ package atf
 
 import (
 	"fmt"
-	"math/rand"
 	"os"
 	"regexp"
 	"strconv"
 	"strings"
 	"testing"
-	"time"
 
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/constants"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -29,7 +27,27 @@ type validation struct {
 	value  interface{}
 }
 
-func getViperConfig(name, version string, isResource bool) *viper.Viper {
+type reader struct {
+	t           *testing.T
+	isResource  bool
+	name        string
+	expectError *regexp.Regexp
+}
+
+func newReader(t *testing.T, isResource bool, name string) *reader {
+	return &reader{
+		t:          t,
+		isResource: isResource,
+		name:       name,
+	}
+}
+
+func (r *reader) fatalf(format string, v ...interface{}) {
+	r.t.Fatalf("[acc-test] test case for resource "+r.name+" failed. "+format, v...)
+}
+
+func (r *reader) getViperConfig(version string) *viper.Viper {
+	tfName := getLocalName(r.name)
 	if path := os.Getenv(constants.AccTestPathKey); path != "" {
 		accTestPath = path
 	}
@@ -38,10 +56,10 @@ func getViperConfig(name, version string, isResource bool) *viper.Viper {
 		postfix = fmt.Sprintf("-%s", version)
 	}
 	v := viper.New()
-	v.SetConfigFile(fmt.Sprintf("%s/%s/%s%s.yaml", accTestPath, getTag(isResource), name, postfix))
+	v.SetConfigFile(fmt.Sprintf("%s/%s/%s%s.yaml", accTestPath, getTag(r.isResource), tfName, postfix))
 	err := v.ReadInConfig()
 	if err != nil {
-		panic(fmt.Sprint("error while reading config, ", err))
+		r.fatalf("error while reading config, %v", err)
 	}
 
 	return v
@@ -53,9 +71,8 @@ func parseMeta(data string) string {
 
 	matches := reg.FindAllString(data, -1)
 	var randInt int
+	r := newRand()
 	for _, m := range matches {
-		src := rand.NewSource(time.Now().Unix())
-		r := rand.New(src)
 		offReg := regexp.MustCompile(`[0-9]+,[0-9]`)
 		numStr := offReg.FindString(m)
 		if numStr != "" {
@@ -72,7 +89,11 @@ func parseMeta(data string) string {
 	return data
 }
 
-func parseValidations(vls map[interface{}]interface{}) []validation {
+func (r *reader) parseValidations(vip *viper.Viper, i int) []validation {
+	vls, ok := vip.Get(fmt.Sprintf("%s.%d.validations", accKey, i)).(map[interface{}]interface{})
+	if !ok {
+		return nil
+	}
 	m := make([]validation, 0, len(vls))
 	for k, v := range vls {
 		kStr := k.(string)
@@ -89,16 +110,26 @@ func parseValidations(vls map[interface{}]interface{}) []validation {
 				value:  v,
 			})
 		} else {
-			panic("invalid validation format. validation format should be '[json|tf].key1.key2....keyn: value'")
+			r.fatalf("invalid validation format. validation format should be '[json|tf].key1.key2....keyn: value'")
 		}
 	}
 
 	return m
 }
 
+func (r *reader) parseRegex(v *viper.Viper, i int) {
+	if expectErrStr := v.GetString(fmt.Sprintf("%s.%d.expect_error", accKey, i)); expectErrStr != "" {
+		var err error
+		r.expectError, err = regexp.Compile(expectErrStr)
+		if err != nil {
+			r.fatalf("error while compiling regex %s, got error %v", expectErrStr, err)
+		}
+	}
+}
+
 // parseConfig populates terraform configuration and parse to accConfig
-func parseConfig(v *viper.Viper, name string, isResource bool) []accConfig {
-	tfKey := getLocalName(name)
+func (r *reader) parseConfig(v *viper.Viper) []accConfig {
+	tfKey := getLocalName(r.name)
 
 	testCases := v.Get(accKey).([]interface{})
 	configs := make([]accConfig, len(testCases))
@@ -110,31 +141,28 @@ func parseConfig(v *viper.Viper, name string, isResource bool) []accConfig {
 			%s
 		}
 		`,
-			providerStanza, getType(isResource), name, tfKey, tfConfig,
+			providerStanza, getType(r.isResource), r.name, tfKey, tfConfig,
 		)
+		r.parseRegex(v, i)
 
-		validations, ok := v.Get(fmt.Sprintf("%s.%d.validations", accKey, i)).(map[interface{}]interface{})
-		if !ok {
-			continue
-		}
-		configs[i].validations = parseValidations(validations)
+		configs[i].validations = r.parseValidations(v, i)
 	}
 
 	return configs
 }
 
 // getTestCases populate TestSteps
-func getTestCases(t *testing.T, name, version string, getAPI GetAPIFunc, isResource bool) []resource.TestStep {
-	v := getViperConfig(getLocalName(name), version, isResource)
+func (r *reader) getTestCases(version string, getAPI GetAPIFunc) []resource.TestStep {
+	v := r.getViperConfig(version)
 	if v.GetBool("ignore") {
-		t.Skip("ignoring tests for resource ", name)
+		r.t.Skip("ignoring tests for resource ", r.name)
 	}
 
-	configs := parseConfig(v, name, isResource)
+	configs := r.parseConfig(v)
 	testSteps := make([]resource.TestStep, 0, len(configs))
 
 	tag := ""
-	if !isResource {
+	if !r.isResource {
 		tag = "data."
 	}
 
@@ -143,11 +171,12 @@ func getTestCases(t *testing.T, name, version string, getAPI GetAPIFunc, isResou
 			Config: c.config,
 			Check: resource.ComposeTestCheckFunc(
 				validateResource(
-					fmt.Sprintf("%s%s.tf_%s", tag, name, getLocalName(name)),
+					fmt.Sprintf("%s%s.tf_%s", tag, r.name, getLocalName(r.name)),
 					c.validations,
 					getAPI,
 				),
 			),
+			ExpectError: r.expectError,
 		})
 	}
 

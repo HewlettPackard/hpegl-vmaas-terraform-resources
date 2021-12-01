@@ -37,3 +37,24 @@ func TestAccResourceInstanceCreate(t *testing.T) {
 
 	acc.RunResourceTests(t)
 }
+
+func TestAccResourceInstanceCreate_templateErr(t *testing.T) {
+	acc := &atf.Acc{
+		ResourceName: "hpegl_vmaas_instance",
+		PreCheck:     testAccPreCheck,
+		Providers:    testAccProviders,
+		Version:      "template_err",
+		GetAPI: func(attr map[string]string) (interface{}, error) {
+			cl, cfg := getAPIClient()
+			iClient := api_client.InstancesAPIService{
+				Client: cl,
+				Cfg:    cfg,
+			}
+			id := toInt(attr["id"])
+
+			return iClient.GetASpecificInstance(getAccContext(), id)
+		},
+	}
+
+	acc.RunResourceTests(t)
+}

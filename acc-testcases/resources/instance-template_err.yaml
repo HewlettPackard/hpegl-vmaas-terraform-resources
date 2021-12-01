@@ -1,0 +1,24 @@
+acc:
+- config: |
+    name = "tf_acc_%rand_int"
+    cloud_id = 1
+    group_id = 2
+    layout_id = 113
+    plan_id = 407
+    instance_type_code = "vmware"
+    network {
+        id = 3
+      }
+    volume {
+        name = "root_vol"
+        datastore_id = "auto"
+        size = %rand_int{5,8}
+      }
+    config {
+      resource_pool_id = 2
+      no_agent = true
+      }
+    scale = 1
+  validations:
+    tf.status: "running"
+  expect_error: ".*template.*"

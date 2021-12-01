@@ -1,9 +1,13 @@
 package atf
 
 import (
+	"crypto/md5"
 	"encoding/json"
 	"fmt"
+	"math/rand"
+	"runtime"
 	"strconv"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
@@ -72,10 +76,52 @@ func getType(isResource bool) string {
 }
 
 func toInt(str string) int {
-	i, err := strconv.Atoi(str)
-	if err != nil {
-		panic(fmt.Sprint("[regex] error on converting offset, ", err))
-	}
+	i, _ := strconv.Atoi(str)
 
 	return i
+}
+
+// newRand will create different random number if it is called from different
+// go routine. This will ensure there will be no collision in random number and
+// Parallel testing is possible
+func newRand() *rand.Rand {
+	s := myCaller()
+	m := md5.New()
+	m.Write([]byte(s))
+	sourceStr := m.Sum(nil)
+	var sourceInt int64
+	for _, i := range sourceStr {
+		sourceInt += int64(i)
+	}
+
+	return rand.New(rand.NewSource(sourceInt + time.Now().Unix()))
+}
+
+func getFrame(skipFrames int) runtime.Frame {
+	// We need the frame at index skipFrames+2, since we never want runtime.Callers and getFrame
+	targetFrameIndex := skipFrames + 2
+
+	// Set size to targetFrameIndex+2 to ensure we have room for one more caller than we need
+	programCounters := make([]uintptr, targetFrameIndex+2)
+	n := runtime.Callers(0, programCounters)
+
+	frame := runtime.Frame{Function: "unknown"}
+	if n > 0 {
+		frames := runtime.CallersFrames(programCounters[:n])
+		for more, frameIndex := true, 0; more && frameIndex <= targetFrameIndex; frameIndex++ {
+			var frameCandidate runtime.Frame
+			frameCandidate, more = frames.Next()
+			if frameIndex == targetFrameIndex {
+				frame = frameCandidate
+			}
+		}
+	}
+
+	return frame
+}
+
+// MyCaller returns the caller of the function that called it :)
+func myCaller() string {
+	// Skip GetCallerFunctionName and the function to get the caller of
+	return getFrame(6).Function
 }
