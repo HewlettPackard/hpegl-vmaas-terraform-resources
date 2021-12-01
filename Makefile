@@ -43,7 +43,7 @@ default: all
 generate:
 	go generate ./...
 
-vendor: generate go.mod go.sum
+vendor: go.mod go.sum
 	go mod download
 
 update up: really-clean vendor

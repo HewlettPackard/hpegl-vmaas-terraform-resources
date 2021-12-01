@@ -32,7 +32,8 @@ func (a *Acc) RunResourcePlanTest(t *testing.T) {
 // RunDataSourceTests to run data source plan only test case. This will take first
 // config from specific data source
 func (a *Acc) RunDataSourceTests(t *testing.T) {
-	testSteps := getTestCases(t, a.ResourceName, a.Version, a.GetAPI, false)
+	r := newReader(t, false, a.ResourceName)
+	testSteps := r.getTestCases(a.Version, a.GetAPI)
 
 	resource.ParallelTest(t, resource.TestCase{
 		IsUnitTest: false,
@@ -45,7 +46,8 @@ func (a *Acc) RunDataSourceTests(t *testing.T) {
 // RunResourceTests creates test cases and run tests which includes create/update/delete/read
 func (a *Acc) RunResourceTests(t *testing.T) {
 	// populate test cases
-	testSteps := getTestCases(t, a.ResourceName, a.Version, a.GetAPI, true)
+	r := newReader(t, true, a.ResourceName)
+	testSteps := r.getTestCases(a.Version, a.GetAPI)
 
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:  func() { a.PreCheck(t) },
@@ -76,7 +78,8 @@ func (a *Acc) checkResourceDestroy(s *terraform.State) error {
 // runs plan test for resource or data source. only first config from test case
 // will considered on plan test
 func (a *Acc) runPlanTest(t *testing.T, isResource bool) {
-	testSteps := getTestCases(t, a.ResourceName, a.Version, a.GetAPI, isResource)
+	r := newReader(t, isResource, a.ResourceName)
+	testSteps := r.getTestCases(a.Version, a.GetAPI)
 	resource.ParallelTest(t, resource.TestCase{
 		PreCheck:  func() { a.PreCheck(t) },
 		Providers: a.Providers,
