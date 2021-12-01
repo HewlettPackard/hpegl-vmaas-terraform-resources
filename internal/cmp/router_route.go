@@ -5,7 +5,6 @@ package cmp
 import (
 	"context"
 	"fmt"
-	"log"
 
 	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
 	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/models"
@@ -29,13 +28,6 @@ func (r *routerRoute) Read(ctx context.Context, d *utils.Data, meta interface{})
 	if err := tftags.Get(d, &tfRoute); err != nil {
 		return err
 	}
-	// Get the router, if the router not exists, return warning
-	if check, err := checkRouterDeprecated(
-		ctx, r.rClient, d, tfRoute.RouterID, &tfRoute.IsDeprecated, &tfRoute,
-	); err != nil || check {
-		return err
-	}
-
 	resp, err := r.rClient.GetSpecificRouterRoute(ctx, tfRoute.RouterID, tfRoute.ID)
 	if err != nil {
 		return err
@@ -59,7 +51,6 @@ func (r *routerRoute) Create(ctx context.Context, d *utils.Data, meta interface{
 	if err != nil {
 		return err
 	}
-
 	if !routeRes.Success {
 		return fmt.Errorf(successErr, "creating route for the router")
 	}
@@ -77,13 +68,6 @@ func (r *routerRoute) Delete(ctx context.Context, d *utils.Data, meta interface{
 	var tfRoute models.RouterRouteBody
 	if err := tftags.Get(d, &tfRoute); err != nil {
 		return err
-	}
-
-	// if parent router got deleted, Route is already deleted
-	if tfRoute.IsDeprecated {
-		log.Printf("[WARNING] Router route already deleted since router is deleted")
-
-		return nil
 	}
 
 	resp, err := r.rClient.DeleteRouterRoute(ctx, tfRoute.RouterID, tfRoute.ID)
