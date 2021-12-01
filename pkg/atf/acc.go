@@ -3,6 +3,8 @@ package atf
 import (
 	"fmt"
 	"net/http"
+	"os"
+	"strings"
 	"testing"
 
 	pkgutils "github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/utils"
@@ -26,12 +28,14 @@ type Acc struct {
 // RunResourcePlanTest to run resource plan only test case. This will take first
 // config from specific resource
 func (a *Acc) RunResourcePlanTest(t *testing.T) {
+	checkSkip(t)
 	a.runPlanTest(t, true)
 }
 
 // RunDataSourceTests to run data source plan only test case. This will take first
 // config from specific data source
 func (a *Acc) RunDataSourceTests(t *testing.T) {
+	checkSkip(t)
 	testSteps := getTestCases(t, a.ResourceName, a.Version, a.GetAPI, false)
 
 	resource.ParallelTest(t, resource.TestCase{
@@ -44,6 +48,7 @@ func (a *Acc) RunDataSourceTests(t *testing.T) {
 
 // RunResourceTests creates test cases and run tests which includes create/update/delete/read
 func (a *Acc) RunResourceTests(t *testing.T) {
+	checkSkip(t)
 	// populate test cases
 	testSteps := getTestCases(t, a.ResourceName, a.Version, a.GetAPI, true)
 
@@ -89,4 +94,10 @@ func (a *Acc) runPlanTest(t *testing.T, isResource bool) {
 			},
 		},
 	})
+}
+
+func checkSkip(t *testing.T) {
+	if strings.ToLower(os.Getenv("TF_ACC")) != "true" && os.Getenv("TF_ACC") != "1" {
+		t.Skip("acceptance test is skipped since TF_ACC is not set")
+	}
 }
