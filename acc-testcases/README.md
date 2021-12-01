@@ -38,7 +38,10 @@ framework supports writing test suites for both resources and data sources.
 
 ### Writing Acceptance Test for New Resource/Datasource
 
-Create new test file wil the format `<resource/data_source>_<name of the resource/data source>_test.go`.
+Create new test file wil the format `<resource/data_source>_<name of the resource/data source without hpegl_vmaas_>_test.go`.
+Exmaple:
+- `resource_instance_test.go` (for resource `hpegl_vmaas_instance`).
+- `data_source_network_test.go` (for data source `hpegl_vmaas_network`)
 You only need to create a new file if there is no test file exists. Otherwise you can use the existing file
 and add your test suite there.
 
@@ -71,8 +74,8 @@ func TestAccResourceMyResourceCreate(t *testing.T) {
 }
 ```
 
-`GetAPI` function should contains Get Sepecific API for the a resource/Data source. This is
-used for validation for that specific resource/data source.
+`GetAPI` function should contains Get Specific API for the a resource/Data source. This is
+used for validation of the specific resource/data source.
 
 ## Writing Acceptance Test Suite
 
