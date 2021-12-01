@@ -93,6 +93,7 @@ func newRand() *rand.Rand {
 	for _, i := range sourceStr {
 		sourceInt += int64(i)
 	}
+
 	return rand.New(rand.NewSource(sourceInt + time.Now().Unix()))
 }
 

@@ -42,7 +42,7 @@ func newReader(t *testing.T, isResource bool, name string) *reader {
 	}
 }
 
-func (r *reader) fatal(format string, v ...interface{}) {
+func (r *reader) fatalf(format string, v ...interface{}) {
 	r.t.Fatalf("[acc-test] test case for resource "+r.name+" failed. "+format, v...)
 }
 
@@ -59,7 +59,7 @@ func (r *reader) getViperConfig(version string) *viper.Viper {
 	v.SetConfigFile(fmt.Sprintf("%s/%s/%s%s.yaml", accTestPath, getTag(r.isResource), tfName, postfix))
 	err := v.ReadInConfig()
 	if err != nil {
-		r.fatal("error while reading config, %v", err)
+		r.fatalf("error while reading config, %v", err)
 	}
 
 	return v
@@ -110,7 +110,7 @@ func (r *reader) parseValidations(vip *viper.Viper, i int) []validation {
 				value:  v,
 			})
 		} else {
-			r.fatal("invalid validation format. validation format should be '[json|tf].key1.key2....keyn: value'")
+			r.fatalf("invalid validation format. validation format should be '[json|tf].key1.key2....keyn: value'")
 		}
 	}
 
@@ -122,7 +122,7 @@ func (r *reader) parseRegex(v *viper.Viper, i int) {
 		var err error
 		r.expectError, err = regexp.Compile(expectErrStr)
 		if err != nil {
-			r.fatal("error while compiling regex %s, got error %v", expectErrStr, err)
+			r.fatalf("error while compiling regex %s, got error %v", expectErrStr, err)
 		}
 	}
 }
