@@ -94,6 +94,11 @@ func RouterTier0ConfigSchema() *schema.Schema {
 					Description: "HA Mode. Available values are 'ACTIVE_ACTIVE' or 'ACTIVE_STANDBY'",
 					ForceNew:    true,
 				},
+				"edge_cluster": {
+					Type:        schema.TypeString,
+					Optional:    true,
+					Description: "Edge Cluster. . Use EdgeCluster's provided_id here using EdgeCluster Data Source.",
+				},
 				"route_redistribution_tier0": {
 					Type:     schema.TypeList,
 					MaxItems: 1,
@@ -227,12 +232,11 @@ func RouterTier1ConfigSchema() *schema.Schema {
 					Description: "Provider ID of the Tier0 Gateway. Use Tier0 Router's " +
 						" .provider_id  here.",
 				},
-				// To be added in later release
-				// "edge_cluster": {
-				// 	Type:        schema.TypeString,
-				// 	Optional:    true,
-				// 	Description: "Edge Cluster",
-				// },
+				"edge_cluster": {
+					Type:        schema.TypeString,
+					Optional:    true,
+					Description: "Edge Cluster. . Use EdgeCluster's provided_id here using EdgeCluster Data Source.",
+				},
 				"fail_over": {
 					Type:     schema.TypeString,
 					Required: true,

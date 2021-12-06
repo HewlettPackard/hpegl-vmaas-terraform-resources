@@ -21,6 +21,7 @@ const (
 	DSNetworkInterface = "hpegl_vmaas_network_interface"
 	DSCloudFolder      = "hpegl_vmaas_cloud_folder"
 	DSRouter           = "hpegl_vmaas_router"
+	DSEdgeCluster      = "hpegl_vmaas_edge_cluster"
 	// resource key
 	ResInstance                = "hpegl_vmaas_instance"
 	ResInstanceClone           = "hpegl_vmaas_instance_clone"

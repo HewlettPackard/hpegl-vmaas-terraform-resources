@@ -32,6 +32,7 @@ type Client struct {
 	DSRouter                DataSource
 	DSDomain                DataSource
 	NetworkProxy            DataSource
+	EdgeCluster             DataSource
 }
 
 // NewClient returns configured client
@@ -74,5 +75,6 @@ func NewClient(client *apiClient.APIClient, cfg apiClient.Configuration) *Client
 		DSRouter:     newRouterDS(&apiClient.RouterAPIService{Client: client, Cfg: cfg}),
 		DSDomain:     newDomain(&apiClient.DomainAPIService{Client: client, Cfg: cfg}),
 		NetworkProxy: newNetworkProxy(&apiClient.NetworksAPIService{Client: client, Cfg: cfg}),
+		EdgeCluster:  newEdgeCluster(&apiClient.RouterAPIService{Client: client, Cfg: cfg}),
 	}
 }
