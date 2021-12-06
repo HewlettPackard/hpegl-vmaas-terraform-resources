@@ -85,8 +85,7 @@ func Network() *schema.Resource {
 			},
 			"cidr": {
 				Type:             schema.TypeString,
-				RequiredWith:     []string{"pool_id"},
-				Optional:         true,
+				Required:         true,
 				Description:      "Gateway CIDR of the network",
 				ValidateDiagFunc: validations.ValidateCidr,
 			},
@@ -102,12 +101,12 @@ func Network() *schema.Resource {
 				Default:     false,
 				Description: "Scan Network",
 			},
-			"dhcp_server": {
-				Type:        schema.TypeBool,
-				Optional:    true,
-				Default:     false,
-				Description: "Enable DHCP Server.",
-			},
+			// "dhcp_server": {
+			// 	Type:        schema.TypeBool,
+			// 	Optional:    true,
+			// 	Default:     false,
+			// 	Description: "Enable DHCP Server.",
+			// },
 			"appliance_url_proxy_bypass": {
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -202,8 +201,8 @@ func Network() *schema.Resource {
 			},
 			"scope_id": {
 				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "Transport Zone ID",
+				Required:    true,
+				Description: "Transport Zone ID. Use " + DSTransportZone + " Data source's provided_id here.",
 			},
 		},
 		SchemaVersion: 0,

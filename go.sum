@@ -50,6 +50,10 @@ github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03
 github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
 github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk v0.1.1-0.20211129112601-2042ebdcae8d h1:GAOFStUEN2gQyiyTtb1DLvVU4H50z4TBc2+NtLMpjcE=
 github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk v0.1.1-0.20211129112601-2042ebdcae8d/go.mod h1:QqQ2OwCQ1qmsMPscU2Y5MeLJP3Q5BPeaTE13s6hu7I8=
+github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk v0.1.1-0.20211206093454-3a7fbe2c91d1 h1:CebQ5cCtgtOTqMFGdRfkKnC46N5W76h079SPBX+1030=
+github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk v0.1.1-0.20211206093454-3a7fbe2c91d1/go.mod h1:QqQ2OwCQ1qmsMPscU2Y5MeLJP3Q5BPeaTE13s6hu7I8=
+github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk v0.1.1-0.20211206102844-9784a97b7781 h1:/jvojR7fixOo16txEr8zJfufflZdv3AceikjErWFuGA=
+github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk v0.1.1-0.20211206102844-9784a97b7781/go.mod h1:QqQ2OwCQ1qmsMPscU2Y5MeLJP3Q5BPeaTE13s6hu7I8=
 github.com/Masterminds/goutils v1.1.0 h1:zukEsf/1JZwCMgHiK3GZftabmxiCw4apj3a28RPBiVg=
 github.com/Masterminds/goutils v1.1.0/go.mod h1:8cTjp+g8YejhMuvIA5y2vz3BpJxksy863GQaJW2MFNU=
 github.com/Masterminds/semver v1.5.0 h1:H65muMkzWKEuNDnfl9d70GUjFniHKHRbFPGBuZ3QEww=
