@@ -1,0 +1,8 @@
+acc:
+- config: |
+    source_instance_id = 27129
+    name = "tf_acc_clone_%rand_int"
+    network {
+      id           = 177
+      interface_id = 0
+    }
