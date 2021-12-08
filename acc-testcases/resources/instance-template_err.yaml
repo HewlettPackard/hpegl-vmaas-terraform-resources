@@ -17,6 +17,7 @@ acc:
     config {
       resource_pool_id = 2
       no_agent = true
+      folder_code = "group-v284"
       }
     scale = 1
   validations:

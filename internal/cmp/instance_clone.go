@@ -132,7 +132,10 @@ func (i *instanceClone) Create(ctx context.Context, d *utils.Data, meta interfac
 			return err
 		}
 	}
-
+	err = instanceSetServerID(ctx, d, i.instanceSharedClient)
+	if err != nil {
+		return err
+	}
 	d.SetID(instancesList.Instances[0].ID)
 
 	// post check
