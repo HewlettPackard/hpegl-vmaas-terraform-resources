@@ -18,6 +18,7 @@ acc:
       resource_pool_id = 2
       no_agent = true
       template_id = 504
+      folder_code = "group-v284"
       }
     scale = 1
   validations:

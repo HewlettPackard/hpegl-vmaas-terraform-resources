@@ -13,12 +13,14 @@ acc:
     volume {
         name = "root_vol"
         datastore_id = 24
+        size = 5
       }
     scale = 2
     config {
       resource_pool_id = 6
       no_agent = true
       template_id = 1719
+      folder_code = "group-v220"
     }
   validations:
     tf.status: "running"
