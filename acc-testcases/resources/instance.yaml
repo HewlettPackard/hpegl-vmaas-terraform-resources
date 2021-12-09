@@ -1,6 +1,8 @@
+vars:
+  instance_name: tf_acc_%rand_int
 acc:
 - config: |
-    name = "tf_acc_%rand_int"
+    name = "$(instance_name)"
     cloud_id = 1
     group_id = 2
     layout_id = 113

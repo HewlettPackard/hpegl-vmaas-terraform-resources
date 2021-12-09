@@ -1,6 +1,8 @@
+vars:
+  route_name: tf_route_%rand_int
 acc:
 - config: |
-    name          = "tf_route_%rand_int"
+    name          = "$(route_name)"
     router_id     = 31
     description   = "router route created using terraform"
     enabled       = true

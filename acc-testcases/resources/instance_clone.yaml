@@ -1,9 +1,9 @@
+vars:
+  instance_name: tf_acc_clone_%rand_int
 acc:
 - config: |
     source_instance_id = 11
-    name = "tf_acc_clone_%rand_int"
+    name = $(instance_name)
     network {
       id = 3
     }
-
-ignore: true
