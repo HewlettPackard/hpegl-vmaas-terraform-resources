@@ -46,10 +46,10 @@ func Instances() *schema.Resource {
 	}
 	instanceSchema.Description = `Instance resource facilitates creating,
 		updating and deleting virtual machines. It is recommend to use the Vmware type for provisioning.`
-	instanceSchema.CreateContext = instanceCreateContext
-	instanceSchema.ReadContext = instanceReadContext
-	instanceSchema.DeleteContext = instanceDeleteContext
-	instanceSchema.UpdateContext = instanceUpdateContext
+	instanceSchema.CreateWithoutTimeout = instanceCreateContext
+	instanceSchema.ReadWithoutTimeout = instanceReadContext
+	instanceSchema.DeleteWithoutTimeout = instanceDeleteContext
+	instanceSchema.UpdateWithoutTimeout = instanceUpdateContext
 	instanceSchema.CustomizeDiff = instanceCustomizeDiff
 
 	return instanceSchema

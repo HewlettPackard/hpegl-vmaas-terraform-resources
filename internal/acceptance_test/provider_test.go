@@ -26,12 +26,15 @@ func init() {
 
 func testAccPreCheck(t *testing.T) {
 	// validate all required envs are present, if not then throws error
+	var requiredenvs []string
 	if pkgutils.GetEnvBool(constants.MockIAMKey) {
-		requiredenvs := []string{constants.CmpSubjectKey}
-		for _, r := range requiredenvs {
-			if os.Getenv(r) == "" {
-				panic(r + " env is required, but not found")
-			}
+		requiredenvs = append(requiredenvs, constants.CmpSubjectKey, "HPEGL_IAM_TOKEN")
+	} else {
+		requiredenvs = append(requiredenvs, "HPEGL_VMAAS_LOCATION", "HPEGL_VMAAS_SPACE_NAME")
+	}
+	for _, r := range requiredenvs {
+		if os.Getenv(r) == "" {
+			panic(r + " env is required, but not found")
 		}
 	}
 

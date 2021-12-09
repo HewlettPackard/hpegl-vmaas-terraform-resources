@@ -46,6 +46,10 @@ func (r *reader) fatalf(format string, v ...interface{}) {
 	r.t.Fatalf("[acc-test] test case for resource "+r.name+" failed. "+format, v...)
 }
 
+func (r *reader) skipf(format string, v ...interface{}) {
+	r.t.Skipf("[acc-test] test case for resource "+r.name+" is skipped. "+format, v...)
+}
+
 func (r *reader) getViperConfig(version string) *viper.Viper {
 	tfName := getLocalName(r.name)
 	if path := os.Getenv(constants.AccTestPathKey); path != "" {
@@ -59,7 +63,7 @@ func (r *reader) getViperConfig(version string) *viper.Viper {
 	v.SetConfigFile(fmt.Sprintf("%s/%s/%s%s.yaml", accTestPath, getTag(r.isResource), tfName, postfix))
 	err := v.ReadInConfig()
 	if err != nil {
-		r.fatalf("error while reading config, %v", err)
+		r.skipf("error while reading config, %v", err)
 	}
 
 	return v
