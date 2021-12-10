@@ -108,7 +108,7 @@ func Network() *schema.Resource {
 			// 	Description: "Enable DHCP Server.",
 			// },
 			"appliance_url_proxy_bypass": {
-				Type:        schema.TypeString,
+				Type:        schema.TypeBool,
 				Optional:    true,
 				Default:     true,
 				Description: "Bypass Proxy for Appliance URL",
@@ -159,7 +159,7 @@ func Network() *schema.Resource {
 					},
 				},
 			},
-			"resource_permission": {
+			"resource_permissions": {
 				Type:     schema.TypeList,
 				Optional: true,
 				MaxItems: 1,
