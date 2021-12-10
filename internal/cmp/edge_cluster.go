@@ -5,6 +5,7 @@ package cmp
 import (
 	"context"
 	"fmt"
+	"log"
 
 	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
 	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/models"
@@ -24,6 +25,7 @@ func newEdgeCluster(tClient *client.RouterAPIService) *edgeCluster {
 
 func (r *edgeCluster) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
 	setMeta(meta, r.tClient.Client)
+	log.Printf("[INFO] Get Edge Cluster")
 	var tfEdgeCluster models.NetworkEdgeClusters
 	if err := tftags.Get(d, &tfEdgeCluster); err != nil {
 		return err
@@ -47,8 +49,7 @@ func (r *edgeCluster) Read(ctx context.Context, d *utils.Data, meta interface{})
 	if serverID == 0 {
 		return fmt.Errorf(errExactMatch, "network server")
 	}
-
-	resp, err := r.tClient.GetEdgeClusters(ctx, serverID, tfEdgeCluster.Name)
+	resp, err := r.tClient.GetEdgeCluster(ctx, serverID, tfEdgeCluster.Name)
 	if err != nil {
 		return err
 	}

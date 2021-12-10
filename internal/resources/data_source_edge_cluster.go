@@ -19,11 +19,6 @@ func EdgeClusterData() *schema.Resource {
 				Required:    true,
 				Description: f(generalNamedesc, "Edge Cluster", "Edge Cluster"),
 			},
-			"service_name": {
-				Type:        schema.TypeString,
-				Required:    true,
-				Description: "Name of the NSX-T network service.",
-			},
 			"internal_id": {
 				Type:     schema.TypeString,
 				Computed: true,

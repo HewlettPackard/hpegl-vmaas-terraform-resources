@@ -5,6 +5,7 @@ package resources
 import (
 	"context"
 
+	diffvalidation "github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/resources/diffValidation"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/resources/schemas"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/utils"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/client"
@@ -80,6 +81,7 @@ func Router() *schema.Resource {
 		CreateContext: routerCreateContext,
 		UpdateContext: routerUpdateContext,
 		DeleteContext: routerDeleteContext,
+		CustomizeDiff: routerCustomDiff,
 		Description: `Router resource facilitates creating,
 		updating and deleting NSX-T Tier0/Tier1 Network Routers.`,
 	}
@@ -139,4 +141,8 @@ func routerDeleteContext(ctx context.Context, rd *schema.ResourceData, meta inte
 	}
 
 	return nil
+}
+
+func routerCustomDiff(ctx context.Context, diff *schema.ResourceDiff, meta interface{}) error {
+	return diffvalidation.NewRouterValidate(diff).DiffValidate()
 }
