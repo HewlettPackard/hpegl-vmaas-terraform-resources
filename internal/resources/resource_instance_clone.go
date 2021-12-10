@@ -26,10 +26,10 @@ func InstancesClone() *schema.Resource {
 	For creating an instance clone, provide a unique name and all the Mandatory(Required) parameters.
 	All optional parameters will be inherits from parent resource if not provided.`
 
-	instanceCloneSchema.CreateContext = instanceCloneCreateContext
-	instanceCloneSchema.ReadContext = instanceCloneReadContext
-	instanceCloneSchema.UpdateContext = instanceCloneUpdateContext
-	instanceCloneSchema.DeleteContext = instanceCloneDeleteContext
+	instanceCloneSchema.CreateWithoutTimeout = instanceCloneCreateContext
+	instanceCloneSchema.ReadWithoutTimeout = instanceCloneReadContext
+	instanceCloneSchema.UpdateWithoutTimeout = instanceCloneUpdateContext
+	instanceCloneSchema.DeleteWithoutTimeout = instanceCloneDeleteContext
 	instanceCloneSchema.CustomizeDiff = instanceCustomizeDiff
 
 	return instanceCloneSchema

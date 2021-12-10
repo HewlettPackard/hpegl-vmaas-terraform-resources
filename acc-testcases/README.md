@@ -12,10 +12,12 @@ Acceptance tests can be run using the `acceptance` target in the Terraform
 IAM configuration as environment.
 
 ```bash
-export IAM_SERVICE_URL=<iam_service_url>
-export TENANT_ID=<tenant_id>
-export USER_SECRET=<user_secret>
-export USER_ID=<user_id>
+export HPEGL_IAM_SERVICE_URL=<iam_service_url>
+export HPEGL_TENANT_ID=<tenant_id>
+export HPEGL_USER_SECRET=<user_secret>
+export HPEGL_USER_ID=<user_id>
+export HPEGL_VMAAS_LOCATION=<vmaas_location>
+export HPEGL_VMAAS_SPACE_NAME=<vmaas_space_name>
 ```
 
 By Default acceptance test will run test cases from folder `acc-testcases`.

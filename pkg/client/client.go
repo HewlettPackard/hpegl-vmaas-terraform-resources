@@ -5,7 +5,6 @@ package client
 import (
 	"fmt"
 	"os"
-	"strings"
 
 	api_client "github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
 	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/models"
@@ -32,15 +31,13 @@ type Client struct {
 }
 
 // Get env configurations for VmaaS services
-func getHeaders(token string) map[string]string {
+func getHeaders() map[string]string {
+	token := os.Getenv("HPEGL_IAM_TOKEN")
 	header := make(map[string]string)
-	serviceURL = constants.ServiceURL
+	serviceURL = utils.GetServiceEndpoint()
 	if utils.GetEnvBool(constants.MockIAMKey) {
-		serviceURL = constants.AccServiceURL
 		header["subject"] = os.Getenv(constants.CmpSubjectKey)
 		header["Authorization"] = token
-	} else if strings.ToLower(os.Getenv("SERVICE_ACCOUNT")) == "intg" {
-		serviceURL = constants.IntgServiceURL
 	}
 
 	return header
@@ -61,17 +58,16 @@ func (i InitialiseClient) NewClient(r *schema.ResourceData) (interface{}, error)
 	// Create VMaas Client
 	client := new(Client)
 
-	token := os.Getenv("HPEGL_IAM_TOKEN")
-
 	cfg := api_client.Configuration{
 		Host:          serviceURL,
-		DefaultHeader: getHeaders(token),
+		DefaultHeader: getHeaders(),
 		DefaultQueryParams: map[string]string{
 			constants.SpaceKey:    tfprovider.Vmaas.SpaceName,
 			constants.LocationKey: tfprovider.Vmaas.Location,
 		},
 	}
 	apiClient := api_client.NewAPIClient(&cfg)
+	utils.SetMeta(apiClient, r)
 	client.CmpClient = cmp_client.NewClient(apiClient, cfg)
 
 	return client, nil

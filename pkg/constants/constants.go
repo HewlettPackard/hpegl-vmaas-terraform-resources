@@ -6,7 +6,7 @@ package constants
 const (
 	// ServiceName - the service mnemonic
 	ServiceName    = "vmaas"
-	AccServiceURL  = "https://iac-vmaas.dev.hpehcss.net"
+	DevServiceURL  = "https://iac-vmaas.dev.hpehcss.net"
 	IntgServiceURL = "https://iac-vmaas.intg.hpedevops.net"
 	ServiceURL     = "https://iac-vmaas.us1.greenlake-hpe.com"
 

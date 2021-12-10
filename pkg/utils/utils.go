@@ -10,8 +10,17 @@ import (
 	"testing"
 
 	api_client "github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
+	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/constants"
 	"github.com/spf13/viper"
 )
+
+type ResourceData struct {
+	Data map[string]interface{}
+}
+
+func (r *ResourceData) Get(key string) interface{} {
+	return r.Data[key]
+}
 
 func parseError(err error) api_client.CustomError {
 	customErr := api_client.CustomError{}
@@ -67,4 +76,15 @@ func GetEnvBool(key string) bool {
 	}
 
 	return value
+}
+
+func GetServiceEndpoint() string {
+	switch os.Getenv("SERVICE_ACCOUNT") {
+	case "dev":
+		return constants.DevServiceURL
+	case "intg":
+		return constants.IntgServiceURL
+	}
+
+	return constants.ServiceURL
 }
