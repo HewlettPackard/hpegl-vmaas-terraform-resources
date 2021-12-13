@@ -7,6 +7,8 @@ resource "hpegl_vmaas_router" "tf_tier1" {
   group_id = "shared"
   tier1_config {
       tier0_gateway = data.hpegl_vmaas_router.tier0_router.provider_id
+      edge_cluster = data.hpegl_vmaas_edge_cluster.tf_edge_cluster.provider_id
+      fail_over = "NON_PREEMPTIVE"
     route_advertisement {
       tier1_connected = true
       tier1_static_routes = false

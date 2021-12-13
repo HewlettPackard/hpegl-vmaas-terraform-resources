@@ -6,6 +6,7 @@ acc:
     enable = true
     group_id = "shared"
     tier1_config {
+      edge_cluster= "e34440bb-6277-4b86-8dfd-288e7e4cbb24"
       fail_over = "NON_PREEMPTIVE"
       route_advertisement {
         tier1_connected = true
