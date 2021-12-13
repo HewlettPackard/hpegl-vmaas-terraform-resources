@@ -243,7 +243,7 @@ func RouterTier1ConfigSchema() *schema.Schema {
 					ValidateDiagFunc: validation.ToDiagFunc(validation.StringInSlice([]string{
 						"NON_PREEMPTIVE", "PREEMPTIVE",
 					}, false)),
-					RequiredWith: []string{"tier1_config.edge_cluster"},
+					RequiredWith: []string{"tier1_config.0.edge_cluster"},
 					Description:  "Failover. Available values are 'PREEMPTIVE' or 'NON_PREEMPTIVE'",
 				},
 				"route_advertisement": {
