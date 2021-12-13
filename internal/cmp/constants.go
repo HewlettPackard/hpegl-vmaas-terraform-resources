@@ -7,6 +7,7 @@ import "time"
 const (
 	vmware        = "vmware"
 	nsxtSegment   = "NSX-T Segment"
+	nsxt          = "NSX-T"
 	errExactMatch = "error, could not find the %s with the specified name. Please verify the name and try again"
 	successErr    = "got success = 'false while %s"
 	// query params keys

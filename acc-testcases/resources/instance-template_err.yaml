@@ -1,6 +1,9 @@
+vars:
+  rand_name_1: tf_acc_%rand_int
+  rand_storage_1: "%rand_int{5,8}"
 acc:
 - config: |
-    name = "tf_acc_%rand_int"
+    name = "$(rand_name_1)"
     cloud_id = 1
     group_id = 2
     layout_id = 113
@@ -12,7 +15,7 @@ acc:
     volume {
         name = "root_vol"
         datastore_id = "auto"
-        size = %rand_int{5,8}
+        size = $(rand_storage_1)
       }
     config {
       resource_pool_id = 2

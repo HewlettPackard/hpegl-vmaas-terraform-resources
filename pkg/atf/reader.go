@@ -32,6 +32,7 @@ type reader struct {
 	isResource  bool
 	name        string
 	expectError *regexp.Regexp
+	vars        map[string]interface{}
 }
 
 func newReader(t *testing.T, isResource bool, name string) *reader {
@@ -39,6 +40,7 @@ func newReader(t *testing.T, isResource bool, name string) *reader {
 		t:          t,
 		isResource: isResource,
 		name:       name,
+		vars:       make(map[string]interface{}),
 	}
 }
 
@@ -48,6 +50,17 @@ func (r *reader) fatalf(format string, v ...interface{}) {
 
 func (r *reader) skipf(format string, v ...interface{}) {
 	r.t.Skipf("[acc-test] test case for resource "+r.name+" is skipped. "+format, v...)
+}
+
+func (r *reader) readVars(v *viper.Viper) {
+	vars, ok := v.Get("vars").(map[string]interface{})
+	if !ok {
+		return
+	}
+
+	for key, val := range vars {
+		r.vars[key] = parseMeta(fmt.Sprint(val))
+	}
 }
 
 func (r *reader) getViperConfig(version string) *viper.Viper {
@@ -67,6 +80,18 @@ func (r *reader) getViperConfig(version string) *viper.Viper {
 	}
 
 	return v
+}
+
+func replaceVar(vars map[string]interface{}, config string) string {
+	exp := `\$\([a-zA-Z_0-9]+\)`
+	reg := regexp.MustCompile(exp)
+
+	matches := reg.FindAllString(config, -1)
+	for _, m := range matches {
+		config = strings.Replace(config, m, fmt.Sprint(vars[m[2:len(m)-1]]), 1)
+	}
+
+	return config
 }
 
 func parseMeta(data string) string {
@@ -122,7 +147,7 @@ func (r *reader) parseValidations(vip *viper.Viper, i int) []validation {
 }
 
 func (r *reader) parseRegex(v *viper.Viper, i int) {
-	if expectErrStr := v.GetString(fmt.Sprintf("%s.%d.expect_error", accKey, i)); expectErrStr != "" {
+	if expectErrStr := v.GetString(path(accKey, i, "expect_error")); expectErrStr != "" {
 		var err error
 		r.expectError, err = regexp.Compile(expectErrStr)
 		if err != nil {
@@ -138,7 +163,7 @@ func (r *reader) parseConfig(v *viper.Viper) []accConfig {
 	testCases := v.Get(accKey).([]interface{})
 	configs := make([]accConfig, len(testCases))
 	for i := range testCases {
-		tfConfig := parseMeta(v.GetString(fmt.Sprintf(`%s.%d.config`, accKey, i)))
+		tfConfig := replaceVar(r.vars, v.GetString(path(accKey, i, "config")))
 		configs[i].config = fmt.Sprintf(`
 		%s
 		%s "%s" "tf_%s" {
@@ -148,7 +173,6 @@ func (r *reader) parseConfig(v *viper.Viper) []accConfig {
 			providerStanza, getType(r.isResource), r.name, tfKey, tfConfig,
 		)
 		r.parseRegex(v, i)
-
 		configs[i].validations = r.parseValidations(v, i)
 	}
 
@@ -162,6 +186,7 @@ func (r *reader) getTestCases(version string, getAPI GetAPIFunc) []resource.Test
 		r.t.Skip("ignoring tests for resource ", r.name)
 	}
 
+	r.readVars(v)
 	configs := r.parseConfig(v)
 	testSteps := make([]resource.TestStep, 0, len(configs))
 

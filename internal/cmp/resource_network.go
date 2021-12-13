@@ -82,7 +82,7 @@ func (r *resNetwork) Create(ctx context.Context, d *utils.Data, meta interface{}
 		return fmt.Errorf(errExactMatch, "network server")
 	}
 	for i, n := range networkService.NetworkServices {
-		if n.TypeName == "NSX-T" {
+		if n.TypeName == nsxt {
 			createReq.NetworkServer.ID = networkService.NetworkServices[i].ID
 
 			break
