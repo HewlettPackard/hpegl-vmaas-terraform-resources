@@ -39,7 +39,7 @@ func (r *edgeCluster) Read(ctx context.Context, d *utils.Data, meta interface{})
 
 	var serverID int
 	for i, n := range serverResp.NetworkServices {
-		if n.TypeName == "NSX-T" {
+		if n.TypeName == nsxt {
 			serverID = serverResp.NetworkServices[i].ID
 
 			break
