@@ -1,6 +1,8 @@
+vars:
+  tier0_name: tf_tier0_gateway_%rand_int
 acc:
 - config: |
-    name = "tf_tier0_gateway_%rand_int"
+    name = "$(tier0_name)"
     enable = true
     group_id = "shared"
     tier0_config {

@@ -1,6 +1,8 @@
+vars:
+    network_name: tf_acc_net_%rand_int
 acc:
 - config: |
-    name = "tf_acc_net_%rand_int"
+    name = "$(network_name)"
     group_id = "shared"
     active = true
     dhcp_server = true

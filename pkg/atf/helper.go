@@ -125,3 +125,16 @@ func myCaller() string {
 	// Skip GetCallerFunctionName and the function to get the caller of
 	return getFrame(6).Function
 }
+
+func path(v ...interface{}) string {
+	if len(v) == 0 {
+		return ""
+	}
+
+	var p string
+	for _, val := range v {
+		p += "." + fmt.Sprint(val)
+	}
+
+	return p[1:]
+}
