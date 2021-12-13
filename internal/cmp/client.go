@@ -32,6 +32,7 @@ type Client struct {
 	DSRouter                DataSource
 	DSDomain                DataSource
 	NetworkProxy            DataSource
+	TransportZone           DataSource
 }
 
 // NewClient returns configured client
@@ -70,9 +71,10 @@ func NewClient(client *apiClient.APIClient, cfg apiClient.Configuration) *Client
 		Environment:   newEnvironment(&apiClient.EnvironmentAPIService{Client: client, Cfg: cfg}),
 		NetworkInterface: newNetworkInterface(&apiClient.CloudsAPIService{Client: client, Cfg: cfg},
 			&apiClient.ProvisioningAPIService{Client: client, Cfg: cfg}),
-		CloudFolder:  newCloudFolder(&apiClient.CloudsAPIService{Client: client, Cfg: cfg}),
-		DSRouter:     newRouterDS(&apiClient.RouterAPIService{Client: client, Cfg: cfg}),
-		DSDomain:     newDomain(&apiClient.DomainAPIService{Client: client, Cfg: cfg}),
-		NetworkProxy: newNetworkProxy(&apiClient.NetworksAPIService{Client: client, Cfg: cfg}),
+		CloudFolder:   newCloudFolder(&apiClient.CloudsAPIService{Client: client, Cfg: cfg}),
+		DSRouter:      newRouterDS(&apiClient.RouterAPIService{Client: client, Cfg: cfg}),
+		DSDomain:      newDomain(&apiClient.DomainAPIService{Client: client, Cfg: cfg}),
+		NetworkProxy:  newNetworkProxy(&apiClient.NetworksAPIService{Client: client, Cfg: cfg}),
+		TransportZone: newTransportZone(&apiClient.RouterAPIService{Client: client, Cfg: cfg}),
 	}
 }

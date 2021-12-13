@@ -169,7 +169,7 @@ func (r *router) routerAlignRouterRequest(ctx context.Context, meta interface{},
 		return fmt.Errorf(errExactMatch, "network-service")
 	}
 	for i, n := range networkService.NetworkServices {
-		if n.TypeName == "NSX-T" {
+		if n.TypeName == nsxt {
 			routerReq.NetworkRouter.NetworkServer.ID = networkService.NetworkServices[i].ID
 			routerReq.NetworkRouter.NetworkServerID = networkService.NetworkServices[i].ID
 
