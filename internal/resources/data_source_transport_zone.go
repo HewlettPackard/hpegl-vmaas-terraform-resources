@@ -19,11 +19,6 @@ func TransportZoneData() *schema.Resource {
 				Required:    true,
 				Description: f(generalNamedesc, "transport zone", "transport zone"),
 			},
-			"service_name": {
-				Type:        schema.TypeString,
-				Required:    true,
-				Description: "Name of the NSX-T network service.",
-			},
 			"internal_id": {
 				Type:     schema.TypeString,
 				Computed: true,

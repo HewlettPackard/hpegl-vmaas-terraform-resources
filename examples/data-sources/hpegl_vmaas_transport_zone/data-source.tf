@@ -2,5 +2,4 @@
 
 data "hpegl_vmaas_transport_zone" "tf_zone" {
   name         = "nsx_transport_zone_overlay"
-  service_name = "NSX-T"
 }
