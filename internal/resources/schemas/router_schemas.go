@@ -79,7 +79,7 @@ func RouterTier0ConfigSchema() *schema.Schema {
 				},
 				"fail_over": {
 					Type:     schema.TypeString,
-					Required: true,
+					Optional: true,
 					ValidateDiagFunc: validations.StringInSlice([]string{
 						"NON_PREEMPTIVE", "PREEMPTIVE",
 					}, false),
@@ -93,6 +93,11 @@ func RouterTier0ConfigSchema() *schema.Schema {
 					}, false),
 					Description: "HA Mode. Available values are 'ACTIVE_ACTIVE' or 'ACTIVE_STANDBY'",
 					ForceNew:    true,
+				},
+				"edge_cluster": {
+					Type:        schema.TypeString,
+					Optional:    true,
+					Description: "Edge Cluster. Use EdgeCluster's provided_id here using EdgeCluster Data Source.",
 				},
 				"route_redistribution_tier0": {
 					Type:     schema.TypeList,
@@ -227,19 +232,19 @@ func RouterTier1ConfigSchema() *schema.Schema {
 					Description: "Provider ID of the Tier0 Gateway. Use Tier0 Router's " +
 						" .provider_id  here.",
 				},
-				// To be added in later release
-				// "edge_cluster": {
-				// 	Type:        schema.TypeString,
-				// 	Optional:    true,
-				// 	Description: "Edge Cluster",
-				// },
+				"edge_cluster": {
+					Type:        schema.TypeString,
+					Optional:    true,
+					Description: "Edge Cluster. Use EdgeCluster's provided_id here using EdgeCluster Data Source.",
+				},
 				"fail_over": {
 					Type:     schema.TypeString,
-					Required: true,
+					Optional: true,
 					ValidateDiagFunc: validation.ToDiagFunc(validation.StringInSlice([]string{
 						"NON_PREEMPTIVE", "PREEMPTIVE",
 					}, false)),
-					Description: "Failover. Available values are 'PREEMPTIVE' or 'NON_PREEMPTIVE'",
+					RequiredWith: []string{"tier1_config.0.edge_cluster"},
+					Description:  "Failover. Available values are 'PREEMPTIVE' or 'NON_PREEMPTIVE'",
 				},
 				"route_advertisement": {
 					Type:     schema.TypeList,

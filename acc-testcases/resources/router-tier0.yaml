@@ -38,4 +38,5 @@ acc:
       }
       fail_over = "NON_PREEMPTIVE"
       ha_mode = "ACTIVE_STANDBY"
+      edge_cluster= "e34440bb-6277-4b86-8dfd-288e7e4cbb24"
     }

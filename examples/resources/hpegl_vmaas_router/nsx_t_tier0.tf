@@ -9,7 +9,7 @@ resource "hpegl_vmaas_router" "tf_tier0" {
     bgp {
       ecmp             = true
       enable_bgp       = true
-      inter_sr_ibgp    = true
+      inter_sr_ibgp    = false
       local_as_num     = 65000
       multipath_relax  = true
       restart_mode     = "HELPER_ONLY"
@@ -38,5 +38,6 @@ resource "hpegl_vmaas_router" "tf_tier0" {
     }
     fail_over = "NON_PREEMPTIVE"
     ha_mode   = "ACTIVE_STANDBY"
+    edge_cluster = data.hpegl_vmaas_edge_cluster.tf_edge_cluster.provider_id
   }
 }
