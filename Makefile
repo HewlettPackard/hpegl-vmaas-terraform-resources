@@ -78,8 +78,13 @@ coverage: vendor
 	@echo "Generated $(coverage_dir)/html/main.html";
 .PHONY: coverage
 
+ACC_TEST_FILE_LOCATION=github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/acceptance_test
 acceptance:
-	TF_ACC=true go test -v -timeout=1200s -cover github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/acceptance_test
+	@if [ "${case}" != "" ]; then \
+		TF_ACC=true go test -run $(case) -v -timeout=2000s -cover $(ACC_TEST_FILE_LOCATION); \
+	else \
+		TF_ACC=true go test -v -timeout=2000s -cover $(ACC_TEST_FILE_LOCATION); \
+	fi
 
 build: vendor $(NAME)
 .PHONY: build
