@@ -23,7 +23,6 @@ func newRouter(routerClient *client.RouterAPIService) *router {
 }
 
 func (r *router) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
-	setMeta(meta, r.rClient.Client)
 	var tfRouter models.GetNetworkRouter
 	if err := tftags.Get(d, &tfRouter); err != nil {
 		return err
@@ -37,7 +36,6 @@ func (r *router) Read(ctx context.Context, d *utils.Data, meta interface{}) erro
 }
 
 func (r *router) Create(ctx context.Context, d *utils.Data, meta interface{}) error {
-	setMeta(meta, r.rClient.Client)
 	createReq := models.CreateRouterRequest{}
 	if err := tftags.Get(d, &createReq.NetworkRouter); err != nil {
 		return err
@@ -54,11 +52,22 @@ func (r *router) Create(ctx context.Context, d *utils.Data, meta interface{}) er
 	}
 	createReq.NetworkRouter.ID = routerResp.ID
 
+	// wait until created
+	retry := &utils.CustomRetry{
+		RetryDelay:   1,
+		InitialDelay: 1,
+		Cond: func(response interface{}, ResponseErr error) (bool, error) {
+			return response.(models.GetSpecificRouterResp).NetworkRouter.Status == "ok", nil
+		},
+	}
+	retry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
+		return r.rClient.GetSpecificRouter(ctx, routerResp.ID)
+	})
+
 	return tftags.Set(d, createReq.NetworkRouter)
 }
 
 func (r *router) Update(ctx context.Context, d *utils.Data, meta interface{}) error {
-	setMeta(meta, r.rClient.Client)
 	createReq := models.CreateRouterRequest{}
 	if err := tftags.Get(d, &createReq.NetworkRouter); err != nil {
 		return err
@@ -86,7 +95,6 @@ func (r *router) Update(ctx context.Context, d *utils.Data, meta interface{}) er
 }
 
 func (r *router) Delete(ctx context.Context, d *utils.Data, meta interface{}) error {
-	setMeta(meta, r.rClient.Client)
 	routerID := d.GetID()
 	_, err := r.rClient.DeleteRouter(ctx, routerID)
 	if err != nil {
