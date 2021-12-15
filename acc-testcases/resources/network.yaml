@@ -20,5 +20,3 @@ acc:
   validations:
     tf.cidr = "172.16.10.1/24"
     tf.gateway = "172.16.10.1"
-
-ignore: true
