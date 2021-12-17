@@ -5,10 +5,11 @@ resource "hpegl_vmaas_network" "test_net" {
   description  = "Network created using tf"
   group_id     = data.hpegl_vmaas_group.tf_group.id
   scope_id     = data.hpegl_vmaas_transport_zone.tf_zone.provider_id
-  cidr         = "168.72.10.0/18"
+  cidr         = "168.72.10.1/18"
   gateway      = "168.72.10.1"
   primary_dns  = "8.8.8.8"
   scan_network = false
+  pool_id = 7
   active       = true
   config {
     connected_gateway = data.hpegl_vmaas_router.tf_router.provider_id

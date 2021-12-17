@@ -140,9 +140,6 @@ func (r *resNetwork) Delete(ctx context.Context, d *utils.Data, meta interface{}
 
 func alignNetworkReq(request *models.CreateNetwork) {
 	request.Site.ID = request.GroupID
-	if request.PoolID != 0 {
-		request.Pool = &models.IDModel{ID: request.PoolID}
-	}
 	if request.NetworkDomainID != 0 {
 		request.NetworkDomain = &models.IDModel{ID: request.NetworkDomainID}
 	}
