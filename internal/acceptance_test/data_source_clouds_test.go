@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	api_client "github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
-	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/atf"
+	"github.com/hewlettpackard/hpegl-provider-lib/pkg/atf"
 )
 
 func TestAccDataSourceCloud(t *testing.T) {
