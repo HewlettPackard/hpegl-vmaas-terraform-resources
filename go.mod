@@ -7,7 +7,7 @@ require (
 	github.com/golang/mock v1.6.0
 	github.com/hashicorp/go-cty v1.4.1-0.20200414143053-d3edf31b6320
 	github.com/hashicorp/terraform-plugin-docs v0.5.1
-	github.com/hashicorp/terraform-plugin-sdk/v2 v2.10.0
+	github.com/hashicorp/terraform-plugin-sdk/v2 v2.10.1
 	github.com/hewlettpackard/hpegl-provider-lib v0.0.10
 	github.com/spf13/viper v1.10.1
 	github.com/tidwall/gjson v1.12.1
