@@ -126,18 +126,23 @@ passed-down to provider code by terraform and from which service provider code e
 This is the slice that is created in the hpegl provider:
 
 ```go
-package clients
+ppackage client
 
 import (
-	"github.com/hewlettpackard/hpegl-provider-lib/pkg/client"
+	"fmt"
 
-	clicaas "github.com/hpe-hcss/poc-caas-terraform-resources/pkg/client"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func InitialiseClients() []client.Initialisation {
-	return []client.Initialisation{
-		clicaas.InitialiseClient{},
-	}
+// Initialisation interface, service Client creation code will have to satisfy this interface
+// The hpegl provider will iterate over a slice of these to initialise service clients
+type Initialisation interface {
+	// NewClient is run by hpegl to initialise the service client
+	NewClient(r *schema.ResourceData) (interface{}, error)
+
+	// ServiceName is used by hpegl, it returns the key to be used for the client returned by NewClient
+	// in the map[string]interface{} passed-down to provider code by terraform
+	ServiceName() string
 }
 ```
 
@@ -147,36 +152,89 @@ The hpegl code that iterates over the slice is:
 package client
 
 import (
-	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"fmt"
+	"os"
 
-	"github.com/hewlettpackard/hpegl-provider-lib/pkg/provider"
-
-	quake "github.com/quattronetworks/quake-client/pkg/terraform/configuration"
-
-	"github.com/hpe-hcss/terraform-provider-hpegl/internal/services/clients"
+	api_client "github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
+	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/models"
+	cmp_client "github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/cmp"
+	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/constants"
+	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/utils"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hewlettpackard/hpegl-provider-lib/pkg/client"
+	"github.com/tshihad/tftags"
 )
 
-func NewClientMap(config provider.ConfigData) (map[string]interface{}, diag.Diagnostics) {
-	c := make(map[string]interface{})
+// keyForGLClientMap is the key in the map[string]interface{} that is passed down by hpegl used to store *Client
+// This must be unique, hpegl will error-out if it isn't
+const keyForGLClientMap = "vmaasClient"
 
-	// Iterate over services
-	for _, cli := range clients.InitialiseClients() {
-		scli, err := cli.NewClient(config)
-		if err != nil {
-			return nil, diag.Errorf("error in creating client %s: %s", cli.ServiceName(), err)
-		}
+// Assert that InitialiseClient satisfies the client.Initialisation interface
+var _ client.Initialisation = (*InitialiseClient)(nil)
 
-		// Check that cli.ServiceName() value is unique
-		if _, ok := c[cli.ServiceName()]; ok {
-			return nil, diag.Errorf("%s client key is not unique", cli.ServiceName())
-		}
+// Client is the client struct that is used by the provider code
+type Client struct {
+	CmpClient *cmp_client.Client
+}
 
-		// Add service client to map
-		c[cli.ServiceName()] = scli
+// InitialiseClient is imported by hpegl from each service repo
+type InitialiseClient struct{}
+
+// NewClient takes an argument of all of the provider.ConfigData, and returns an interface{} and error
+// If there is no error interface{} will contain *Client.
+// The hpegl provider will put *Client at the value of keyForGLClientMap (returned by ServiceName) in
+// the map of clients that it creates and passes down to provider code.  hpegl executes NewClient for each service.
+func (i InitialiseClient) NewClient(r *schema.ResourceData) (interface{}, error) {
+	var tfprovider models.TFProvider
+	if err := tftags.Get(r, &tfprovider); err != nil {
+		return nil, err
+	}
+	// Create VMaas Client
+	client := new(Client)
+
+	cfg := api_client.Configuration{
+		Host:          serviceURL,
+		DefaultHeader: getHeaders(),
+		DefaultQueryParams: map[string]string{
+			constants.SpaceKey:    tfprovider.Vmaas.SpaceName,
+			constants.LocationKey: tfprovider.Vmaas.Location,
+		},
+	}
+	apiClient := api_client.NewAPIClient(&cfg)
+	utils.SetMeta(apiClient, r)
+	client.CmpClient = cmp_client.NewClient(apiClient, cfg)
+
+	return client, nil
+}
+
+// ServiceName is used to return the value of keyForGLClientMap, for use by hpegl
+func (i InitialiseClient) ServiceName() string {
+	return keyForGLClientMap
+}
+// GetClientFromMetaMap is a convenience function used by provider code to extract *Client from the
+// meta argument passed-in by terraform
+func GetClientFromMetaMap(meta interface{}) (*Client, error) {
+	cli := meta.(map[string]interface{})[keyForGLClientMap]
+	if cli == nil {
+		return nil, fmt.Errorf("client is not initialised, make sure that vmaas block is defined in hpegl stanza")
 	}
 
-	return c, nil
+	return cli.(*Client), nil
 }
+
+// Get env configurations for VmaaS services
+func getHeaders() map[string]string {
+	token := os.Getenv("HPEGL_IAM_TOKEN")
+	header := make(map[string]string)
+	serviceURL = utils.GetServiceEndpoint()
+	if utils.GetEnvBool(constants.MockIAMKey) {
+		header["subject"] = os.Getenv(constants.CmpSubjectKey)
+		header["Authorization"] = token
+	}
+
+	return header
+}
+
 ```
 
 Note the following features of pkg/client:
@@ -186,15 +244,14 @@ Note the following features of pkg/client:
 * We use a constant keyForGLClientMap to define the key for the Client struct in the map[string]interface{}
     that is returned by NewClientMap above.  This constant is returned by ServiceName().  Note that hpegl
     will check that the keys returned by service-teams are unique when it starts-up.  It will error out
-    if it detects a repeated key.  We suggest that the service mnemonic (e.g. caas, vmaas, bmaas, etc)
+    if it detects a repeated key.  We suggest that the service mnemonic (e.g. vmaas etc)
     forms part of the key.
 
 * We've added a helper function GetClientFromMetaMap() to extract Client from map[string]interface{}.  This
     function is used in provider code
 
 * The Client struct itself is indicative of what we expect will be used by service code, assuming that
-    the service client is generated from a Swagger definition such as that for
-    [caas](https://github.com/hpe-hcss/hpecli-generated-caas-client).  Note that the IAM Token is
+    the service client is generated from a Swagger definition.  Note that the IAM Token is
     contained in the struct.  This Token is generated by the hpegl provider code and passed
     down as part of the provider.ConfigData struct
 
@@ -206,7 +263,7 @@ Note the following features of pkg/client:
 * We have added support for a .gltform file, the relevant code is in pkg/client/config.go.
   At present we are using a .gltform file to provide the IAM token and other information to the GreenLake provider
   when it is run in the context of the POC [Genesis service](https://github.com/hpe-hcss/genesis).  The use of a file
-  to deliver information to the terraform provider is a pattern that we've adopted from the stand-alone Quake terraform
+  to deliver information to the terraform provider is a pattern that we've adopted from the stand-alone Metal terraform
   provider.  It is TBD if we will persist with this method as the GreenLake provider is developed further.
 
 * We hope that service teams can use the basic structure of pkg/client, and change the following
@@ -232,15 +289,12 @@ package resources
 import (
 	"github.com/hewlettpackard/hpegl-provider-lib/pkg/registration"
 
-	resquake "github.com/quattronetworks/quake-client/pkg/terraform/registration"
-
-	rescaas "github.com/hpe-hcss/poc-caas-terraform-resources/pkg/resources"
+	resvmaas "github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/resources"
 )
 
 func SupportedServices() []registration.ServiceRegistration {
 	return []registration.ServiceRegistration{
-		rescaas.Registration{},
-		resquake.Registration{},
+		resvmaas.Registration{},
 	}
 }
 ```
@@ -276,19 +330,8 @@ hpegl_<service mnemonic>_<service resource or data-source name>
 ```
 
 To be specific at the moment we have the following names:
-* CaaS: <br>
-  hpegl_caas_cluster
-
-* BMaaS: <br>
-  hpegl_bmaas_available_resources <br>
-  hpegl_bmaas_available_images <br>
-  hpegl_bmaas_usage <br>
-  hpegl_bmaas_host <br>
-  hpegl_bmaas_network <br>
-  hpegl_bmaas_ssh_key <br>
-  hpegl_bmaas_volume <br>
-
-In the case of VMaaS the names will start with: hpegl_vmaas_
+* VmaaS: <br>
+  hpegl_vmaas_network
 
 
 ## internal
@@ -315,11 +358,8 @@ There are two basic types of [terraform test](https://www.terraform.io/docs/exte
   Acceptance tests need to be developed for each service that is added to the GreenLake provider.
   Acceptance tests can be run from this service provider repo using the plugin.ProviderFunc object
   returned from test-utils. Moreover the intention is that we will be able to copy acceptance tests
-  verbatim (or with minimal changes to test set-up) from the service repos to hpegl.  See
-  [here](https://github.com/hpe-hcss/terraform-provider-hpegl/tree/main/internal/acceptance/bmaas)
-  for acceptance tests for bmaas/Quake.  Note that these bmaas acceptance tests require a working Quake
-  portal to run against.  Also note that these bmaas acceptance tests were copied from the standalone
-  Quake provider repo. <br><br>
+  verbatim (or with minimal changes to test set-up) from the service repos to hpegl.
+  <br><br>
   Some information on writing acceptance tests can be found
   [here](https://www.terraform.io/docs/extend/testing/acceptance-tests/testcase.html)
 
@@ -336,8 +376,7 @@ $ make acceptance
 
 ### resources
 
-This repo contains POC CaaS provider code to create a CaaS cluster, along with some stub cluster-blueprint
-CRUD code.  This code is ultimately executed by the hpegl terraform provider.  Note that we are using
+This code is ultimately executed by the hpegl terraform provider.  Note that we are using
 the v2.0 SDK.  The Terraform provider writing tutorial [here](https://learn.hashicorp.com/collections/terraform/providers) has been updated
 to use the v2.0 SDK.  One of the features of the v2.0 SDK is that
 a context is passed-down to the CRUD functions which allows terraform to time-out
@@ -384,14 +423,15 @@ package testutils
 import (
 	"context"
 
+	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/client"
+	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/resources"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/plugin"
-
 	"github.com/hewlettpackard/hpegl-provider-lib/pkg/provider"
-
-	"github.com/hpe-hcss/poc-caas-terraform-resources/pkg/client"
-	"github.com/hpe-hcss/poc-caas-terraform-resources/pkg/resources"
+	"github.com/hewlettpackard/hpegl-provider-lib/pkg/token/common"
+	"github.com/hewlettpackard/hpegl-provider-lib/pkg/token/retrieve"
+	"github.com/hewlettpackard/hpegl-provider-lib/pkg/token/serviceclient"
 )
 
 func ProviderFunc() plugin.ProviderFunc {
@@ -400,15 +440,24 @@ func ProviderFunc() plugin.ProviderFunc {
 
 func providerConfigure(p *schema.Provider) schema.ConfigureContextFunc { // nolint staticcheck
 	return func(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
-		cli, err := client.InitialiseClient{}.NewClient(provider.GetConfigData(d))
+		cli, err := client.InitialiseClient{}.NewClient(d)
 		if err != nil {
 			return nil, diag.Errorf("error in creating client: %s", err)
+		}
+
+		// Initialise token handler
+		h, err := serviceclient.NewHandler(d)
+		if err != nil {
+			return nil, diag.FromErr(err)
 		}
 
 		// Returning a map[string]interface{} with the Client from pkg.client at the
 		// key specified in that repo to ensure compatibility with the hpegl terraform
 		// provider
-		return map[string]interface{}{client.InitialiseClient{}.ServiceName(): cli}, nil
+		return map[string]interface{}{
+			client.InitialiseClient{}.ServiceName(): cli,
+			common.TokenRetrieveFunctionKey:         retrieve.NewTokenRetrieveFunc(h),
+		}, nil
 	}
 }
 ```
@@ -444,12 +493,10 @@ following section at the head of the Makefile:
 ```makefile
 NAME=$(shell find cmd -name "main.go" -exec dirname {} \; | sort -u | sed -e 's|cmd/||')
 VERSION=0.0.1
-DUMMY_PROVIDER=poc-caas
+DUMMY_PROVIDER=vmaas
 LOCAL_LOCATION=~/.local/share/terraform/plugins/terraform.example.com/$(DUMMY_PROVIDER)/hpegl/$(VERSION)/linux_amd64/
 ```
 
-The value of DUMMY_PROVIDER must be changed to something specific to the service under development, we suggest
-that the value contains the service mnemonic.
 
 See below for how to use this service-specific provider in development.
 
@@ -465,10 +512,10 @@ terraform {
   required_providers {
     hpegl = {
       # We are specifying a location that is specific to the service under development
-      # In this example it is poc-caas (see "source" below).  The service-specific replacement
-      # to poc-caas must be specified in "source" below and also in the Makefile as the
+      # In this example it is vmaas (see "source" below).  The service-specific replacement
+      # to vmaas must be specified in "source" below and also in the Makefile as the
       # value of DUMMY_PROVIDER.
-      source  = "terraform.example.com/poc-caas/hpegl"
+      source  = "terraform.example.com/vmaas/hpegl"
       version = ">= 0.0.1"
     }
   }
