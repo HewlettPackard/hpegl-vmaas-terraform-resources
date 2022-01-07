@@ -260,7 +260,7 @@ func instanceGetConfig(c map[string]interface{}, isVmware bool) *models.CreateIn
 		SmbiosAssetTag: c["asset_tag"].(string),
 		VMwareFolderID: c["folder_code"].(string),
 		Template:       c["template_id"].(int),
-		CreateUser:     c["create_user"].(bool),
+		CreateUser:     strconv.FormatBool(c["create_user"].(bool)),
 	}
 	if !isVmware {
 		config.Template = 0
