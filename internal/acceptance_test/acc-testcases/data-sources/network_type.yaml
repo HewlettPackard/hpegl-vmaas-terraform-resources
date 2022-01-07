@@ -1,3 +1,2 @@
-acc:
-- config: |
-    name = "NSX-T Segment"
+  network_type: 
+    name: "NSX-T Segment"

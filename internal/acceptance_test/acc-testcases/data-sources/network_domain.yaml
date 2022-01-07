@@ -1,3 +1,2 @@
-acc:
-- config: |
-    name     = "tf_domain"
+  network_domain: 
+    name: "tf_domain"

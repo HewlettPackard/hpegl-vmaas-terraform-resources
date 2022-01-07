@@ -1,6 +1,3 @@
-acc:
-- config: |
-    name     = "E1000"
-    cloud_id = 1
-  validations:
-    tf.id: 2
+  network_interface: 
+    name: "E1000"
+    cloud_id: 1

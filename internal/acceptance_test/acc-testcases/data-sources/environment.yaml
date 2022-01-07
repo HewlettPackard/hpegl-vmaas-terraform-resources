@@ -1,3 +1,2 @@
-acc:
-- config: |
-    name     = "dev"
+  environment:
+    name: "dev"

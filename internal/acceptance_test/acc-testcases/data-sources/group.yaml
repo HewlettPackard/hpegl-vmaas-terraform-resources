@@ -1,3 +1,2 @@
-acc:
-- config: |
-    name     = "tf_group"
+  group: 
+    name: "tf_group"

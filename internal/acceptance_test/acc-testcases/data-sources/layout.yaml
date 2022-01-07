@@ -1,4 +1,3 @@
-acc:
-- config: |
-    name               = "Vmware VM"
-    instance_type_code = "vmware"
+  layout:
+    name: "Vmware VM"
+    instance_type_code: "vmware"
