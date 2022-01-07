@@ -9,6 +9,9 @@ VERSION=0.0.1
 DUMMY_PROVIDER=vmaas
 LOCAL_LOCATION=~/.local/share/terraform/plugins/terraform.example.com/$(DUMMY_PROVIDER)/hpegl/$(VERSION)/linux_amd64/
 
+# Part of accframework
+TESTCASE_DIRS=data-sources resources
+
 # Stuff that needs to be installed globally (not in vendor)
 DEPEND=
 
@@ -78,13 +81,27 @@ coverage: vendor
 	@echo "Generated $(coverage_dir)/html/main.html";
 .PHONY: coverage
 
+accframework: vendor
+	for dir in $(TESTCASE_DIRS); do \
+			touch ./internal/acceptance_test/acc-testcases/$${dir}_temp_config.yaml && touch ./internal/acceptance_test/acc-testcases/vmaas_temp_config.yaml ; \
+			echo $${dir}: >> ./internal/acceptance_test/acc-testcases/$${dir}_temp_config.yaml ; \
+			cat ./internal/acceptance_test/acc-testcases/$${dir}/* >> ./internal/acceptance_test/acc-testcases/$${dir}_temp_config.yaml ; \
+			cat ./internal/acceptance_test/acc-testcases/$${dir}_temp_config.yaml >> ./internal/acceptance_test/acc-testcases/vmaas_temp_config.yaml ; \
+	done ; \
+
+.PHONY: accframework
+
 ACC_TEST_FILE_LOCATION=github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/acceptance_test
-acceptance:
+acceptance: accframework
 	@if [ "${case}" != "" ]; then \
 		TF_ACC=true go test -run $(case) -v -timeout=2000s -cover $(ACC_TEST_FILE_LOCATION); \
 	else \
-		TF_ACC=true go test -v -timeout=2000s -cover $(ACC_TEST_FILE_LOCATION); \
-	fi
+		TF_ACC_CONFIG=vmaas_temp_config TF_ACC_CONFIG_PATH=$(shell pwd)/internal/acceptance_test/acc-testcases TF_ACC=true go test -v -timeout=2000s -cover $(ACC_TEST_FILE_LOCATION); \
+	fi ; \
+	for dir in $(TESTCASE_DIRS); do \
+			rm ./internal/acceptance_test/acc-testcases/$${dir}_temp_config.yaml ; \
+	done ; \
+	rm ./internal/acceptance_test/acc-testcases/vmaas_temp_config.yaml ; \
 
 build: vendor $(NAME)
 .PHONY: build
