@@ -1,2 +1,2 @@
-  edge_cluster:
-    name: "nsx_edge_cluster"
+edge_cluster:
+  name: "nsx_edge_cluster"

@@ -84,10 +84,8 @@ coverage: vendor
 accframework: vendor
 	for dir in $(TESTCASE_DIRS); do \
 		touch ./internal/acceptance_test/acc-$${TEST_ENV}-testcases/vmaas_temp_config.yaml ; \
-		# touch ./internal/acceptance_test/acc-$${TEST_ENV}-testcases/$${dir}_temp_config.yaml && touch ./internal/acceptance_test/acc-$${TEST_ENV}-testcases/vmaas_temp_config.yaml ; \
 		echo $${dir}: >> ./internal/acceptance_test/acc-$${TEST_ENV}-testcases/vmaas_temp_config.yaml ; \
-		cat ./internal/acceptance_test/acc-$${TEST_ENV}-testcases/$${dir}/* >> ./internal/acceptance_test/acc-$${TEST_ENV}-testcases/vmaas_temp_config.yaml ; \
-		# cat ./internal/acceptance_test/acc-$${TEST_ENV}-testcases/$${dir}_temp_config.yaml >> ./internal/acceptance_test/acc-$${TEST_ENV}-testcases/vmaas_temp_config.yaml ; \
+		sed 's/^/  /' ./internal/acceptance_test/acc-$${TEST_ENV}-testcases/$${dir}/* >> ./internal/acceptance_test/acc-$${TEST_ENV}-testcases/vmaas_temp_config.yaml ; \
 	done ; \
 
 .PHONY: accframework

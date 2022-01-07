@@ -1,2 +1,2 @@
-  network: 
-    name: "NSXT_DHCP"
+network: 
+  name: "NSXT_DHCP"

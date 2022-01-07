@@ -1,255 +1,256 @@
 data-sources:
-  cloud:
-    name: "HPE GreenLake VMaaS Cloud"
-  cloud_folder: 
-    name: ComputeFolder
-    cloud_id: 1
-  datastore: 
-    name: "GLHC-Vol10"
-    cloud_id: 1
-  edge_cluster:
-    name: "nsx_edge_cluster"
-  environment:
-    name: "dev"
-  group: 
-    name: "tf_group"
-  layout:
-    name: "Vmware VM"
-    instance_type_code: "vmware"
-  network: 
-    name: "NSXT_DHCP"
-  network_domain: 
-    name: "tf_domain"
-  network_interface: 
-    name: "E1000"
-    cloud_id: 1
-  network_pool:
-    name: "tf_pool"
-  network_proxy: 
-    name: "tf_proxy"
-  network_type: 
-    name: "NSX-T Segment"
-  plan: 
-    name: "G1-Small"
-  power_schedule: 
-    name: "TF_Weekday"
-  resource_pool:
-    name: "ComputeResourcePool"
-    cloud_id: 1
-  template: 
-    name: "vanilla-centos7-x86_64-09072020"
+    cloud:
+      name: "HPE GreenLake VMaaS Cloud"
+    cloud_folder: 
+      name: ComputeFolder
+      cloud_id: 1
+    datastore: 
+      name: "GLHC-Vol10"
+      cloud_id: 1
+    edge_cluster:
+      name: "nsx_edge_cluster"
+    environment:
+      name: "dev"
+    group: 
+      name: "tf_group"
+    layout:
+      name: "Vmware VM"
+      instance_type_code: "vmware"
+    network: 
+      name: "NSXT_DHCP"
+    network_domain: 
+      name: "tf_domain"
+    network_interface: 
+      name: "E1000"
+      cloud_id: 1
+    network_pool:
+      name: "tf_pool"
+    network_proxy: 
+      name: "tf_proxy"
+    network_type: 
+      name: "NSX-T Segment"
+    plan: 
+      name: "G1-Small"
+    power_schedule: 
+      name: "TF_Weekday"
+    resource_pool:
+      name: "ComputeResourcePool"
+      cloud_id: 1
+    template: 
+      name: "vanilla-centos7-x86_64-09072020"
 resources:
-vars:
-  instance_name: tf_acc_%rand_int
-acc:
-- config: |
-    name = "$(instance_name)"
-    cloud_id = 1
-    group_id = 2
-    layout_id = 113
-    plan_id = 407
-    instance_type_code = "vmware"
-    network {
+  vars:
+    instance_name: tf_acc_%rand_int
+  acc:
+  - config: |
+      name = "$(instance_name)"
+      cloud_id = 1
+      group_id = 2
+      layout_id = 113
+      plan_id = 407
+      instance_type_code = "vmware"
+      network {
+          id = 3
+        }
+      volume {
+          name = "root_vol"
+          datastore_id = "auto"
+          size = %rand_int{5,8}
+        }
+      config {
+        resource_pool_id = 2
+        no_agent = true
+        template_id = 504
+        folder_code = "group-v284"
+        }
+      scale = 1
+    validations:
+      tf.status: "running"
+  vars:
+    instance_name: tf_acc_clone_%rand_int
+  acc:
+  - config: |
+      source_instance_id = 11
+      name = $(instance_name)
+      network {
         id = 3
       }
-    volume {
-        name = "root_vol"
-        datastore_id = "auto"
-        size = %rand_int{5,8}
+  vars:
+    rand_name_1: tf_acc_%rand_int
+    rand_storage_1: "%rand_int{5,8}"
+  acc:
+  - config: |
+      name = "$(rand_name_1)"
+      cloud_id = 1
+      group_id = 2
+      layout_id = 113
+      plan_id = 407
+      instance_type_code = "vmware"
+      network {
+          id = 3
+        }
+      volume {
+          name = "root_vol"
+          datastore_id = "auto"
+          size = $(rand_storage_1)
+        }
+      config {
+        resource_pool_id = 2
+        no_agent = true
+        folder_code = "group-v284"
+        }
+      scale = 1
+    validations:
+      tf.status: "running"
+    expect_error: ".*template.*"
+  vars:
+      network_name: tf_acc_net_%rand_int
+  acc:
+  - config: |
+      name = "$(network_name)"
+      description  = "Network created using tf"
+      group_id     = "shared"
+      scope_id     = "88cd4dc8-0445-4b8e-b260-0f4cd361f4e1"
+      cidr         = "172.16.10.1/24"
+      gateway      = "172.16.10.1"
+      pool_id      = 7
+      scan_network = false
+      active       = true
+      config {
+         connected_gateway = "/infra/tier-1s/26cdb82e-0057-4461-ad4d-cddd61d77b1f"
       }
-    config {
-      resource_pool_id = 2
-      no_agent = true
-      template_id = 504
-      folder_code = "group-v284"
+      resource_permissions {
+        all = true
       }
-    scale = 1
-  validations:
-    tf.status: "running"
-vars:
-  instance_name: tf_acc_clone_%rand_int
-acc:
-- config: |
-    source_instance_id = 11
-    name = $(instance_name)
-    network {
-      id = 3
-    }
-vars:
-  rand_name_1: tf_acc_%rand_int
-  rand_storage_1: "%rand_int{5,8}"
-acc:
-- config: |
-    name = "$(rand_name_1)"
-    cloud_id = 1
-    group_id = 2
-    layout_id = 113
-    plan_id = 407
-    instance_type_code = "vmware"
-    network {
-        id = 3
+    validations:
+      tf.cidr = "172.16.10.1/24"
+      tf.gateway = "172.16.10.1"
+  acc:
+  - config: |
+      router_id   = 31
+      ip_address = "10.201.227.84"
+      remote_as = 65000
+      keepalive = 60
+      holddown = 180
+      router_filtering_type = "IPV4"
+      bfd_enabled = false
+      bfd_interval = 1000
+      bfd_multiple = 3
+      allow_as_in = false
+      hop_limit = 1
+      restart_mode = "HELPER_ONLY"
+    validations:
+      json.networkRouterBgpNeighbor.ipAddress="10.201.227.84"
+      json.networkRouterBgpNeighbor.remoteAs=65000
+  vars:
+    nat_name: tf_router_nat_%rand_int
+  acc:
+  - config: |
+      router_id   = 31
+      name        = "$(nat_name)"
+      enabled     = true
+      description = "NAT rule created via terraform"
+      config {
+        action   = "DNAT"
+        logging  = true
+        firewall = "MATCH_EXTERNAL_ADDRESS"
       }
-    volume {
-        name = "root_vol"
-        datastore_id = "auto"
-        size = $(rand_storage_1)
+      source_network      = "1.1.3.0/24"
+      translated_network  = "1.1.1.0/24"
+      destination_network = "1.1.2.0/24"
+      translated_ports    = 22
+      priority            = 120
+    validations:
+      json.networkRouterNAT.sourceNetwork : "1.1.3.0/24"
+  - config: |
+      router_id   = 31
+      name        = "$(nat_name)"
+      enabled     = true
+      description = "NAT rule created via terraform"
+      config {
+        action   = "DNAT"
+        logging  = true
+        firewall = "MATCH_EXTERNAL_ADDRESS"
       }
-    config {
-      resource_pool_id = 2
-      no_agent = true
-      folder_code = "group-v284"
+      source_network      = "1.1.4.0/24"
+      translated_network  = "1.1.1.0/24"
+      destination_network = "1.1.2.0/24"
+      translated_ports    = 22
+      priority            = 120
+    validations:
+      json.networkRouterNAT.sourceNetwork : "1.1.4.0/24"
+  vars:
+    route_name: tf_route_%rand_int
+  acc:
+  - config: |
+      name          = "$(route_name)"
+      router_id     = 31
+      description   = "router route created using terraform"
+      enabled       = true
+      default_route = false
+      network       = "30.0.0.0/24"
+      next_hop      = "88.88.88.91"
+      mtu           = "65535"
+      priority      = 100
+  vars:
+    tier0_name: tf_tier0_gateway_%rand_int
+  acc:
+  - config: |
+      name = "$(tier0_name)"
+      enable = true
+      group_id = "shared"
+      tier0_config {
+        bgp {
+          ecmp = true
+          enable_bgp = true
+          inter_sr_ibgp = true
+          local_as_num = 65000
+          multipath_relax = true
+          restart_mode = "HELPER_ONLY"
+          restart_time = 180
+          stale_route_time = 600
+        }
+        route_redistribution_tier0 {
+          tier0_dns_forwarder_ip = false
+          tier0_external_interface = true
+          tier0_ipsec_local_ip = false
+          tier0_loopback_interface = true
+          tier0_nat = true
+          tier0_segment = true
+          tier0_service_interface = true
+          tier0_static = true
+        }
+        route_redistribution_tier1 {
+          tier1_dns_forwarder_ip = false
+          tier1_service_interface =  true
+          tier1_ipsec_local_endpoint = false
+          tier1_lb_snat = false
+          tier1_lb_vip = false
+          tier1_nat = false
+          tier1_segment = true
+          tier1_static = false
+        }
+        fail_over = "NON_PREEMPTIVE"
+        ha_mode = "ACTIVE_STANDBY"
+        edge_cluster= "e34440bb-6277-4b86-8dfd-288e7e4cbb24"
       }
-    scale = 1
-  validations:
-    tf.status: "running"
-  expect_error: ".*template.*"
-vars:
-    network_name: tf_acc_net_%rand_int
-acc:
-- config: |
-    name = "$(network_name)"
-    description  = "Network created using tf"
-    group_id     = "shared"
-    scope_id     = "88cd4dc8-0445-4b8e-b260-0f4cd361f4e1"
-    cidr         = "172.16.10.1/24"
-    gateway      = "172.16.10.1"
-    pool_id      = 7
-    scan_network = false
-    active       = true
-    config {
-       connected_gateway = "/infra/tier-1s/26cdb82e-0057-4461-ad4d-cddd61d77b1f"
-    }
-    resource_permissions {
-      all = true
-    }
-  validations:
-    tf.cidr = "172.16.10.1/24"
-    tf.gateway = "172.16.10.1"
-acc:
-- config: |
-    router_id   = 31
-    ip_address = "10.201.227.84"
-    remote_as = 65000
-    keepalive = 60
-    holddown = 180
-    router_filtering_type = "IPV4"
-    bfd_enabled = false
-    bfd_interval = 1000
-    bfd_multiple = 3
-    allow_as_in = false
-    hop_limit = 1
-    restart_mode = "HELPER_ONLY"
-  validations:
-    json.networkRouterBgpNeighbor.ipAddress="10.201.227.84"
-    json.networkRouterBgpNeighbor.remoteAs=65000vars:
-  nat_name: tf_router_nat_%rand_int
-acc:
-- config: |
-    router_id   = 31
-    name        = "$(nat_name)"
-    enabled     = true
-    description = "NAT rule created via terraform"
-    config {
-      action   = "DNAT"
-      logging  = true
-      firewall = "MATCH_EXTERNAL_ADDRESS"
-    }
-    source_network      = "1.1.3.0/24"
-    translated_network  = "1.1.1.0/24"
-    destination_network = "1.1.2.0/24"
-    translated_ports    = 22
-    priority            = 120
-  validations:
-    json.networkRouterNAT.sourceNetwork : "1.1.3.0/24"
-- config: |
-    router_id   = 31
-    name        = "$(nat_name)"
-    enabled     = true
-    description = "NAT rule created via terraform"
-    config {
-      action   = "DNAT"
-      logging  = true
-      firewall = "MATCH_EXTERNAL_ADDRESS"
-    }
-    source_network      = "1.1.4.0/24"
-    translated_network  = "1.1.1.0/24"
-    destination_network = "1.1.2.0/24"
-    translated_ports    = 22
-    priority            = 120
-  validations:
-    json.networkRouterNAT.sourceNetwork : "1.1.4.0/24"
-vars:
-  route_name: tf_route_%rand_int
-acc:
-- config: |
-    name          = "$(route_name)"
-    router_id     = 31
-    description   = "router route created using terraform"
-    enabled       = true
-    default_route = false
-    network       = "30.0.0.0/24"
-    next_hop      = "88.88.88.91"
-    mtu           = "65535"
-    priority      = 100
-vars:
-  tier0_name: tf_tier0_gateway_%rand_int
-acc:
-- config: |
-    name = "$(tier0_name)"
-    enable = true
-    group_id = "shared"
-    tier0_config {
-      bgp {
-        ecmp = true
-        enable_bgp = true
-        inter_sr_ibgp = true
-        local_as_num = 65000
-        multipath_relax = true
-        restart_mode = "HELPER_ONLY"
-        restart_time = 180
-        stale_route_time = 600
+  vars:
+    name: "tf_tier1_gateway_%rand_int"
+  acc:
+  - config: |
+      name = "$(name)"
+      enable = true
+      group_id = "shared"
+      tier1_config {
+        edge_cluster= "e34440bb-6277-4b86-8dfd-288e7e4cbb24"
+        fail_over = "NON_PREEMPTIVE"
+        route_advertisement {
+          tier1_connected = true
+          tier1_static_routes = false
+          tier1_dns_forwarder_ip = true
+          tier1_lb_vip = false
+          tier1_nat = false
+          tier1_lb_snat = false
+          tier1_ipsec_local_endpoint = true
+        }
       }
-      route_redistribution_tier0 {
-        tier0_dns_forwarder_ip = false
-        tier0_external_interface = true
-        tier0_ipsec_local_ip = false
-        tier0_loopback_interface = true
-        tier0_nat = true
-        tier0_segment = true
-        tier0_service_interface = true
-        tier0_static = true
-      }
-      route_redistribution_tier1 {
-        tier1_dns_forwarder_ip = false
-        tier1_service_interface =  true
-        tier1_ipsec_local_endpoint = false
-        tier1_lb_snat = false
-        tier1_lb_vip = false
-        tier1_nat = false
-        tier1_segment = true
-        tier1_static = false
-      }
-      fail_over = "NON_PREEMPTIVE"
-      ha_mode = "ACTIVE_STANDBY"
-      edge_cluster= "e34440bb-6277-4b86-8dfd-288e7e4cbb24"
-    }
-vars:
-  name: "tf_tier1_gateway_%rand_int"
-acc:
-- config: |
-    name = "$(name)"
-    enable = true
-    group_id = "shared"
-    tier1_config {
-      edge_cluster= "e34440bb-6277-4b86-8dfd-288e7e4cbb24"
-      fail_over = "NON_PREEMPTIVE"
-      route_advertisement {
-        tier1_connected = true
-        tier1_static_routes = false
-        tier1_dns_forwarder_ip = true
-        tier1_lb_vip = false
-        tier1_nat = false
-        tier1_lb_snat = false
-        tier1_ipsec_local_endpoint = true
-      }
-    }

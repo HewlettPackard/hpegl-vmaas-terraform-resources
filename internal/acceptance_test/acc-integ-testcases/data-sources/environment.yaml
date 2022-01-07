@@ -1,2 +1,2 @@
-  environment:
-    name: "dev"
+environment:
+  name: "dev"

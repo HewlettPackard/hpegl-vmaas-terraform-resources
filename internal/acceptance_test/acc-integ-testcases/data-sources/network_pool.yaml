@@ -1,2 +1,2 @@
-  network_pool:
-    name: "tf_pool"
+network_pool:
+  name: "tf_pool"

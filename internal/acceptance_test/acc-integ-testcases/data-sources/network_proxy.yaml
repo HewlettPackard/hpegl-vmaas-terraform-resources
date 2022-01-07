@@ -1,2 +1,2 @@
-  network_proxy: 
-    name: "tf_proxy"
+network_proxy: 
+  name: "tf_proxy"
