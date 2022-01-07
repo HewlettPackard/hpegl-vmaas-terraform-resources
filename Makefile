@@ -97,7 +97,7 @@ acceptance: accframework
 	else \
 		TF_ACC_CONFIG=vmaas_temp_config TF_ACC_CONFIG_PATH=$(shell pwd)/internal/acceptance_test/acc-$${TEST_ENV}-testcases TF_ACC=true go test -v -timeout=2000s -cover $(ACC_TEST_FILE_LOCATION); \
 	fi ; \
-	# rm ./internal/acceptance_test/acc-$${TEST_ENV}-testcases/vmaas_temp_config.yaml ; \
+	rm ./internal/acceptance_test/acc-$${TEST_ENV}-testcases/vmaas_temp_config.yaml ; \
 
 build: vendor $(NAME)
 .PHONY: build
