@@ -1,27 +1,28 @@
 vars:
   rand_name_1: tf_acc_%rand_int
   rand_storage_1: "%rand_int{5,8}"
-instance-template_err:
-  name: "$(rand_name_1)"
-  cloud_id: 1
-  group_id: 2
-  layout_id: 113
-  plan_id: 407
-  instance_type_code: "vmware"
-  network: {
-      id: 3
-    }
-  volume: {
-      name: "root_vol",
-      datastore_id: "auto",
-      size: $(rand_storage_1)
-    }
-  config: {
-    resource_pool_id: 2,
-    no_agent: true,
-    folder_code: "group-v284"
-    }
-  scale: 1
-validations:
-  tf.status: "running"
-expect_error: ".*template.*"
+acc:
+- config: |
+    name = "$(rand_name_1)"
+    cloud_id = 1
+    group_id = 2
+    layout_id = 113
+    plan_id = 407
+    instance_type_code = "vmware"
+    network {
+        id = 3
+      }
+    volume {
+        name = "root_vol"
+        datastore_id = "auto"
+        size = $(rand_storage_1)
+      }
+    config {
+      resource_pool_id = 2
+      no_agent = true
+      folder_code = "group-v284"
+      }
+    scale = 1
+  validations:
+    tf.status: "running"
+  expect_error: ".*template.*"

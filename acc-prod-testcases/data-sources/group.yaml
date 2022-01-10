@@ -1,3 +1,2 @@
-acc:
-- config: |
-    name     = "default"
+group:
+  name: "default"

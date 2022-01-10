@@ -1,4 +1,3 @@
-acc:
-- config: |
-    name = "Compute-Cluster-Vol0"
-    cloud_id = 3
+datastore:
+  name: "Compute-Cluster-Vol0"
+  cloud_id: 3

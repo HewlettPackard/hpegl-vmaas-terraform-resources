@@ -1,3 +1,2 @@
-acc:
-- config: |
-    name = "HPE GreenLake VMaaS Cloud"
+cloud:
+  name: "HPE GreenLake VMaaS Cloud"

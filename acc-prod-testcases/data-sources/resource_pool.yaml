@@ -1,4 +1,3 @@
-acc:
-- config: |
-    name = "ComputeResourcePool"
-    cloud_id = 3
+resource_pool:
+  name: "ComputeResourcePool"
+  cloud_id: 3

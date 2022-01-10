@@ -1,3 +1,6 @@
-cloud_folder: 
-  name: ComputeFolder
-  cloud_id: 1
+acc:
+- config: |
+    name     = "ComputeFolder"
+    cloud_id = 1
+  validations:
+    json.folder.id: 1

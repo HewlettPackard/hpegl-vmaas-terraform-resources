@@ -1,3 +1,2 @@
-acc:
-- config: |
-    name = "Blue-Net"
+network:
+  name: "Blue-Net"

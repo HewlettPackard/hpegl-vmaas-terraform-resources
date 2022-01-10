@@ -1,2 +1,3 @@
-power_schedule: 
-  name: "TF_Weekday"
+acc:
+- config: |
+    name = "TF_Weekday"

@@ -1,2 +1,3 @@
-edge_cluster:
-  name: "nsx_edge_cluster"
+acc:
+- config: |
+    name = "nsx_edge_cluster"

@@ -1,3 +1,2 @@
-acc:
-- config: |
-    name = "DEMO_WEEKDAY"
+power_schedule:
+  name: "DEMO_WEEKDAY"
