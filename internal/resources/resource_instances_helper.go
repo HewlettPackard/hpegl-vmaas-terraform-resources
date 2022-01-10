@@ -220,6 +220,7 @@ func getInstanceDefaultSchema(isClone bool) *schema.Resource {
 							Type:        schema.TypeBool,
 							Optional:    true,
 							Description: "Create user",
+							ForceNew:    true,
 						},
 					},
 				},
