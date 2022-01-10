@@ -1,0 +1,8 @@
+vars:
+  instance_name: tf_acc_clone_%rand_int
+instance_clone:
+  source_instance_id: 11
+  name: $(instance_name)
+  network: {
+    id = 3
+  }

@@ -1,0 +1,21 @@
+vars:
+    network_name: tf_acc_net_%rand_int
+network:
+  name: "$(network_name)"
+  description : "Network created using tf"
+  group_id    : "shared"
+  scope_id    : "88cd4dc8-0445-4b8e-b260-0f4cd361f4e1"
+  cidr        : "172.16.10.1/24"
+  gateway     : "172.16.10.1"
+  pool_id     : 7
+  scan_network: false
+  active      : true
+  config: {
+      connected_gateway: "/infra/tier-1s/26cdb82e-0057-4461-ad4d-cddd61d77b1f"
+  }
+  resource_permissions: {
+    all: true
+  }
+validations:
+  tf.cidr: "172.16.10.1/24"
+  tf.gateway: "172.16.10.1"
