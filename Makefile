@@ -83,9 +83,9 @@ coverage: vendor
 
 accframework: vendor
 	for dir in $(TESTCASE_DIRS); do \
-		touch ./internal/acceptance_test/acc-$${TEST_ENV}-testcases/vmaas_temp_config.yaml ; \
-		echo $${dir}: >> ./internal/acceptance_test/acc-$${TEST_ENV}-testcases/vmaas_temp_config.yaml ; \
-		sed 's/^/  /' ./internal/acceptance_test/acc-$${TEST_ENV}-testcases/$${dir}/* >> ./internal/acceptance_test/acc-$${TEST_ENV}-testcases/vmaas_temp_config.yaml ; \
+		touch ./acc-$${TEST_ENV}-testcases/vmaas_temp_config.yaml ; \
+		echo $${dir}: >> ./acc-$${TEST_ENV}-testcases/vmaas_temp_config.yaml ; \
+		sed 's/^/  /' ./acc-$${TEST_ENV}-testcases/$${dir}/* >> ./acc-$${TEST_ENV}-testcases/vmaas_temp_config.yaml ; \
 	done ; \
 
 .PHONY: accframework
@@ -95,9 +95,9 @@ acceptance: accframework
 	@if [ "${case}" != "" ]; then \
 		TF_ACC=true go test -run $(case) -v -timeout=2000s -cover $(ACC_TEST_FILE_LOCATION); \
 	else \
-		TF_ACC_CONFIG=vmaas_temp_config TF_ACC_CONFIG_PATH=$(shell pwd)/internal/acceptance_test/acc-$${TEST_ENV}-testcases TF_ACC=true go test -v -timeout=2000s -cover $(ACC_TEST_FILE_LOCATION); \
+		TF_ACC_CONFIG=vmaas_temp_config TF_ACC_CONFIG_PATH=$(shell pwd)/acc-$${TEST_ENV}-testcases TF_ACC=true go test -v -timeout=2000s -cover $(ACC_TEST_FILE_LOCATION); \
 	fi ; \
-	rm ./internal/acceptance_test/acc-$${TEST_ENV}-testcases/vmaas_temp_config.yaml ; \
+	rm ./acc-$${TEST_ENV}-testcases/vmaas_temp_config.yaml ; \
 
 build: vendor $(NAME)
 .PHONY: build
