@@ -8,7 +8,7 @@ require (
 	github.com/hashicorp/go-cty v1.4.1-0.20200414143053-d3edf31b6320
 	github.com/hashicorp/terraform-plugin-docs v0.5.1
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.10.1
-	github.com/hewlettpackard/hpegl-provider-lib v0.0.10
+	github.com/hewlettpackard/hpegl-provider-lib v0.0.11
 	github.com/spf13/viper v1.10.1
 	github.com/tidwall/gjson v1.12.1
 	github.com/tshihad/tftags v0.0.9
@@ -87,7 +87,7 @@ require (
 	github.com/zclconf/go-cty v1.10.0 // indirect
 	go.opencensus.io v0.23.0 // indirect
 	golang.org/x/crypto v0.0.0-20210817164053-32db794688a5 // indirect
-	golang.org/x/mod v0.4.2 // indirect
+	golang.org/x/mod v0.5.0 // indirect
 	golang.org/x/net v0.0.0-20210813160813-60bc85c4be6d // indirect
 	golang.org/x/oauth2 v0.0.0-20211104180415-d3ed0bb246c8 // indirect
 	golang.org/x/sys v0.0.0-20211210111614-af8b64212486 // indirect
