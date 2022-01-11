@@ -216,6 +216,12 @@ func getInstanceDefaultSchema(isClone bool) *schema.Resource {
 							Optional:    true,
 							Description: "Asset tag",
 						},
+						"create_user": {
+							Type:        schema.TypeBool,
+							Optional:    true,
+							Description: "Create user",
+							ForceNew:    true,
+						},
 					},
 				},
 			},

@@ -52,6 +52,8 @@ dmitri.shuralyov.com/gpu/mtl v0.0.0-20190408044501-666a987793e9/go.mod h1:H6x//7
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
 github.com/DataDog/datadog-go v3.2.0+incompatible/go.mod h1:LButxg5PwREeZtORoXG3tL4fMGNddJ+vMq1mwgfaqoQ=
+github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk v0.1.0-beta6 h1:2oGmXovMOkYkMR4w9mNcWuenk+vNXNwCaG3O/k8+9pk=
+github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk v0.1.0-beta6/go.mod h1:QqQ2OwCQ1qmsMPscU2Y5MeLJP3Q5BPeaTE13s6hu7I8=
 github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk v0.1.1-0.20211210061100-0d6f0303264c h1:NerBcU4IIXERaTKkWFPmTl82ExfkaPr/gfJ70OLlWVg=
 github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk v0.1.1-0.20211210061100-0d6f0303264c/go.mod h1:QqQ2OwCQ1qmsMPscU2Y5MeLJP3Q5BPeaTE13s6hu7I8=
 github.com/Masterminds/goutils v1.1.0 h1:zukEsf/1JZwCMgHiK3GZftabmxiCw4apj3a28RPBiVg=
