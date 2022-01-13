@@ -55,6 +55,10 @@ func (i *Instance) DiffValidate() error {
 		return err
 	}
 
+	if err := i.instanceValidateSnapshotDeletion(); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -203,4 +207,18 @@ func (i *Instance) instanceValidatePowerTransition() error {
 	}
 
 	return fmt.Errorf("power operation not allowed from %s state to %s state", oldPowerStr, newPowerStr)
+}
+
+func (i *Instance) instanceValidateSnapshotDeletion() error {
+	if !i.diff.HasChange("snapshot") {
+		return nil
+	}
+	// if there is a change in snapshot, then get the new value
+	_, newSnapshotValue := i.diff.GetChange("snapshot")
+	newMap := utils.GetlistMap(newSnapshotValue)
+	// if an attempt to delete the snapshot, then return error
+	if len(newMap) <= 0 {
+		return fmt.Errorf("Deleting snapshot is not supported currently.")
+	}
+	return nil
 }

@@ -151,6 +151,9 @@ func updateInstance(ctx context.Context, sharedClient instanceSharedClient, d *u
 
 	if d.HasChanged("snapshot") {
 		snapshot := d.GetListMap("snapshot")
+		if len(snapshot) <= 0 {
+			return fmt.Errorf("Deleting snapshot is not supported currently.")
+		}
 		err := createInstanceSnapshot(ctx, sharedClient, getInstance.Instance.ID, models.SnapshotBody{
 			Snapshot: &models.SnapshotBodySnapshot{
 				Name:        snapshot[0]["name"].(string),
