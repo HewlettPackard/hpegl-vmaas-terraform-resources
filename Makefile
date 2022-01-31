@@ -83,7 +83,7 @@ acceptance:
 	@if [ "${case}" != "" ]; then \
 		TF_ACC=true go test -run $(case) -v -timeout=2000s -cover $(ACC_TEST_FILE_LOCATION); \
 	else \
-		TF_ACC=true go test -v -timeout=2000s -cover $(ACC_TEST_FILE_LOCATION); \
+		TF_ACC=true go test -v -timeout=9000s -cover $(ACC_TEST_FILE_LOCATION); \
 	fi
 
 build: vendor $(NAME)
