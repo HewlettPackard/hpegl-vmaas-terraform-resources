@@ -65,7 +65,7 @@ func getAPIClient() (*api_client.APIClient, api_client.Configuration) {
 	})
 
 	if meta_err != nil {
-		log.Printf("[WARN] Error returned: %s", meta_err)
+		log.Printf("[WARN] Error: %s", meta_err)
 	}
 
 	return apiClient, cfg

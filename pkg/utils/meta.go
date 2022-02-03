@@ -29,6 +29,6 @@ func SetMeta(apiClient *client.APIClient, r *schema.ResourceData) {
 	})
 
 	if meta_err != nil {
-		log.Printf("[ERR] Error returned: %s", meta_err)
+		log.Printf("[WARN] Error: %s", meta_err)
 	}
 }
