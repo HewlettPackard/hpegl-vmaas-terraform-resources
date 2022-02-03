@@ -52,7 +52,10 @@ func (c *networkInterface) Read(ctx context.Context, d *utils.Data, meta interfa
 
 	for _, n := range networkInterface.Data.NetworkTypes {
 		if n.Name == name {
-			d.Set("code", n.Code)
+			err = d.Set("code", n.Code)
+			if err != nil {
+				return err
+			}
 			d.SetID(n.ID)
 
 			return d.Error()

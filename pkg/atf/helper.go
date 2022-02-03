@@ -87,7 +87,10 @@ func toInt(str string) int {
 func newRand() *rand.Rand {
 	s := myCaller()
 	m := md5.New()
-	m.Write([]byte(s))
+	_, err := m.Write([]byte(s))
+	if err != nil {
+		panic(err)
+	}
 	sourceStr := m.Sum(nil)
 	var sourceInt int64
 	for _, i := range sourceStr {

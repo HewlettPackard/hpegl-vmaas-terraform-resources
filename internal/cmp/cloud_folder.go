@@ -38,7 +38,10 @@ func (f *cloudFolder) Read(ctx context.Context, d *utils.Data, meta interface{})
 
 	for _, cf := range folders.Folders {
 		if cf.Name == name {
-			d.Set("code", cf.ExternalID)
+			err = d.Set("code", cf.ExternalID)
+			if err != nil {
+				return err
+			}
 			d.SetID(cf.ID)
 
 			return nil

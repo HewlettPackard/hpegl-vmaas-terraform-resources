@@ -41,8 +41,9 @@ func (r *router) Create(ctx context.Context, d *utils.Data, meta interface{}) er
 		return err
 	}
 	// align createReq and fill json related fields
-	r.routerAlignRouterRequest(ctx, meta, &createReq)
-
+	if err := r.routerAlignRouterRequest(ctx, meta, &createReq); err != nil {
+		return err
+	}
 	routerResp, err := r.rClient.CreateRouter(ctx, createReq)
 	if err != nil {
 		return err
@@ -60,9 +61,12 @@ func (r *router) Create(ctx context.Context, d *utils.Data, meta interface{}) er
 			return response.(models.GetSpecificRouterResp).NetworkRouter.Status == "ok", nil
 		},
 	}
-	retry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
+	_, err = retry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
 		return r.rClient.GetSpecificRouter(ctx, routerResp.ID)
 	})
+	if err != nil {
+		return err
+	}
 
 	return tftags.Set(d, createReq.NetworkRouter)
 }
@@ -73,7 +77,9 @@ func (r *router) Update(ctx context.Context, d *utils.Data, meta interface{}) er
 		return err
 	}
 	// align createReq and fill json related fields
-	r.routerAlignRouterRequest(ctx, meta, &createReq)
+	if err := r.routerAlignRouterRequest(ctx, meta, &createReq); err != nil {
+		return err
+	}
 
 	// HaMode cannot be updated, setting it to empty so that it is ignored in the API Payload.
 	createReq.NetworkRouter.Config.HaMode = ""
