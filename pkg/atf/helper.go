@@ -4,6 +4,7 @@ import (
 	"crypto/md5"
 	"encoding/json"
 	"fmt"
+	"log"
 	"math/rand"
 	"runtime"
 	"strconv"
@@ -89,7 +90,7 @@ func newRand() *rand.Rand {
 	m := md5.New()
 	_, err := m.Write([]byte(s))
 	if err != nil {
-		panic(err)
+		log.Printf("[WARN]: Error while writing to Hash object %s", err)
 	}
 	sourceStr := m.Sum(nil)
 	var sourceInt int64

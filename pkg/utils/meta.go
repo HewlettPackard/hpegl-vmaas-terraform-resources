@@ -11,7 +11,7 @@ import (
 )
 
 func SetMeta(apiClient *client.APIClient, r *schema.ResourceData) {
-	meta_err := apiClient.SetMeta(nil, func(ctx *context.Context, meta interface{}) {
+	err := apiClient.SetMeta(nil, func(ctx *context.Context, meta interface{}) {
 		// Initialise token handler
 		h, err := serviceclient.NewHandler(r)
 		if err != nil {
@@ -28,7 +28,7 @@ func SetMeta(apiClient *client.APIClient, r *schema.ResourceData) {
 		}
 	})
 
-	if meta_err != nil {
-		log.Printf("[WARN] Error: %s", meta_err)
+	if err != nil {
+		log.Printf("[WARN] Error: %s", err)
 	}
 }
