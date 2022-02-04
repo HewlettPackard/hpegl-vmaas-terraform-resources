@@ -4,7 +4,9 @@ package cmp
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"log"
 
 	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
 	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/models"
@@ -44,6 +46,8 @@ func (r *router) Create(ctx context.Context, d *utils.Data, meta interface{}) er
 	if err := r.routerAlignRouterRequest(ctx, meta, &createReq); err != nil {
 		return err
 	}
+	val, _ := json.Marshal(&createReq)
+	log.Printf("Router value: %s", string(val))
 	routerResp, err := r.rClient.CreateRouter(ctx, createReq)
 	if err != nil {
 		return err
@@ -142,7 +146,7 @@ func (r *router) routerAlignRouterRequest(ctx context.Context, meta interface{},
 		routerReq.NetworkRouter.Config.HaMode = routerReq.NetworkRouter.TfTier0Config.TfHaMode
 		routerReq.NetworkRouter.Config.FailOver = routerReq.NetworkRouter.TfTier0Config.TfFailOver
 		routerReq.NetworkRouter.Config.EdgeCluster = routerReq.NetworkRouter.TfTier0Config.TfEdgeCluster
-		routerReq.NetworkRouter.EnableBGP = routerReq.NetworkRouter.TfTier0Config.Bgp.TfEnableBgp
+		routerReq.NetworkRouter.EnableBGP = routerReq.NetworkRouter.TfTier0Config.TfBGP.TfEnableBgp
 		queryParam[nameKey] = tier0GatewayType
 	} else {
 		routerReq.NetworkRouter.Config.CreateRouterTier0Config.RouteRedistributionTier1.RouteAdvertisement =

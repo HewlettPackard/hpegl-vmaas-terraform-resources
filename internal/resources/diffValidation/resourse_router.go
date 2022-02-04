@@ -5,6 +5,7 @@ package diffvalidation
 import (
 	"fmt"
 
+	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
@@ -52,11 +53,18 @@ func (r *Router) validateTier0Config() error {
 
 	//BGP graceful restart timers cannot be updated when BGP config is enabled
 	bgpEnabledPath := "tier0_config.0.bgp.0.enable_bgp"
-	if r.diff.HasChange(bgpEnabledPath) || r.diff.HasChange("tier0_config.0.bgp.0.restart_time") || r.diff.HasChange("tier0_config.0.bgp.0.stale_route_time") {
+	if r.diff.HasChange(bgpEnabledPath) || (r.diff.HasChange("tier0_config.0.bgp.0.restart_time") || r.diff.HasChange("tier0_config.0.bgp.0.stale_route_time")) {
 		action := r.diff.Get(bgpEnabledPath)
 		if action.(bool) {
-			if r.diff.HasChange("tier0_config.0.bgp.0.restart_time") || r.diff.HasChange("tier0_config.0.bgp.0.stale_route_time") {
+			oldRestartTimer, newRestartTimer := r.diff.GetChange("tier0_config.0.bgp.0.restart_time")
+			oldStaleTimer, newStaleTimer := r.diff.GetChange("tier0_config.0.bgp.0.stale_route_time")
+			// During the creation of the Router
+			if (r.diff.HasChange("tier0_config.0.bgp.0.restart_time") && utils.IsEmpty(oldRestartTimer) && newRestartTimer.(int) != utils.DefaultRestartTimer) || (r.diff.HasChange("tier0_config.0.bgp.0.stale_route_time") && utils.IsEmpty(oldStaleTimer) && newStaleTimer.(int) != utils.DefaultStaleTimer) {
 				return fmt.Errorf("BGP graceful restart timers cannot be updated when BGP config is enabled")
+				// While updating the Router
+			} else if (r.diff.HasChange("tier0_config.0.bgp.0.restart_time") && !utils.IsEmpty(oldRestartTimer)) || (r.diff.HasChange("tier0_config.0.bgp.0.stale_route_time") && !utils.IsEmpty(oldStaleTimer)) {
+				return fmt.Errorf("BGP graceful restart timers cannot be updated when BGP config is enabled")
+				// While updating the Router
 			}
 		}
 	}

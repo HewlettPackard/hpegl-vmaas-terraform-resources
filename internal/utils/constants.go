@@ -34,4 +34,7 @@ const (
 	Deleting = "deleting"
 	Deleted  = "deleted"
 	Failed   = "failed"
+	// Router Constants
+	DefaultRestartTimer = 180
+	DefaultStaleTimer   = 600
 )
