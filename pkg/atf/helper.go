@@ -4,6 +4,7 @@ import (
 	"crypto/md5"
 	"encoding/json"
 	"fmt"
+	"log"
 	"math/rand"
 	"runtime"
 	"strconv"
@@ -87,7 +88,10 @@ func toInt(str string) int {
 func newRand() *rand.Rand {
 	s := myCaller()
 	m := md5.New()
-	m.Write([]byte(s))
+	_, err := m.Write([]byte(s))
+	if err != nil {
+		log.Printf("[WARN]: Error while writing to Hash object %s", err)
+	}
 	sourceStr := m.Sum(nil)
 	var sourceInt int64
 	for _, i := range sourceStr {

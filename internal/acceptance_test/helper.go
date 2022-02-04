@@ -33,7 +33,7 @@ func getAPIClient() (*api_client.APIClient, api_client.Configuration) {
 	}
 
 	apiClient := api_client.NewAPIClient(&cfg)
-	apiClient.SetMeta(nil, func(ctx *context.Context, meta interface{}) {
+	err := apiClient.SetMeta(nil, func(ctx *context.Context, meta interface{}) {
 		d := &utils.ResourceData{
 			Data: map[string]interface{}{
 				"iam_service_url":           os.Getenv("HPEGL_IAM_SERVICE_URL"),
@@ -63,6 +63,10 @@ func getAPIClient() (*api_client.APIClient, api_client.Configuration) {
 			*ctx = context.WithValue(*ctx, api_client.ContextAccessToken, token)
 		}
 	})
+
+	if err != nil {
+		log.Printf("[WARN] Error: %s", err)
+	}
 
 	return apiClient, cfg
 }

@@ -70,7 +70,10 @@ func readInstance(ctx context.Context, sharedClient instanceSharedClient, d *uti
 	})
 
 	if isClone {
-		d.Set("layout_id", instance.Instance.Layout.ID)
+		err = d.Set("layout_id", instance.Instance.Layout.ID)
+		if err != nil {
+			return err
+		}
 	}
 
 	tfInstance.Network, err = instanceGetNetworkModel(tfInstance.Network, serverRetry)
@@ -83,7 +86,10 @@ func readInstance(ctx context.Context, sharedClient instanceSharedClient, d *uti
 	tfInstance.History = instanceGetHistoryModel(historyRetry)
 	tfInstance.Containers = instance.Instance.ContainerDetails
 
-	tftags.Set(d, tfInstance)
+	err = tftags.Set(d, tfInstance)
+	if err != nil {
+		return err
+	}
 
 	d.SetID(instance.Instance.ID)
 
@@ -542,7 +548,10 @@ func instanceSetServerID(ctx context.Context, d *utils.Data, sharedClient instan
 	if len(servers.Server) != 1 {
 		return fmt.Errorf(errExactMatch, "server")
 	}
-	d.Set("server_id", servers.Server[0].ID)
+	err = d.Set("server_id", servers.Server[0].ID)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

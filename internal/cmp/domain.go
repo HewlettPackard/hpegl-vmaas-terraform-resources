@@ -39,7 +39,10 @@ func (n *domain) Read(ctx context.Context, d *utils.Data, meta interface{}) erro
 		return errors.New("error coudn't find exact domain, please check the name")
 	}
 
-	tftags.Set(d, domains.NetworkDomains[0])
+	err = tftags.Set(d, domains.NetworkDomains[0])
+	if err != nil {
+		return err
+	}
 
 	// post check
 	return d.Error()
