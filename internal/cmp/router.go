@@ -4,9 +4,7 @@ package cmp
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
-	"log"
 
 	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
 	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/models"
@@ -46,8 +44,6 @@ func (r *router) Create(ctx context.Context, d *utils.Data, meta interface{}) er
 	if err := r.routerAlignRouterRequest(ctx, meta, &createReq); err != nil {
 		return err
 	}
-	val, _ := json.Marshal(&createReq)
-	log.Printf("Router value: %s", string(val))
 	routerResp, err := r.rClient.CreateRouter(ctx, createReq)
 	if err != nil {
 		return err
