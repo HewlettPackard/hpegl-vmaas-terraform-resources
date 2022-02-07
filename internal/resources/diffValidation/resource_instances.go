@@ -4,14 +4,11 @@ package diffvalidation
 
 import (
 	"fmt"
-	"reflect"
 	"strings"
 
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/utils"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
-
-var errPrimaryNetworkUpdation = fmt.Errorf("primary network updation/deletion is not supported")
 
 type Instance struct {
 	diff *schema.ResourceDiff
@@ -51,40 +48,8 @@ func (i *Instance) DiffValidate() error {
 		return err
 	}
 
-	if err := i.validateIsPrimaryNetworkChanged(); err != nil {
-		return err
-	}
-
 	if err := i.instanceValidateSnapshotDeletion(); err != nil {
 		return err
-	}
-
-	return nil
-}
-
-func (i *Instance) validateIsPrimaryNetworkChanged() error {
-	if i.diff.HasChange("network") {
-		o, n := i.diff.GetChange("network")
-		oldMap := utils.GetlistMap(o)
-		newMap := utils.GetlistMap(n)
-
-		// skip upon create operation
-		if len(oldMap) == 0 {
-			return nil
-		}
-		// check whether primary network has been changed?
-		for i := range oldMap {
-			if oldMap[i]["is_primary"].(bool) {
-				if len(newMap) < i {
-					return errPrimaryNetworkUpdation
-				}
-				if !reflect.DeepEqual(newMap[i], oldMap[i]) {
-					return errPrimaryNetworkUpdation
-				}
-
-				break
-			}
-		}
 	}
 
 	return nil
@@ -218,7 +183,7 @@ func (i *Instance) instanceValidateSnapshotDeletion() error {
 	newMap := utils.GetlistMap(newSnapshotValue)
 	// if an attempt to delete the snapshot, then return error
 	if len(newMap) <= 0 {
-		return fmt.Errorf("Deleting snapshot is not supported currently.")
+		return fmt.Errorf("deleting snapshot is not supported currently")
 	}
 	return nil
 }
