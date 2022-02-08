@@ -52,17 +52,16 @@ func (r *Router) validateTier0Config() error {
 	}
 
 	//BGP graceful restart timers cannot be updated when BGP config is enabled
-	bgpEnabledPath := "tier0_config.0.bgp.0.enable_bgp"
-	if r.diff.HasChange(bgpEnabledPath) || (r.diff.HasChange("tier0_config.0.bgp.0.restart_time") || r.diff.HasChange("tier0_config.0.bgp.0.stale_route_time")) {
-		action := r.diff.Get(bgpEnabledPath)
+	if r.diff.HasChange(utils.BgpEnabledPath) || (r.diff.HasChange(utils.BgpRestartTimerPath) || r.diff.HasChange(utils.BgpStaleTimerPath)) {
+		action := r.diff.Get(utils.BgpEnabledPath)
 		if action.(bool) {
-			oldRestartTimer, newRestartTimer := r.diff.GetChange("tier0_config.0.bgp.0.restart_time")
-			oldStaleTimer, newStaleTimer := r.diff.GetChange("tier0_config.0.bgp.0.stale_route_time")
+			currRestartTimer, newRestartTimer := r.diff.GetChange(utils.BgpRestartTimerPath)
+			currStaleTimer, newStaleTimer := r.diff.GetChange(utils.BgpStaleTimerPath)
 			// During the creation of the Router
-			if (r.diff.HasChange("tier0_config.0.bgp.0.restart_time") && utils.IsEmpty(oldRestartTimer) && newRestartTimer.(int) != utils.DefaultRestartTimer) || (r.diff.HasChange("tier0_config.0.bgp.0.stale_route_time") && utils.IsEmpty(oldStaleTimer) && newStaleTimer.(int) != utils.DefaultStaleTimer) {
+			if (r.diff.HasChange(utils.BgpRestartTimerPath) && utils.IsEmpty(currRestartTimer) && newRestartTimer.(int) != utils.DefaultRestartTimer) || (r.diff.HasChange(utils.BgpStaleTimerPath) && utils.IsEmpty(currStaleTimer) && newStaleTimer.(int) != utils.DefaultStaleTimer) {
 				return fmt.Errorf("BGP graceful restart timers cannot be updated when BGP config is enabled")
 				// While updating the Router
-			} else if (r.diff.HasChange("tier0_config.0.bgp.0.restart_time") && !utils.IsEmpty(oldRestartTimer)) || (r.diff.HasChange("tier0_config.0.bgp.0.stale_route_time") && !utils.IsEmpty(oldStaleTimer)) {
+			} else if (r.diff.HasChange(utils.BgpRestartTimerPath) && !utils.IsEmpty(currRestartTimer)) || (r.diff.HasChange(utils.BgpStaleTimerPath) && !utils.IsEmpty(currStaleTimer)) {
 				return fmt.Errorf("BGP graceful restart timers cannot be updated when BGP config is enabled")
 				// While updating the Router
 			}

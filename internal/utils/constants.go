@@ -35,6 +35,9 @@ const (
 	Deleted  = "deleted"
 	Failed   = "failed"
 	// Router Constants
+	BgpEnabledPath      = "tier0_config.0.bgp.0.enable_bgp"
+	BgpRestartTimerPath = "tier0_config.0.bgp.0.restart_time"
+	BgpStaleTimerPath   = "tier0_config.0.bgp.0.stale_route_time"
 	DefaultRestartTimer = 180
 	DefaultStaleTimer   = 600
 )
