@@ -185,5 +185,6 @@ func (i *Instance) instanceValidateSnapshotDeletion() error {
 	if len(newMap) <= 0 {
 		return fmt.Errorf("deleting snapshot is not supported currently")
 	}
+
 	return nil
 }

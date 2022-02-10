@@ -125,17 +125,17 @@ func (r *reader) parseValidations(vip *viper.Viper, i int) []validation {
 	}
 	m := make([]validation, 0, len(vls))
 	for k, v := range vls {
-		kStr := k.(string)
-		kSplit := strings.Split(kStr, ".")
-		if len(kSplit) > 1 && (kSplit[0] == jsonKey || kSplit[0] == tfKey) {
+		str := k.(string)
+		split := strings.Split(str, ".")
+		if len(split) > 1 && (split[0] == jsonKey || split[0] == tfKey) {
 			isJSON := false
-			if kSplit[0] == jsonKey {
+			if split[0] == jsonKey {
 				isJSON = true
 			}
 
 			m = append(m, validation{
 				isJSON: isJSON,
-				key:    kStr[len(kSplit[0])+1:],
+				key:    str[len(split[0])+1:],
 				value:  v,
 			})
 		} else {
