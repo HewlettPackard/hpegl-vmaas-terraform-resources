@@ -103,7 +103,7 @@ func getInstanceDefaultSchema(isClone bool) *schema.Resource {
 						"is_primary": {
 							Type:        schema.TypeBool,
 							Computed:    true,
-							Description: `Flag to identify given network is primary or not. Primary network cannot be updated or deleted.`,
+							Description: `Flag to identify given network is primary or not. Primary network cannot be deleted.`,
 						},
 						"internal_id": {
 							Type:        schema.TypeInt,
