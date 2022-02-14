@@ -49,6 +49,7 @@ linters:
     - nilerr
     - thelper
     # Temporarily disabling these
+    - errorlint
     - predeclared
     - paralleltest
     - gocritic
