@@ -57,19 +57,41 @@ func (r *Router) validateHAModeIsACTIVE_STANDBY() error {
 
 func (r *Router) validateBGPTimers() error {
 	// BGP graceful restart timers cannot be updated when BGP config is enabled
+	// During tier0 router creation with bgp enabled, the timers should have default values
 	if r.diff.HasChange(bgpRestartTimerPath) || r.diff.HasChange(bgpStaleTimerPath) {
-		action := r.diff.Get(bgpEnabledPath)
-		if action.(bool) {
+		isBgpEnabled := r.diff.Get(bgpEnabledPath)
+		if isBgpEnabled.(bool) {
+			var checkRestartTimerDuringCreation, checkRestartTimerDuringUpdation bool
+			var checkStaleTimerDuringCreation, checkStaleTimerDuringUpdation bool
+
 			currRestartTimer, newRestartTimer := r.diff.GetChange(bgpRestartTimerPath)
 			currStaleTimer, newStaleTimer := r.diff.GetChange(bgpStaleTimerPath)
 
-			// During the creation of the Router
-			validateTimerCreation := (r.diff.HasChange(bgpRestartTimerPath) && utils.IsEmpty(currRestartTimer) && newRestartTimer.(int) != DefaultRestartTimer) ||
-				(r.diff.HasChange(bgpStaleTimerPath) && utils.IsEmpty(currStaleTimer) && newStaleTimer.(int) != DefaultStaleTimer)
-			// While updating the Router
-			validateTimerUpdation := (r.diff.HasChange(bgpRestartTimerPath) && !utils.IsEmpty(currRestartTimer)) || (r.diff.HasChange(bgpStaleTimerPath) && !utils.IsEmpty(currStaleTimer))
+			// Restart timer
+			if r.diff.HasChange(bgpRestartTimerPath) {
+				if utils.IsEmpty(currRestartTimer) {
+					// Check: During tier0 router creation with bgp enabled,
+					// the restart timer should not be different from DefaultRestartTimer
+					checkRestartTimerDuringCreation = (newRestartTimer.(int) != DefaultRestartTimer)
+				} else {
+					// With bgp enabled, restart timer should not be updated
+					checkRestartTimerDuringUpdation = true
+				}
+			}
+			// Stale timer
+			if r.diff.HasChange(bgpStaleTimerPath) {
+				if utils.IsEmpty(currStaleTimer) {
+					// Check: During tier0 router creation with bgp enabled,
+					// the stale timer should not be different from DefaultStaleTimer
+					checkStaleTimerDuringCreation = newStaleTimer.(int) != DefaultStaleTimer
+				} else {
+					// With bgp enabled, stale timer should not be updated
+					checkStaleTimerDuringUpdation = true
+				}
+			}
 
-			if validateTimerCreation || validateTimerUpdation {
+			if checkRestartTimerDuringCreation || checkRestartTimerDuringUpdation ||
+				checkStaleTimerDuringCreation || checkStaleTimerDuringUpdation {
 				return fmt.Errorf("BGP graceful restart timers cannot be updated when BGP config is enabled")
 			}
 		}
