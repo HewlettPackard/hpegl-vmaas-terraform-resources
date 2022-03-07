@@ -142,7 +142,7 @@ func (r *router) routerAlignRouterRequest(ctx context.Context, meta interface{},
 		routerReq.NetworkRouter.Config.HaMode = routerReq.NetworkRouter.TfTier0Config.TfHaMode
 		routerReq.NetworkRouter.Config.FailOver = routerReq.NetworkRouter.TfTier0Config.TfFailOver
 		routerReq.NetworkRouter.Config.EdgeCluster = routerReq.NetworkRouter.TfTier0Config.TfEdgeCluster
-		routerReq.NetworkRouter.EnableBGP = routerReq.NetworkRouter.TfTier0Config.Bgp.TfEnableBgp
+		routerReq.NetworkRouter.EnableBGP = routerReq.NetworkRouter.TfTier0Config.TfBGP.TfEnableBgp
 		queryParam[nameKey] = tier0GatewayType
 	} else {
 		routerReq.NetworkRouter.Config.CreateRouterTier0Config.RouteRedistributionTier1.RouteAdvertisement =
