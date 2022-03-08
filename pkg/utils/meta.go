@@ -27,7 +27,6 @@ func SetMeta(apiClient *client.APIClient, r *schema.ResourceData) {
 			*ctx = context.WithValue(*ctx, client.ContextAccessToken, token)
 		}
 	})
-
 	if err != nil {
 		log.Printf("[WARN] Error: %s", err)
 	}

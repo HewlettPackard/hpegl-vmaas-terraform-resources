@@ -37,7 +37,7 @@ func (r *Router) DiffValidate() error {
 	return nil
 }
 
-func (r *Router) validateHAModeIsACTIVE_STANDBY() error {
+func (r *Router) validateHAModeIsActiveStandby() error {
 	// BGP inter SR routing only applicable for Tier0 in active-active HA-mode
 
 	if r.diff.HasChange(haModePath) || r.diff.HasChange(interSRiBGPPath) {
@@ -101,7 +101,7 @@ func (r *Router) validateBGPTimers() error {
 }
 
 func (r *Router) validateTier0Config() error {
-	err := r.validateHAModeIsACTIVE_STANDBY()
+	err := r.validateHAModeIsActiveStandby()
 	if err != nil {
 		return err
 	}

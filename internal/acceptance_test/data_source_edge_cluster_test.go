@@ -37,6 +37,7 @@ func TestAccDataSourceNetworkEdgeCluster(t *testing.T) {
 					break
 				}
 			}
+
 			return iClient.GetEdgeCluster(getAccContext(), serverID, name)
 		},
 	}

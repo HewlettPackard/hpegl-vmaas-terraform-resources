@@ -63,7 +63,6 @@ func getAPIClient() (*api_client.APIClient, api_client.Configuration) {
 			*ctx = context.WithValue(*ctx, api_client.ContextAccessToken, token)
 		}
 	})
-
 	if err != nil {
 		log.Printf("[WARN] Error: %s", err)
 	}
