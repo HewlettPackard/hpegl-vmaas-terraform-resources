@@ -57,6 +57,9 @@ linters:
     - ifshort
     - exhaustivestruct
     - cyclop
+    - varnamelen
+    - maintidx
+    - ireturn
     #Temporarily disabling wrapcheck
     # - wrapcheck
     # Disable the 'cyclop' cyclometric complexity linter. 'gocyclo' already

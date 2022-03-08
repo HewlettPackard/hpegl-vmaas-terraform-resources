@@ -226,7 +226,10 @@ func cloneInstance(
 		},
 	}
 	_, err := cloneRetry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		val, _ := json.Marshal(&req)
+		val, err := json.Marshal(&req)
+		if err != nil {
+			return nil, err
+		}
 		log.Printf("value: %s", string(val))
 
 		return i.iClient.CloneAnInstance(ctx, sourceID, req)

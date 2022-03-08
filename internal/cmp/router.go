@@ -113,31 +113,22 @@ func (r *router) Delete(ctx context.Context, d *utils.Data, meta interface{}) er
 func (r *router) routerAlignRouterRequest(ctx context.Context, meta interface{}, routerReq *models.CreateRouterRequest) error {
 	queryParam := make(map[string]string)
 	// Check whether teir0 or tier1 and assign properties to proper child, so json can marshal properly
+	tier0Config := routerReq.NetworkRouter.Config.CreateRouterTier0Config
 	if routerReq.NetworkRouter.TfTier0Config != nil {
-		routerReq.NetworkRouter.Config.CreateRouterTier0Config.RouteRedistributionTier0 =
-			routerReq.NetworkRouter.TfTier0Config.TfRRTier0
+		tier0Config.RouteRedistributionTier0 = routerReq.NetworkRouter.TfTier0Config.TfRRTier0
 
-		routerReq.NetworkRouter.Config.CreateRouterTier0Config.RouteRedistributionTier1 =
-			routerReq.NetworkRouter.TfTier0Config.TfRRTier1
-		routerReq.NetworkRouter.Config.CreateRouterTier0Config.RouteRedistributionTier1.RouteAdvertisement.TIER1DNSFORWARDERIP =
-			routerReq.NetworkRouter.TfTier0Config.TfRRTier1.TIER1DNSFORWARDERIP
-		routerReq.NetworkRouter.Config.CreateRouterTier0Config.RouteRedistributionTier1.RouteAdvertisement.TIER1LBSNAT =
-			routerReq.NetworkRouter.TfTier0Config.TfRRTier1.TIER1LBSNAT
-		routerReq.NetworkRouter.Config.CreateRouterTier0Config.RouteRedistributionTier1.RouteAdvertisement.TIER1NAT =
-			routerReq.NetworkRouter.TfTier0Config.TfRRTier1.TIER1NAT
-		routerReq.NetworkRouter.Config.CreateRouterTier0Config.RouteRedistributionTier1.RouteAdvertisement.TIER1LBVIP =
-			routerReq.NetworkRouter.TfTier0Config.TfRRTier1.TIER1LBVIP
-		routerReq.NetworkRouter.Config.CreateRouterTier0Config.RouteRedistributionTier1.RouteAdvertisement.TIER1IPSECLOCALENDPOINT =
-			routerReq.NetworkRouter.TfTier0Config.TfRRTier1.TIER1IPSECLOCALENDPOINT
-		routerReq.NetworkRouter.Config.CreateRouterTier0Config.RouteRedistributionTier1.RouteAdvertisement.TIER1STATIC =
-			routerReq.NetworkRouter.TfTier0Config.TfRRTier1.TIER1STATIC
-		routerReq.NetworkRouter.Config.CreateRouterTier0Config.RouteRedistributionTier1.RouteAdvertisement.Tier1Connected =
-			routerReq.NetworkRouter.TfTier0Config.TfRRTier1.Tier1Connected
-		routerReq.NetworkRouter.Config.CreateRouterTier0Config.RouteRedistributionTier1.RouteAdvertisement.Tier1StaticRoutes =
-			routerReq.NetworkRouter.TfTier0Config.TfRRTier1.Tier1StaticRoutes
+		tfRRTier1 := routerReq.NetworkRouter.TfTier0Config.TfRRTier1
+		tier0Config.RouteRedistributionTier1 = tfRRTier1
+		tier0Config.RouteRedistributionTier1.RouteAdvertisement.TIER1DNSFORWARDERIP = tfRRTier1.TIER1DNSFORWARDERIP
+		tier0Config.RouteRedistributionTier1.RouteAdvertisement.TIER1LBSNAT = tfRRTier1.TIER1LBSNAT
+		tier0Config.RouteRedistributionTier1.RouteAdvertisement.TIER1NAT = tfRRTier1.TIER1NAT
+		tier0Config.RouteRedistributionTier1.RouteAdvertisement.TIER1LBVIP = tfRRTier1.TIER1LBVIP
+		tier0Config.RouteRedistributionTier1.RouteAdvertisement.TIER1IPSECLOCALENDPOINT = tfRRTier1.TIER1IPSECLOCALENDPOINT
+		tier0Config.RouteRedistributionTier1.RouteAdvertisement.TIER1STATIC = tfRRTier1.TIER1STATIC
+		tier0Config.RouteRedistributionTier1.RouteAdvertisement.Tier1Connected = tfRRTier1.Tier1Connected
+		tier0Config.RouteRedistributionTier1.RouteAdvertisement.Tier1StaticRoutes = tfRRTier1.Tier1StaticRoutes
 
-		routerReq.NetworkRouter.Config.CreateRouterTier0Config.Bgp =
-			routerReq.NetworkRouter.TfTier0Config.TfBGP
+		tier0Config.Bgp = routerReq.NetworkRouter.TfTier0Config.TfBGP
 
 		routerReq.NetworkRouter.Config.HaMode = routerReq.NetworkRouter.TfTier0Config.TfHaMode
 		routerReq.NetworkRouter.Config.FailOver = routerReq.NetworkRouter.TfTier0Config.TfFailOver
@@ -145,8 +136,7 @@ func (r *router) routerAlignRouterRequest(ctx context.Context, meta interface{},
 		routerReq.NetworkRouter.EnableBGP = routerReq.NetworkRouter.TfTier0Config.TfBGP.TfEnableBgp
 		queryParam[nameKey] = tier0GatewayType
 	} else {
-		routerReq.NetworkRouter.Config.CreateRouterTier0Config.RouteRedistributionTier1.RouteAdvertisement =
-			routerReq.NetworkRouter.TfTier1Config.TfRouteAdvertisement
+		tier0Config.RouteRedistributionTier1.RouteAdvertisement = routerReq.NetworkRouter.TfTier1Config.TfRouteAdvertisement
 		routerReq.NetworkRouter.Config.EdgeCluster = routerReq.NetworkRouter.TfTier1Config.TfEdgeCluster
 		routerReq.NetworkRouter.Config.FailOver = routerReq.NetworkRouter.TfTier1Config.TfFailOver
 		routerReq.NetworkRouter.Config.Tier0Gateways = routerReq.NetworkRouter.TfTier1Config.TfTier0Gateways
