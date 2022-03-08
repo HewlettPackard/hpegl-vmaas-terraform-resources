@@ -124,19 +124,19 @@ func (r *reader) parseValidations(vip *viper.Viper, i int) []validation {
 		return nil
 	}
 	m := make([]validation, 0, len(vls))
-	for k, v := range vls {
-		str := k.(string)
-		split := strings.Split(str, ".")
-		if len(split) > 1 && (split[0] == jsonKey || split[0] == tfKey) {
+	for key, val := range vls {
+		keyStr := key.(string)
+		keySplit := strings.Split(keyStr, ".")
+		if len(keySplit) > 1 && (keySplit[0] == jsonKey || keySplit[0] == tfKey) {
 			isJSON := false
-			if split[0] == jsonKey {
+			if keySplit[0] == jsonKey {
 				isJSON = true
 			}
 
 			m = append(m, validation{
 				isJSON: isJSON,
-				key:    str[len(split[0])+1:],
-				value:  v,
+				key:    keyStr[len(keySplit[0])+1:],
+				value:  val,
 			})
 		} else {
 			r.fatalf("invalid validation format. validation format should be '[json|tf].key1.key2....keyn: value'")
