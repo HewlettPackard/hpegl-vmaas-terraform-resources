@@ -131,7 +131,7 @@ func updateInstance(ctx context.Context, sharedClient instanceSharedClient, d *u
 			return err
 		}
 	}
-	if err := instanceUpdateNetworkVolume(ctx, sharedClient, d, id); err != nil {
+	if err := instanceUpdateNetworkVolumePlan(ctx, sharedClient, d, id); err != nil {
 		return err
 	}
 
@@ -575,7 +575,7 @@ func instanceGetNetworkModel(
 	return networks, nil
 }
 
-func instanceUpdateNetworkVolume(
+func instanceUpdateNetworkVolumePlan(
 	ctx context.Context,
 	sharedClient instanceSharedClient,
 	d *utils.Data,
