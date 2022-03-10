@@ -132,7 +132,7 @@ func (r *resNetwork) Delete(ctx context.Context, d *utils.Data, meta interface{}
 	networkID := d.GetID()
 	resp, err := r.nClient.DeleteNetwork(ctx, networkID)
 	if !resp.Success {
-		return fmt.Errorf("got success as false on delete network, error: %v", err)
+		return fmt.Errorf("got success as false on delete network, error: %w", err)
 	}
 
 	return err

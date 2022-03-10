@@ -8,8 +8,8 @@ run:
   build-tags: acceptance
 
 linters-settings:
-  # dupl:
-  #   threshold: 110
+  dupl:
+    threshold: 110
   lll:
     line-length: 128
   goimports:
@@ -41,13 +41,25 @@ linters:
     - gochecknoinits
     - gochecknoglobals
     - errcheck
-    # - exhaustivestruct
     # - forbidigo
     - testpackage
     - nolintlint
     - scopelint
-    # Temporarily disabling paralleltest
-    # - paralleltest
+    - wrapcheck
+    - nilerr
+    - thelper
+    # Temporarily disabling these
+    - errorlint
+    - predeclared
+    - paralleltest
+    - gocritic
+    - forcetypeassert
+    - ifshort
+    - exhaustivestruct
+    - cyclop
+    - varnamelen
+    - maintidx
+    - ireturn
     #Temporarily disabling wrapcheck
     # - wrapcheck
     # Disable the 'cyclop' cyclometric complexity linter. 'gocyclo' already
