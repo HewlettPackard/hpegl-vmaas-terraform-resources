@@ -21,7 +21,7 @@ func NewInstanceValidate(diff *schema.ResourceDiff) *Instance {
 }
 
 func (i *Instance) DiffValidate() error {
-	notAllowed := []string{"plan_id", "scale"}
+	notAllowed := []string{"scale"}
 
 	for _, param := range notAllowed {
 		if i.diff.HasChange(param) {

@@ -72,7 +72,6 @@ func getInstanceDefaultSchema(isClone bool) *schema.Resource {
 				Type:        schema.TypeInt,
 				Optional:    isClone,
 				Required:    !isClone,
-				ForceNew:    true,
 				Description: f(generalDDesc, "plan"),
 			},
 			"instance_type_code": {

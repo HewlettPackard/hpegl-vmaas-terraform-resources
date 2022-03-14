@@ -131,7 +131,7 @@ func updateInstance(ctx context.Context, sharedClient instanceSharedClient, d *u
 			return err
 		}
 	}
-	if err := instanceUpdateNetworkVolume(ctx, sharedClient, d, id); err != nil {
+	if err := instanceUpdateNetworkVolumePlan(ctx, sharedClient, d, id); err != nil {
 		return err
 	}
 
@@ -575,7 +575,7 @@ func instanceGetNetworkModel(
 	return networks, nil
 }
 
-func instanceUpdateNetworkVolume(
+func instanceUpdateNetworkVolumePlan(
 	ctx context.Context,
 	sharedClient instanceSharedClient,
 	d *utils.Data,
@@ -595,12 +595,21 @@ func instanceUpdateNetworkVolume(
 		if err := d.Error(); err != nil {
 			return err
 		}
+	} else if d.HasChanged("plan_id") {
+		resizeReq = models.ResizeInstanceBody{
+			Instance: &models.ResizeInstanceBodyInstance{
+				Plan: &models.ResizeInstanceBodyInstancePlan{
+					ID: d.GetInt("plan_id"),
+				},
+			},
+		}
 	}
+
 	if d.HasChanged("network") {
 		schemaNetwork := d.GetListMap("network")
 		resizeReq.NetworkInterfaces = instanceGetResizeNetwork(schemaNetwork)
 	}
-	if d.HasChanged("volume") || d.HasChanged("network") {
+	if d.HasChanged("volume") || d.HasChanged("network") || d.HasChanged("plan_id") {
 		updateResp, err := sharedClient.iClient.ResizeAnInstance(ctx, instanceID, &resizeReq)
 		if err != nil {
 			return err
