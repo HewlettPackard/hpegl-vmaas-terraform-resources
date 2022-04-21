@@ -21,8 +21,8 @@ func PlanData() *schema.Resource {
 			},
 		},
 		ReadContext: planReadContext,
-		Description: `The ` + DSPlan + ` data source can be used to discover the ID of a hpegl vmaas plan.
-		This can then be used with resources or data sources that require a ` + DSPlan + `,
+		Description: `The ` + DSPlan + ` data source can be used to discover the ID of an hpegl vmaas plan.
+		This can then be used with resources or data sources that require an ` + DSPlan + `,
 		such as the ` + ResInstance + ` resource.`,
 		SchemaVersion:  0,
 		StateUpgraders: nil,

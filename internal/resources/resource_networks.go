@@ -48,7 +48,7 @@ func Network() *schema.Resource {
 			"pool_id": {
 				Type:        schema.TypeInt,
 				Optional:    true,
-				Description: "Pool ID can be obtained with " + DSNetworkPool + " data source. pool_id will not support with NSX-T segment",
+				Description: "Pool ID can be obtained with " + DSNetworkPool + " data source.",
 			},
 			"external_id": {
 				Type:        schema.TypeString,
@@ -86,7 +86,7 @@ func Network() *schema.Resource {
 			"cidr": {
 				Type:             schema.TypeString,
 				Required:         true,
-				Description:      "Gateway CIDR of the network",
+				Description:      "Gateway Classless Inter-Domain Routing (CIDR) of the network",
 				ValidateDiagFunc: validations.ValidateCidr,
 			},
 			"active": {
@@ -116,17 +116,17 @@ func Network() *schema.Resource {
 			"no_proxy": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "List of IP addresses or name servers to exclude proxy traversal for.",
+				Description: "List of IP addresses or name servers for which to exclude proxy traversal.",
 			},
 			"domain_id": {
 				Type:        schema.TypeInt,
 				Optional:    true,
-				Description: "ID of the Network domain. Use " + DSNetworkDomain + " datasource to obtain the id.",
+				Description: "ID of the Network domain. Use " + DSNetworkDomain + " datasource to obtain the ID.",
 			},
 			"proxy_id": {
 				Type:        schema.TypeInt,
 				Optional:    true,
-				Description: "Network Proxy ID. Use " + DSNetworkProxy + " data source to obtain the id.",
+				Description: "Network Proxy ID. Use " + DSNetworkProxy + " data source to obtain the ID.",
 			},
 			"search_domains": {
 				Type:        schema.TypeString,
@@ -169,7 +169,7 @@ func Network() *schema.Resource {
 							Type:        schema.TypeBool,
 							Optional:    true,
 							Default:     true,
-							Description: "Pass `true` to allow access all groups.",
+							Description: "Pass `true` to allow access to all groups.",
 						},
 						"sites": {
 							Type:        schema.TypeList,
@@ -202,7 +202,7 @@ func Network() *schema.Resource {
 			"scope_id": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "Transport Zone ID. Use " + DSTransportZone + " Data source's provided_id here.",
+				Description: "Transport Zone ID. Use " + DSTransportZone + " Data source's `provider_id` here.",
 			},
 		},
 		SchemaVersion: 0,

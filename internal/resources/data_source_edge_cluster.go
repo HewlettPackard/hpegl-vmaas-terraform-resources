@@ -34,8 +34,8 @@ func EdgeClusterData() *schema.Resource {
 			},
 		},
 		ReadContext: edgeClusterReadContext,
-		Description: `The ` + DSEdgeCluster + ` data source can be used to discover the Provider ID of a hpegl vmaas Edge cluster.
-		This can then be used with resources or data sources that require a ` + DSEdgeCluster,
+		Description: `The ` + DSEdgeCluster + ` data source can be used to discover the Provider ID of an hpegl vmaas Edge cluster.
+		This can then be used with resources or data sources that require an ` + DSEdgeCluster,
 		SchemaVersion:  0,
 		StateUpgraders: nil,
 		Importer: &schema.ResourceImporter{

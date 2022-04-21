@@ -26,8 +26,8 @@ func NetworkProxyData() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
-		Description: `The ` + DSNetworkProxy + ` data source can be used to discover the ID of a ` + DSNetworkProxy + `.
-		This can then be used with resources or data sources that require a ` + DSNetworkProxy + `,
+		Description: `The ` + DSNetworkProxy + ` data source can be used to discover the ID of an ` + DSNetworkProxy + `.
+		This can then be used with resources or data sources that require an ` + DSNetworkProxy + `,
 		such as the ` + ResNetwork + ` resource (for creating non NSX-T segments).`,
 	}
 }

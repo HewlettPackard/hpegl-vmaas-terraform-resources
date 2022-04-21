@@ -21,8 +21,8 @@ func NetworkData() *schema.Resource {
 			},
 		},
 		ReadContext: networkReadContext,
-		Description: `The ` + DSNetwork + ` data source can be used to discover the ID of a hpegl vmaas network.
-		This can then be used with resources or data sources that require a ` + DSNetwork + `,
+		Description: `The ` + DSNetwork + ` data source can be used to discover the ID of an hpegl vmaas network.
+		This can then be used with resources or data sources that require an ` + DSNetwork + `,
 		such as the ` + ResInstance + ` resource.`,
 		SchemaVersion:  0,
 		StateUpgraders: nil,

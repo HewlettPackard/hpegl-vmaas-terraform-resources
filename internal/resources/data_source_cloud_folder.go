@@ -32,8 +32,8 @@ func CloudFolderData() *schema.Resource {
 		},
 		ReadContext: cloudFolderReadContext,
 		Description: `The ` + DSCloudFolder + ` data source can be used to discover the ID for a folder.
-		` + DSCloudFolder + ` can be used along with hpegl_vmaas_instance, if so all instances/VMs spawned will store
-		on the specified folder.`,
+		` + DSCloudFolder + ` can be used along with hpegl_vmaas_instance, If it is used, all instances/VMs
+		spawned will be stored in the specified folder.`,
 		SchemaVersion:  0,
 		StateUpgraders: nil,
 		Importer: &schema.ResourceImporter{

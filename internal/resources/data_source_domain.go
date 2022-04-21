@@ -26,8 +26,8 @@ func DomainData() *schema.Resource {
 			},
 		},
 		ReadContext: domainReadContext,
-		Description: `The ` + DSNetworkDomain + ` data source can be used to discover the ID of a ` + DSNetworkDomain + `.
-		 This can then be used with resources or data sources that require a ` + DSNetworkDomain + `
+		Description: `The ` + DSNetworkDomain + ` data source can be used to discover the ID of an ` + DSNetworkDomain + `.
+		 This can then be used with resources or data sources that require an ` + DSNetworkDomain + `
 		 such as the ` + ResNetwork,
 		SchemaVersion:  0,
 		StateUpgraders: nil,

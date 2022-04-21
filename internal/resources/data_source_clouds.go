@@ -21,8 +21,8 @@ func CloudData() *schema.Resource {
 			},
 		},
 		ReadContext: cloudReadContext,
-		Description: `The ` + DSCloud + ` data source can be used to discover the ID of a hpegl vmaas Cloud.
-		 This can then be used with resources or data sources that require a hpegl vmaas cloud,
+		Description: `The ` + DSCloud + ` data source can be used to discover the ID of an hpegl vmaas Cloud.
+		 This can then be used with resources or data sources that require an hpegl vmaas cloud,
 		 such as the hpegl_vmaas_datastore data source, hpegl_vmaas_instance resource, etc.`,
 		SchemaVersion:  0,
 		StateUpgraders: nil,

@@ -79,7 +79,7 @@ func getInstanceDefaultSchema(isClone bool) *schema.Resource {
 				ForceNew:    true,
 				Optional:    isClone,
 				Required:    !isClone,
-				Description: "Unique code used to identify the instance type.",
+				Description: "Unique code to identify the instance type.",
 			},
 			"network": {
 				Type:        schema.TypeList,
@@ -102,12 +102,12 @@ func getInstanceDefaultSchema(isClone bool) *schema.Resource {
 						"is_primary": {
 							Type:        schema.TypeBool,
 							Computed:    true,
-							Description: `Flag to identify given network is primary or not. Primary network cannot be deleted.`,
+							Description: `Flag to identify if given network is primary. Primary network cannot be deleted.`,
 						},
 						"internal_id": {
 							Type:        schema.TypeInt,
 							Computed:    true,
-							Description: f(generalDDesc, "network intternal ID"),
+							Description: f(generalDDesc, "network internal ID"),
 						},
 						"name": {
 							Type:        schema.TypeString,
@@ -141,7 +141,7 @@ func getInstanceDefaultSchema(isClone bool) *schema.Resource {
 							Type:     schema.TypeString,
 							Required: true,
 							Description: `Datastore ID can be obtained from hpegl_vmaas_datastore
-							data source. Please provide 'auto' as value to select datastore as auto.`,
+							data source. Use the value 'auto' so that the datastore is automatically selected.`,
 							DiffSuppressFunc: utils.SkipField(),
 						},
 						"id": {
@@ -161,7 +161,7 @@ func getInstanceDefaultSchema(isClone bool) *schema.Resource {
 			"labels": {
 				Type:        schema.TypeList,
 				Optional:    true,
-				Description: "An array of strings used for labelling instance.",
+				Description: "An array of strings for labelling instance.",
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
@@ -265,7 +265,7 @@ func getInstanceDefaultSchema(isClone bool) *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 				Description: `Power operation for an instance. Power attribute can be
-				use to update power state of an existing instance. Allowed power operations are
+				used to update the power state of an existing instance. Allowed power operations are
 				'poweroff', 'poweron' and 'suspend'. Upon creating an instance only 'poweron' operation is allowed.`,
 				ValidateFunc: validation.StringInSlice([]string{
 					utils.PowerOn, utils.PowerOff, utils.Suspend,
@@ -285,8 +285,8 @@ func getInstanceDefaultSchema(isClone bool) *schema.Resource {
 				Type:     schema.TypeSet,
 				MaxItems: 1,
 				Description: `Snapshot details to be created. Snapshot name and description
-				 should be unique. Any change in those will results into creation of new snapshot,
-				 with preserving previous snapshot(s).`,
+				 should be unique. Any change in name or description will result in the
+				 creation of a new snapshot.`,
 				Optional: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{

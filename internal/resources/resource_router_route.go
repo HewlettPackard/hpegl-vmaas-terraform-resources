@@ -41,7 +41,7 @@ func RouterRoute() *schema.Resource {
 				Type:        schema.TypeBool,
 				Default:     false,
 				Optional:    true,
-				Description: "If `true` then route will consider as default route.",
+				Description: "If `true` then the route will considered as the default route.",
 			},
 			"network": {
 				Type:             schema.TypeString,

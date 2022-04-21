@@ -36,7 +36,7 @@ func Router() *schema.Resource {
 			"enable": {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Description: "Can be used to enable/disable the network router",
+				Description: "Enables or disables the network router",
 				Default:     true,
 			},
 			"network_server_id": {

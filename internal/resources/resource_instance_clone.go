@@ -24,7 +24,7 @@ func InstancesClone() *schema.Resource {
 	instanceCloneSchema.Description = `Instance clone resource facilitates creating,
 	updating and deleting cloned virtual machines.
 	For creating an instance clone, provide a unique name and all the Mandatory(Required) parameters.
-	All optional parameters will be inherits from parent resource if not provided.`
+	All optional parameters will be inherited from parent resource if not provided.`
 
 	instanceCloneSchema.CreateWithoutTimeout = instanceCloneCreateContext
 	instanceCloneSchema.ReadWithoutTimeout = instanceCloneReadContext
