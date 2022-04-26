@@ -26,8 +26,8 @@ func EnvironmentData() *schema.Resource {
 			},
 		},
 		ReadContext: environmentReadContext,
-		Description: `The hpegl_vmaas_environment data source can be used to discover the ID/Code of an hpegl vmaas environment.
-		This can then be used with resources or data sources that require an hpegl_vmaas_environment,
+		Description: `The hpegl_vmaas_environment data source can be used to discover the ID/Code of a hpegl vmaas environment.
+		This can then be used with resources or data sources that require a hpegl_vmaas_environment,
 		such as the hpegl_vmaas_instance resource.`,
 		SchemaVersion:  0,
 		StateUpgraders: nil,

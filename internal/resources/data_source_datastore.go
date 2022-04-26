@@ -26,7 +26,7 @@ func DatastoreData() *schema.Resource {
 			},
 		},
 		ReadContext: datastoreReadContext,
-		Description: `The ` + DSDatastore + ` data source can be used to discover the ID of an hpegl vmaas datastore.
+		Description: `The ` + DSDatastore + ` data source can be used to discover the ID of a hpegl vmaas datastore.
 		This can then be used with resources or data sources that require a ` + DSDatastore + `,
 		such as the ` + ResInstance + ` resource.`,
 		SchemaVersion:  0,

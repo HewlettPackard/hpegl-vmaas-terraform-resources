@@ -21,8 +21,8 @@ func GroupData() *schema.Resource {
 			},
 		},
 		ReadContext: groupReadContext,
-		Description: `The ` + DSGroup + ` data source can be used to discover the ID of an hpegl vmaas group.
-		This can then be used with resources or data sources that require an ` + DSGroup + `,
+		Description: `The ` + DSGroup + ` data source can be used to discover the ID of a hpegl vmaas group.
+		This can then be used with resources or data sources that require a ` + DSGroup + `,
 		such as the ` + ResInstance + ` resource.`,
 		SchemaVersion:  0,
 		StateUpgraders: nil,

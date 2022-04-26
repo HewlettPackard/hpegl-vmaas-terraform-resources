@@ -31,8 +31,8 @@ func NetworkInterfaceData() *schema.Resource {
 			},
 		},
 		ReadContext: networkInterfaceReadContext,
-		Description: `The ` + DSNetworkInterface + ` data source can be used to discover the ID of an hpegl vmaas NetworkInterface.
-		This can then be used with resources or data sources that require an ` + DSNetworkInterface + `,
+		Description: `The ` + DSNetworkInterface + ` data source can be used to discover the ID of a hpegl vmaas NetworkInterface.
+		This can then be used with resources or data sources that require a ` + DSNetworkInterface + `,
 		such as the ` + ResInstance + ` resource.`,
 		SchemaVersion:  0,
 		StateUpgraders: nil,

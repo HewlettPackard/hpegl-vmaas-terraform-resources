@@ -31,8 +31,8 @@ func NetworkPoolData() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
-		Description: `The ` + DSNetworkPool + ` data source can be used to discover the ID of an hpegl vmaas network pool.
-		This can then be used with resources or data sources that require an ` + DSNetworkPool + `,
+		Description: `The ` + DSNetworkPool + ` data source can be used to discover the ID of a hpegl vmaas network pool.
+		This can then be used with resources or data sources that require a ` + DSNetworkPool + `,
 		such as the ` + ResNetwork + ` resource (for creating non NSX-T segments).`,
 	}
 }

@@ -102,7 +102,7 @@ func getInstanceDefaultSchema(isClone bool) *schema.Resource {
 						"is_primary": {
 							Type:        schema.TypeBool,
 							Computed:    true,
-							Description: `Flag to identify if given network is primary. Primary network cannot be deleted.`,
+							Description: `Flag that identifies if a given network is primary. Primary network cannot be deleted.`,
 						},
 						"internal_id": {
 							Type:        schema.TypeInt,
@@ -266,7 +266,7 @@ func getInstanceDefaultSchema(isClone bool) *schema.Resource {
 				Optional: true,
 				Description: `Power operation for an instance. Power attribute can be
 				used to update the power state of an existing instance. Allowed power operations are
-				'poweroff', 'poweron' and 'suspend'. Upon creating an instance only 'poweron' operation is allowed.`,
+				'poweroff', 'poweron' and 'suspend'. While creating an instance only 'poweron' operation is allowed.`,
 				ValidateFunc: validation.StringInSlice([]string{
 					utils.PowerOn, utils.PowerOff, utils.Suspend,
 				}, false),
@@ -284,8 +284,8 @@ func getInstanceDefaultSchema(isClone bool) *schema.Resource {
 			"snapshot": {
 				Type:     schema.TypeSet,
 				MaxItems: 1,
-				Description: `Snapshot details to be created. Snapshot name and description
-				 should be unique. Any change in name or description will result in the
+				Description: `Details for the snapshot to be created. Note that Snapshot name and description
+				 should be unique for each snapshot. Any change in name or description will result in the
 				 creation of a new snapshot.`,
 				Optional: true,
 				Elem: &schema.Resource{
