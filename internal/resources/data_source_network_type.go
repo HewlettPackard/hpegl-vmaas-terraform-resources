@@ -26,8 +26,8 @@ func NetworkTypeData() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
-		Description: `The ` + DSNetworkType + ` data source can be used to discover the ID of a hpegl vmaas network types.
-		This can then be used with resources or data sources that require a ` + DSNetworkType + `,
+		Description: `The ` + DSNetworkType + ` data source can be used to discover the ID of an hpegl vmaas network types.
+		This can then be used with resources or data sources that require an ` + DSNetworkType + `,
 		such as the ` + ResNetwork + ` resource.`,
 	}
 }

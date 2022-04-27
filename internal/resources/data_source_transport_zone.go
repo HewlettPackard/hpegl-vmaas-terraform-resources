@@ -35,7 +35,7 @@ func TransportZoneData() *schema.Resource {
 		},
 		ReadContext: transportZoneReadContext,
 		Description: `The ` + DSTransportZone + ` data source can be used to discover the ID of a hpegl vmaas transport zone.
-		This can then be used with resources or data sources that require a ` + DSTransportZone,
+		This can then be used with resources or data sources that require an ` + DSTransportZone,
 		SchemaVersion:  0,
 		StateUpgraders: nil,
 		Importer: &schema.ResourceImporter{

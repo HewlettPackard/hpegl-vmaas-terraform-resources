@@ -51,7 +51,7 @@ func GetInstanceHistorySchema() *schema.Schema {
 func GetInstanceContainerSchema() *schema.Schema {
 	return &schema.Schema{
 		Type:        schema.TypeList,
-		Description: `Containers details for the instance which contains ip addresses, hostname and other stats`,
+		Description: `Container's details for the instance which contains IP addresses, hostname and other stats`,
 		Computed:    true,
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{

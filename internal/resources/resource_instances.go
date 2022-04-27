@@ -44,8 +44,8 @@ func Instances() *schema.Resource {
 			},
 		},
 	}
-	instanceSchema.Description = `Instance resource facilitates creating,
-		updating and deleting virtual machines. It is recommend to use the Vmware type for provisioning.`
+	instanceSchema.Description = `This Instance resource facilitates creating,
+		updating and deleting virtual machines. HPE recommends that you use the VMware as type for provisioning.`
 	instanceSchema.CreateWithoutTimeout = instanceCreateContext
 	instanceSchema.ReadWithoutTimeout = instanceReadContext
 	instanceSchema.DeleteWithoutTimeout = instanceDeleteContext

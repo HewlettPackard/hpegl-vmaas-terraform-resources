@@ -26,8 +26,8 @@ func ResourcePoolData() *schema.Resource {
 			},
 		},
 		ReadContext: resourcePoolReadContext,
-		Description: `The ` + DSResourcePool + ` data source can be used to discover the ID of a hpegl vmaas resource pool.
-		This can then be used with resources or data sources that require a ` + DSResourcePool + `,
+		Description: `The ` + DSResourcePool + ` data source can be used to discover the ID of an hpegl vmaas resource pool.
+		This can then be used with resources or data sources that require an ` + DSResourcePool + `,
 		such as the ` + ResInstance + ` resource.`,
 		SchemaVersion:  0,
 		StateUpgraders: nil,

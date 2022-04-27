@@ -34,7 +34,7 @@ const (
 	ResRouterBgpNeighbor       = "hpegl_vmaas_router_bgp_neighbor"
 
 	// documentation related constants
-	generalNamedesc = "Name of the %s as it appears on GLPC Portal. " +
+	generalNamedesc = "Name of the %s as it appears on HPE GreenLake for private cloud dashboard. " +
 		"If there is no %s with this name, a 'NOT FOUND' error will returned."
 	generalDDesc = "Unique ID to identify a %s."
 )
