@@ -30,7 +30,8 @@ func (t *template) Read(ctx context.Context, d *utils.Data, meta interface{}) er
 		return err
 	}
 	template, err := t.tClient.GetAllVirtualImages(ctx, map[string]string{
-		nameKey: name,
+		nameKey:       name,
+		filterTypeKey: syncedTypeValue,
 	})
 	if err != nil {
 		return err
