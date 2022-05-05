@@ -5,13 +5,12 @@ package constants
 
 const (
 	// ServiceName - the service mnemonic
-	ServiceName    = "vmaas"
-	DevServiceURL  = "https://iac-vmaas.dev.hpehcss.net"
-	IntgServiceURL = "https://iac-vmaas.intg.hpedevops.net"
-	ServiceURL     = "https://iac-vmaas.us1.greenlake-hpe.com"
+	ServiceName = "vmaas"
+	ServiceURL  = "https://iac-vmaas.us1.greenlake-hpe.com"
 
 	LOCATION    = "location"
 	SPACENAME   = "space_name"
+	APIURL      = "api_url"
 	INSECURE    = "allow_insecure"
 	SpaceKey    = "space"
 	LocationKey = "location"

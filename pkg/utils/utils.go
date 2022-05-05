@@ -10,7 +10,6 @@ import (
 	"testing"
 
 	api_client "github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
-	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/constants"
 	"github.com/spf13/viper"
 )
 
@@ -76,15 +75,4 @@ func GetEnvBool(key string) bool {
 	}
 
 	return value
-}
-
-func GetServiceEndpoint() string {
-	switch os.Getenv("SERVICE_ACCOUNT") {
-	case "dev":
-		return constants.DevServiceURL
-	case "intg":
-		return constants.IntgServiceURL
-	}
-
-	return constants.ServiceURL
 }
