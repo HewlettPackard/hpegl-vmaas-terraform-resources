@@ -129,7 +129,7 @@ func (r *router) routerAlignRouterRequest(ctx context.Context, meta interface{},
 		tier0Config.RouteRedistributionTier1.RouteAdvertisement.Tier1StaticRoutes = tfRRTier1.Tier1StaticRoutes
 
 		tier0Config.Bgp = routerReq.NetworkRouter.TfTier0Config.TfBGP
-
+		routerReq.NetworkRouter.Config.CreateRouterTier0Config = tier0Config
 		routerReq.NetworkRouter.Config.HaMode = routerReq.NetworkRouter.TfTier0Config.TfHaMode
 		routerReq.NetworkRouter.Config.FailOver = routerReq.NetworkRouter.TfTier0Config.TfFailOver
 		routerReq.NetworkRouter.Config.EdgeCluster = routerReq.NetworkRouter.TfTier0Config.TfEdgeCluster
@@ -137,6 +137,7 @@ func (r *router) routerAlignRouterRequest(ctx context.Context, meta interface{},
 		queryParam[nameKey] = tier0GatewayType
 	} else {
 		tier0Config.RouteRedistributionTier1.RouteAdvertisement = routerReq.NetworkRouter.TfTier1Config.TfRouteAdvertisement
+		routerReq.NetworkRouter.Config.CreateRouterTier0Config.RouteRedistributionTier1.RouteAdvertisement = tier0Config.RouteRedistributionTier1.RouteAdvertisement
 		routerReq.NetworkRouter.Config.EdgeCluster = routerReq.NetworkRouter.TfTier1Config.TfEdgeCluster
 		routerReq.NetworkRouter.Config.FailOver = routerReq.NetworkRouter.TfTier1Config.TfFailOver
 		routerReq.NetworkRouter.Config.Tier0Gateways = routerReq.NetworkRouter.TfTier1Config.TfTier0Gateways
