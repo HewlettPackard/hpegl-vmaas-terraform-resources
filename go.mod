@@ -11,7 +11,7 @@ require (
 	github.com/hewlettpackard/hpegl-provider-lib v0.0.11
 	github.com/spf13/viper v1.10.1
 	github.com/tidwall/gjson v1.12.1
-	github.com/tshihad/tftags v0.0.9
+	github.com/tshihad/tftags v0.0.10
 )
 
 require (
