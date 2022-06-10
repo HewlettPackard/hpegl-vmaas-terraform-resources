@@ -40,19 +40,29 @@ func (r Registration) SupportedDataSources() map[string]*schema.Resource {
 		resources.DSNetworkProxy:     resources.NetworkProxyData(),
 		resources.DSEdgeCluster:      resources.EdgeClusterData(),
 		resources.DSTransportZone:    resources.TransportZoneData(),
+		resources.ResLoadBalancer:    resources.ResLoadBalancerData(),
+		resources.DSLBMonitor:        resources.LBMonitorData(),
+		resources.DSLBProfile:        resources.LBProfileData(),
+		resources.DSLBPool:           resources.LBPoolData(),
+		resources.DSLBVirtualServer:  resources.LBVirtualServerData(),
 	}
 }
 
 func (r Registration) SupportedResources() map[string]*schema.Resource {
 	return map[string]*schema.Resource{
-		resources.ResInstance:                resources.Instances(),
-		resources.ResInstanceClone:           resources.InstancesClone(),
-		resources.ResNetwork:                 resources.Network(),
-		resources.ResRouter:                  resources.Router(),
-		resources.ResRouterNat:               resources.RouterNatRule(),
-		resources.ResRouterFirewallRuleGroup: resources.RouterFirewallRuleGroup(),
-		resources.ResRouterRoute:             resources.RouterRoute(),
-		resources.ResRouterBgpNeighbor:       resources.RouterBgpNeighbor(),
+		resources.ResInstance:                      resources.Instances(),
+		resources.ResInstanceClone:                 resources.InstancesClone(),
+		resources.ResNetwork:                       resources.Network(),
+		resources.ResRouter:                        resources.Router(),
+		resources.ResRouterNat:                     resources.RouterNatRule(),
+		resources.ResRouterFirewallRuleGroup:       resources.RouterFirewallRuleGroup(),
+		resources.ResRouterRoute:                   resources.RouterRoute(),
+		resources.ResRouterBgpNeighbor:             resources.RouterBgpNeighbor(),
+		resources.ResResLoadBalancer:               resources.ResLoadBalancer(),
+		resources.ResResLoadBalancerMonitors:       resources.ResLoadBalancerMonitors(),
+		resources.ResResLoadBalancerProfiles:       resources.ResLoadBalancerProfiles(),
+		resources.ResResLoadBalancerPools:          resources.ResLoadBalancerPools(),
+		resources.ResResLoadBalancerVirtualServers: resources.ResLoadBalancerVirtualServers(),
 	}
 }
 

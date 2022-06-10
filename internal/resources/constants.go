@@ -23,11 +23,13 @@ const (
 	DSRouter           = "hpegl_vmaas_router"
 	DSEdgeCluster      = "hpegl_vmaas_edge_cluster"
 	DSTransportZone    = "hpegl_vmaas_transport_zone"
+	DSLoadBalancer     = "hpegl_vmaas_load_balancer"
 	// resource key
 	ResInstance                = "hpegl_vmaas_instance"
 	ResInstanceClone           = "hpegl_vmaas_instance_clone"
 	ResNetwork                 = "hpegl_vmaas_network"
 	ResRouter                  = "hpegl_vmaas_router"
+	ResLoadBalancer            = "hpegl_vmaas_load_balancer"
 	ResRouterNat               = "hpegl_vmaas_router_nat_rule"
 	ResRouterFirewallRuleGroup = "hpegl_vmaas_router_firewall_rule_group"
 	ResRouterRoute             = "hpegl_vmaas_router_route"

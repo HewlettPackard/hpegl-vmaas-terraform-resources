@@ -16,7 +16,7 @@ func RouterData() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			"name": {
 				Type:        schema.TypeString,
-				Required:    true,
+				Computed:    true,
 				Description: f(generalNamedesc, "Router", "Router"),
 			},
 			"provider_id": {

@@ -10,7 +10,7 @@ resource "hpegl_vmaas_router" "tf_tier1" {
       edge_cluster = data.hpegl_vmaas_edge_cluster.tf_edge_cluster.provider_id
       fail_over = "NON_PREEMPTIVE"
     route_advertisement {
-      tier1_connected = true
+      tier1_connected = truez
       tier1_static_routes = false
       tier1_dns_forwarder_ip = true
       tier1_lb_vip = false
