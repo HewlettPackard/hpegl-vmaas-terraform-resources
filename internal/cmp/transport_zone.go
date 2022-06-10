@@ -52,7 +52,5 @@ func (r *transportZone) Read(ctx context.Context, d *utils.Data, meta interface{
 	if err != nil {
 		return err
 	}
-	resp.ProviderID = "/infra/sites/default/enforcement-points/default/transport-zones/" + resp.ProviderID
-
 	return tftags.Set(d, resp)
 }
