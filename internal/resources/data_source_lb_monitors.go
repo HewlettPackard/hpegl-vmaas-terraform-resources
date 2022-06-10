@@ -5,6 +5,7 @@ package resources
 import (
 	"context"
 
+	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/resources/validations"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/utils"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/client"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -51,12 +52,12 @@ func LBMonitorData() *schema.Resource {
 			},
 			"monitorTransparent": {
 				Type:        schema.TypeBool,
-				Computed:    true,		
+				Computed:    true,
 				Description: "Network loadbalancer Monitor transparent",
 			},
 			"monitorAdaptive": {
 				Type:        schema.TypeBool,
-				Computed:    true,		
+				Computed:    true,
 				Description: "Network loadbalancer Monitor adaptive",
 			},
 			"fallCount": {
@@ -78,15 +79,13 @@ func LBMonitorData() *schema.Resource {
 				Type: schema.TypeString,
 				ValidateDiagFunc: validations.StringInSlice([]string{
 					"LBHttpMonitorProfile", "LBHttpsMonitorProfile", "LBIcmpMonitorProfile",
-					 "LBPassiveMonitorProfile","LBTcpMonitorProfile","LBUdpMonitorProfile"
+					"LBPassiveMonitorProfile", "LBTcpMonitorProfile", "LBUdpMonitorProfile",
 				}, false),
 				Computed:    true,
-				Description: "Network Loadbalancer Supported values are `LBHttpMonitorProfile`, 
-				`LBHttpsMonitorProfile`, `LBIcmpMonitorProfile`, `LBPassiveMonitorProfile`,
-				 `LBTcpMonitorProfile`, `LBUdpMonitorProfile`",
+				Description: "Network Loadbalancer Supported values are `LBHttpMonitorProfile`, `LBHttpsMonitorProfile`, `LBIcmpMonitorProfile`, `LBPassiveMonitorProfile`, `LBTcpMonitorProfile`, `LBUdpMonitorProfile`",
 			},
 		},
-		ReadContext:   LBMonitorReadContext,
+		ReadContext: LBMonitorReadContext,
 		Description: `The ` + DSLBMonitor + ` data source can be used to discover the ID of a hpegl vmaas network load balancer.
 		This can then be used with resources or data sources that require a ` + DSLBMonitor + `,
 		such as the ` + ResLoadBalancerMonitors + ` resource.`,
@@ -105,7 +104,7 @@ func LBMonitorReadContext(ctx context.Context, d *schema.ResourceData, meta inte
 	}
 
 	data := utils.NewData(d)
-	err = c.CmpClient.DSLBMonitor.Read(ctx, data, meta)
+	err = c.CmpClient.LoadBalancer.Read(ctx, data, meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}

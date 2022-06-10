@@ -5,6 +5,7 @@ package resources
 import (
 	"context"
 
+	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/resources/validations"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/utils"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/client"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -23,13 +24,9 @@ func LBProfileData() *schema.Resource {
 				Type: schema.TypeString,
 				ValidateDiagFunc: validations.StringInSlice([]string{
 					"LBHttpProfile", "LBFastTcpProfile", "LBFastUdpProfile",
-					 "LBClientSslProfile","LBServerSslProfile",
-					 "LBCookiePersistenceProfile","LBGenericPersistenceProfile"
-				}, false),
+					"LBClientSslProfile", "LBServerSslProfile", "LBCookiePersistenceProfile", "LBGenericPersistenceProfile"}, false),
 				Computed:    true,
-				Description: "Network Loadbalancer Supported values are `LBHttpProfile`, 
-				`LBFastTcpProfile`, `LBFastUdpProfile`, `LBClientSslProfile`,
-				 `LBServerSslProfile`, `LBCookiePersistenceProfile`,`LBGenericPersistenceProfile`",
+				Description: "Network Loadbalancer Supported values are `LBHttpProfile`,`LBFastTcpProfile`, `LBFastUdpProfile`, `LBClientSslProfile`, `LBServerSslProfile`, `LBCookiePersistenceProfile`,`LBGenericPersistenceProfile`",
 			},
 			"config": {
 				Type:        schema.TypeList,
@@ -39,50 +36,37 @@ func LBProfileData() *schema.Resource {
 					Schema: map[string]*schema.Schema{
 						"profileType": {
 							Type: schema.TypeString,
-				            ValidateDiagFunc: validations.StringInSlice([]string{
-					            "application-profile", "ssl-profile", "persistence-profile",
-				            }, false),
-				            Computed:    true,
-				            Description: "Network Loadbalancer Supported values are `application-profile`, 
-				            `ssl-profile`, `persistence-profile`",
-						},
+							ValidateDiagFunc: validations.StringInSlice([]string{
+								"application-profile", "ssl-profile", "persistence-profile",
+							}, false),
+							Computed:    true,
+							Description: "Network Loadbalancer Supported values are `application-profile`,`ssl-profile`, `persistence-profile`"},
 						"sslSuite": {
 							Type: schema.TypeString,
-				            ValidateDiagFunc: validations.StringInSlice([]string{
-				        	    "BALANCED", "HIGH_SECURITY", "HIGH_COMPATIBILITY", "CUSTOM"
-				             }, false),
-				            Computed:    true,
-				            Description: "Network Loadbalancer Supported values are `BALANCED`, 
-				                `HIGH_SECURITY`, `HIGH_COMPATIBILITY`,`CUSTOM`",
-						},
+							ValidateDiagFunc: validations.StringInSlice([]string{
+								"BALANCED", "HIGH_SECURITY", "HIGH_COMPATIBILITY", "CUSTOM"}, false),
+							Computed:    true,
+							Description: "Network Loadbalancer Supported values are `BALANCED`,`HIGH_SECURITY`, `HIGH_COMPATIBILITY`,`CUSTOM`"},
 						"cookieMode": {
-							Type: schema.TypeString,
-				            ValidateDiagFunc: validations.StringInSlice([]string{
-					            "INSERT", "PREFIX", "REWRITE"
-				            }, false),
-				            Computed:    true,
-				            Description: "Network Loadbalancer Supported values are `INSERT`, 
-				                `PREFIX`, `REWRITE`",
-						},
+							Type:             schema.TypeString,
+							ValidateDiagFunc: validations.StringInSlice([]string{"INSERT", "PREFIX", "REWRITE"}, false),
+							Computed:         true,
+							Description:      "Network Loadbalancer Supported values are `INSERT`,`PREFIX`, `REWRITE`"},
 						"cookieName": {
 							Type:        schema.TypeString,
 							Computed:    true,
 							Description: "cookieName for Network Load balancer Profile",
 						},
 						"cookieType": {
-							Type: schema.TypeString,
-				            ValidateDiagFunc: validations.StringInSlice([]string{
-					            "LBPersistenceCookieTime", "LBSessionCookieTime"
-				            }, false),
-				            Computed:    true,
-				            Description: "Network Loadbalancer Supported values are `LBPersistenceCookieTime`, 
-				            `LBSessionCookieTime`",
-						},
+							Type:             schema.TypeString,
+							ValidateDiagFunc: validations.StringInSlice([]string{"LBPersistenceCookieTime", "LBSessionCookieTime"}, false),
+							Computed:         true,
+							Description:      "Network Loadbalancer Supported values are `LBPersistenceCookieTime`,`LBSessionCookieTime`"},
 					},
 				},
 			},
 		},
-		ReadContext:   LBProfileReadContext,
+		ReadContext: LBProfileReadContext,
 		Description: `The ` + DSLBProfile + ` data source can be used to discover the ID of a hpegl vmaas router.
 		This can then be used with resources or data sources that require a ` + DSLBProfile + `,
 		such as the ` + ResLoadBalancerProfiles + ` resource.`,
@@ -101,7 +85,7 @@ func LBProfileReadContext(ctx context.Context, d *schema.ResourceData, meta inte
 	}
 
 	data := utils.NewData(d)
-	err = c.CmpClient.DSLBProfile.Read(ctx, data, meta)
+	err = c.CmpClient.LoadBalancer.Read(ctx, data, meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}

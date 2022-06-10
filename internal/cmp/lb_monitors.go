@@ -12,22 +12,22 @@ import (
 	"github.com/tshihad/tftags"
 )
 
-type loadBalancer struct {
+type loadBalancerMonitor struct {
 	lbClient *client.LoadBalancerAPIService
 }
 
-func newLoadBalancer(loadBalancerClient *client.LoadBalancerAPIService) *loadBalancer {
-	return &loadBalancer{
+func newLoadBalancerMonitor(loadBalancerClient *client.LoadBalancerAPIService) *loadBalancerMonitor {
+	return &loadBalancerMonitor{
 		lbClient: loadBalancerClient,
 	}
 }
 
-func (lb *loadBalancer) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
+func (lb *loadBalancerMonitor) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
 	var lbMonitorResp models.GetSpecificLBMonitorResp
 	if err := tftags.Get(d, &lbMonitorResp); err != nil {
 		return err
 	}
-	getlbMonitorResp, err := lb.lbClient.GetSpecificLBMonitor(ctx, lbMonitorResp.ID)
+	getlbMonitorResp, err := lb.lbClient.GetSpecificLBMonitor(ctx, 1, lbMonitorResp.ID)
 	if err != nil {
 		return err
 	}
@@ -35,18 +35,18 @@ func (lb *loadBalancer) Read(ctx context.Context, d *utils.Data, meta interface{
 	return tftags.Set(d, getlbMonitorResp.GetSpecificLBMonitorResp)
 }
 
-func (lb *loadBalancer) Create(ctx context.Context, d *utils.Data, meta interface{}) error {
+func (lb *loadBalancerMonitor) Create(ctx context.Context, d *utils.Data, meta interface{}) error {
 	createReq := models.CreateLBMonitor{}
 	if err := tftags.Get(d, &createReq.CreateLBMonitorReq); err != nil {
 		return err
 	}
 
-	lbMonitorResp, err := lb.lbClient.CreateLBMonitor(ctx, createReq)
+	lbMonitorResp, err := lb.lbClient.CreateLBMonitor(ctx, createReq, 1)
 	if err != nil {
 		return err
 	}
 	if !lbMonitorResp.Success {
-		return fmt.Errorf(successErr, "creating loadBalancer Monitor")
+		return fmt.Errorf(successErr, "creating  loadBalancerMonitor Monitor")
 	}
 
 	// wait until created
@@ -55,7 +55,7 @@ func (lb *loadBalancer) Create(ctx context.Context, d *utils.Data, meta interfac
 		InitialDelay: 1,
 	}
 	_, err = retry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return lb.lbClient.GetSpecificLBMonitor(ctx, lbMonitorResp.LBMonitorResp.ID)
+		return lb.lbClient.GetSpecificLBMonitor(ctx, 1, lbMonitorResp.LBMonitorResp.ID)
 	})
 	if err != nil {
 		return err
@@ -64,12 +64,16 @@ func (lb *loadBalancer) Create(ctx context.Context, d *utils.Data, meta interfac
 	return tftags.Set(d, createReq.CreateLBMonitorReq)
 }
 
-func (lb *loadBalancer) Delete(ctx context.Context, d *utils.Data, meta interface{}) error {
+func (lb *loadBalancerMonitor) Delete(ctx context.Context, d *utils.Data, meta interface{}) error {
 	lbMonitorID := d.GetID()
-	_, err := lb.lbClient.DeleteLBMonitor(ctx, lbMonitorID)
+	_, err := lb.lbClient.DeleteLBMonitor(ctx, 1, lbMonitorID)
 	if err != nil {
 		return err
 	}
 
+	return nil
+}
+
+func (lb *loadBalancerMonitor) Update(ctx context.Context, d *utils.Data, meta interface{}) error {
 	return nil
 }

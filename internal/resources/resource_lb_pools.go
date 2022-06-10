@@ -5,8 +5,7 @@ package resources
 import (
 	"context"
 
-	diffvalidation "github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/resources/diffValidation"
-	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/resources/schemas"
+	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/resources/validations"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/utils"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/client"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -34,16 +33,10 @@ func LoadBalancerPools() *schema.Resource {
 				ForceNew:    true,
 			},
 			"vipBalance": {
-				Type: schema.TypeString,
-				            ValidateDiagFunc: validations.StringInSlice([]string{
-					            "ROUND_ROBIN", "WEIGHTED_ROUND_ROBIN", " LEAST_CONNECTION",
-								 "WEIGHTED_LEAST_CONNECTION","IP_HASH",
-				            }, false),
-				            Required:    true,
-				            Description: "Network Loadbalancer Supported values are `ROUND_ROBIN`, 
-				                `WEIGHTED_ROUND_ROBIN`, `LEAST_CONNECTION`, `WEIGHTED_LEAST_CONNECTION`,`IP_HASH`",
-						},
-			},
+				Type:             schema.TypeString,
+				ValidateDiagFunc: validations.StringInSlice([]string{"ROUND_ROBIN", "WEIGHTED_ROUND_ROBIN", " LEAST_CONNECTION", "WEIGHTED_LEAST_CONNECTION", "IP_HASH"}, false),
+				Required:         true,
+				Description:      "Network Loadbalancer Supported values are `ROUND_ROBIN`,`WEIGHTED_ROUND_ROBIN`, `LEAST_CONNECTION`, `WEIGHTED_LEAST_CONNECTION`,`IP_HASH`"},
 			"config": {
 				Type:        schema.TypeList,
 				Required:    true,
@@ -51,14 +44,10 @@ func LoadBalancerPools() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"snatTranslationType": {
-							Type: schema.TypeString,
-				            ValidateDiagFunc: validations.StringInSlice([]string{
-					            "LBSnatAutoMap", "LBSnatDisabled", "LBSnatIpPool"
-				            }, false),
-				            Required:    true,
-				            Description: "Network Loadbalancer Supported values are `LBSnatAutoMap`, 
-				                `LBSnatDisabled`, `LBSnatIpPool`",
-						},
+							Type:             schema.TypeString,
+							ValidateDiagFunc: validations.StringInSlice([]string{"LBSnatAutoMap", "LBSnatDisabled", "LBSnatIpPool"}, false),
+							Required:         true,
+							Description:      "Network Loadbalancer Supported values are `LBSnatAutoMap`,`LBSnatDisabled`, `LBSnatIpPool`",
 						},
 						"passiveMonitorPath": {
 							Type:        schema.TypeInt,
@@ -88,16 +77,16 @@ func LoadBalancerPools() *schema.Resource {
 						},
 						"memberGroup": {
 							Type:        schema.TypeList,
-				            Required:    true,
-				            Description: "memberGroup Configuration",
-				            Elem: &schema.Resource{
-					            Schema: map[string]*schema.Schema{
-						            "name": {
-							            Type:        schema.TypeString,
+							Required:    true,
+							Description: "memberGroup Configuration",
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"name": {
+										Type:        schema.TypeString,
 										Required:    true,
 										Description: "name of the member group",
-						            },
-						            "path": {
+									},
+									"path": {
 										Type:        schema.TypeString,
 										Required:    true,
 										Description: "path of the member group",
@@ -113,8 +102,7 @@ func LoadBalancerPools() *schema.Resource {
 										Description: "port of the member group",
 									},
 								},
-							},			
-						
+							},
 						},
 					},
 				},
@@ -135,7 +123,7 @@ func loadbalancerPoolReadContext(ctx context.Context, rd *schema.ResourceData, m
 	}
 
 	data := utils.NewData(rd)
-	if err := c.CmpClient.ResLoadBalancerPools.Read(ctx, data, meta); err != nil {
+	if err := c.CmpClient.LoadBalancerPool.Read(ctx, data, meta); err != nil {
 		return diag.FromErr(err)
 	}
 
@@ -149,7 +137,7 @@ func loadbalancerPoolCreateContext(ctx context.Context, rd *schema.ResourceData,
 	}
 
 	data := utils.NewData(rd)
-	if err := c.CmpClient.ResLoadBalancerPools.Create(ctx, data, meta); err != nil {
+	if err := c.CmpClient.LoadBalancerPool.Create(ctx, data, meta); err != nil {
 		return diag.FromErr(err)
 	}
 
@@ -163,7 +151,7 @@ func loadbalancerPoolDeleteContext(ctx context.Context, rd *schema.ResourceData,
 	}
 
 	data := utils.NewData(rd)
-	if err := c.CmpClient.ResLoadBalancerPools.Delete(ctx, data, meta); err != nil {
+	if err := c.CmpClient.LoadBalancerPool.Delete(ctx, data, meta); err != nil {
 		return diag.FromErr(err)
 	}
 

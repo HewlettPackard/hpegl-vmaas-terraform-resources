@@ -5,8 +5,7 @@ package resources
 import (
 	"context"
 
-	diffvalidation "github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/resources/diffValidation"
-	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/resources/schemas"
+	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/resources/validations"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/utils"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/client"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -95,15 +94,10 @@ func LoadBalancerMonitors() *schema.Resource {
 				Description: "Network loadbalancer Monitor alias port",
 			},
 			"monitorType": {
-				Type: schema.TypeString,
-				ValidateDiagFunc: validations.StringInSlice([]string{
-					"LBHttpMonitorProfile", "LBHttpsMonitorProfile", "LBIcmpMonitorProfile",
-					 "LBPassiveMonitorProfile","LBTcpMonitorProfile","LBUdpMonitorProfile"
-				}, false),
-				Required:    true,
-				Description: "Network Loadbalancer Supported values are `LBHttpMonitorProfile`, 
-				`LBHttpsMonitorProfile`, `LBIcmpMonitorProfile`, `LBPassiveMonitorProfile`,
-				 `LBTcpMonitorProfile`, `LBUdpMonitorProfile`",
+				Type:             schema.TypeString,
+				ValidateDiagFunc: validations.StringInSlice([]string{"LBHttpMonitorProfile", "LBHttpsMonitorProfile", "LBIcmpMonitorProfile", "LBPassiveMonitorProfile", "LBTcpMonitorProfile", "LBUdpMonitorProfile"}, false),
+				Required:         true,
+				Description:      "Network Loadbalancer Supported values are `LBHttpMonitorProfile`,`LBHttpsMonitorProfile`, `LBIcmpMonitorProfile`, `LBPassiveMonitorProfile`,`LBTcpMonitorProfile`, `LBUdpMonitorProfile`",
 			},
 		},
 		ReadContext:   loadbalancerMonitorReadContext,
@@ -121,7 +115,7 @@ func loadbalancerMonitorReadContext(ctx context.Context, rd *schema.ResourceData
 	}
 
 	data := utils.NewData(rd)
-	if err := c.CmpClient.ResLoadBalancerMonitors.Read(ctx, data, meta); err != nil {
+	if err := c.CmpClient.LoadBalancer.Read(ctx, data, meta); err != nil {
 		return diag.FromErr(err)
 	}
 
@@ -135,7 +129,7 @@ func loadbalancerMonitorCreateContext(ctx context.Context, rd *schema.ResourceDa
 	}
 
 	data := utils.NewData(rd)
-	if err := c.CmpClient.ResLoadBalancerMonitors.Create(ctx, data, meta); err != nil {
+	if err := c.CmpClient.LoadBalancer.Create(ctx, data, meta); err != nil {
 		return diag.FromErr(err)
 	}
 
@@ -149,7 +143,7 @@ func loadbalancerMonitorDeleteContext(ctx context.Context, rd *schema.ResourceDa
 	}
 
 	data := utils.NewData(rd)
-	if err := c.CmpClient.ResLoadBalancerMonitors.Delete(ctx, data, meta); err != nil {
+	if err := c.CmpClient.LoadBalancer.Delete(ctx, data, meta); err != nil {
 		return diag.FromErr(err)
 	}
 

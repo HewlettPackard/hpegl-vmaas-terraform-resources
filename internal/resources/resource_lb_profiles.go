@@ -5,8 +5,7 @@ package resources
 import (
 	"context"
 
-	diffvalidation "github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/resources/diffValidation"
-	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/resources/schemas"
+	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/resources/validations"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/utils"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/client"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -28,17 +27,10 @@ func LoadBalancerProfiles() *schema.Resource {
 				ForceNew:    true,
 			},
 			"serviceType": {
-				Type: schema.TypeString,
-				ValidateDiagFunc: validations.StringInSlice([]string{
-					"LBHttpProfile", "LBFastTcpProfile", "LBFastUdpProfile",
-					 "LBClientSslProfile","LBServerSslProfile",
-					 "LBCookiePersistenceProfile","LBGenericPersistenceProfile"
-				}, false),
-				Required:    true,
-				Description: "Network Loadbalancer Supported values are `LBHttpProfile`, 
-				`LBFastTcpProfile`, `LBFastUdpProfile`, `LBClientSslProfile`,
-				 `LBServerSslProfile`, `LBCookiePersistenceProfile`,`LBGenericPersistenceProfile`",
-			},
+				Type:             schema.TypeString,
+				ValidateDiagFunc: validations.StringInSlice([]string{"LBHttpProfile", "LBFastTcpProfile", "LBFastUdpProfile", "LBClientSslProfile", "LBServerSslProfile", "LBCookiePersistenceProfile", "LBGenericPersistenceProfile"}, false),
+				Required:         true,
+				Description:      "Network Loadbalancer Supported values are `LBHttpProfile`,`LBFastTcpProfile`, `LBFastUdpProfile`, `LBClientSslProfile`,`LBServerSslProfile`, `LBCookiePersistenceProfile`,`LBGenericPersistenceProfile`"},
 			"config": {
 				Type:        schema.TypeList,
 				Required:    true,
@@ -47,13 +39,11 @@ func LoadBalancerProfiles() *schema.Resource {
 					Schema: map[string]*schema.Schema{
 						"profileType": {
 							Type: schema.TypeString,
-				            ValidateDiagFunc: validations.StringInSlice([]string{
-					            "application-profile", "ssl-profile", "persistence-profile",
-				            }, false),
-				            Required:    true,
-				            Description: "Network Loadbalancer Supported values are `application-profile`, 
-				            `ssl-profile`, `persistence-profile`",
-						},
+							ValidateDiagFunc: validations.StringInSlice([]string{
+								"application-profile", "ssl-profile", "persistence-profile",
+							}, false),
+							Required:    true,
+							Description: "Network Loadbalancer Supported values are `application-profile`, `ssl-profile`, `persistence-profile`"},
 						"requestHeaderSize": {
 							Type:        schema.TypeInt,
 							Required:    true,
@@ -86,22 +76,16 @@ func LoadBalancerProfiles() *schema.Resource {
 							Description: "haFlowMirroring for Network Load balancer Profile",
 						},
 						"sslSuite": {
-							Type: schema.TypeString,
-				            ValidateDiagFunc: validations.StringInSlice([]string{
-				        	    "BALANCED", "HIGH_SECURITY", "HIGH_COMPATIBILITY", "CUSTOM"
-				             }, false),
-				            Required:    true,
-				            Description: "Network Loadbalancer Supported values are `BALANCED`, 
-				                `HIGH_SECURITY`, `HIGH_COMPATIBILITY`,`CUSTOM`",
+							Type:             schema.TypeString,
+							ValidateDiagFunc: validations.StringInSlice([]string{"BALANCED", "HIGH_SECURITY", "HIGH_COMPATIBILITY", "CUSTOM"}, false),
+							Required:         true,
+							Description:      "Network Loadbalancer Supported values are `BALANCED`,`HIGH_SECURITY`, `HIGH_COMPATIBILITY`,`CUSTOM`",
 						},
 						"cookieMode": {
-							Type: schema.TypeString,
-				            ValidateDiagFunc: validations.StringInSlice([]string{
-					            "INSERT", "PREFIX", "REWRITE"
-				            }, false),
-				            Required:    true,
-				            Description: "Network Loadbalancer Supported values are `INSERT`, 
-				                `PREFIX`, `REWRITE`",
+							Type:             schema.TypeString,
+							ValidateDiagFunc: validations.StringInSlice([]string{"INSERT", "PREFIX", "REWRITE"}, false),
+							Required:         true,
+							Description:      "Network Loadbalancer Supported values are `INSERT`,`PREFIX`, `REWRITE`",
 						},
 						"cookieName": {
 							Type:        schema.TypeString,
@@ -109,14 +93,10 @@ func LoadBalancerProfiles() *schema.Resource {
 							Description: "cookieName for Network Load balancer Profile",
 						},
 						"cookieType": {
-							Type: schema.TypeString,
-				            ValidateDiagFunc: validations.StringInSlice([]string{
-					            "LBPersistenceCookieTime", "LBSessionCookieTime"
-				            }, false),
-				            Required:    true,
-				            Description: "Network Loadbalancer Supported values are `LBPersistenceCookieTime`, 
-				            `LBSessionCookieTime`",
-						},
+							Type:             schema.TypeString,
+							ValidateDiagFunc: validations.StringInSlice([]string{"LBPersistenceCookieTime", "LBSessionCookieTime"}, false),
+							Required:         true,
+							Description:      "Network Loadbalancer Supported values are `LBPersistenceCookieTime`,`LBSessionCookieTime`"},
 						"cookieFallback": {
 							Type:        schema.TypeBool,
 							Required:    true,
@@ -148,7 +128,7 @@ func loadbalancerProfileReadContext(ctx context.Context, rd *schema.ResourceData
 	}
 
 	data := utils.NewData(rd)
-	if err := c.CmpClient.ResLoadBalancerProfiles.Read(ctx, data, meta); err != nil {
+	if err := c.CmpClient.LoadBalancerProfile.Read(ctx, data, meta); err != nil {
 		return diag.FromErr(err)
 	}
 
@@ -162,7 +142,7 @@ func loadbalancerProfileCreateContext(ctx context.Context, rd *schema.ResourceDa
 	}
 
 	data := utils.NewData(rd)
-	if err := c.CmpClient.ResLoadBalancerProfiles.Create(ctx, data, meta); err != nil {
+	if err := c.CmpClient.LoadBalancerProfile.Create(ctx, data, meta); err != nil {
 		return diag.FromErr(err)
 	}
 
@@ -176,7 +156,7 @@ func loadbalancerProfileDeleteContext(ctx context.Context, rd *schema.ResourceDa
 	}
 
 	data := utils.NewData(rd)
-	if err := c.CmpClient.ResLoadBalancerProfiles.Delete(ctx, data, meta); err != nil {
+	if err := c.CmpClient.LoadBalancerProfile.Delete(ctx, data, meta); err != nil {
 		return diag.FromErr(err)
 	}
 

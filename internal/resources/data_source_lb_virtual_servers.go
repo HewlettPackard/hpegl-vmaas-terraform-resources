@@ -5,6 +5,7 @@ package resources
 import (
 	"context"
 
+	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/resources/validations"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/utils"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/client"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -30,13 +31,9 @@ func LBVirtualServerData() *schema.Resource {
 				Description: "vipPort of network loadbalancer virtual server",
 			},
 			"vipProtocol": {
-				Type: schema.TypeString,
-				            ValidateDiagFunc: validations.StringInSlice([]string{
-					            "http", "tcp", "udp"
-				            }, false),
-				            Description: "Network Loadbalancer Supported values are `http`, 
-				                `tcp`, `udp`",
-			},
+				Type:             schema.TypeString,
+				ValidateDiagFunc: validations.StringInSlice([]string{"http", "tcp", "udp"}, false),
+				Description:      "Network Loadbalancer Supported values are `http`,`tcp`, `udp`"},
 			"pool": {
 				Type:        schema.TypeInt,
 				Computed:    true,
@@ -49,14 +46,10 @@ func LBVirtualServerData() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"persistence": {
-							Type: schema.TypeString,
-				            ValidateDiagFunc: validations.StringInSlice([]string{
-					            "SOURCE_IP", "COOKIE", "DISBALED"
-				            }, false),
-				            Computed:    true,
-				            Description: "Network Loadbalancer Supported values are `SOURCE_IP`, 
-				                `COOKIE`, `DISBALED`",
-						},
+							Type:             schema.TypeString,
+							ValidateDiagFunc: validations.StringInSlice([]string{"SOURCE_IP", "COOKIE", "DISBALED"}, false),
+							Computed:         true,
+							Description:      "Network Loadbalancer Supported values are `SOURCE_IP`,`COOKIE`, `DISBALED`"},
 						"persistenceProfile": {
 							Type:        schema.TypeInt,
 							Computed:    true,
@@ -100,7 +93,7 @@ func LBVirtualServerReadContext(ctx context.Context, d *schema.ResourceData, met
 	}
 
 	data := utils.NewData(d)
-	err = c.CmpClient.DSLBVirtualServer.Read(ctx, data, meta)
+	err = c.CmpClient.LoadBalancer.Read(ctx, data, meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}

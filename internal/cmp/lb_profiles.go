@@ -12,22 +12,22 @@ import (
 	"github.com/tshihad/tftags"
 )
 
-type loadBalancer struct {
+type loadBalancerProfile struct {
 	lbClient *client.LoadBalancerAPIService
 }
 
-func newLoadBalancer(loadBalancerClient *client.LoadBalancerAPIService) *loadBalancer {
-	return &loadBalancer{
+func newLoadBalancerProfile(loadBalancerClient *client.LoadBalancerAPIService) *loadBalancerProfile {
+	return &loadBalancerProfile{
 		lbClient: loadBalancerClient,
 	}
 }
 
-func (lb *loadBalancer) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
+func (lb *loadBalancerProfile) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
 	var lbProfileResp models.GetLBSpecificProfilesResp
 	if err := tftags.Get(d, &lbProfileResp); err != nil {
 		return err
 	}
-	getlbProfileResp, err := lb.lbClient.GetSpecificLBProfile(ctx, lbProfileResp.ID)
+	getlbProfileResp, err := lb.lbClient.GetSpecificLBProfile(ctx, 1, lbProfileResp.ID)
 	if err != nil {
 		return err
 	}
@@ -35,18 +35,22 @@ func (lb *loadBalancer) Read(ctx context.Context, d *utils.Data, meta interface{
 	return tftags.Set(d, getlbProfileResp.GetLBSpecificProfilesResp)
 }
 
-func (lb *loadBalancer) Create(ctx context.Context, d *utils.Data, meta interface{}) error {
+func (lb *loadBalancerProfile) Update(ctx context.Context, d *utils.Data, meta interface{}) error {
+	return nil
+}
+
+func (lb *loadBalancerProfile) Create(ctx context.Context, d *utils.Data, meta interface{}) error {
 	createReq := models.CreateLBProfile{}
 	if err := tftags.Get(d, &createReq.CreateLBProfileReq); err != nil {
 		return err
 	}
 
-	lbProfileResp, err := lb.lbClient.CreateLBProfile(ctx, createReq)
+	lbProfileResp, err := lb.lbClient.CreateLBProfile(ctx, createReq, 1)
 	if err != nil {
 		return err
 	}
 	if !lbProfileResp.Success {
-		return fmt.Errorf(successErr, "creating loadBalancer Profile")
+		return fmt.Errorf(successErr, "creating loadBalancerProfile Profile")
 	}
 
 	// wait until created
@@ -55,7 +59,7 @@ func (lb *loadBalancer) Create(ctx context.Context, d *utils.Data, meta interfac
 		InitialDelay: 1,
 	}
 	_, err = retry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return lb.lbClient.GetSpecificLBProfile(ctx, lbProfileResp.LBProfileResp.ID)
+		return lb.lbClient.GetSpecificLBProfile(ctx, 1, lbProfileResp.LBProfileResp.ID)
 	})
 	if err != nil {
 		return err
@@ -64,9 +68,9 @@ func (lb *loadBalancer) Create(ctx context.Context, d *utils.Data, meta interfac
 	return tftags.Set(d, createReq.CreateLBProfileReq)
 }
 
-func (lb *loadBalancer) Delete(ctx context.Context, d *utils.Data, meta interface{}) error {
+func (lb *loadBalancerProfile) Delete(ctx context.Context, d *utils.Data, meta interface{}) error {
 	lbProfileID := d.GetID()
-	_, err := lb.lbClient.DeleteLBProfile(ctx, lbProfileID)
+	_, err := lb.lbClient.DeleteLBProfile(ctx, 1, lbProfileID)
 	if err != nil {
 		return err
 	}

@@ -12,22 +12,22 @@ import (
 	"github.com/tshihad/tftags"
 )
 
-type loadBalancer struct {
+type loadBalancerPool struct {
 	lbClient *client.LoadBalancerAPIService
 }
 
-func newLoadBalancer(loadBalancerClient *client.LoadBalancerAPIService) *loadBalancer {
-	return &loadBalancer{
+func newLoadBalancerPool(loadBalancerClient *client.LoadBalancerAPIService) *loadBalancerPool {
+	return &loadBalancerPool{
 		lbClient: loadBalancerClient,
 	}
 }
 
-func (lb *loadBalancer) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
+func (lb *loadBalancerPool) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
 	var lbPoolResp models.GetSpecificLBPoolResp
 	if err := tftags.Get(d, &lbPoolResp); err != nil {
 		return err
 	}
-	getlbPoolResp, err := lb.lbClient.GetSpecificLBPool(ctx, lbPoolResp.ID)
+	getlbPoolResp, err := lb.lbClient.GetSpecificLBPool(ctx, 1, lbPoolResp.ID)
 	if err != nil {
 		return err
 	}
@@ -35,18 +35,18 @@ func (lb *loadBalancer) Read(ctx context.Context, d *utils.Data, meta interface{
 	return tftags.Set(d, getlbPoolResp.GetSpecificLBPoolResp)
 }
 
-func (lb *loadBalancer) Create(ctx context.Context, d *utils.Data, meta interface{}) error {
+func (lb *loadBalancerPool) Create(ctx context.Context, d *utils.Data, meta interface{}) error {
 	createReq := models.CreateLBPool{}
 	if err := tftags.Get(d, &createReq.CreateLBPoolReq); err != nil {
 		return err
 	}
 
-	lbPoolResp, err := lb.lbClient.CreateLBPool(ctx, createReq)
+	lbPoolResp, err := lb.lbClient.CreateLBPool(ctx, createReq, 1)
 	if err != nil {
 		return err
 	}
 	if !lbPoolResp.Success {
-		return fmt.Errorf(successErr, "creating loadBalancer Pool")
+		return fmt.Errorf(successErr, "creating loadBalancerPool Pool")
 	}
 
 	// wait until created
@@ -55,7 +55,7 @@ func (lb *loadBalancer) Create(ctx context.Context, d *utils.Data, meta interfac
 		InitialDelay: 1,
 	}
 	_, err = retry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return lb.lbClient.GetSpecificLBPool(ctx, lbPoolResp.LBPoolResp.ID)
+		return lb.lbClient.GetSpecificLBPool(ctx, 1, lbPoolResp.LBPoolResp.ID)
 	})
 	if err != nil {
 		return err
@@ -64,9 +64,13 @@ func (lb *loadBalancer) Create(ctx context.Context, d *utils.Data, meta interfac
 	return tftags.Set(d, createReq.CreateLBPoolReq)
 }
 
-func (lb *loadBalancer) Delete(ctx context.Context, d *utils.Data, meta interface{}) error {
+func (lb *loadBalancerPool) Update(ctx context.Context, d *utils.Data, meta interface{}) error {
+	return nil
+}
+
+func (lb *loadBalancerPool) Delete(ctx context.Context, d *utils.Data, meta interface{}) error {
 	lbPoolID := d.GetID()
-	_, err := lb.lbClient.DeleteLBPool(ctx, lbPoolID)
+	_, err := lb.lbClient.DeleteLBPool(ctx, 1, lbPoolID)
 	if err != nil {
 		return err
 	}

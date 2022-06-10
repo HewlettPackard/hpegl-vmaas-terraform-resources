@@ -5,6 +5,7 @@ package resources
 import (
 	"context"
 
+	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/resources/validations"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/utils"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/client"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -26,13 +27,12 @@ func LBPoolData() *schema.Resource {
 			},
 			"vipBalance": {
 				Type: schema.TypeString,
-				            ValidateDiagFunc: validations.StringInSlice([]string{
-					            "ROUND_ROBIN", "WEIGHTED_ROUND_ROBIN", " LEAST_CONNECTION",
-								 "WEIGHTED_LEAST_CONNECTION","IP_HASH",
-				            }, false),
-				            Computed:    true,
-				            Description: "Network Loadbalancer Supported values are `ROUND_ROBIN`, 
-				                `WEIGHTED_ROUND_ROBIN`, `LEAST_CONNECTION`, `WEIGHTED_LEAST_CONNECTION`,`IP_HASH`",
+				ValidateDiagFunc: validations.StringInSlice([]string{
+					"ROUND_ROBIN", "WEIGHTED_ROUND_ROBIN", " LEAST_CONNECTION",
+					"WEIGHTED_LEAST_CONNECTION", "IP_HASH",
+				}, false),
+				Computed:    true,
+				Description: "Network Loadbalancer Supported values are `ROUND_ROBIN`,`WEIGHTED_ROUND_ROBIN`, `LEAST_CONNECTION`, `WEIGHTED_LEAST_CONNECTION`,`IP_HASH`",
 			},
 			"config": {
 				Type:        schema.TypeList,
@@ -41,14 +41,10 @@ func LBPoolData() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"snatTranslationType": {
-							Type: schema.TypeString,
-				            ValidateDiagFunc: validations.StringInSlice([]string{
-					            "LBSnatAutoMap", "LBSnatDisabled", "LBSnatIpPool"
-				            }, false),
-				            Computed:    true,
-				            Description: "Network Loadbalancer Supported values are `LBSnatAutoMap`, 
-				                `LBSnatDisabled`, `LBSnatIpPool`",
-						},
+							Type:             schema.TypeString,
+							ValidateDiagFunc: validations.StringInSlice([]string{"LBSnatAutoMap", "LBSnatDisabled", "LBSnatIpPool"}, false),
+							Computed:         true,
+							Description:      "Network Loadbalancer Supported values are `LBSnatAutoMap`,`LBSnatDisabled`, `LBSnatIpPool`"},
 						"snatIpAddress": {
 							Type:        schema.TypeString,
 							Computed:    true,
@@ -56,16 +52,16 @@ func LBPoolData() *schema.Resource {
 						},
 						"memberGroup": {
 							Type:        schema.TypeList,
-				            Computed:    true,
-				            Description: "memberGroup Configuration",
-				            Elem: &schema.Resource{
-					            Schema: map[string]*schema.Schema{
-						            "name": {
-							            Type:        schema.TypeString,
+							Computed:    true,
+							Description: "memberGroup Configuration",
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"name": {
+										Type:        schema.TypeString,
 										Computed:    true,
 										Description: "name of the member group",
-						            },
-						            "path": {
+									},
+									"path": {
 										Type:        schema.TypeString,
 										Computed:    true,
 										Description: "path of the member group",
@@ -82,12 +78,12 @@ func LBPoolData() *schema.Resource {
 									},
 								},
 							},
-						},	
+						},
 					},
 				},
 			},
 		},
-		ReadContext:   LBPoolReadContext,
+		ReadContext: LBPoolReadContext,
 		Description: `The ` + DSLBPool + ` data source can be used to discover the ID of a hpegl vmaas network load balancer.
 		This can then be used with resources or data sources that require a ` + DSLBPool + `,
 		such as the ` + ResLoadBalancerPools + ` resource.`,
@@ -106,7 +102,7 @@ func LBPoolReadContext(ctx context.Context, d *schema.ResourceData, meta interfa
 	}
 
 	data := utils.NewData(d)
-	err = c.CmpClient.DSLBPool.Read(ctx, data, meta)
+	err = c.CmpClient.LoadBalancer.Read(ctx, data, meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}

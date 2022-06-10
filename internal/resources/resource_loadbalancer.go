@@ -5,8 +5,7 @@ package resources
 import (
 	"context"
 
-	diffvalidation "github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/resources/diffValidation"
-	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/resources/schemas"
+	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/resources/validations"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/utils"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/client"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -60,20 +59,16 @@ func LoadBalancer() *schema.Resource {
 							Description: "If `true` then admin State rule will be active/enabled.",
 						},
 						"size": {
-							Type: schema.TypeString,
-							ValidateDiagFunc: validations.StringInSlice([]string{
-								"SMALL", "MEDIUM", "LARGE",
-							}, false),
-							Required:    true,
-							Description: "Network Loadbalancer Supported values are `SMALL`, `MEDIUM`, `LARGE`",
+							Type:             schema.TypeString,
+							ValidateDiagFunc: validations.StringInSlice([]string{"SMALL", "MEDIUM", "LARGE"}, false),
+							Required:         true,
+							Description:      "Network Loadbalancer Supported values are `SMALL`, `MEDIUM`, `LARGE`",
 						},
 						"loglevel": {
-							Type: schema.TypeString,
-							ValidateDiagFunc: validations.StringInSlice([]string{
-								"DEBUG", "INFO", "WARNING", "ERROR","CRITICAL","ALERT","EMERGENCY"
-							}, false),
-							Required:    true,
-							Description: "Network Loadbalancer Supported values are `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`, `ALERT`, `EMERGENCY`",
+							Type:             schema.TypeString,
+							ValidateDiagFunc: validations.StringInSlice([]string{"DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL", "ALERT", "EMERGENCY"}, false),
+							Required:         true,
+							Description:      "Network Loadbalancer Supported values are `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`, `ALERT`, `EMERGENCY`",
 						},
 						"tier1": {
 							Type:        schema.TypeString,
@@ -113,7 +108,7 @@ func loadbalancerReadContext(ctx context.Context, rd *schema.ResourceData, meta 
 	}
 
 	data := utils.NewData(rd)
-	if err := c.CmpClient.ResLoadBalancer.Read(ctx, data, meta); err != nil {
+	if err := c.CmpClient.LoadBalancer.Read(ctx, data, meta); err != nil {
 		return diag.FromErr(err)
 	}
 
@@ -127,7 +122,7 @@ func loadbalancerCreateContext(ctx context.Context, rd *schema.ResourceData, met
 	}
 
 	data := utils.NewData(rd)
-	if err := c.CmpClient.ResLoadBalancer.Create(ctx, data, meta); err != nil {
+	if err := c.CmpClient.LoadBalancer.Create(ctx, data, meta); err != nil {
 		return diag.FromErr(err)
 	}
 
@@ -141,7 +136,7 @@ func loadbalancerDeleteContext(ctx context.Context, rd *schema.ResourceData, met
 	}
 
 	data := utils.NewData(rd)
-	if err := c.CmpClient.ResLoadBalancer.Delete(ctx, data, meta); err != nil {
+	if err := c.CmpClient.LoadBalancer.Delete(ctx, data, meta); err != nil {
 		return diag.FromErr(err)
 	}
 

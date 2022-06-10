@@ -27,21 +27,25 @@ func (lb *loadBalancer) Read(ctx context.Context, d *utils.Data, meta interface{
 	if err := tftags.Get(d, &loadBalancerResp); err != nil {
 		return err
 	}
-	getResLoadBalancer, err := lb.lbClient.GetSpecificResLoadBalancers(ctx, loadBalancerResp.ID)
+	getResLoadBalancer, err := lb.lbClient.GetSpecificLoadBalancers(ctx, loadBalancerResp.ID)
 	if err != nil {
 		return err
 	}
 
-	return tftags.Set(d, getResLoadBalancer.GetSpecificNetworkResLoadBalancerResp)
+	return tftags.Set(d, getResLoadBalancer.GetSpecificNetworkLoadBalancerResp)
+}
+
+func (lb *loadBalancer) Update(ctx context.Context, d *utils.Data, meta interface{}) error {
+	return nil
 }
 
 func (lb *loadBalancer) Create(ctx context.Context, d *utils.Data, meta interface{}) error {
-	createReq := models.CreateResLoadBalancerRequest{}
-	if err := tftags.Get(d, &createReq.NetworkResLoadBalancer); err != nil {
+	createReq := models.CreateLoadBalancerRequest{}
+	if err := tftags.Get(d, &createReq.NetworkLoadBalancer); err != nil {
 		return err
 	}
 
-	lbResp, err := lb.lbClient.CreateResLoadBalancer(ctx, createReq)
+	lbResp, err := lb.lbClient.CreateLoadBalancer(ctx, createReq)
 	if err != nil {
 		return err
 	}
@@ -55,18 +59,18 @@ func (lb *loadBalancer) Create(ctx context.Context, d *utils.Data, meta interfac
 		InitialDelay: 1,
 	}
 	_, err = retry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return lb.lbClient.GetSpecificResLoadBalancers(ctx, lbResp.NetworkResLoadBalancerResp.ID)
+		return lb.lbClient.GetSpecificLoadBalancers(ctx, lbResp.NetworkLoadBalancerResp.ID)
 	})
 	if err != nil {
 		return err
 	}
 
-	return tftags.Set(d, createReq.NetworkResLoadBalancer)
+	return tftags.Set(d, createReq.NetworkLoadBalancer)
 }
 
 func (lb *loadBalancer) Delete(ctx context.Context, d *utils.Data, meta interface{}) error {
 	lbID := d.GetID()
-	_, err := lb.lbClient.DeleteResLoadBalancer(ctx, lbID)
+	_, err := lb.lbClient.DeleteLoadBalancer(ctx, lbID)
 	if err != nil {
 		return err
 	}

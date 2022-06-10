@@ -12,22 +12,22 @@ import (
 	"github.com/tshihad/tftags"
 )
 
-type loadBalancer struct {
+type loadBalancerVirtualServer struct {
 	lbClient *client.LoadBalancerAPIService
 }
 
-func newLoadBalancer(loadBalancerClient *client.LoadBalancerAPIService) *loadBalancer {
-	return &loadBalancer{
+func newLoadBalancerVirtualServer(loadBalancerClient *client.LoadBalancerAPIService) *loadBalancerVirtualServer {
+	return &loadBalancerVirtualServer{
 		lbClient: loadBalancerClient,
 	}
 }
 
-func (lb *loadBalancer) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
+func (lb *loadBalancerVirtualServer) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
 	var lbVirtualServerResp models.GetSpecificLBVirtualServersResp
 	if err := tftags.Get(d, &lbVirtualServerResp); err != nil {
 		return err
 	}
-	getlbVirtualServerResp, err := lb.lbClient.GetSpecificLBVirtualServer(ctx, lbVirtualServerResp.ID)
+	getlbVirtualServerResp, err := lb.lbClient.GetSpecificLBVirtualServer(ctx, 1, lbVirtualServerResp.ID)
 	if err != nil {
 		return err
 	}
@@ -35,18 +35,22 @@ func (lb *loadBalancer) Read(ctx context.Context, d *utils.Data, meta interface{
 	return tftags.Set(d, getlbVirtualServerResp.GetSpecificLBVirtualServersResp)
 }
 
-func (lb *loadBalancer) Create(ctx context.Context, d *utils.Data, meta interface{}) error {
+func (lb *loadBalancerVirtualServer) Update(ctx context.Context, d *utils.Data, meta interface{}) error {
+	return nil
+}
+
+func (lb *loadBalancerVirtualServer) Create(ctx context.Context, d *utils.Data, meta interface{}) error {
 	createReq := models.CreateLBVirtualServers{}
 	if err := tftags.Get(d, &createReq.CreateLBVirtualServersReq); err != nil {
 		return err
 	}
 
-	lbVirtualServersResp, err := lb.lbClient.CreateLBVirtualServers(ctx, createReq)
+	lbVirtualServersResp, err := lb.lbClient.CreateLBVirtualServers(ctx, createReq, 1)
 	if err != nil {
 		return err
 	}
 	if !lbVirtualServersResp.Success {
-		return fmt.Errorf(successErr, "creating loadBalancer Virtual Servers")
+		return fmt.Errorf(successErr, "creating loadBalancerVirtualServer Virtual Servers")
 	}
 
 	// wait until created
@@ -55,7 +59,7 @@ func (lb *loadBalancer) Create(ctx context.Context, d *utils.Data, meta interfac
 		InitialDelay: 1,
 	}
 	_, err = retry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return lb.lbClient.GetSpecificLBVirtualServer(ctx, lbVirtualServersResp.CreateLBVirtualServersResp.ID)
+		return lb.lbClient.GetSpecificLBVirtualServer(ctx, 1, lbVirtualServersResp.CreateLBVirtualServersResp.ID)
 	})
 	if err != nil {
 		return err
@@ -64,9 +68,9 @@ func (lb *loadBalancer) Create(ctx context.Context, d *utils.Data, meta interfac
 	return tftags.Set(d, createReq.CreateLBVirtualServersReq)
 }
 
-func (lb *loadBalancer) Delete(ctx context.Context, d *utils.Data, meta interface{}) error {
+func (lb *loadBalancerVirtualServer) Delete(ctx context.Context, d *utils.Data, meta interface{}) error {
 	lbVirtualServerID := d.GetID()
-	_, err := lb.lbClient.DeleteLBVirtualServers(ctx, lbVirtualServerID)
+	_, err := lb.lbClient.DeleteLBVirtualServers(ctx, 1, lbVirtualServerID)
 	if err != nil {
 		return err
 	}

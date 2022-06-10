@@ -5,8 +5,7 @@ package resources
 import (
 	"context"
 
-	diffvalidation "github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/resources/diffValidation"
-	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/resources/schemas"
+	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/resources/validations"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/utils"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/client"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -40,13 +39,9 @@ func LoadBalancerVirtualServers() *schema.Resource {
 				Default:     true,
 			},
 			"vipProtocol": {
-				Type: schema.TypeString,
-				            ValidateDiagFunc: validations.StringInSlice([]string{
-					            "http", "tcp", "udp"
-				            }, false),
-				            Description: "Network Loadbalancer Supported values are `http`, 
-				                `tcp`, `udp`",
-			},
+				Type:             schema.TypeString,
+				ValidateDiagFunc: validations.StringInSlice([]string{"http", "tcp", "udp"}, false),
+				Description:      "Network Loadbalancer Supported values are `http`,`tcp`, `udp`"},
 			"pool": {
 				Type:        schema.TypeInt,
 				Required:    true,
@@ -69,14 +64,10 @@ func LoadBalancerVirtualServers() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"persistence": {
-							Type: schema.TypeString,
-				            ValidateDiagFunc: validations.StringInSlice([]string{
-					            "SOURCE_IP", "COOKIE", "DISBALED"
-				            }, false),
-				            Required:    true,
-				            Description: "Network Loadbalancer Supported values are `SOURCE_IP`, 
-				                `COOKIE`, `DISBALED`",
-						},
+							Type:             schema.TypeString,
+							ValidateDiagFunc: validations.StringInSlice([]string{"SOURCE_IP", "COOKIE", "DISBALED"}, false),
+							Required:         true,
+							Description:      "Network Loadbalancer Supported values are `SOURCE_IP`,`COOKIE`, `DISBALED`"},
 						"persistenceProfile": {
 							Type:        schema.TypeInt,
 							Required:    true,
@@ -116,7 +107,7 @@ func loadbalancerVirtualServerReadContext(ctx context.Context, rd *schema.Resour
 	}
 
 	data := utils.NewData(rd)
-	if err := c.CmpClient.ResLoadBalancerVirtualServers.Read(ctx, data, meta); err != nil {
+	if err := c.CmpClient.LoadBalancerVirtualServer.Read(ctx, data, meta); err != nil {
 		return diag.FromErr(err)
 	}
 
@@ -130,7 +121,7 @@ func loadbalancerVirtualServerCreateContext(ctx context.Context, rd *schema.Reso
 	}
 
 	data := utils.NewData(rd)
-	if err := c.CmpClient.ResLoadBalancerVirtualServers.Create(ctx, data, meta); err != nil {
+	if err := c.CmpClient.LoadBalancerVirtualServer.Create(ctx, data, meta); err != nil {
 		return diag.FromErr(err)
 	}
 
@@ -144,7 +135,7 @@ func loadbalancerVirtualServerDeleteContext(ctx context.Context, rd *schema.Reso
 	}
 
 	data := utils.NewData(rd)
-	if err := c.CmpClient.ResLoadBalancerVirtualServers.Delete(ctx, data, meta); err != nil {
+	if err := c.CmpClient.LoadBalancerVirtualServer.Delete(ctx, data, meta); err != nil {
 		return diag.FromErr(err)
 	}
 

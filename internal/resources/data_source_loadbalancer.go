@@ -5,6 +5,7 @@ package resources
 import (
 	"context"
 
+	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/resources/validations"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/utils"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/client"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -21,7 +22,7 @@ func LoadBalancerData() *schema.Resource {
 			},
 			"type": {
 				Type:        schema.TypeString,
-				Description: "This field can be used as type for the " + ResResLoadBalancer,
+				Description: "This field can be used as type for the " + ResLoadBalancer,
 				Computed:    true,
 			},
 			"networkServerId": {
@@ -42,20 +43,16 @@ func LoadBalancerData() *schema.Resource {
 							Description: "If `true` then admin State rule will be active/enabled.",
 						},
 						"size": {
-							Type: schema.TypeString,
-							ValidateDiagFunc: validations.StringInSlice([]string{
-								"SMALL", "MEDIUM", "LARGE",
-							}, false),
-							Computed:    true,
-							Description: "Network Loadbalancer Supported values are `SMALL`, `MEDIUM`, `LARGE`",
+							Type:             schema.TypeString,
+							ValidateDiagFunc: validations.StringInSlice([]string{"SMALL", "MEDIUM", "LARGE"}, false),
+							Computed:         true,
+							Description:      "Network Loadbalancer Supported values are `SMALL`, `MEDIUM`, `LARGE`",
 						},
 						"loglevel": {
-							Type: schema.TypeString,
-							ValidateDiagFunc: validations.StringInSlice([]string{
-								"DEBUG", "INFO", "WARNING", "ERROR","CRITICAL","ALERT","EMERGENCY"
-							}, false),
-							Computed:    true,
-							Description: "Network Loadbalancer Supported values are `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`, `ALERT`, `EMERGENCY`",
+							Type:             schema.TypeString,
+							ValidateDiagFunc: validations.StringInSlice([]string{"DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL", "ALERT", "EMERGENCY"}, false),
+							Computed:         true,
+							Description:      "Network Loadbalancer Supported values are `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`, `ALERT`, `EMERGENCY`",
 						},
 						"tier1": {
 							Type:        schema.TypeString,
@@ -80,7 +77,7 @@ func LoadBalancerData() *schema.Resource {
 				},
 			},
 		},
-		ReadContext:   ResLoadBalancerReadContext,
+		ReadContext: ResLoadBalancerReadContext,
 		Description: `The ` + DSLoadBalancer + ` data source can be used to discover the ID of a hpegl vmaas network load balancer.
 		This can then be used with resources or data sources that require a ` + DSLoadBalancer + `,
 		such as the ` + ResLoadBalancer + ` resource.`,
@@ -99,7 +96,7 @@ func ResLoadBalancerReadContext(ctx context.Context, d *schema.ResourceData, met
 	}
 
 	data := utils.NewData(d)
-	err = c.CmpClient.DSLoadBalancer.Read(ctx, data, meta)
+	err = c.CmpClient.LoadBalancer.Read(ctx, data, meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}
