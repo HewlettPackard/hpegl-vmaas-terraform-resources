@@ -83,9 +83,9 @@ func LBProfileData() *schema.Resource {
 			},
 		},
 		ReadContext:   LBProfileReadContext,
-		Description: `The ` + DSLoadBalancer + ` profile data source can be used to discover the ID of a hpegl vmaas router.
-		This can then be used with resources or data sources that require a ` + DSLoadBalancer + `,
-		profile such as the ` + ResLoadBalancer + ` profile resource.`,
+		Description: `The ` + DSLBProfile + ` data source can be used to discover the ID of a hpegl vmaas router.
+		This can then be used with resources or data sources that require a ` + DSLBProfile + `,
+		such as the ` + ResLoadBalancerProfiles + ` resource.`,
 		SchemaVersion:  0,
 		StateUpgraders: nil,
 		Importer: &schema.ResourceImporter{

@@ -11,7 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func ResLoadBalancerData() *schema.Resource {
+func LoadBalancerData() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"name": {
@@ -99,7 +99,7 @@ func ResLoadBalancerReadContext(ctx context.Context, d *schema.ResourceData, met
 	}
 
 	data := utils.NewData(d)
-	err = c.CmpClient.ResLoadBalancer.Read(ctx, data, meta)
+	err = c.CmpClient.DSLoadBalancer.Read(ctx, data, meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}

@@ -88,9 +88,9 @@ func LBPoolData() *schema.Resource {
 			},
 		},
 		ReadContext:   LBPoolReadContext,
-		Description: `The ` + DSLoadBalancer + ` pool data source can be used to discover the ID of a hpegl vmaas network load balancer.
-		This can then be used with resources or data sources that require a ` + DSLoadBalancer + `,
-		pool such as the ` + ResLoadBalancer + ` pool resource.`,
+		Description: `The ` + DSLBPool + ` data source can be used to discover the ID of a hpegl vmaas network load balancer.
+		This can then be used with resources or data sources that require a ` + DSLBPool + `,
+		such as the ` + ResLoadBalancerPools + ` resource.`,
 		SchemaVersion:  0,
 		StateUpgraders: nil,
 		Importer: &schema.ResourceImporter{

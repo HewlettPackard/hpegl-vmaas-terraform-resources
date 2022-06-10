@@ -87,9 +87,9 @@ func LBMonitorData() *schema.Resource {
 			},
 		},
 		ReadContext:   LBMonitorReadContext,
-		Description: `The ` + DSLoadBalancer + ` monitor data source can be used to discover the ID of a hpegl vmaas network load balancer.
-		This can then be used with resources or data sources that require a ` + DSLoadBalancer + `,
-		monitor such as the ` + ResLoadBalancer + ` monitor resource.`,
+		Description: `The ` + DSLBMonitor + ` data source can be used to discover the ID of a hpegl vmaas network load balancer.
+		This can then be used with resources or data sources that require a ` + DSLBMonitor + `,
+		such as the ` + ResLoadBalancerMonitors + ` resource.`,
 		SchemaVersion:  0,
 		StateUpgraders: nil,
 		Importer: &schema.ResourceImporter{

@@ -82,9 +82,9 @@ func LBVirtualServerData() *schema.Resource {
 			},
 		},
 		ReadContext: LBVirtualServerReadContext,
-		Description: `The ` + DSLoadBalancer + ` virtual server data source can be used to discover the ID of a hpegl vmaas router.
-		This can then be used with resources or data sources that require a ` + DSLoadBalancer + `,
-		virtual server such as the ` + ResLoadBalancer + ` virtual server resource.`,
+		Description: `The ` + DSLBVirtualServer + ` virtual server data source can be used to discover the ID of a hpegl vmaas router.
+		This can then be used with resources or data sources that require a ` + DSLBVirtualServer + `,
+		virtual server such as the ` + ResLoadBalancerVirtualServers + ` resource.`,
 		SchemaVersion:  0,
 		StateUpgraders: nil,
 		Importer: &schema.ResourceImporter{
