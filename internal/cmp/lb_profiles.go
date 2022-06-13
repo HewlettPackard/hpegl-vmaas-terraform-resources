@@ -27,7 +27,13 @@ func (lb *loadBalancerProfile) Read(ctx context.Context, d *utils.Data, meta int
 	if err := tftags.Get(d, &lbProfileResp); err != nil {
 		return err
 	}
-	getlbProfileResp, err := lb.lbClient.GetSpecificLBProfile(ctx, 1, lbProfileResp.ID)
+
+	lbDetails, err := lb.lbClient.GetLoadBalancers(ctx)
+	if err != nil {
+		return err
+	}
+
+	getlbProfileResp, err := lb.lbClient.GetSpecificLBProfile(ctx, lbDetails.GetNetworkLoadBalancerResp[0].ID, lbProfileResp.ID)
 	if err != nil {
 		return err
 	}
@@ -45,7 +51,12 @@ func (lb *loadBalancerProfile) Create(ctx context.Context, d *utils.Data, meta i
 		return err
 	}
 
-	lbProfileResp, err := lb.lbClient.CreateLBProfile(ctx, createReq, 1)
+	lbDetails, err := lb.lbClient.GetLoadBalancers(ctx)
+	if err != nil {
+		return err
+	}
+
+	lbProfileResp, err := lb.lbClient.CreateLBProfile(ctx, createReq, lbDetails.GetNetworkLoadBalancerResp[0].ID)
 	if err != nil {
 		return err
 	}
@@ -59,7 +70,7 @@ func (lb *loadBalancerProfile) Create(ctx context.Context, d *utils.Data, meta i
 		InitialDelay: 1,
 	}
 	_, err = retry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return lb.lbClient.GetSpecificLBProfile(ctx, 1, lbProfileResp.LBProfileResp.ID)
+		return lb.lbClient.GetSpecificLBProfile(ctx, lbDetails.GetNetworkLoadBalancerResp[0].ID, lbProfileResp.LBProfileResp.ID)
 	})
 	if err != nil {
 		return err
@@ -70,7 +81,11 @@ func (lb *loadBalancerProfile) Create(ctx context.Context, d *utils.Data, meta i
 
 func (lb *loadBalancerProfile) Delete(ctx context.Context, d *utils.Data, meta interface{}) error {
 	lbProfileID := d.GetID()
-	_, err := lb.lbClient.DeleteLBProfile(ctx, 1, lbProfileID)
+	lbDetails, err := lb.lbClient.GetLoadBalancers(ctx)
+	if err != nil {
+		return err
+	}
+	_, err = lb.lbClient.DeleteLBProfile(ctx, lbDetails.GetNetworkLoadBalancerResp[0].ID, lbProfileID)
 	if err != nil {
 		return err
 	}

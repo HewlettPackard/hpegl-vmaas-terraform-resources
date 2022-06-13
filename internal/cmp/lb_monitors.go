@@ -27,7 +27,13 @@ func (lb *loadBalancerMonitor) Read(ctx context.Context, d *utils.Data, meta int
 	if err := tftags.Get(d, &lbMonitorResp); err != nil {
 		return err
 	}
-	getlbMonitorResp, err := lb.lbClient.GetSpecificLBMonitor(ctx, 1, lbMonitorResp.ID)
+
+	lbDetails, err := lb.lbClient.GetLoadBalancers(ctx)
+	if err != nil {
+		return err
+	}
+
+	getlbMonitorResp, err := lb.lbClient.GetSpecificLBMonitor(ctx, lbDetails.GetNetworkLoadBalancerResp[0].ID, lbMonitorResp.ID)
 	if err != nil {
 		return err
 	}
@@ -41,12 +47,17 @@ func (lb *loadBalancerMonitor) Create(ctx context.Context, d *utils.Data, meta i
 		return err
 	}
 
-	lbMonitorResp, err := lb.lbClient.CreateLBMonitor(ctx, createReq, 1)
+	lbDetails, err := lb.lbClient.GetLoadBalancers(ctx)
+	if err != nil {
+		return err
+	}
+
+	lbMonitorResp, err := lb.lbClient.CreateLBMonitor(ctx, createReq, lbDetails.GetNetworkLoadBalancerResp[0].ID)
 	if err != nil {
 		return err
 	}
 	if !lbMonitorResp.Success {
-		return fmt.Errorf(successErr, "creating  loadBalancerMonitor Monitor")
+		return fmt.Errorf(successErr, "creating loadBalancerMonitor Monitor")
 	}
 
 	// wait until created
@@ -55,7 +66,7 @@ func (lb *loadBalancerMonitor) Create(ctx context.Context, d *utils.Data, meta i
 		InitialDelay: 1,
 	}
 	_, err = retry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return lb.lbClient.GetSpecificLBMonitor(ctx, 1, lbMonitorResp.LBMonitorResp.ID)
+		return lb.lbClient.GetSpecificLBMonitor(ctx, lbDetails.GetNetworkLoadBalancerResp[0].ID, lbMonitorResp.LBMonitorResp.ID)
 	})
 	if err != nil {
 		return err
@@ -66,7 +77,11 @@ func (lb *loadBalancerMonitor) Create(ctx context.Context, d *utils.Data, meta i
 
 func (lb *loadBalancerMonitor) Delete(ctx context.Context, d *utils.Data, meta interface{}) error {
 	lbMonitorID := d.GetID()
-	_, err := lb.lbClient.DeleteLBMonitor(ctx, 1, lbMonitorID)
+	lbDetails, err := lb.lbClient.GetLoadBalancers(ctx)
+	if err != nil {
+		return err
+	}
+	_, err = lb.lbClient.DeleteLBMonitor(ctx, lbDetails.GetNetworkLoadBalancerResp[0].ID, lbMonitorID)
 	if err != nil {
 		return err
 	}

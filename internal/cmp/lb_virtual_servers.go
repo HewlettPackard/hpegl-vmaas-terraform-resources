@@ -27,7 +27,13 @@ func (lb *loadBalancerVirtualServer) Read(ctx context.Context, d *utils.Data, me
 	if err := tftags.Get(d, &lbVirtualServerResp); err != nil {
 		return err
 	}
-	getlbVirtualServerResp, err := lb.lbClient.GetSpecificLBVirtualServer(ctx, 1, lbVirtualServerResp.ID)
+
+	lbDetails, err := lb.lbClient.GetLoadBalancers(ctx)
+	if err != nil {
+		return err
+	}
+
+	getlbVirtualServerResp, err := lb.lbClient.GetSpecificLBVirtualServer(ctx, lbDetails.GetNetworkLoadBalancerResp[0].ID, lbVirtualServerResp.ID)
 	if err != nil {
 		return err
 	}
@@ -45,7 +51,12 @@ func (lb *loadBalancerVirtualServer) Create(ctx context.Context, d *utils.Data, 
 		return err
 	}
 
-	lbVirtualServersResp, err := lb.lbClient.CreateLBVirtualServers(ctx, createReq, 1)
+	lbDetails, err := lb.lbClient.GetLoadBalancers(ctx)
+	if err != nil {
+		return err
+	}
+
+	lbVirtualServersResp, err := lb.lbClient.CreateLBVirtualServers(ctx, createReq, lbDetails.GetNetworkLoadBalancerResp[0].ID)
 	if err != nil {
 		return err
 	}
@@ -59,7 +70,7 @@ func (lb *loadBalancerVirtualServer) Create(ctx context.Context, d *utils.Data, 
 		InitialDelay: 1,
 	}
 	_, err = retry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return lb.lbClient.GetSpecificLBVirtualServer(ctx, 1, lbVirtualServersResp.CreateLBVirtualServersResp.ID)
+		return lb.lbClient.GetSpecificLBVirtualServer(ctx, lbDetails.GetNetworkLoadBalancerResp[0].ID, lbVirtualServersResp.CreateLBVirtualServersResp.ID)
 	})
 	if err != nil {
 		return err
@@ -70,7 +81,11 @@ func (lb *loadBalancerVirtualServer) Create(ctx context.Context, d *utils.Data, 
 
 func (lb *loadBalancerVirtualServer) Delete(ctx context.Context, d *utils.Data, meta interface{}) error {
 	lbVirtualServerID := d.GetID()
-	_, err := lb.lbClient.DeleteLBVirtualServers(ctx, 1, lbVirtualServerID)
+	lbDetails, err := lb.lbClient.GetLoadBalancers(ctx)
+	if err != nil {
+		return err
+	}
+	_, err = lb.lbClient.DeleteLBVirtualServers(ctx, lbDetails.GetNetworkLoadBalancerResp[0].ID, lbVirtualServerID)
 	if err != nil {
 		return err
 	}

@@ -27,7 +27,13 @@ func (lb *loadBalancerPool) Read(ctx context.Context, d *utils.Data, meta interf
 	if err := tftags.Get(d, &lbPoolResp); err != nil {
 		return err
 	}
-	getlbPoolResp, err := lb.lbClient.GetSpecificLBPool(ctx, 1, lbPoolResp.ID)
+
+	lbDetails, err := lb.lbClient.GetLoadBalancers(ctx)
+	if err != nil {
+		return err
+	}
+
+	getlbPoolResp, err := lb.lbClient.GetSpecificLBPool(ctx, lbDetails.GetNetworkLoadBalancerResp[0].ID, lbPoolResp.ID)
 	if err != nil {
 		return err
 	}
@@ -41,12 +47,17 @@ func (lb *loadBalancerPool) Create(ctx context.Context, d *utils.Data, meta inte
 		return err
 	}
 
-	lbPoolResp, err := lb.lbClient.CreateLBPool(ctx, createReq, 1)
+	lbDetails, err := lb.lbClient.GetLoadBalancers(ctx)
+	if err != nil {
+		return err
+	}
+
+	lbPoolResp, err := lb.lbClient.CreateLBPool(ctx, createReq, lbDetails.GetNetworkLoadBalancerResp[0].ID)
 	if err != nil {
 		return err
 	}
 	if !lbPoolResp.Success {
-		return fmt.Errorf(successErr, "creating loadBalancerPool Pool")
+		return fmt.Errorf(successErr, "creating loadBalancer Pool")
 	}
 
 	// wait until created
@@ -55,7 +66,7 @@ func (lb *loadBalancerPool) Create(ctx context.Context, d *utils.Data, meta inte
 		InitialDelay: 1,
 	}
 	_, err = retry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return lb.lbClient.GetSpecificLBPool(ctx, 1, lbPoolResp.LBPoolResp.ID)
+		return lb.lbClient.GetSpecificLBPool(ctx, lbDetails.GetNetworkLoadBalancerResp[0].ID, lbPoolResp.LBPoolResp.ID)
 	})
 	if err != nil {
 		return err
@@ -70,7 +81,12 @@ func (lb *loadBalancerPool) Update(ctx context.Context, d *utils.Data, meta inte
 
 func (lb *loadBalancerPool) Delete(ctx context.Context, d *utils.Data, meta interface{}) error {
 	lbPoolID := d.GetID()
-	_, err := lb.lbClient.DeleteLBPool(ctx, 1, lbPoolID)
+	lbDetails, err := lb.lbClient.GetLoadBalancers(ctx)
+	if err != nil {
+		return err
+	}
+
+	_, err = lb.lbClient.DeleteLBPool(ctx, lbDetails.GetNetworkLoadBalancerResp[0].ID, lbPoolID)
 	if err != nil {
 		return err
 	}
