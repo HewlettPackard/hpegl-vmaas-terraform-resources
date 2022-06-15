@@ -21,79 +21,83 @@ func LoadBalancerMonitors() *schema.Resource {
 				Description: "Network loadbalancer Monitor name",
 			},
 			"description": {
-				Type:        schema.TypeInt,
+				Type:        schema.TypeString,
 				Description: "Creating the Network Load balancer Monitor.",
-				Required:    true,
+				Optional:    true,
 			},
-			"monitorTimeout": {
+			"send_type": {
+				Type:        schema.TypeString,
+				Description: "send type method like GET,POST",
+				Optional:    true,
+			},
+			"monitor_timeout": {
 				Type:        schema.TypeInt,
-				Required:    true,
+				Optional:    true,
 				Description: "Timeout for Network loadbalancer Monitor",
 			},
-			"monitorInterval": {
+			"monitor_interval": {
 				Type:        schema.TypeInt,
 				Description: "Interval time for Network loadbalancer Monitor",
-				Required:    true,
+				Optional:    true,
 			},
-			"sendVersion": {
+			"send_version": {
 				Type:        schema.TypeInt,
 				Description: "Network loadbalancer Monitor http version",
-				Required:    true,
+				Optional:    true,
 			},
-			"sendData": {
+			"send_data": {
 				Type:        schema.TypeString,
 				Description: "Network loadbalancer Monitor Send info",
-				Required:    true,
+				Optional:    true,
 			},
-			"receiveData": {
+			"receive_data": {
 				Type:        schema.TypeString,
 				Description: "Network loadbalancer Monitor receive info",
-				Required:    true,
+				Optional:    true,
 			},
-			"receiveCode": {
+			"receive_code": {
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 				Description: "Network loadbalancer Monitor receive status codes like 200,300,301,302,304,307",
 			},
-			"monitorDestination": {
+			"monitor_destination": {
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 				Description: "Network loadbalancer Monitor destination",
 			},
-			"monitorReverse": {
+			"monitor_reverse": {
 				Type:        schema.TypeBool,
-				Required:    true,
 				Default:     true,
+				Optional:    true,
 				Description: "Network loadbalancer Monitor Reverse",
 			},
-			"monitorTransparent": {
+			"monitor_transparent": {
 				Type:        schema.TypeBool,
-				Required:    true,
 				Default:     true,
+				Optional:    true,
 				Description: "Network loadbalancer Monitor transparent",
 			},
-			"monitorAdaptive": {
+			"monitor_adaptive": {
 				Type:        schema.TypeBool,
-				Required:    true,
-				Default:     true,
+				Optional:    true,
 				Description: "Network loadbalancer Monitor adaptive",
 			},
-			"fallCount": {
+			"fall_count": {
 				Type:        schema.TypeInt,
-				Required:    true,
+				Optional:    true,
 				Description: "Network loadbalancer Monitor fall counts",
 			},
-			"riseCount": {
+			"rise_count": {
 				Type:        schema.TypeInt,
-				Required:    true,
+				Optional:    true,
 				Description: "Network loadbalancer Monitor rise counts",
 			},
-			"aliasPort": {
+			"alias_port": {
 				Type:        schema.TypeInt,
-				Required:    true,
+				Optional:    true,
 				Description: "Network loadbalancer Monitor alias port",
 			},
-			"monitorType": {
+			"monitor_type": {
 				Type:             schema.TypeString,
 				ValidateDiagFunc: validations.StringInSlice([]string{"LBHttpMonitorProfile", "LBHttpsMonitorProfile", "LBIcmpMonitorProfile", "LBPassiveMonitorProfile", "LBTcpMonitorProfile", "LBUdpMonitorProfile"}, false),
 				Required:         true,
@@ -101,6 +105,7 @@ func LoadBalancerMonitors() *schema.Resource {
 			},
 		},
 		ReadContext:   loadbalancerMonitorReadContext,
+		UpdateContext: loadbalancerMonitorReadContext,
 		CreateContext: loadbalancerMonitorCreateContext,
 		DeleteContext: loadbalancerMonitorDeleteContext,
 		Description: `loadbalancer Monitor resource facilitates creating,

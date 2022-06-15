@@ -21,18 +21,18 @@ func LoadBalancerPools() *schema.Resource {
 				Description: "Network loadbalancer pool name",
 			},
 			"description": {
-				Type:        schema.TypeInt,
+				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Creating the Network loadbalancer pool.",
 				ForceNew:    true,
 			},
-			"minActive": {
+			"min_active": {
 				Type:        schema.TypeInt,
 				Required:    true,
 				Description: "minimum active members for the Network loadbalancer pool",
 				ForceNew:    true,
 			},
-			"vipBalance": {
+			"vip_balance": {
 				Type:             schema.TypeString,
 				ValidateDiagFunc: validations.StringInSlice([]string{"ROUND_ROBIN", "WEIGHTED_ROUND_ROBIN", " LEAST_CONNECTION", "WEIGHTED_LEAST_CONNECTION", "IP_HASH"}, false),
 				Required:         true,
@@ -43,63 +43,62 @@ func LoadBalancerPools() *schema.Resource {
 				Description: "pool Configuration",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"snatTranslationType": {
+						"snat_translation_type": {
 							Type:             schema.TypeString,
 							ValidateDiagFunc: validations.StringInSlice([]string{"LBSnatAutoMap", "LBSnatDisabled", "LBSnatIpPool"}, false),
 							Required:         true,
 							Description:      "Network Loadbalancer Supported values are `LBSnatAutoMap`,`LBSnatDisabled`, `LBSnatIpPool`",
 						},
-						"passiveMonitorPath": {
+						"passive_monitor_path": {
 							Type:        schema.TypeInt,
 							Required:    true,
-							Description: "passiveMonitorPath for Network loadbalancer pool",
+							Description: "passive_monitor_path for Network loadbalancer pool",
 						},
-						"activeMonitorPaths": {
+						"active_monitor_paths": {
 							Type:        schema.TypeInt,
 							Required:    true,
-							Description: "activeMonitorPaths for Network loadbalancer pool",
+							Description: "active_monitor_paths for Network loadbalancer pool",
 						},
-						"tcpMultiplexing": {
+						"tcp_multiplexing": {
 							Type:        schema.TypeBool,
 							Required:    true,
-							Default:     true,
-							Description: "tcpMultiplexing for Network loadbalancer pool",
+							Description: "tcp_multiplexing for Network loadbalancer pool",
 						},
-						"tcpMultiplexingNumber": {
+						"tcp_multiplexing_number": {
 							Type:        schema.TypeInt,
 							Required:    true,
-							Description: "tcpMultiplexingNumber for Network loadbalancer pool",
+							Description: "tcp_multiplexing_number for Network loadbalancer pool",
 						},
-						"snatIpAddress": {
+						"snat_ip_address": {
 							Type:        schema.TypeString,
 							Required:    true,
-							Description: "snatIpAddress for Network loadbalancer pool",
+							Description: "snat_ip_address for Network loadbalancer pool",
 						},
-						"memberGroup": {
+						"member_group": {
 							Type:        schema.TypeList,
 							Required:    true,
-							Description: "memberGroup Configuration",
+							Description: "member group",
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"name": {
 										Type:        schema.TypeString,
 										Required:    true,
-										Description: "name of the member group",
+										Description: "name of member group",
 									},
 									"path": {
 										Type:        schema.TypeString,
 										Required:    true,
-										Description: "path of the member group",
+										Description: "path of member group",
 									},
-									"ipRevisionFilter": {
+									"ip_revision_filter": {
 										Type:        schema.TypeString,
 										Required:    true,
-										Description: "ipRevisionFilter of the member group",
+										Description: "ipRevisionFilter of member group",
 									},
 									"port": {
 										Type:        schema.TypeInt,
 										Required:    true,
-										Description: "port of the member group",
+										Description: "port of member group",
 									},
 								},
 							},
@@ -109,6 +108,7 @@ func LoadBalancerPools() *schema.Resource {
 			},
 		},
 		ReadContext:   loadbalancerPoolReadContext,
+		UpdateContext: loadbalancerPoolReadContext,
 		CreateContext: loadbalancerPoolCreateContext,
 		DeleteContext: loadbalancerPoolDeleteContext,
 		Description: `loadbalancer Pool resource facilitates creating,

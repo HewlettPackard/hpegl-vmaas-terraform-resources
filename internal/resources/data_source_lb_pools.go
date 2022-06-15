@@ -20,18 +20,18 @@ func LBPoolData() *schema.Resource {
 				Computed:    true,
 				Description: f(generalNamedesc, "ResLoadBalancerPool", "ResLoadBalancerPool"),
 			},
-			"minActive": {
+			"min_active": {
 				Type:        schema.TypeInt,
 				Computed:    true,
 				Description: "minimum active members for the Network loadbalancer pool",
 			},
-			"vipBalance": {
+			"vip_balance": {
 				Type: schema.TypeString,
 				ValidateDiagFunc: validations.StringInSlice([]string{
 					"ROUND_ROBIN", "WEIGHTED_ROUND_ROBIN", " LEAST_CONNECTION",
 					"WEIGHTED_LEAST_CONNECTION", "IP_HASH",
 				}, false),
-				Computed:    true,
+				Required:    true,
 				Description: "Network Loadbalancer Supported values are `ROUND_ROBIN`,`WEIGHTED_ROUND_ROBIN`, `LEAST_CONNECTION`, `WEIGHTED_LEAST_CONNECTION`,`IP_HASH`",
 			},
 			"config": {
@@ -40,44 +40,15 @@ func LBPoolData() *schema.Resource {
 				Description: "pool Configuration",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"snatTranslationType": {
+						"snat_translation_type": {
 							Type:             schema.TypeString,
+							Required:         true,
 							ValidateDiagFunc: validations.StringInSlice([]string{"LBSnatAutoMap", "LBSnatDisabled", "LBSnatIpPool"}, false),
-							Computed:         true,
 							Description:      "Network Loadbalancer Supported values are `LBSnatAutoMap`,`LBSnatDisabled`, `LBSnatIpPool`"},
-						"snatIpAddress": {
+						"snat_ip_address": {
 							Type:        schema.TypeString,
 							Computed:    true,
-							Description: "snatIpAddress for Network loadbalancer pool",
-						},
-						"memberGroup": {
-							Type:        schema.TypeList,
-							Computed:    true,
-							Description: "memberGroup Configuration",
-							Elem: &schema.Resource{
-								Schema: map[string]*schema.Schema{
-									"name": {
-										Type:        schema.TypeString,
-										Computed:    true,
-										Description: "name of the member group",
-									},
-									"path": {
-										Type:        schema.TypeString,
-										Computed:    true,
-										Description: "path of the member group",
-									},
-									"ipRevisionFilter": {
-										Type:        schema.TypeString,
-										Computed:    true,
-										Description: "ipRevisionFilter of the member group",
-									},
-									"port": {
-										Type:        schema.TypeInt,
-										Computed:    true,
-										Description: "port of the member group",
-									},
-								},
-							},
+							Description: "snat_ip_address for Network loadbalancer pool",
 						},
 					},
 				},

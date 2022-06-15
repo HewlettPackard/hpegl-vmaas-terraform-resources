@@ -2,18 +2,14 @@
 
 resource hpegl_vmaas_load_balancer tf_load_balancer {
   name  = "lab-nsxt"        
-  description  = ""creating load balancer for test"
-  type     = "nsx-t"
-  networkServerId = data.hpegl_vmaas_load_balancer_networkServerId.tf_networkServerId.serverID  
+  description  = "creating load balancer for test"
+  network_server_id = 1  
   enabled      =    true        
   visibility   = "private"
   config {
-     adminState = true
+     admin_state = true
       size = "SMALL"
       loglevel = "DEBUG"
       tier1  = "/infra/tier-1s/26cdb82e-0057-4461-ad4d-cddd61d77b1f"
-  }
-  resource_permissions {
-    all  = true
   }
 }

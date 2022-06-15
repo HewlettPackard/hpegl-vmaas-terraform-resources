@@ -30,22 +30,37 @@ func LoadBalancer() *schema.Resource {
 				Optional:    true,
 				Description: "creating Network loadbalancer",
 			},
-			"networkServerId": {
+			"network_server_id": {
 				Type:        schema.TypeInt,
-				Required:    true,
+				Computed:    true,
 				Description: "NSX-T Integration ID",
-				Default:     true,
+				ForceNew:    true,
 			},
 			"enabled": {
 				Type:        schema.TypeBool,
-				Required:    true,
+				Optional:    true,
 				Description: "Network Loadbalancer configuration enabled",
 				Default:     true,
 			},
 			"visibility": {
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 				Description: "Network Loadbalancer is public/private visibility mode",
+			},
+			"resource_permission": {
+				Type:        schema.TypeList,
+				Required:    true,
+				Description: "permission access for Loadbalancer",
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"all": {
+							Type:        schema.TypeBool,
+							Default:     true,
+							Optional:    true,
+							Description: "If `true` then admin State rule will be active/enabled.",
+						},
+					},
+				},
 			},
 			"config": {
 				Type:        schema.TypeList,
@@ -53,47 +68,38 @@ func LoadBalancer() *schema.Resource {
 				Description: "Network Load Balancer Configuration",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"adminState": {
+						"admin_state": {
 							Type:        schema.TypeBool,
-							Required:    true,
+							Optional:    true,
+							Default:     true,
 							Description: "If `true` then admin State rule will be active/enabled.",
 						},
 						"size": {
 							Type:             schema.TypeString,
 							ValidateDiagFunc: validations.StringInSlice([]string{"SMALL", "MEDIUM", "LARGE"}, false),
-							Required:         true,
+							Optional:         true,
+							Default:          true,
 							Description:      "Network Loadbalancer Supported values are `SMALL`, `MEDIUM`, `LARGE`",
 						},
 						"loglevel": {
 							Type:             schema.TypeString,
 							ValidateDiagFunc: validations.StringInSlice([]string{"DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL", "ALERT", "EMERGENCY"}, false),
-							Required:         true,
+							Optional:         true,
+							Default:          true,
 							Description:      "Network Loadbalancer Supported values are `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`, `ALERT`, `EMERGENCY`",
 						},
 						"tier1": {
 							Type:        schema.TypeString,
-							Required:    true,
+							Optional:    true,
+							Default:     true,
 							Description: "Network Loadbalancer NSX-T tier1 gateway",
-						},
-					},
-				},
-			},
-			"resourcePermission": {
-				Type:        schema.TypeList,
-				Required:    true,
-				Description: "Network Load Balancer resourcePermission",
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"all": {
-							Type:        schema.TypeBool,
-							Required:    true,
-							Description: "If `true` then resourcePermission rule will be active/enabled.",
 						},
 					},
 				},
 			},
 		},
 		ReadContext:   loadbalancerReadContext,
+		UpdateContext: loadbalancerReadContext,
 		CreateContext: loadbalancerCreateContext,
 		DeleteContext: loadbalancerDeleteContext,
 		Description: `loadbalancer resource facilitates creating,

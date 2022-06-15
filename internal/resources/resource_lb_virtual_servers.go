@@ -15,10 +15,10 @@ import (
 func LoadBalancerVirtualServers() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
-			"vipName": {
+			"vip_name": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "vipName of Network loadbalancer virtual server name",
+				Description: "vip_name of Network loadbalancer virtual server name",
 			},
 			"description": {
 				Type:        schema.TypeString,
@@ -26,36 +26,31 @@ func LoadBalancerVirtualServers() *schema.Resource {
 				Description: "description of Network loadbalancer virtual server",
 				ForceNew:    true,
 			},
-			"vipAddress": {
+			"vip_address": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "vipAddress of Network loadbalancer virtual server",
+				Description: "vip_address of Network loadbalancer virtual server",
 				ForceNew:    true,
 			},
-			"vipPort": {
+			"vip_port": {
 				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "vipPort of network loadbalancer virtual server",
-				Default:     true,
+				Required:    true,
+				Description: "vip_port of network loadbalancer virtual server",
 			},
-			"vipProtocol": {
-				Type:             schema.TypeString,
-				ValidateDiagFunc: validations.StringInSlice([]string{"http", "tcp", "udp"}, false),
-				Description:      "Network Loadbalancer Supported values are `http`,`tcp`, `udp`"},
 			"pool": {
 				Type:        schema.TypeInt,
 				Required:    true,
 				Description: "pool of Network loadbalancer virtual server",
 			},
-			"sslCert": {
+			"ssl_cert": {
 				Type:        schema.TypeInt,
 				Required:    true,
-				Description: "sslCert of Network loadbalancer virtual server",
+				Description: "ssl_cert of Network loadbalancer virtual server",
 			},
-			"sslServerCert": {
+			"ssl_server_cert": {
 				Type:        schema.TypeInt,
 				Required:    true,
-				Description: "sslServerCert of the Network loadbalancer virtual server",
+				Description: "ssl_server_cert of the Network loadbalancer virtual server",
 			},
 			"config": {
 				Type:        schema.TypeList,
@@ -68,31 +63,32 @@ func LoadBalancerVirtualServers() *schema.Resource {
 							ValidateDiagFunc: validations.StringInSlice([]string{"SOURCE_IP", "COOKIE", "DISBALED"}, false),
 							Required:         true,
 							Description:      "Network Loadbalancer Supported values are `SOURCE_IP`,`COOKIE`, `DISBALED`"},
-						"persistenceProfile": {
+						"persistence_profile": {
 							Type:        schema.TypeInt,
 							Required:    true,
-							Description: "persistenceProfile of virtual server Configuration",
+							Description: "persistence_profile of virtual server Configuration",
 						},
-						"applicationProfile": {
+						"application_profile": {
 							Type:        schema.TypeString,
 							Required:    true,
-							Description: "applicationProfile of virtual server Configuration",
+							Description: "application_profile of virtual server Configuration",
 						},
-						"sslClientProfile": {
+						"ssl_client_profile": {
 							Type:        schema.TypeString,
 							Required:    true,
-							Description: "sslClientProfile of virtual server Configuration",
+							Description: "ssl_client_profile of virtual server Configuration",
 						},
-						"sslServerProfile": {
+						"ssl_server_profile": {
 							Type:        schema.TypeString,
 							Required:    true,
-							Description: "sslServerProfile of virtual server Configuration",
+							Description: "ssl_server_profile of virtual server Configuration",
 						},
 					},
 				},
 			},
 		},
 		ReadContext:   loadbalancerVirtualServerReadContext,
+		UpdateContext: loadbalancerVirtualServerReadContext,
 		CreateContext: loadbalancerVirtualServerCreateContext,
 		DeleteContext: loadbalancerVirtualServerDeleteContext,
 		Description: `loadbalancer Virtual Server resource facilitates creating,

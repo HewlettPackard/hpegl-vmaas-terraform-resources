@@ -25,11 +25,11 @@ func LoadBalancerData() *schema.Resource {
 				Description: "This field can be used as type for the " + ResLoadBalancer,
 				Computed:    true,
 			},
-			"networkServerId": {
+			"network_server_id": {
 				Type:        schema.TypeInt,
 				Computed:    true,
 				Description: "NSX-T Integration ID",
-				Default:     true,
+				ForceNew:    true,
 			},
 			"config": {
 				Type:        schema.TypeList,
@@ -37,7 +37,7 @@ func LoadBalancerData() *schema.Resource {
 				Description: "Network Load Balancer Configuration",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"adminState": {
+						"admin_state": {
 							Type:        schema.TypeBool,
 							Computed:    true,
 							Description: "If `true` then admin State rule will be active/enabled.",
@@ -45,33 +45,19 @@ func LoadBalancerData() *schema.Resource {
 						"size": {
 							Type:             schema.TypeString,
 							ValidateDiagFunc: validations.StringInSlice([]string{"SMALL", "MEDIUM", "LARGE"}, false),
-							Computed:         true,
+							Required:         true,
 							Description:      "Network Loadbalancer Supported values are `SMALL`, `MEDIUM`, `LARGE`",
 						},
 						"loglevel": {
 							Type:             schema.TypeString,
 							ValidateDiagFunc: validations.StringInSlice([]string{"DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL", "ALERT", "EMERGENCY"}, false),
-							Computed:         true,
+							Required:         true,
 							Description:      "Network Loadbalancer Supported values are `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`, `ALERT`, `EMERGENCY`",
 						},
 						"tier1": {
 							Type:        schema.TypeString,
 							Computed:    true,
 							Description: "Network Loadbalancer NSX-T tier1 gateway",
-						},
-					},
-				},
-			},
-			"resourcePermission": {
-				Type:        schema.TypeList,
-				Computed:    true,
-				Description: "Network Load Balancer resourcePermission",
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"all": {
-							Type:        schema.TypeBool,
-							Computed:    true,
-							Description: "If `true` then resourcePermission rule will be active/enabled.",
 						},
 					},
 				},

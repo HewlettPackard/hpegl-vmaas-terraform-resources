@@ -20,68 +20,68 @@ func LBMonitorData() *schema.Resource {
 				Computed:    true,
 				Description: f(generalNamedesc, "ResLoadBalancerMonitor", "ResLoadBalancerMonitor"),
 			},
-			"sendVersion": {
+			"send_version": {
 				Type:        schema.TypeInt,
 				Description: "Network loadbalancer Monitor http version",
 				Computed:    true,
 			},
-			"sendData": {
+			"send_data": {
 				Type:        schema.TypeString,
 				Description: "Network loadbalancer Monitor Send info",
 				Computed:    true,
 			},
-			"receiveData": {
+			"receive_data": {
 				Type:        schema.TypeString,
 				Description: "Network loadbalancer Monitor receive info",
 				Computed:    true,
 			},
-			"receiveCode": {
+			"receive_code": {
 				Type:        schema.TypeString,
 				Computed:    true,
 				Description: "Network loadbalancer Monitor receive status codes like 200,300,301,302,304,307",
 			},
-			"monitorDestination": {
+			"monitor_destination": {
 				Type:        schema.TypeString,
 				Computed:    true,
 				Description: "Network loadbalancer Monitor destination",
 			},
-			"monitorReverse": {
+			"monitor_reverse": {
 				Type:        schema.TypeBool,
 				Computed:    true,
 				Description: "Network loadbalancer Monitor Reverse",
 			},
-			"monitorTransparent": {
+			"monitor_transparent": {
 				Type:        schema.TypeBool,
 				Computed:    true,
 				Description: "Network loadbalancer Monitor transparent",
 			},
-			"monitorAdaptive": {
+			"monitor_adaptive": {
 				Type:        schema.TypeBool,
 				Computed:    true,
 				Description: "Network loadbalancer Monitor adaptive",
 			},
-			"fallCount": {
+			"fall_count": {
 				Type:        schema.TypeInt,
 				Computed:    true,
 				Description: "Network loadbalancer Monitor fall counts",
 			},
-			"riseCount": {
+			"rise_count": {
 				Type:        schema.TypeInt,
 				Computed:    true,
 				Description: "Network loadbalancer Monitor rise counts",
 			},
-			"aliasPort": {
+			"alias_port": {
 				Type:        schema.TypeInt,
 				Computed:    true,
 				Description: "Network loadbalancer Monitor alias port",
 			},
-			"monitorType": {
-				Type: schema.TypeString,
+			"monitor_type": {
+				Type:     schema.TypeString,
+				Required: true,
 				ValidateDiagFunc: validations.StringInSlice([]string{
 					"LBHttpMonitorProfile", "LBHttpsMonitorProfile", "LBIcmpMonitorProfile",
 					"LBPassiveMonitorProfile", "LBTcpMonitorProfile", "LBUdpMonitorProfile",
 				}, false),
-				Computed:    true,
 				Description: "Network Loadbalancer Supported values are `LBHttpMonitorProfile`, `LBHttpsMonitorProfile`, `LBIcmpMonitorProfile`, `LBPassiveMonitorProfile`, `LBTcpMonitorProfile`, `LBUdpMonitorProfile`",
 			},
 		},

@@ -20,12 +20,12 @@ func LBProfileData() *schema.Resource {
 				Computed:    true,
 				Description: f(generalNamedesc, "ResLoadBalancerProfile", "ResLoadBalancerProfile"),
 			},
-			"serviceType": {
-				Type: schema.TypeString,
+			"service_type": {
+				Type:     schema.TypeString,
+				Required: true,
 				ValidateDiagFunc: validations.StringInSlice([]string{
 					"LBHttpProfile", "LBFastTcpProfile", "LBFastUdpProfile",
 					"LBClientSslProfile", "LBServerSslProfile", "LBCookiePersistenceProfile", "LBGenericPersistenceProfile"}, false),
-				Computed:    true,
 				Description: "Network Loadbalancer Supported values are `LBHttpProfile`,`LBFastTcpProfile`, `LBFastUdpProfile`, `LBClientSslProfile`, `LBServerSslProfile`, `LBCookiePersistenceProfile`,`LBGenericPersistenceProfile`",
 			},
 			"config": {
@@ -34,33 +34,33 @@ func LBProfileData() *schema.Resource {
 				Description: "profile Configuration",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"profileType": {
+						"profile_type": {
 							Type: schema.TypeString,
 							ValidateDiagFunc: validations.StringInSlice([]string{
 								"application-profile", "ssl-profile", "persistence-profile",
 							}, false),
-							Computed:    true,
+							Required:    true,
 							Description: "Network Loadbalancer Supported values are `application-profile`,`ssl-profile`, `persistence-profile`"},
-						"sslSuite": {
+						"ssl_suite": {
 							Type: schema.TypeString,
 							ValidateDiagFunc: validations.StringInSlice([]string{
 								"BALANCED", "HIGH_SECURITY", "HIGH_COMPATIBILITY", "CUSTOM"}, false),
-							Computed:    true,
+							Required:    true,
 							Description: "Network Loadbalancer Supported values are `BALANCED`,`HIGH_SECURITY`, `HIGH_COMPATIBILITY`,`CUSTOM`"},
-						"cookieMode": {
+						"cookie_mode": {
 							Type:             schema.TypeString,
 							ValidateDiagFunc: validations.StringInSlice([]string{"INSERT", "PREFIX", "REWRITE"}, false),
-							Computed:         true,
+							Required:         true,
 							Description:      "Network Loadbalancer Supported values are `INSERT`,`PREFIX`, `REWRITE`"},
-						"cookieName": {
+						"cookie_name": {
 							Type:        schema.TypeString,
 							Computed:    true,
-							Description: "cookieName for Network Load balancer Profile",
+							Description: "cookie_name for Network Load balancer Profile",
 						},
-						"cookieType": {
+						"cookie_type": {
 							Type:             schema.TypeString,
 							ValidateDiagFunc: validations.StringInSlice([]string{"LBPersistenceCookieTime", "LBSessionCookieTime"}, false),
-							Computed:         true,
+							Required:         true,
 							Description:      "Network Loadbalancer Supported values are `LBPersistenceCookieTime`,`LBSessionCookieTime`"},
 					},
 				},

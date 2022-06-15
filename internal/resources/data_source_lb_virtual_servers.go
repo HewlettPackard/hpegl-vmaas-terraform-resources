@@ -15,25 +15,21 @@ import (
 func LBVirtualServerData() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
-			"vipName": {
+			"vip_name": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: f(generalNamedesc, "ResLoadBalancerVirtualServer", "ResLoadBalancerVirtualServer"),
+				Description: f(generalNamedesc, "loadBalancervirtualserver", "loadbalancervirtualserver"),
 			},
-			"vipAddress": {
+			"vip_address": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: "vipAddress of Network loadbalancer virtual server",
+				Description: "vip_address of Network loadbalancer virtual server",
 			},
-			"vipPort": {
+			"vip_port": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: "vipPort of network loadbalancer virtual server",
+				Description: "vip_port of network loadbalancer virtual server",
 			},
-			"vipProtocol": {
-				Type:             schema.TypeString,
-				ValidateDiagFunc: validations.StringInSlice([]string{"http", "tcp", "udp"}, false),
-				Description:      "Network Loadbalancer Supported values are `http`,`tcp`, `udp`"},
 			"pool": {
 				Type:        schema.TypeInt,
 				Computed:    true,
@@ -48,27 +44,27 @@ func LBVirtualServerData() *schema.Resource {
 						"persistence": {
 							Type:             schema.TypeString,
 							ValidateDiagFunc: validations.StringInSlice([]string{"SOURCE_IP", "COOKIE", "DISBALED"}, false),
-							Computed:         true,
+							Required:         true,
 							Description:      "Network Loadbalancer Supported values are `SOURCE_IP`,`COOKIE`, `DISBALED`"},
-						"persistenceProfile": {
+						"persistence_profile": {
 							Type:        schema.TypeInt,
 							Computed:    true,
-							Description: "persistenceProfile of virtual server Configuration",
+							Description: "persistence_profile of virtual server Configuration",
 						},
-						"applicationProfile": {
+						"application_profile": {
 							Type:        schema.TypeString,
 							Computed:    true,
-							Description: "applicationProfile of virtual server Configuration",
+							Description: "application_profile of virtual server Configuration",
 						},
-						"sslClientProfile": {
+						"ssl_client_profile": {
 							Type:        schema.TypeString,
 							Computed:    true,
-							Description: "sslClientProfile of virtual server Configuration",
+							Description: "ssl_client_profile of virtual server Configuration",
 						},
-						"sslServerProfile": {
+						"ssl_server_profile": {
 							Type:        schema.TypeString,
 							Computed:    true,
-							Description: "sslServerProfile of virtual server Configuration",
+							Description: "ssl_server_profile of virtual server Configuration",
 						},
 					},
 				},
