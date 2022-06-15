@@ -3,7 +3,7 @@
 resource hpegl_vmaas_load_balancer_profile tf_lb_profile {
   name  =  "LoadBalancer profile"       
   description  = "creating LB Profile"
-  service_type     = data.hpegl_vmaas_load_balancer_profile_service_type.tf_service_type.service_type
+  service_type     = "data.hpegl_vmaas_load_balancer_profile_service_type.tf_service_type.service_type"
   config{
     profile_type = data.hpegl_vmaas_lb_profile_profileType.tf_profileType.profile_type
     request_header_size = 1024

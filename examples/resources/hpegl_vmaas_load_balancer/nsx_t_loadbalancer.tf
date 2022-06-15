@@ -1,6 +1,6 @@
 # (C) Copyright 2022 Hewlett Packard Enterprise Development LP
 
-resource hpegl_vmaas_load_balancer tf_load_balancer {
+resource "hpegl_vmaas_load_balancer" "tf_load_balancer" {
   name  = "lab-nsxt"        
   description  = "creating load balancer for test"
   network_server_id = 1  

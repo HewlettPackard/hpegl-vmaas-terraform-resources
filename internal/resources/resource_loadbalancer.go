@@ -57,7 +57,7 @@ func LoadBalancer() *schema.Resource {
 							Type:        schema.TypeBool,
 							Default:     true,
 							Optional:    true,
-							Description: "If `true` then admin State rule will be active/enabled.",
+							Description: "If `true` then resource_permission rule will be active/enabled.",
 						},
 					},
 				},
