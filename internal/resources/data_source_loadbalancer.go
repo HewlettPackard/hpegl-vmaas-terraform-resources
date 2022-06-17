@@ -23,7 +23,7 @@ func LoadBalancerData() *schema.Resource {
 			"type": {
 				Type:        schema.TypeString,
 				Description: "This field can be used as type for the " + ResLoadBalancer,
-				Computed:    true,
+				Required:    true,
 			},
 			"network_server_id": {
 				Type:        schema.TypeInt,

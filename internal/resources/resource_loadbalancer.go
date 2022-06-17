@@ -4,6 +4,7 @@ package resources
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/resources/validations"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/utils"
@@ -23,7 +24,7 @@ func LoadBalancer() *schema.Resource {
 			"type": {
 				Type:        schema.TypeString,
 				Description: "Type of Network loadbalancer",
-				Computed:    true,
+				Required:    true,
 			},
 			"description": {
 				Type:        schema.TypeString,
@@ -32,9 +33,8 @@ func LoadBalancer() *schema.Resource {
 			},
 			"network_server_id": {
 				Type:        schema.TypeInt,
-				Computed:    true,
 				Description: "NSX-T Integration ID",
-				ForceNew:    true,
+				Required:    true,
 			},
 			"enabled": {
 				Type:        schema.TypeBool,
@@ -113,6 +113,7 @@ func loadbalancerReadContext(ctx context.Context, rd *schema.ResourceData, meta 
 		return diag.FromErr(err)
 	}
 
+	fmt.Println("1111111", rd)
 	data := utils.NewData(rd)
 	if err := c.CmpClient.LoadBalancer.Read(ctx, data, meta); err != nil {
 		return diag.FromErr(err)
