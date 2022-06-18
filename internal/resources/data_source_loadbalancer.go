@@ -79,7 +79,7 @@ func LoadBalancerReadContext(ctx context.Context, d *schema.ResourceData, meta i
 	}
 
 	data := utils.NewData(d)
-	err = c.CmpClient.DSLoadBalancer.Read(ctx, data, meta)
+	err = c.CmpClient.LoadBalancer.Read(ctx, data, meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}

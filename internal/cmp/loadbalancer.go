@@ -17,15 +17,6 @@ type loadBalancer struct {
 	lbClient *client.LoadBalancerAPIService
 }
 
-// type Router struct {
-// 	rClient *client.RouterAPIService
-// }
-
-// func newRouters(routerClient *client.RouterAPIService) *router {
-// 	return &router{
-// 		rClient: routerClient,
-// 	}
-// }
 func newLoadBalancer(loadBalancerClient *client.LoadBalancerAPIService) *loadBalancer {
 	return &loadBalancer{
 		lbClient: loadBalancerClient,
