@@ -4,9 +4,7 @@ package resources
 
 import (
 	"context"
-	"fmt"
 
-	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/resources/validations"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/utils"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/client"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -24,7 +22,7 @@ func LoadBalancer() *schema.Resource {
 			"type": {
 				Type:        schema.TypeString,
 				Description: "Type of Network loadbalancer",
-				Required:    true,
+				Computed:    true,
 			},
 			"description": {
 				Type:        schema.TypeString,
@@ -34,7 +32,7 @@ func LoadBalancer() *schema.Resource {
 			"network_server_id": {
 				Type:        schema.TypeInt,
 				Description: "NSX-T Integration ID",
-				Required:    true,
+				Computed:    true,
 			},
 			"enabled": {
 				Type:        schema.TypeBool,
@@ -64,7 +62,7 @@ func LoadBalancer() *schema.Resource {
 			},
 			"config": {
 				Type:        schema.TypeList,
-				Required:    true,
+				Optional:    true,
 				Description: "Network Load Balancer Configuration",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -75,18 +73,14 @@ func LoadBalancer() *schema.Resource {
 							Description: "If `true` then admin State rule will be active/enabled.",
 						},
 						"size": {
-							Type:             schema.TypeString,
-							ValidateDiagFunc: validations.StringInSlice([]string{"SMALL", "MEDIUM", "LARGE"}, false),
-							Optional:         true,
-							Default:          true,
-							Description:      "Network Loadbalancer Supported values are `SMALL`, `MEDIUM`, `LARGE`",
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: `In Filter. Supported Values are "SMALL", "MEDIUM", "LARGE"`,
 						},
 						"loglevel": {
-							Type:             schema.TypeString,
-							ValidateDiagFunc: validations.StringInSlice([]string{"DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL", "ALERT", "EMERGENCY"}, false),
-							Optional:         true,
-							Default:          true,
-							Description:      "Network Loadbalancer Supported values are `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`, `ALERT`, `EMERGENCY`",
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: `In Filter. Supported Values are "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL", "ALERT", "EMERGENCY"`,
 						},
 						"tier1": {
 							Type:        schema.TypeString,
@@ -98,22 +92,25 @@ func LoadBalancer() *schema.Resource {
 				},
 			},
 		},
-		ReadContext:   loadbalancerReadContext,
-		UpdateContext: loadbalancerReadContext,
-		CreateContext: loadbalancerCreateContext,
-		DeleteContext: loadbalancerDeleteContext,
+		SchemaVersion: 0,
+		Importer: &schema.ResourceImporter{
+			StateContext: schema.ImportStatePassthroughContext,
+		},
+		ReadContext:   LoadBalancerReadContext,
+		UpdateContext: LoadbalancerCreateContext,
+		CreateContext: LoadbalancerCreateContext,
+		DeleteContext: LoadbalancerDeleteContext,
 		Description: `loadbalancer resource facilitates creating,
 		and deleting NSX-T  Network Load Balancers.`,
 	}
 }
 
-func loadbalancerReadContext(ctx context.Context, rd *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func LoadbalancerReadContext(ctx context.Context, rd *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, err := client.GetClientFromMetaMap(meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	fmt.Println("1111111", rd)
 	data := utils.NewData(rd)
 	if err := c.CmpClient.LoadBalancer.Read(ctx, data, meta); err != nil {
 		return diag.FromErr(err)
@@ -122,7 +119,7 @@ func loadbalancerReadContext(ctx context.Context, rd *schema.ResourceData, meta 
 	return nil
 }
 
-func loadbalancerCreateContext(ctx context.Context, rd *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func LoadbalancerCreateContext(ctx context.Context, rd *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, err := client.GetClientFromMetaMap(meta)
 	if err != nil {
 		return diag.FromErr(err)
@@ -133,10 +130,10 @@ func loadbalancerCreateContext(ctx context.Context, rd *schema.ResourceData, met
 		return diag.FromErr(err)
 	}
 
-	return loadbalancerReadContext(ctx, rd, meta)
+	return LoadbalancerReadContext(ctx, rd, meta)
 }
 
-func loadbalancerDeleteContext(ctx context.Context, rd *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func LoadbalancerDeleteContext(ctx context.Context, rd *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, err := client.GetClientFromMetaMap(meta)
 	if err != nil {
 		return diag.FromErr(err)

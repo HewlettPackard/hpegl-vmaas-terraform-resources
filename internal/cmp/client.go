@@ -39,6 +39,7 @@ type Client struct {
 	NetworkProxy              DataSource
 	EdgeCluster               DataSource
 	TransportZone             DataSource
+	DSLoadBalancer            DataSource
 }
 
 // NewClient returns configured client
