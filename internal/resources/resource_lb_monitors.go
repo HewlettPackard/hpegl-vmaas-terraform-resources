@@ -41,7 +41,7 @@ func LoadBalancerMonitors() *schema.Resource {
 				Optional:    true,
 			},
 			"send_version": {
-				Type:        schema.TypeInt,
+				Type:        schema.TypeString,
 				Description: "Network loadbalancer Monitor http version",
 				Optional:    true,
 			},
@@ -120,7 +120,7 @@ func loadbalancerMonitorReadContext(ctx context.Context, rd *schema.ResourceData
 	}
 
 	data := utils.NewData(rd)
-	if err := c.CmpClient.LoadBalancer.Read(ctx, data, meta); err != nil {
+	if err := c.CmpClient.LoadBalancerMonitor.Read(ctx, data, meta); err != nil {
 		return diag.FromErr(err)
 	}
 
@@ -134,7 +134,7 @@ func loadbalancerMonitorCreateContext(ctx context.Context, rd *schema.ResourceDa
 	}
 
 	data := utils.NewData(rd)
-	if err := c.CmpClient.LoadBalancer.Create(ctx, data, meta); err != nil {
+	if err := c.CmpClient.LoadBalancerMonitor.Create(ctx, data, meta); err != nil {
 		return diag.FromErr(err)
 	}
 
@@ -148,7 +148,7 @@ func loadbalancerMonitorDeleteContext(ctx context.Context, rd *schema.ResourceDa
 	}
 
 	data := utils.NewData(rd)
-	if err := c.CmpClient.LoadBalancer.Delete(ctx, data, meta); err != nil {
+	if err := c.CmpClient.LoadBalancerMonitor.Delete(ctx, data, meta); err != nil {
 		return diag.FromErr(err)
 	}
 

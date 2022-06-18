@@ -17,7 +17,7 @@ func LBPoolData() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			"name": {
 				Type:        schema.TypeString,
-				Computed:    true,
+				Required:    true,
 				Description: f(generalNamedesc, "ResLoadBalancerPool", "ResLoadBalancerPool"),
 			},
 			"min_active": {
@@ -36,7 +36,7 @@ func LBPoolData() *schema.Resource {
 			},
 			"config": {
 				Type:        schema.TypeList,
-				Computed:    true,
+				Required:    true,
 				Description: "pool Configuration",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{

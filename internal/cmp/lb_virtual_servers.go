@@ -46,7 +46,27 @@ func (lb *loadBalancerVirtualServer) Update(ctx context.Context, d *utils.Data, 
 }
 
 func (lb *loadBalancerVirtualServer) Create(ctx context.Context, d *utils.Data, meta interface{}) error {
-	createReq := models.CreateLBVirtualServers{}
+	setMeta(meta, lb.lbClient.Client)
+	createReq := models.CreateLBVirtualServers{
+		CreateLBVirtualServersReq: models.CreateLBVirtualServersReq{
+			Description:   d.GetString("description"),
+			VipName:       d.GetString("vip_name"),
+			VipAddress:    d.GetString("vip_address"),
+			VipProtocol:   d.GetString("vip_protocol"),
+			VipPort:       d.GetString("vip_port"),
+			Pool:          d.GetInt("pool"),
+			SSLServerCert: d.GetInt("ssl_server_cert"),
+			SSLCert:       d.GetInt("ssl_cert"),
+			VirtualServerConfig: models.VirtualServerConfig{
+				Persistence:        d.GetString("persistence"),
+				PersistenceProfile: d.GetInt("persistence_profile"),
+				ApplicationProfile: d.GetString("application_profile"),
+				SSLClientProfile:   d.GetString("ssl_client_profile"),
+				SSLServerProfile:   d.GetString("ssl_server_profile"),
+			},
+		},
+	}
+
 	if err := tftags.Get(d, &createReq.CreateLBVirtualServersReq); err != nil {
 		return err
 	}
@@ -64,6 +84,7 @@ func (lb *loadBalancerVirtualServer) Create(ctx context.Context, d *utils.Data, 
 		return fmt.Errorf(successErr, "creating loadBalancerVirtualServer Virtual Servers")
 	}
 
+	createReq.CreateLBVirtualServersReq.ID = lbVirtualServersResp.CreateLBVirtualServersResp.ID
 	// wait until created
 	retry := &utils.CustomRetry{
 		RetryDelay:   1,

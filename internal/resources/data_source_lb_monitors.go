@@ -21,7 +21,7 @@ func LBMonitorData() *schema.Resource {
 				Description: f(generalNamedesc, "ResLoadBalancerMonitor", "ResLoadBalancerMonitor"),
 			},
 			"send_version": {
-				Type:        schema.TypeInt,
+				Type:        schema.TypeString,
 				Description: "Network loadbalancer Monitor http version",
 				Computed:    true,
 			},

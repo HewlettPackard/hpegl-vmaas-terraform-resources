@@ -5,6 +5,7 @@ package cmp
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
 	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/models"
@@ -46,7 +47,30 @@ func (lb *loadBalancerProfile) Update(ctx context.Context, d *utils.Data, meta i
 }
 
 func (lb *loadBalancerProfile) Create(ctx context.Context, d *utils.Data, meta interface{}) error {
-	createReq := models.CreateLBProfile{}
+	setMeta(meta, lb.lbClient.Client)
+	createReq := models.CreateLBProfile{
+		CreateLBProfileReq: models.CreateLBProfileReq{
+			Name:        d.GetString("name"),
+			Description: d.GetString("description"),
+			ServiceType: d.GetString("service_type"),
+			ProfileConfig: models.LBProfile{
+				ProfileType:            d.GetString("profile_type"),
+				RequestHeaderSize:      d.GetInt("request_header_size"),
+				ResponseHeaderSize:     d.GetInt("response_header_size"),
+				ResponseTimeout:        d.GetInt("response_timeout"),
+				HTTPIdleTimeoutName:    d.GetInt("http_idle_timeout"),
+				FastTCPIdleTimeout:     d.GetInt("fast_tcp_idle_timeout"),
+				ConnectionCloseTimeout: d.GetInt("connection_close_timeout"),
+				HaFlowMirroring:        d.GetBool("ha_flow_mirroring"),
+				CookieMode:             d.GetString("cookie_mode"),
+				CookieName:             d.GetString("cookie_name"),
+				CookieType:             d.GetString("cookie_type"),
+				CookieFallback:         d.GetBool("cookie_fallback"),
+				CookieGarbling:         d.GetBool("cookie_garbling"),
+			},
+		},
+	}
+
 	if err := tftags.Get(d, &createReq.CreateLBProfileReq); err != nil {
 		return err
 	}
@@ -56,6 +80,8 @@ func (lb *loadBalancerProfile) Create(ctx context.Context, d *utils.Data, meta i
 		return err
 	}
 
+	createReq.CreateLBProfileReq.ProfileConfig.ConnectionCloseTimeout = 1
+	createReq.CreateLBProfileReq.ProfileConfig.FastTCPIdleTimeout = 1
 	lbProfileResp, err := lb.lbClient.CreateLBProfile(ctx, createReq, lbDetails.GetNetworkLoadBalancerResp[0].ID)
 	if err != nil {
 		return err
@@ -64,10 +90,11 @@ func (lb *loadBalancerProfile) Create(ctx context.Context, d *utils.Data, meta i
 		return fmt.Errorf(successErr, "creating loadBalancerProfile Profile")
 	}
 
+	createReq.CreateLBProfileReq.ID = lbProfileResp.LBProfileResp.ID
 	// wait until created
 	retry := &utils.CustomRetry{
-		RetryDelay:   1,
-		InitialDelay: 1,
+		InitialDelay: time.Second * 15,
+		RetryDelay:   time.Second * 30,
 	}
 	_, err = retry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
 		return lb.lbClient.GetSpecificLBProfile(ctx, lbDetails.GetNetworkLoadBalancerResp[0].ID, lbProfileResp.LBProfileResp.ID)

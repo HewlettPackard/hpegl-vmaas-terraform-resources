@@ -61,12 +61,12 @@ func LoadBalancerProfiles() *schema.Resource {
 						},
 						"fast_tcp_idle_timeout": {
 							Type:        schema.TypeInt,
-							Required:    true,
+							Optional:    true,
 							Description: "fast_tcp_idle_timeout for Network Load balancer Profile",
 						},
 						"connection_close_timeout": {
 							Type:        schema.TypeInt,
-							Required:    true,
+							Optional:    true,
 							Description: "connection_close_timeout for Network Load balancer Profile",
 						},
 						"ha_flow_mirroring": {

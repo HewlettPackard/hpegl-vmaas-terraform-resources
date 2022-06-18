@@ -5,6 +5,7 @@ package cmp
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
 	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/models"
@@ -42,7 +43,27 @@ func (lb *loadBalancerMonitor) Read(ctx context.Context, d *utils.Data, meta int
 }
 
 func (lb *loadBalancerMonitor) Create(ctx context.Context, d *utils.Data, meta interface{}) error {
-	createReq := models.CreateLBMonitor{}
+
+	setMeta(meta, lb.lbClient.Client)
+
+	createReq := models.CreateLBMonitor{
+		CreateLBMonitorReq: models.CreateLBMonitorReq{
+			Name:               d.GetString("name"),
+			Description:        d.GetString("description"),
+			MonitorType:        d.GetString("monitor_type"),
+			MonitorTimeout:     d.GetInt("monitor_timeout"),
+			MonitorInterval:    d.GetInt("monitor_interval"),
+			SendVersion:        d.GetString("send_version"),
+			SendType:           d.GetString("send_type"),
+			MonitorDestination: d.GetString("monitor_destination"),
+			MonitorReverse:     d.GetBool("monitor_reverse"),
+			MonitorTransparent: d.GetBool("monitor_transparent"),
+			MonitorAdaptive:    d.GetBool("monitor_adaptive"),
+			FallCount:          d.GetInt("fall_count"),
+			RiseCount:          d.GetInt("rise_count"),
+			AliasPort:          d.GetInt("alias_port"),
+		},
+	}
 	if err := tftags.Get(d, &createReq.CreateLBMonitorReq); err != nil {
 		return err
 	}
@@ -60,10 +81,12 @@ func (lb *loadBalancerMonitor) Create(ctx context.Context, d *utils.Data, meta i
 		return fmt.Errorf(successErr, "creating loadBalancerMonitor Monitor")
 	}
 
+	createReq.CreateLBMonitorReq.ID = lbMonitorResp.LBMonitorResp.ID
+
 	// wait until created
 	retry := &utils.CustomRetry{
-		RetryDelay:   1,
-		InitialDelay: 1,
+		InitialDelay: time.Second * 15,
+		RetryDelay:   time.Second * 30,
 	}
 	_, err = retry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
 		return lb.lbClient.GetSpecificLBMonitor(ctx, lbDetails.GetNetworkLoadBalancerResp[0].ID, lbMonitorResp.LBMonitorResp.ID)

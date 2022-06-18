@@ -5,6 +5,7 @@ package cmp
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
 	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/models"
@@ -42,7 +43,30 @@ func (lb *loadBalancerPool) Read(ctx context.Context, d *utils.Data, meta interf
 }
 
 func (lb *loadBalancerPool) Create(ctx context.Context, d *utils.Data, meta interface{}) error {
-	createReq := models.CreateLBPool{}
+	setMeta(meta, lb.lbClient.Client)
+	createReq := models.CreateLBPool{
+		CreateLBPoolReq: models.CreateLBPoolReq{
+			Name:        d.GetString("name"),
+			Description: d.GetString("description"),
+			VipBalance:  d.GetString("vip_balance"),
+			MinActive:   d.GetInt("min_active"),
+			PoolConfig: models.PoolConfig{
+				SnatTranslationType:   d.GetString("snat_translation_type"),
+				PassiveMonitorPath:    d.GetInt("passive_monitor_path"),
+				ActiveMonitorPaths:    d.GetInt("active_monitor_paths"),
+				TCPMultiplexing:       d.GetBool("tcp_multiplexing"),
+				TCPMultiplexingNumber: d.GetInt("tcp_multiplexing_number"),
+				SnatIPAddress:         d.GetString("snat_ip_address"),
+				MemberGroup: models.MemberGroup{
+					Name:             d.GetString("name"),
+					Path:             d.GetString("path"),
+					IPRevisionFilter: d.GetString("ip_revision_filter"),
+					Port:             d.GetInt("port"),
+				},
+			},
+		},
+	}
+
 	if err := tftags.Get(d, &createReq.CreateLBPoolReq); err != nil {
 		return err
 	}
@@ -52,6 +76,7 @@ func (lb *loadBalancerPool) Create(ctx context.Context, d *utils.Data, meta inte
 		return err
 	}
 
+	createReq.CreateLBPoolReq.PoolConfig.SnatTranslationType = "LBSnatAutoMap"
 	lbPoolResp, err := lb.lbClient.CreateLBPool(ctx, createReq, lbDetails.GetNetworkLoadBalancerResp[0].ID)
 	if err != nil {
 		return err
@@ -59,11 +84,12 @@ func (lb *loadBalancerPool) Create(ctx context.Context, d *utils.Data, meta inte
 	if !lbPoolResp.Success {
 		return fmt.Errorf(successErr, "creating loadBalancer Pool")
 	}
+	createReq.CreateLBPoolReq.ID = lbPoolResp.LBPoolResp.ID
 
 	// wait until created
 	retry := &utils.CustomRetry{
-		RetryDelay:   1,
-		InitialDelay: 1,
+		InitialDelay: time.Second * 15,
+		RetryDelay:   time.Second * 30,
 	}
 	_, err = retry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
 		return lb.lbClient.GetSpecificLBPool(ctx, lbDetails.GetNetworkLoadBalancerResp[0].ID, lbPoolResp.LBPoolResp.ID)
