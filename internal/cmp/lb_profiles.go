@@ -80,8 +80,8 @@ func (lb *loadBalancerProfile) Create(ctx context.Context, d *utils.Data, meta i
 		return err
 	}
 
-	createReq.CreateLBProfileReq.ProfileConfig.ConnectionCloseTimeout = 1
-	createReq.CreateLBProfileReq.ProfileConfig.FastTCPIdleTimeout = 1
+	createReq.CreateLBProfileReq.ProfileConfig.ConnectionCloseTimeout = 15
+	createReq.CreateLBProfileReq.ProfileConfig.FastTCPIdleTimeout = 15
 	lbProfileResp, err := lb.lbClient.CreateLBProfile(ctx, createReq, lbDetails.GetNetworkLoadBalancerResp[0].ID)
 	if err != nil {
 		return err

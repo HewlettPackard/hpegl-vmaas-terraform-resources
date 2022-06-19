@@ -92,7 +92,8 @@ func (lb *loadBalancerPool) Create(ctx context.Context, d *utils.Data, meta inte
 		RetryDelay:   time.Second * 30,
 	}
 	_, err = retry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return lb.lbClient.GetSpecificLBPool(ctx, lbDetails.GetNetworkLoadBalancerResp[0].ID, lbPoolResp.LBPoolResp.ID)
+		return lb.lbClient.GetSpecificLBPool(ctx, lbDetails.GetNetworkLoadBalancerResp[0].ID,
+			lbPoolResp.LBPoolResp.ID)
 	})
 	if err != nil {
 		return err

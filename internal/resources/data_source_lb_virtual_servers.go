@@ -52,7 +52,7 @@ func LBVirtualServerData() *schema.Resource {
 							Description: "persistence_profile of virtual server Configuration",
 						},
 						"application_profile": {
-							Type:        schema.TypeString,
+							Type:        schema.TypeInt,
 							Computed:    true,
 							Description: "application_profile of virtual server Configuration",
 						},

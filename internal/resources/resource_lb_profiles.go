@@ -77,7 +77,7 @@ func LoadBalancerProfiles() *schema.Resource {
 						"ssl_suite": {
 							Type:             schema.TypeString,
 							ValidateDiagFunc: validations.StringInSlice([]string{"BALANCED", "HIGH_SECURITY", "HIGH_COMPATIBILITY", "CUSTOM"}, false),
-							Required:         true,
+							Optional:         true,
 							Description:      "Network Loadbalancer Supported values are `BALANCED`,`HIGH_SECURITY`, `HIGH_COMPATIBILITY`,`CUSTOM`",
 						},
 						"cookie_mode": {

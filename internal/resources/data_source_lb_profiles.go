@@ -45,7 +45,7 @@ func LBProfileData() *schema.Resource {
 							Type: schema.TypeString,
 							ValidateDiagFunc: validations.StringInSlice([]string{
 								"BALANCED", "HIGH_SECURITY", "HIGH_COMPATIBILITY", "CUSTOM"}, false),
-							Required:    true,
+							Optional:    true,
 							Description: "Network Loadbalancer Supported values are `BALANCED`,`HIGH_SECURITY`, `HIGH_COMPATIBILITY`,`CUSTOM`"},
 						"cookie_mode": {
 							Type:             schema.TypeString,
@@ -85,7 +85,7 @@ func LBProfileReadContext(ctx context.Context, d *schema.ResourceData, meta inte
 	}
 
 	data := utils.NewData(d)
-	err = c.CmpClient.LoadBalancer.Read(ctx, data, meta)
+	err = c.CmpClient.LoadBalancerProfile.Read(ctx, data, meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}

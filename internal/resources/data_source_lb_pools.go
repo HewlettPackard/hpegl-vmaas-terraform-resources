@@ -73,7 +73,7 @@ func LBPoolReadContext(ctx context.Context, d *schema.ResourceData, meta interfa
 	}
 
 	data := utils.NewData(d)
-	err = c.CmpClient.LoadBalancer.Read(ctx, data, meta)
+	err = c.CmpClient.LoadBalancerPool.Read(ctx, data, meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}

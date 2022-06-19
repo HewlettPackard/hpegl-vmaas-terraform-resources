@@ -104,7 +104,7 @@ func LBMonitorReadContext(ctx context.Context, d *schema.ResourceData, meta inte
 	}
 
 	data := utils.NewData(d)
-	err = c.CmpClient.LoadBalancer.Read(ctx, data, meta)
+	err = c.CmpClient.LoadBalancerMonitor.Read(ctx, data, meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}

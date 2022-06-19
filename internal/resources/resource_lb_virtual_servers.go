@@ -65,22 +65,22 @@ func LoadBalancerVirtualServers() *schema.Resource {
 							Description:      "Network Loadbalancer Supported values are `SOURCE_IP`,`COOKIE`, `DISBALED`"},
 						"persistence_profile": {
 							Type:        schema.TypeInt,
-							Required:    true,
+							Optional:    true,
 							Description: "persistence_profile of virtual server Configuration",
 						},
 						"application_profile": {
-							Type:        schema.TypeString,
+							Type:        schema.TypeInt,
 							Required:    true,
 							Description: "application_profile of virtual server Configuration",
 						},
 						"ssl_client_profile": {
 							Type:        schema.TypeString,
-							Required:    true,
+							Optional:    true,
 							Description: "ssl_client_profile of virtual server Configuration",
 						},
 						"ssl_server_profile": {
 							Type:        schema.TypeString,
-							Required:    true,
+							Optional:    true,
 							Description: "ssl_server_profile of virtual server Configuration",
 						},
 					},

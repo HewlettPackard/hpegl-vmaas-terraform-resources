@@ -60,7 +60,7 @@ func (lb *loadBalancerVirtualServer) Create(ctx context.Context, d *utils.Data, 
 			VirtualServerConfig: models.VirtualServerConfig{
 				Persistence:        d.GetString("persistence"),
 				PersistenceProfile: d.GetInt("persistence_profile"),
-				ApplicationProfile: d.GetString("application_profile"),
+				ApplicationProfile: d.GetInt("application_profile"),
 				SSLClientProfile:   d.GetString("ssl_client_profile"),
 				SSLServerProfile:   d.GetString("ssl_server_profile"),
 			},
@@ -75,6 +75,25 @@ func (lb *loadBalancerVirtualServer) Create(ctx context.Context, d *utils.Data, 
 	if err != nil {
 		return err
 	}
+	poolID, err := lb.lbClient.GetLBPools(ctx, lbDetails.GetNetworkLoadBalancerResp[0].ID)
+	if err != nil {
+		return err
+	}
+
+	profileData, err := lb.lbClient.GetLBProfiles(ctx, lbDetails.GetNetworkLoadBalancerResp[0].ID)
+	if err != nil {
+		return err
+	}
+
+	for i, profile := range profileData.GetLBProfilesResp {
+		if profile.LBProfileConfig.ProfileType == "application-profile" &&
+			profile.ServiceType == "LBHttpProfile" {
+			createReq.CreateLBVirtualServersReq.VirtualServerConfig.ApplicationProfile =
+				profileData.GetLBProfilesResp[i].ID
+			break
+		}
+	}
+	createReq.CreateLBVirtualServersReq.Pool = poolID.GetLBPoolsResp[0].ID
 
 	lbVirtualServersResp, err := lb.lbClient.CreateLBVirtualServers(ctx, createReq, lbDetails.GetNetworkLoadBalancerResp[0].ID)
 	if err != nil {
