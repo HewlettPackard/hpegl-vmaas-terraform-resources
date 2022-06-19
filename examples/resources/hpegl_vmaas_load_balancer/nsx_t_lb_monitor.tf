@@ -3,13 +3,13 @@
 resource "hpegl_vmaas_load_balancer_monitor" "tf_lb_monitor" {
   name  =  "Test-Monitor"       
   description  = "Creating lb monitor"
-  monitor_type = "data.hpegl_vmaas_load_balancer_monitor.tf_monitorType.monitor_type"
+  monitor_type = "LBTcpMonitorProfile"
   monitor_timeout = 15
   monitor_interval =  30  
-  send_version      = "data.hpegl_vmaas_load_balancer_monitor.tf_sendVersion.send_version "
+  send_version      = 20 
   send_type = "GET"          
   receive_code = "200,300,301,302,304,307"
-  monitor_destination = "data.hpegl_vmaas_load_balancer_monitor.tf_monitorDestination.monitor_destination"
+  monitor_destination = "https://test.com"
   monitor_reverse = false
   monitor_transparent = false
   monitor_adaptive = false
@@ -17,5 +17,4 @@ resource "hpegl_vmaas_load_balancer_monitor" "tf_lb_monitor" {
   rise_count = 30
   alias_port = 80
 }
-
 

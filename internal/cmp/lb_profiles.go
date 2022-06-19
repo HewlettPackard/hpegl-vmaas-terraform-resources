@@ -67,6 +67,7 @@ func (lb *loadBalancerProfile) Create(ctx context.Context, d *utils.Data, meta i
 				CookieType:             d.GetString("cookie_type"),
 				CookieFallback:         d.GetBool("cookie_fallback"),
 				CookieGarbling:         d.GetBool("cookie_garbling"),
+				SSLSuite:               d.GetString("ssl_suite"),
 			},
 		},
 	}
@@ -80,12 +81,19 @@ func (lb *loadBalancerProfile) Create(ctx context.Context, d *utils.Data, meta i
 		return err
 	}
 
+	createReq.CreateLBProfileReq.ProfileConfig.ProfileType = "application-profile"
 	createReq.CreateLBProfileReq.ProfileConfig.ConnectionCloseTimeout = 15
 	createReq.CreateLBProfileReq.ProfileConfig.FastTCPIdleTimeout = 15
+	createReq.CreateLBProfileReq.ProfileConfig.RequestHeaderSize = 30
+	createReq.CreateLBProfileReq.ProfileConfig.ResponseHeaderSize = 40
+	createReq.CreateLBProfileReq.ProfileConfig.ResponseTimeout = 40
+	createReq.CreateLBProfileReq.ProfileConfig.HTTPIdleTimeoutName = 50
+
 	lbProfileResp, err := lb.lbClient.CreateLBProfile(ctx, createReq, lbDetails.GetNetworkLoadBalancerResp[0].ID)
 	if err != nil {
 		return err
 	}
+
 	if !lbProfileResp.Success {
 		return fmt.Errorf(successErr, "creating loadBalancerProfile Profile")
 	}
