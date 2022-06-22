@@ -1,4 +1,4 @@
-// (C) Copyright 2021 Hewlett Packard Enterprise Development LP
+// (C) Copyright 2021-2022 Hewlett Packard Enterprise Development LP
 
 package cmp
 
@@ -7,33 +7,39 @@ import apiClient "github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
 // Client is the cmp client which will implements all the
 // functions in interface.go
 type Client struct {
-	Instance                Resource
-	InstanceClone           Resource
-	Router                  Resource
-	ResNetwork              Resource
-	RouterNat               Resource
-	RouterFirewallRuleGroup Resource
-	RouterRoute             Resource
-	RouterBgpNeighbor       Resource
-	Network                 DataSource
-	NetworkType             DataSource
-	NetworkPool             DataSource
-	Plan                    DataSource
-	Group                   DataSource
-	Cloud                   DataSource
-	ResourcePool            DataSource
-	Layout                  DataSource
-	Datastore               DataSource
-	PowerSchedule           DataSource
-	Template                DataSource
-	Environment             DataSource
-	NetworkInterface        DataSource
-	CloudFolder             DataSource
-	DSRouter                DataSource
-	DSDomain                DataSource
-	NetworkProxy            DataSource
-	EdgeCluster             DataSource
-	TransportZone           DataSource
+	Instance                  Resource
+	InstanceClone             Resource
+	Router                    Resource
+	ResNetwork                Resource
+	RouterNat                 Resource
+	RouterFirewallRuleGroup   Resource
+	RouterRoute               Resource
+	RouterBgpNeighbor         Resource
+	LoadBalancer              Resource
+	LoadBalancerMonitor       Resource
+	LoadBalancerProfile       Resource
+	LoadBalancerPool          Resource
+	LoadBalancerVirtualServer Resource
+	Network                   DataSource
+	NetworkType               DataSource
+	NetworkPool               DataSource
+	Plan                      DataSource
+	Group                     DataSource
+	Cloud                     DataSource
+	ResourcePool              DataSource
+	Layout                    DataSource
+	Datastore                 DataSource
+	PowerSchedule             DataSource
+	Template                  DataSource
+	Environment               DataSource
+	NetworkInterface          DataSource
+	CloudFolder               DataSource
+	DSRouter                  DataSource
+	DSDomain                  DataSource
+	NetworkProxy              DataSource
+	EdgeCluster               DataSource
+	TransportZone             DataSource
+	DSLoadBalancer            DataSource
 }
 
 // NewClient returns configured client
@@ -52,6 +58,12 @@ func NewClient(client *apiClient.APIClient, cfg apiClient.Configuration) *Client
 			&apiClient.NetworksAPIService{Client: client, Cfg: cfg},
 			&apiClient.RouterAPIService{Client: client, Cfg: cfg},
 		),
+		LoadBalancer:              newLoadBalancer(&apiClient.LoadBalancerAPIService{Client: client, Cfg: cfg}),
+		LoadBalancerMonitor:       newLoadBalancerMonitor(&apiClient.LoadBalancerAPIService{Client: client, Cfg: cfg}),
+		LoadBalancerProfile:       newLoadBalancerProfile(&apiClient.LoadBalancerAPIService{Client: client, Cfg: cfg}),
+		LoadBalancerPool:          newLoadBalancerPool(&apiClient.LoadBalancerAPIService{Client: client, Cfg: cfg}),
+		LoadBalancerVirtualServer: newLoadBalancerVirtualServer(&apiClient.LoadBalancerAPIService{Client: client, Cfg: cfg}),
+
 		Router:                  newRouter(&apiClient.RouterAPIService{Client: client, Cfg: cfg}),
 		RouterNat:               newRouterNat(&apiClient.RouterAPIService{Client: client, Cfg: cfg}),
 		RouterFirewallRuleGroup: newRouterFirewallRuleGroup(&apiClient.RouterAPIService{Client: client, Cfg: cfg}),

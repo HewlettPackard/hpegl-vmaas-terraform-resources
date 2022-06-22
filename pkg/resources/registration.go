@@ -1,4 +1,4 @@
-// (C) Copyright 2021 Hewlett Packard Enterprise Development LP
+// (C) Copyright 2021-2022 Hewlett Packard Enterprise Development LP
 
 package resources
 
@@ -40,19 +40,29 @@ func (r Registration) SupportedDataSources() map[string]*schema.Resource {
 		resources.DSNetworkProxy:     resources.NetworkProxyData(),
 		resources.DSEdgeCluster:      resources.EdgeClusterData(),
 		resources.DSTransportZone:    resources.TransportZoneData(),
+		resources.DSLoadBalancer:     resources.LoadBalancerData(),
+		resources.DSLBMonitor:        resources.LBMonitorData(),
+		resources.DSLBProfile:        resources.LBProfileData(),
+		resources.DSLBPool:           resources.LBPoolData(),
+		resources.DSLBVirtualServer:  resources.LBVirtualServerData(),
 	}
 }
 
 func (r Registration) SupportedResources() map[string]*schema.Resource {
 	return map[string]*schema.Resource{
-		resources.ResInstance:                resources.Instances(),
-		resources.ResInstanceClone:           resources.InstancesClone(),
-		resources.ResNetwork:                 resources.Network(),
-		resources.ResRouter:                  resources.Router(),
-		resources.ResRouterNat:               resources.RouterNatRule(),
-		resources.ResRouterFirewallRuleGroup: resources.RouterFirewallRuleGroup(),
-		resources.ResRouterRoute:             resources.RouterRoute(),
-		resources.ResRouterBgpNeighbor:       resources.RouterBgpNeighbor(),
+		resources.ResInstance:                   resources.Instances(),
+		resources.ResInstanceClone:              resources.InstancesClone(),
+		resources.ResNetwork:                    resources.Network(),
+		resources.ResRouter:                     resources.Router(),
+		resources.ResRouterNat:                  resources.RouterNatRule(),
+		resources.ResRouterFirewallRuleGroup:    resources.RouterFirewallRuleGroup(),
+		resources.ResRouterRoute:                resources.RouterRoute(),
+		resources.ResRouterBgpNeighbor:          resources.RouterBgpNeighbor(),
+		resources.ResLoadBalancer:               resources.LoadBalancer(),
+		resources.ResLoadBalancerMonitors:       resources.LoadBalancerMonitors(),
+		resources.ResLoadBalancerProfiles:       resources.LoadBalancerProfiles(),
+		resources.ResLoadBalancerPools:          resources.LoadBalancerPools(),
+		resources.ResLoadBalancerVirtualServers: resources.LoadBalancerVirtualServers(),
 	}
 }
 
