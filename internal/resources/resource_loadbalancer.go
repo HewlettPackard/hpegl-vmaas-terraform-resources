@@ -97,10 +97,10 @@ func LoadBalancer() *schema.Resource {
 			StateContext: schema.ImportStatePassthroughContext,
 		},
 		ReadContext:   LoadBalancerReadContext,
-		UpdateContext: LoadbalancerCreateContext,
+		UpdateContext: LoadbalancerUpdateContext,
 		CreateContext: LoadbalancerCreateContext,
 		DeleteContext: LoadbalancerDeleteContext,
-		Description: `loadbalancer resource facilitates creating,
+		Description: `loadbalancer resource facilitates creating, updating
 		and deleting NSX-T  Network Load Balancers.`,
 	}
 }
@@ -131,6 +131,20 @@ func LoadbalancerCreateContext(ctx context.Context, rd *schema.ResourceData, met
 	}
 
 	return LoadbalancerReadContext(ctx, rd, meta)
+}
+
+func LoadbalancerUpdateContext(ctx context.Context, rd *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	c, err := client.GetClientFromMetaMap(meta)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	data := utils.NewData(rd)
+	if err := c.CmpClient.LoadBalancer.Update(ctx, data, meta); err != nil {
+		return diag.FromErr(err)
+	}
+
+	return nil
 }
 
 func LoadbalancerDeleteContext(ctx context.Context, rd *schema.ResourceData, meta interface{}) diag.Diagnostics {

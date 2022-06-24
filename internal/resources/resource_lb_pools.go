@@ -24,13 +24,11 @@ func LoadBalancerPools() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Creating the Network loadbalancer pool.",
-				ForceNew:    true,
 			},
 			"min_active": {
 				Type:        schema.TypeInt,
 				Required:    true,
 				Description: "minimum active members for the Network loadbalancer pool",
-				ForceNew:    true,
 			},
 			"vip_balance": {
 				Type:             schema.TypeString,
@@ -61,7 +59,7 @@ func LoadBalancerPools() *schema.Resource {
 						},
 						"tcp_multiplexing": {
 							Type:        schema.TypeBool,
-							Required:    true,
+							Optional:    true,
 							Description: "tcp_multiplexing for Network loadbalancer pool",
 						},
 						"tcp_multiplexing_number": {
@@ -108,7 +106,7 @@ func LoadBalancerPools() *schema.Resource {
 			},
 		},
 		ReadContext:   loadbalancerPoolReadContext,
-		UpdateContext: loadbalancerPoolReadContext,
+		UpdateContext: loadbalancerPoolUpdateContext,
 		CreateContext: loadbalancerPoolCreateContext,
 		DeleteContext: loadbalancerPoolDeleteContext,
 		Description: `loadbalancer Pool resource facilitates creating,
@@ -152,6 +150,20 @@ func loadbalancerPoolDeleteContext(ctx context.Context, rd *schema.ResourceData,
 
 	data := utils.NewData(rd)
 	if err := c.CmpClient.LoadBalancerPool.Delete(ctx, data, meta); err != nil {
+		return diag.FromErr(err)
+	}
+
+	return nil
+}
+
+func loadbalancerPoolUpdateContext(ctx context.Context, rd *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	c, err := client.GetClientFromMetaMap(meta)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	data := utils.NewData(rd)
+	if err := c.CmpClient.LoadBalancerPool.Update(ctx, data, meta); err != nil {
 		return diag.FromErr(err)
 	}
 

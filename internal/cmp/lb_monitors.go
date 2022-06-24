@@ -113,5 +113,47 @@ func (lb *loadBalancerMonitor) Delete(ctx context.Context, d *utils.Data, meta i
 }
 
 func (lb *loadBalancerMonitor) Update(ctx context.Context, d *utils.Data, meta interface{}) error {
+	id := d.GetID()
+
+	updateReq := models.CreateLBMonitor{
+		CreateLBMonitorReq: models.CreateLBMonitorReq{
+			Name:               d.GetString("name"),
+			Description:        d.GetString("description"),
+			MonitorType:        d.GetString("monitor_type"),
+			MonitorTimeout:     d.GetInt("monitor_timeout"),
+			MonitorInterval:    d.GetInt("monitor_interval"),
+			SendVersion:        d.GetString("send_version"),
+			SendType:           d.GetString("send_type"),
+			MonitorDestination: d.GetString("monitor_destination"),
+			MonitorReverse:     d.GetBool("monitor_reverse"),
+			MonitorTransparent: d.GetBool("monitor_transparent"),
+			MonitorAdaptive:    d.GetBool("monitor_adaptive"),
+			FallCount:          d.GetInt("fall_count"),
+			RiseCount:          d.GetInt("rise_count"),
+			AliasPort:          d.GetInt("alias_port"),
+		},
+	}
+
+	if err := d.Error(); err != nil {
+		return err
+	}
+
+	lbDetails, err := lb.lbClient.GetLoadBalancers(ctx)
+	if err != nil {
+		return err
+	}
+	retry := &utils.CustomRetry{
+		InitialDelay: time.Second * 15,
+		RetryDelay:   time.Second * 30,
+	}
+	_, err = retry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
+		return lb.lbClient.UpdateLBMonitor(ctx, updateReq, lbDetails.GetNetworkLoadBalancerResp[0].ID, id)
+	})
+	if err != nil {
+		return err
+	}
+
+	//return d.Error()
+
 	return nil
 }

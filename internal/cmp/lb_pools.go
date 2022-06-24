@@ -103,6 +103,49 @@ func (lb *loadBalancerPool) Create(ctx context.Context, d *utils.Data, meta inte
 }
 
 func (lb *loadBalancerPool) Update(ctx context.Context, d *utils.Data, meta interface{}) error {
+	id := d.GetID()
+
+	updateReq := models.CreateLBPool{
+		CreateLBPoolReq: models.CreateLBPoolReq{
+			Name:        d.GetString("name"),
+			Description: d.GetString("description"),
+			VipBalance:  d.GetString("vip_balance"),
+			MinActive:   d.GetInt("min_active"),
+			PoolConfig: models.PoolConfig{
+				SnatTranslationType:   d.GetString("snat_translation_type"),
+				PassiveMonitorPath:    d.GetInt("passive_monitor_path"),
+				ActiveMonitorPaths:    d.GetInt("active_monitor_paths"),
+				TCPMultiplexingNumber: d.GetInt("tcp_multiplexing_number"),
+				SnatIPAddress:         d.GetString("snat_ip_address"),
+				MemberGroup: models.MemberGroup{
+					Name:             d.GetString("name"),
+					Path:             d.GetString("path"),
+					IPRevisionFilter: d.GetString("ip_revision_filter"),
+					Port:             d.GetInt("port"),
+				},
+			},
+		},
+	}
+
+	if err := d.Error(); err != nil {
+		return err
+	}
+
+	lbDetails, err := lb.lbClient.GetLoadBalancers(ctx)
+	if err != nil {
+		return err
+	}
+	retry := &utils.CustomRetry{
+		InitialDelay: time.Second * 15,
+		RetryDelay:   time.Second * 30,
+	}
+	_, err = retry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
+		return lb.lbClient.UpdateLBPool(ctx, updateReq, lbDetails.GetNetworkLoadBalancerResp[0].ID, id)
+	})
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 

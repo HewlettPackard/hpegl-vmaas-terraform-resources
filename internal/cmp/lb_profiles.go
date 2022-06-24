@@ -42,10 +42,6 @@ func (lb *loadBalancerProfile) Read(ctx context.Context, d *utils.Data, meta int
 	return tftags.Set(d, getlbProfileResp.GetLBSpecificProfilesResp)
 }
 
-func (lb *loadBalancerProfile) Update(ctx context.Context, d *utils.Data, meta interface{}) error {
-	return nil
-}
-
 func (lb *loadBalancerProfile) Create(ctx context.Context, d *utils.Data, meta interface{}) error {
 	setMeta(meta, lb.lbClient.Client)
 	createReq := models.CreateLBProfile{
@@ -121,6 +117,55 @@ func (lb *loadBalancerProfile) Delete(ctx context.Context, d *utils.Data, meta i
 		return err
 	}
 	_, err = lb.lbClient.DeleteLBProfile(ctx, lbDetails.GetNetworkLoadBalancerResp[0].ID, lbProfileID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (lb *loadBalancerProfile) Update(ctx context.Context, d *utils.Data, meta interface{}) error {
+	id := d.GetID()
+
+	updateReq := models.CreateLBProfile{
+		CreateLBProfileReq: models.CreateLBProfileReq{
+			Name:        d.GetString("name"),
+			Description: d.GetString("description"),
+			ServiceType: d.GetString("service_type"),
+			ProfileConfig: models.LBProfile{
+				ProfileType:            d.GetString("profile_type"),
+				RequestHeaderSize:      d.GetInt("request_header_size"),
+				ResponseHeaderSize:     d.GetInt("response_header_size"),
+				ResponseTimeout:        d.GetInt("response_timeout"),
+				HTTPIdleTimeoutName:    d.GetInt("http_idle_timeout"),
+				FastTCPIdleTimeout:     d.GetInt("fast_tcp_idle_timeout"),
+				ConnectionCloseTimeout: d.GetInt("connection_close_timeout"),
+				HaFlowMirroring:        d.GetBool("ha_flow_mirroring"),
+				CookieMode:             d.GetString("cookie_mode"),
+				CookieName:             d.GetString("cookie_name"),
+				CookieType:             d.GetString("cookie_type"),
+				CookieFallback:         d.GetBool("cookie_fallback"),
+				CookieGarbling:         d.GetBool("cookie_garbling"),
+				SSLSuite:               d.GetString("ssl_suite"),
+			},
+		},
+	}
+
+	if err := d.Error(); err != nil {
+		return err
+	}
+
+	lbDetails, err := lb.lbClient.GetLoadBalancers(ctx)
+	if err != nil {
+		return err
+	}
+	retry := &utils.CustomRetry{
+		InitialDelay: time.Second * 15,
+		RetryDelay:   time.Second * 30,
+	}
+	_, err = retry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
+		return lb.lbClient.UpdateLBProfile(ctx, updateReq, lbDetails.GetNetworkLoadBalancerResp[0].ID, id)
+	})
 	if err != nil {
 		return err
 	}

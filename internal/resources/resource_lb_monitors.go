@@ -105,7 +105,7 @@ func LoadBalancerMonitors() *schema.Resource {
 			},
 		},
 		ReadContext:   loadbalancerMonitorReadContext,
-		UpdateContext: loadbalancerMonitorReadContext,
+		UpdateContext: loadbalancerMonitorUpdateContext,
 		CreateContext: loadbalancerMonitorCreateContext,
 		DeleteContext: loadbalancerMonitorDeleteContext,
 		Description: `loadbalancer Monitor resource facilitates creating,
@@ -121,6 +121,20 @@ func loadbalancerMonitorReadContext(ctx context.Context, rd *schema.ResourceData
 
 	data := utils.NewData(rd)
 	if err := c.CmpClient.LoadBalancerMonitor.Read(ctx, data, meta); err != nil {
+		return diag.FromErr(err)
+	}
+
+	return nil
+}
+
+func loadbalancerMonitorUpdateContext(ctx context.Context, rd *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	c, err := client.GetClientFromMetaMap(meta)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	data := utils.NewData(rd)
+	if err := c.CmpClient.LoadBalancerMonitor.Update(ctx, data, meta); err != nil {
 		return diag.FromErr(err)
 	}
 

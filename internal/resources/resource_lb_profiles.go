@@ -22,18 +22,17 @@ func LoadBalancerProfiles() *schema.Resource {
 			},
 			"description": {
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 				Description: "Creating the Network Load balancer Profile",
-				ForceNew:    true,
 			},
 			"service_type": {
 				Type:             schema.TypeString,
 				ValidateDiagFunc: validations.StringInSlice([]string{"LBHttpProfile", "LBFastTcpProfile", "LBFastUdpProfile", "LBClientSslProfile", "LBServerSslProfile", "LBCookiePersistenceProfile", "LBGenericPersistenceProfile"}, false),
-				Required:         true,
+				Optional:         true,
 				Description:      "Network Loadbalancer Supported values are `LBHttpProfile`,`LBFastTcpProfile`, `LBFastUdpProfile`, `LBClientSslProfile`,`LBServerSslProfile`, `LBCookiePersistenceProfile`,`LBGenericPersistenceProfile`"},
 			"config": {
 				Type:        schema.TypeList,
-				Required:    true,
+				Optional:    true,
 				Description: "profile Configuration",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -42,21 +41,21 @@ func LoadBalancerProfiles() *schema.Resource {
 							ValidateDiagFunc: validations.StringInSlice([]string{
 								"application-profile", "ssl-profile", "persistence-profile",
 							}, false),
-							Required:    true,
+							Optional:    true,
 							Description: "Network Loadbalancer Supported values are `application-profile`, `ssl-profile`, `persistence-profile`"},
 						"request_header_size": {
 							Type:        schema.TypeInt,
-							Required:    true,
+							Optional:    true,
 							Description: "request_header_size for Network Load balancer Profile",
 						},
 						"response_header_size": {
 							Type:        schema.TypeInt,
-							Required:    true,
+							Optional:    true,
 							Description: "response_header_size for Network Load balancer Profile",
 						},
 						"http_idle_timeout": {
 							Type:        schema.TypeInt,
-							Required:    true,
+							Optional:    true,
 							Description: "http_idle_timeout for Network Load balancer Profile",
 						},
 						"fast_tcp_idle_timeout": {
@@ -83,18 +82,18 @@ func LoadBalancerProfiles() *schema.Resource {
 						"cookie_mode": {
 							Type:             schema.TypeString,
 							ValidateDiagFunc: validations.StringInSlice([]string{"INSERT", "PREFIX", "REWRITE"}, false),
-							Required:         true,
+							Optional:         true,
 							Description:      "Network Loadbalancer Supported values are `INSERT`,`PREFIX`, `REWRITE`",
 						},
 						"cookie_name": {
 							Type:        schema.TypeString,
-							Required:    true,
+							Optional:    true,
 							Description: "cookie_name for Network Load balancer Profile",
 						},
 						"cookie_type": {
 							Type:             schema.TypeString,
 							ValidateDiagFunc: validations.StringInSlice([]string{"LBPersistenceCookieTime", "LBSessionCookieTime"}, false),
-							Required:         true,
+							Optional:         true,
 							Description:      "Network Loadbalancer Supported values are `LBPersistenceCookieTime`,`LBSessionCookieTime`"},
 						"cookie_fallback": {
 							Type:        schema.TypeBool,
@@ -111,7 +110,7 @@ func LoadBalancerProfiles() *schema.Resource {
 			},
 		},
 		ReadContext:   loadbalancerProfileReadContext,
-		UpdateContext: loadbalancerProfileReadContext,
+		UpdateContext: loadbalancerProfileUpdateContext,
 		CreateContext: loadbalancerProfileCreateContext,
 		DeleteContext: loadbalancerProfileDeleteContext,
 		Description: `loadbalancer Profile resource facilitates creating,
@@ -145,6 +144,20 @@ func loadbalancerProfileCreateContext(ctx context.Context, rd *schema.ResourceDa
 	}
 
 	return loadbalancerProfileReadContext(ctx, rd, meta)
+}
+
+func loadbalancerProfileUpdateContext(ctx context.Context, rd *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	c, err := client.GetClientFromMetaMap(meta)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	data := utils.NewData(rd)
+	if err := c.CmpClient.LoadBalancerProfile.Update(ctx, data, meta); err != nil {
+		return diag.FromErr(err)
+	}
+
+	return nil
 }
 
 func loadbalancerProfileDeleteContext(ctx context.Context, rd *schema.ResourceData, meta interface{}) diag.Diagnostics {
