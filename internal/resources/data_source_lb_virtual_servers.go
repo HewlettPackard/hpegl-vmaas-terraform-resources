@@ -15,6 +15,11 @@ import (
 func LBVirtualServerData() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
+			// "lb_id": {
+			// 	Type:        schema.TypeInt,
+			// 	Required:    true,
+			// 	Description: "Network loadbalancer ID",
+			// },
 			"vip_name": {
 				Type:        schema.TypeString,
 				Computed:    true,
@@ -89,7 +94,7 @@ func LBVirtualServerReadContext(ctx context.Context, d *schema.ResourceData, met
 	}
 
 	data := utils.NewData(d)
-	err = c.CmpClient.LoadBalancer.Read(ctx, data, meta)
+	err = c.CmpClient.DSLBVirtualServer.Read(ctx, data, meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}

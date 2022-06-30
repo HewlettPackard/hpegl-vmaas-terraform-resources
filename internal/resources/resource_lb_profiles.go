@@ -20,6 +20,12 @@ func LoadBalancerProfiles() *schema.Resource {
 				Required:    true,
 				Description: "Network loadbalancer Profile Name",
 			},
+			"lb_id": {
+				Type:        schema.TypeInt,
+				Required:    true,
+				Description: "Network loadbalancer ID",
+				ForceNew:    true,
+			},
 			"description": {
 				Type:        schema.TypeString,
 				Optional:    true,

@@ -15,6 +15,11 @@ import (
 func LBPoolData() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
+			// "lb_id": {
+			// 	Type:        schema.TypeInt,
+			// 	Required:    true,
+			// 	Description: "Network loadbalancer ID",
+			// },
 			"name": {
 				Type:        schema.TypeString,
 				Required:    true,
@@ -73,7 +78,7 @@ func LBPoolReadContext(ctx context.Context, d *schema.ResourceData, meta interfa
 	}
 
 	data := utils.NewData(d)
-	err = c.CmpClient.LoadBalancerPool.Read(ctx, data, meta)
+	err = c.CmpClient.DSLBPool.Read(ctx, data, meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}

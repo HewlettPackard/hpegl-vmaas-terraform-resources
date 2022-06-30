@@ -24,68 +24,61 @@ func newLoadBalancerProfile(loadBalancerClient *client.LoadBalancerAPIService) *
 }
 
 func (lb *loadBalancerProfile) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
-	var lbProfileResp models.GetLBSpecificProfilesResp
+	setMeta(meta, lb.lbClient.Client)
+	var lbProfileResp models.CreateLBProfileReq
+
 	if err := tftags.Get(d, &lbProfileResp); err != nil {
 		return err
 	}
 
-	lbDetails, err := lb.lbClient.GetLoadBalancers(ctx)
+	_, err := lb.lbClient.GetSpecificLBProfile(ctx, lbProfileResp.LbID, lbProfileResp.ID)
 	if err != nil {
 		return err
 	}
-
-	getlbProfileResp, err := lb.lbClient.GetSpecificLBProfile(ctx, lbDetails.GetNetworkLoadBalancerResp[0].ID, lbProfileResp.ID)
-	if err != nil {
-		return err
-	}
-
-	return tftags.Set(d, getlbProfileResp.GetLBSpecificProfilesResp)
+	return tftags.Set(d, lbProfileResp)
 }
 
 func (lb *loadBalancerProfile) Create(ctx context.Context, d *utils.Data, meta interface{}) error {
 	setMeta(meta, lb.lbClient.Client)
-	createReq := models.CreateLBProfile{
-		CreateLBProfileReq: models.CreateLBProfileReq{
-			Name:        d.GetString("name"),
-			Description: d.GetString("description"),
-			ServiceType: d.GetString("service_type"),
-			ProfileConfig: models.LBProfile{
-				ProfileType:            d.GetString("profile_type"),
-				RequestHeaderSize:      d.GetInt("request_header_size"),
-				ResponseHeaderSize:     d.GetInt("response_header_size"),
-				ResponseTimeout:        d.GetInt("response_timeout"),
-				HTTPIdleTimeoutName:    d.GetInt("http_idle_timeout"),
-				FastTCPIdleTimeout:     d.GetInt("fast_tcp_idle_timeout"),
-				ConnectionCloseTimeout: d.GetInt("connection_close_timeout"),
-				HaFlowMirroring:        d.GetBool("ha_flow_mirroring"),
-				CookieMode:             d.GetString("cookie_mode"),
-				CookieName:             d.GetString("cookie_name"),
-				CookieType:             d.GetString("cookie_type"),
-				CookieFallback:         d.GetBool("cookie_fallback"),
-				CookieGarbling:         d.GetBool("cookie_garbling"),
-				SSLSuite:               d.GetString("ssl_suite"),
-			},
-		},
-	}
+	var createReq models.CreateLBProfile
+
+	// createReq := models.CreateLBProfile{
+	// 	CreateLBProfileReq: models.CreateLBProfileReq{
+	// 		Name:        d.GetString("name"),
+	// 		Description: d.GetString("description"),
+	// 		ServiceType: d.GetString("service_type"),
+	// 		ProfileConfig: models.LBProfile{
+	// 			ProfileType:            d.GetString("profile_type"),
+	// 			RequestHeaderSize:      d.GetInt("request_header_size"),
+	// 			ResponseHeaderSize:     d.GetInt("response_header_size"),
+	// 			ResponseTimeout:        d.GetInt("response_timeout"),
+	// 			HTTPIdleTimeoutName:    d.GetInt("http_idle_timeout"),
+	// 			FastTCPIdleTimeout:     d.GetInt("fast_tcp_idle_timeout"),
+	// 			ConnectionCloseTimeout: d.GetInt("connection_close_timeout"),
+	// 			HaFlowMirroring:        d.GetBool("ha_flow_mirroring"),
+	// 			CookieMode:             d.GetString("cookie_mode"),
+	// 			CookieName:             d.GetString("cookie_name"),
+	// 			CookieType:             d.GetString("cookie_type"),
+	// 			CookieFallback:         d.GetBool("cookie_fallback"),
+	// 			CookieGarbling:         d.GetBool("cookie_garbling"),
+	// 			SSLSuite:               d.GetString("ssl_suite"),
+	// 		},
+	// 	},
+	// }
 
 	if err := tftags.Get(d, &createReq.CreateLBProfileReq); err != nil {
 		return err
 	}
 
-	lbDetails, err := lb.lbClient.GetLoadBalancers(ctx)
-	if err != nil {
-		return err
-	}
+	// createReq.CreateLBProfileReq.ProfileConfig.ProfileType = "application-profile"
+	// createReq.CreateLBProfileReq.ProfileConfig.ConnectionCloseTimeout = 15
+	// createReq.CreateLBProfileReq.ProfileConfig.FastTCPIdleTimeout = 15
+	// createReq.CreateLBProfileReq.ProfileConfig.RequestHeaderSize = 30
+	// createReq.CreateLBProfileReq.ProfileConfig.ResponseHeaderSize = 40
+	// createReq.CreateLBProfileReq.ProfileConfig.ResponseTimeout = 40
+	// createReq.CreateLBProfileReq.ProfileConfig.HTTPIdleTimeoutName = 50
 
-	createReq.CreateLBProfileReq.ProfileConfig.ProfileType = "application-profile"
-	createReq.CreateLBProfileReq.ProfileConfig.ConnectionCloseTimeout = 15
-	createReq.CreateLBProfileReq.ProfileConfig.FastTCPIdleTimeout = 15
-	createReq.CreateLBProfileReq.ProfileConfig.RequestHeaderSize = 30
-	createReq.CreateLBProfileReq.ProfileConfig.ResponseHeaderSize = 40
-	createReq.CreateLBProfileReq.ProfileConfig.ResponseTimeout = 40
-	createReq.CreateLBProfileReq.ProfileConfig.HTTPIdleTimeoutName = 50
-
-	lbProfileResp, err := lb.lbClient.CreateLBProfile(ctx, createReq, lbDetails.GetNetworkLoadBalancerResp[0].ID)
+	lbProfileResp, err := lb.lbClient.CreateLBProfile(ctx, createReq, createReq.CreateLBProfileReq.LbID)
 	if err != nil {
 		return err
 	}
@@ -93,19 +86,7 @@ func (lb *loadBalancerProfile) Create(ctx context.Context, d *utils.Data, meta i
 	if !lbProfileResp.Success {
 		return fmt.Errorf(successErr, "creating loadBalancerProfile Profile")
 	}
-
 	createReq.CreateLBProfileReq.ID = lbProfileResp.LBProfileResp.ID
-	// wait until created
-	retry := &utils.CustomRetry{
-		InitialDelay: time.Second * 15,
-		RetryDelay:   time.Second * 30,
-	}
-	_, err = retry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return lb.lbClient.GetSpecificLBProfile(ctx, lbDetails.GetNetworkLoadBalancerResp[0].ID, lbProfileResp.LBProfileResp.ID)
-	})
-	if err != nil {
-		return err
-	}
 
 	return tftags.Set(d, createReq.CreateLBProfileReq)
 }

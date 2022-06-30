@@ -20,6 +20,12 @@ func LoadBalancerMonitors() *schema.Resource {
 				Required:    true,
 				Description: "Network loadbalancer Monitor name",
 			},
+			"lb_id": {
+				Type:        schema.TypeInt,
+				Required:    true,
+				Description: "Network loadbalancer ID",
+				ForceNew:    true,
+			},
 			"description": {
 				Type:        schema.TypeString,
 				Description: "Creating the Network Load balancer Monitor.",

@@ -15,6 +15,11 @@ import (
 func LBProfileData() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
+			// "lb_id": {
+			// 	Type:        schema.TypeInt,
+			// 	Required:    true,
+			// 	Description: "Network loadbalancer ID",
+			// },
 			"name": {
 				Type:        schema.TypeString,
 				Computed:    true,
@@ -85,7 +90,7 @@ func LBProfileReadContext(ctx context.Context, d *schema.ResourceData, meta inte
 	}
 
 	data := utils.NewData(d)
-	err = c.CmpClient.LoadBalancerProfile.Read(ctx, data, meta)
+	err = c.CmpClient.DSLBProfile.Read(ctx, data, meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}

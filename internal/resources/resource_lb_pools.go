@@ -20,6 +20,17 @@ func LoadBalancerPools() *schema.Resource {
 				Required:    true,
 				Description: "Network loadbalancer pool name",
 			},
+			"lb_id": {
+				Type:        schema.TypeInt,
+				Required:    true,
+				Description: "Network loadbalancer ID",
+				ForceNew:    true,
+			},
+			"pool": {
+				Type:        schema.TypeInt,
+				Required:    true,
+				Description: "Network loadbalancer PoolID",
+			},
 			"description": {
 				Type:        schema.TypeString,
 				Required:    true,
