@@ -29,6 +29,7 @@ func (n *loadBalancerds) Read(ctx context.Context, d *utils.Data, meta interface
 	if err := d.Error(); err != nil {
 		return err
 	}
+
 	lb, err := n.lbClient.GetLoadBalancers(ctx)
 	if err != nil {
 		return err
@@ -42,5 +43,6 @@ func (n *loadBalancerds) Read(ctx context.Context, d *utils.Data, meta interface
 		}
 	}
 
+	//return fmt.Errorf(errExactMatch, name)
 	return fmt.Errorf(errExactMatch, "LoadBalancer")
 }

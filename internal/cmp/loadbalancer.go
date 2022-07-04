@@ -104,7 +104,6 @@ func (lb *loadBalancer) Create(ctx context.Context, d *utils.Data, meta interfac
 			Name:        d.GetString("name"),
 			Description: d.GetString("description"),
 			Enabled:     d.GetBool("enabled"),
-			Visibility:  d.GetString("visibility"),
 			ResourcePermissions: models.EnableResourcePermissions{
 				All: d.GetBool("all"),
 			},
@@ -142,6 +141,8 @@ func (lb *loadBalancer) Create(ctx context.Context, d *utils.Data, meta interfac
 			break
 		}
 	}
+	createReq.NetworkLoadBalancer.Config.Loglevel = "INFO"
+	createReq.NetworkLoadBalancer.Config.Size = "SMALL"
 	lbResp, err := lb.lbClient.CreateLoadBalancer(ctx, createReq)
 	if err != nil {
 		return err

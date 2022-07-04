@@ -21,9 +21,14 @@ func LoadBalancer() *schema.Resource {
 			},
 			"type": {
 				Type:        schema.TypeString,
-				Description: "Type of Network loadbalancer",
 				Computed:    true,
+				Description: "Type of Network loadbalancer",
 			},
+			// "lb_id": {
+			// 	Type:        schema.TypeInt,
+			// 	Computed:    true,
+			// 	Description: "Parent lb ID, router_id can be obtained by using LB datasource/resource.",
+			// },
 			"description": {
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -75,11 +80,13 @@ func LoadBalancer() *schema.Resource {
 						"size": {
 							Type:        schema.TypeString,
 							Optional:    true,
+							Default:     "SMALL",
 							Description: `In Filter. Supported Values are "SMALL", "MEDIUM", "LARGE"`,
 						},
 						"loglevel": {
 							Type:        schema.TypeString,
 							Optional:    true,
+							Default:     "INFO",
 							Description: `In Filter. Supported Values are "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL", "ALERT", "EMERGENCY"`,
 						},
 						"tier1": {

@@ -12,19 +12,19 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func LoadBalancerMonitors() *schema.Resource {
+func LoadBalancerMonitor() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
+			"lb_id": {
+				Type:        schema.TypeInt,
+				Required:    true,
+				Description: "Parent lb ID, router_id can be obtained by using router datasource/resource.",
+				ForceNew:    true,
+			},
 			"name": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Network loadbalancer Monitor name",
-			},
-			"lb_id": {
-				Type:        schema.TypeInt,
-				Required:    true,
-				Description: "Network loadbalancer ID",
-				ForceNew:    true,
 			},
 			"description": {
 				Type:        schema.TypeString,

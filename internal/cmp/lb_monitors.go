@@ -30,44 +30,39 @@ func (lb *loadBalancerMonitor) Read(ctx context.Context, d *utils.Data, meta int
 		return err
 	}
 
-	_, err := lb.lbClient.GetSpecificLBMonitor(ctx, lbMonitorResp.LbID, lbMonitorResp.ID)
+	getMonitorLoadBalancer, err := lb.lbClient.GetSpecificLBMonitor(ctx, lbMonitorResp.LbID, lbMonitorResp.ID)
 	if err != nil {
 		return err
 	}
-	return tftags.Set(d, lbMonitorResp)
+	return tftags.Set(d, getMonitorLoadBalancer.GetSpecificLBMonitorResp)
+
 }
 
 func (lb *loadBalancerMonitor) Create(ctx context.Context, d *utils.Data, meta interface{}) error {
 	setMeta(meta, lb.lbClient.Client)
-	var createReq models.CreateLBMonitor
-	err := tftags.Get(d, &createReq.CreateLBMonitorReq)
-	if err != nil {
-		return err
+
+	createReq := models.CreateLBMonitor{
+		CreateLBMonitorReq: models.CreateLBMonitorReq{
+			Name:               d.GetString("name"),
+			LbID:               d.GetInt("lb_id"),
+			Description:        d.GetString("description"),
+			MonitorType:        d.GetString("monitor_type"),
+			MonitorTimeout:     d.GetInt("monitor_timeout"),
+			MonitorInterval:    d.GetInt("monitor_interval"),
+			SendVersion:        d.GetString("send_version"),
+			SendType:           d.GetString("send_type"),
+			MonitorDestination: d.GetString("monitor_destination"),
+			MonitorReverse:     d.GetBool("monitor_reverse"),
+			MonitorTransparent: d.GetBool("monitor_transparent"),
+			MonitorAdaptive:    d.GetBool("monitor_adaptive"),
+			FallCount:          d.GetInt("fall_count"),
+			RiseCount:          d.GetInt("rise_count"),
+			AliasPort:          d.GetInt("alias_port"),
+		},
 	}
 
-	// createReq := models.CreateLBMonitor{
-	// 	CreateLBMonitorReq: models.CreateLBMonitorReq{
-	// 		Name:               d.GetString("name"),
-	// 		Description:        d.GetString("description"),
-	// 		MonitorType:        d.GetString("monitor_type"),
-	// 		MonitorTimeout:     d.GetInt("monitor_timeout"),
-	// 		MonitorInterval:    d.GetInt("monitor_interval"),
-	// 		SendVersion:        d.GetString("send_version"),
-	// 		SendType:           d.GetString("send_type"),
-	// 		MonitorDestination: d.GetString("monitor_destination"),
-	// 		MonitorReverse:     d.GetBool("monitor_reverse"),
-	// 		MonitorTransparent: d.GetBool("monitor_transparent"),
-	// 		MonitorAdaptive:    d.GetBool("monitor_adaptive"),
-	// 		FallCount:          d.GetInt("fall_count"),
-	// 		RiseCount:          d.GetInt("rise_count"),
-	// 		AliasPort:          d.GetInt("alias_port"),
-	// 	},
-	// }
-	if err := tftags.Get(d, &createReq.CreateLBMonitorReq); err != nil {
-		return err
-	}
-
-	lbMonitorResp, err := lb.lbClient.CreateLBMonitor(ctx, createReq, createReq.CreateLBMonitorReq.LbID)
+	lbMonitorResp, err := lb.lbClient.CreateLBMonitor(ctx, createReq,
+		createReq.CreateLBMonitorReq.LbID)
 	if err != nil {
 		return err
 	}
@@ -76,6 +71,19 @@ func (lb *loadBalancerMonitor) Create(ctx context.Context, d *utils.Data, meta i
 	}
 
 	createReq.CreateLBMonitorReq.ID = lbMonitorResp.LBMonitorResp.ID
+
+	// wait until created
+	retry := &utils.CustomRetry{
+		RetryDelay:   1,
+		InitialDelay: 1,
+	}
+	_, err = retry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
+		return lb.lbClient.GetSpecificLBMonitor(ctx, createReq.CreateLBMonitorReq.LbID,
+			lbMonitorResp.LBMonitorResp.ID)
+	})
+	if err != nil {
+		return err
+	}
 
 	return tftags.Set(d, createReq.CreateLBMonitorReq)
 }

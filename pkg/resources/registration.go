@@ -41,10 +41,7 @@ func (r Registration) SupportedDataSources() map[string]*schema.Resource {
 		resources.DSEdgeCluster:      resources.EdgeClusterData(),
 		resources.DSTransportZone:    resources.TransportZoneData(),
 		resources.DSLoadBalancer:     resources.LoadBalancerData(),
-		resources.DSLBMonitor:        resources.LBMonitorData(),
-		resources.DSLBProfile:        resources.LBProfileData(),
-		resources.DSLBPool:           resources.LBPoolData(),
-		resources.DSLBVirtualServer:  resources.LBVirtualServerData(),
+		resources.DSLoadBalancerPool: resources.LoadBalancerPoolData(),
 	}
 }
 
@@ -59,7 +56,7 @@ func (r Registration) SupportedResources() map[string]*schema.Resource {
 		resources.ResRouterRoute:                resources.RouterRoute(),
 		resources.ResRouterBgpNeighbor:          resources.RouterBgpNeighbor(),
 		resources.ResLoadBalancer:               resources.LoadBalancer(),
-		resources.ResLoadBalancerMonitors:       resources.LoadBalancerMonitors(),
+		resources.ResLoadBalancerMonitors:       resources.LoadBalancerMonitor(),
 		resources.ResLoadBalancerProfiles:       resources.LoadBalancerProfiles(),
 		resources.ResLoadBalancerPools:          resources.LoadBalancerPools(),
 		resources.ResLoadBalancerVirtualServers: resources.LoadBalancerVirtualServers(),

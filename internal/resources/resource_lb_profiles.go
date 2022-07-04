@@ -23,7 +23,7 @@ func LoadBalancerProfiles() *schema.Resource {
 			"lb_id": {
 				Type:        schema.TypeInt,
 				Required:    true,
-				Description: "Network loadbalancer ID",
+				Description: "Parent lb ID, router_id can be obtained by using router datasource/resource.",
 				ForceNew:    true,
 			},
 			"description": {

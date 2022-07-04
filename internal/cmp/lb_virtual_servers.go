@@ -30,11 +30,11 @@ func (lb *loadBalancerVirtualServer) Read(ctx context.Context, d *utils.Data, me
 		return err
 	}
 
-	_, err := lb.lbClient.GetSpecificLBVirtualServer(ctx, lbVSResp.LbID, lbVSResp.ID)
+	getPoolLoadBalancer, err := lb.lbClient.GetSpecificLBVirtualServer(ctx, lbVSResp.LbID, lbVSResp.ID)
 	if err != nil {
 		return err
 	}
-	return tftags.Set(d, lbVSResp)
+	return tftags.Set(d, getPoolLoadBalancer.GetSpecificLBVirtualServersResp)
 }
 
 func (lb *loadBalancerVirtualServer) Update(ctx context.Context, d *utils.Data, meta interface{}) error {
@@ -43,30 +43,26 @@ func (lb *loadBalancerVirtualServer) Update(ctx context.Context, d *utils.Data, 
 
 func (lb *loadBalancerVirtualServer) Create(ctx context.Context, d *utils.Data, meta interface{}) error {
 	setMeta(meta, lb.lbClient.Client)
-	var createReq models.CreateLBVirtualServers
 
-	// createReq := models.CreateLBVirtualServers{
-	// 	CreateLBVirtualServersReq: models.CreateLBVirtualServersReq{
-	// 		Description:   d.GetString("description"),
-	// 		VipName:       d.GetString("vip_name"),
-	// 		VipAddress:    d.GetString("vip_address"),
-	// 		VipProtocol:   d.GetString("vip_protocol"),
-	// 		VipPort:       d.GetString("vip_port"),
-	// 		Pool:          d.GetInt("pool"),
-	// 		SSLServerCert: d.GetInt("ssl_server_cert"),
-	// 		SSLCert:       d.GetInt("ssl_cert"),
-	// 		VirtualServerConfig: models.VirtualServerConfig{
-	// 			Persistence:        d.GetString("persistence"),
-	// 			PersistenceProfile: d.GetInt("persistence_profile"),
-	// 			ApplicationProfile: d.GetInt("application_profile"),
-	// 			SSLClientProfile:   d.GetString("ssl_client_profile"),
-	// 			SSLServerProfile:   d.GetString("ssl_server_profile"),
-	// 		},
-	// 	},
-	// }
-
-	if err := tftags.Get(d, &createReq.CreateLBVirtualServersReq); err != nil {
-		return err
+	createReq := models.CreateLBVirtualServers{
+		CreateLBVirtualServersReq: models.CreateLBVirtualServersReq{
+			Description:   d.GetString("description"),
+			LbID:          d.GetInt("lb_id"),
+			VipName:       d.GetString("vip_name"),
+			VipAddress:    d.GetString("vip_address"),
+			VipProtocol:   d.GetString("vip_protocol"),
+			VipPort:       d.GetString("vip_port"),
+			Pool:          d.GetInt("pool"),
+			SSLServerCert: d.GetInt("ssl_server_cert"),
+			SSLCert:       d.GetInt("ssl_cert"),
+			VirtualServerConfig: models.VirtualServerConfig{
+				Persistence:        d.GetString("persistence"),
+				PersistenceProfile: d.GetInt("persistence_profile"),
+				ApplicationProfile: d.GetInt("application_profile"),
+				SSLClientProfile:   d.GetString("ssl_client_profile"),
+				SSLServerProfile:   d.GetString("ssl_server_profile"),
+			},
+		},
 	}
 
 	profileData, err := lb.lbClient.GetLBProfiles(ctx, createReq.CreateLBVirtualServersReq.LbID)
@@ -93,6 +89,20 @@ func (lb *loadBalancerVirtualServer) Create(ctx context.Context, d *utils.Data, 
 	}
 
 	createReq.CreateLBVirtualServersReq.ID = lbVirtualServersResp.CreateLBVirtualServersResp.ID
+
+	// wait until created
+	retry := &utils.CustomRetry{
+		RetryDelay:   1,
+		InitialDelay: 1,
+	}
+	_, err = retry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
+		return lb.lbClient.GetSpecificLBVirtualServer(ctx, createReq.CreateLBVirtualServersReq.LbID,
+			lbVirtualServersResp.CreateLBVirtualServersResp.ID)
+	})
+	if err != nil {
+		return err
+	}
+
 	return tftags.Set(d, createReq.CreateLBVirtualServersReq)
 }
 
