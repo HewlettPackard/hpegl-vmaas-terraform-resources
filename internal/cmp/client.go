@@ -41,10 +41,6 @@ type Client struct {
 	TransportZone             DataSource
 	DSLoadBalancer            DataSource
 	DSLoadBalancerPool        DataSource
-	// DSLBMonitor               DataSource
-	// DSLBProfile               DataSource
-	// DSLBPool                  DataSource
-	// DSLBVirtualServer         DataSource
 }
 
 // NewClient returns configured client
