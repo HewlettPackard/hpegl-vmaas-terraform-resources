@@ -1,6 +1,7 @@
 # (C) Copyright 2022 Hewlett Packard Enterprise Development LP
 
 resource "hpegl_vmaas_load_balancer_pool" "test_lb_pool" {
+  lb_id = data.hpegl_vmaas_lb.lb.id 
   name  =  "TEST-POOL"       
   description  = "creating load balancer pool"
   min_active     = 1

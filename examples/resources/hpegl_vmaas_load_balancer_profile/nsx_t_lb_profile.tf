@@ -1,6 +1,7 @@
 # (C) Copyright 2022 Hewlett Packard Enterprise Development LP
 
 resource "hpegl_vmaas_load_balancer_profile" "tf_lb_profile" {
+  lb_id = data.hpegl_vmaas_lb.lb.id  
   name  =  "LB-PROFILE"       
   description  = "creating LB Profile"
   service_type     = "LBHttpProfile"

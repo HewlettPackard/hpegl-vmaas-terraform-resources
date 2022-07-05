@@ -1,7 +1,8 @@
 # (C) Copyright 2022 Hewlett Packard Enterprise Development LP
 
 resource "hpegl_vmaas_load_balancer_monitor" "tf_lb_monitor" {
-  name  =  "TEST-MONITOR"       
+  name  =  "TEST-MONITOR"  
+  lb_id = data.hpegl_vmaas_lb.lb.id     
   description  = "Creating lb monitor"
   monitor_type = "LBTcpMonitorProfile"
   monitor_timeout = 15

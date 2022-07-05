@@ -74,8 +74,8 @@ func (lb *loadBalancerMonitor) Create(ctx context.Context, d *utils.Data, meta i
 
 	// wait until created
 	retry := &utils.CustomRetry{
-		RetryDelay:   1,
-		InitialDelay: 1,
+		InitialDelay: time.Second * 15,
+		RetryDelay:   time.Second * 30,
 	}
 	_, err = retry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
 		return lb.lbClient.GetSpecificLBMonitor(ctx, createReq.CreateLBMonitorReq.LbID,
@@ -89,14 +89,19 @@ func (lb *loadBalancerMonitor) Create(ctx context.Context, d *utils.Data, meta i
 }
 
 func (lb *loadBalancerMonitor) Delete(ctx context.Context, d *utils.Data, meta interface{}) error {
-	lbMonitorID := d.GetID()
-	lbDetails, err := lb.lbClient.GetLoadBalancers(ctx)
+	setMeta(meta, lb.lbClient.Client)
+	var tfLBMonitor models.CreateLBMonitorReq
+	if err := tftags.Get(d, &tfLBMonitor); err != nil {
+		return err
+	}
+
+	resp, err := lb.lbClient.DeleteLBMonitor(ctx, tfLBMonitor.LbID, tfLBMonitor.ID)
 	if err != nil {
 		return err
 	}
-	_, err = lb.lbClient.DeleteLBMonitor(ctx, lbDetails.GetNetworkLoadBalancerResp[0].ID, lbMonitorID)
-	if err != nil {
-		return err
+
+	if !resp.Success {
+		return fmt.Errorf("got success = 'false' while deleting LB-MONITOR")
 	}
 
 	return nil

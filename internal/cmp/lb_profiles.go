@@ -101,14 +101,19 @@ func (lb *loadBalancerProfile) Create(ctx context.Context, d *utils.Data, meta i
 }
 
 func (lb *loadBalancerProfile) Delete(ctx context.Context, d *utils.Data, meta interface{}) error {
-	lbProfileID := d.GetID()
-	lbDetails, err := lb.lbClient.GetLoadBalancers(ctx)
+	setMeta(meta, lb.lbClient.Client)
+	var tfLBProfile models.CreateLBProfileReq
+	if err := tftags.Get(d, &tfLBProfile); err != nil {
+		return err
+	}
+
+	resp, err := lb.lbClient.DeleteLBProfile(ctx, tfLBProfile.LbID, tfLBProfile.ID)
 	if err != nil {
 		return err
 	}
-	_, err = lb.lbClient.DeleteLBProfile(ctx, lbDetails.GetNetworkLoadBalancerResp[0].ID, lbProfileID)
-	if err != nil {
-		return err
+
+	if !resp.Success {
+		return fmt.Errorf("got success = 'false' while deleting LB-PROFILE")
 	}
 
 	return nil

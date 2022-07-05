@@ -143,14 +143,19 @@ func (lb *loadBalancerVirtualServer) Create(ctx context.Context, d *utils.Data, 
 }
 
 func (lb *loadBalancerVirtualServer) Delete(ctx context.Context, d *utils.Data, meta interface{}) error {
-	lbVirtualServerID := d.GetID()
-	lbDetails, err := lb.lbClient.GetLoadBalancers(ctx)
+	setMeta(meta, lb.lbClient.Client)
+	var tfLBVirtualServer models.CreateLBVirtualServersReq
+	if err := tftags.Get(d, &tfLBVirtualServer); err != nil {
+		return err
+	}
+
+	resp, err := lb.lbClient.DeleteLBVirtualServers(ctx, tfLBVirtualServer.LbID, tfLBVirtualServer.ID)
 	if err != nil {
 		return err
 	}
-	_, err = lb.lbClient.DeleteLBVirtualServers(ctx, lbDetails.GetNetworkLoadBalancerResp[0].ID, lbVirtualServerID)
-	if err != nil {
-		return err
+
+	if !resp.Success {
+		return fmt.Errorf("got success = 'false' while deleting LB-VIRTUAL-SERVER")
 	}
 
 	return nil
