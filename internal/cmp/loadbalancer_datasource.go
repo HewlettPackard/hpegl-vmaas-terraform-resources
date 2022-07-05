@@ -40,9 +40,9 @@ func (n *loadBalancerds) Read(ctx context.Context, d *utils.Data, meta interface
 			log.Print("[DEBUG]", lb.GetNetworkLoadBalancerResp[i].ID)
 
 			return tftags.Set(d, lb.GetNetworkLoadBalancerResp[i])
+
 		}
 	}
 
-	//return fmt.Errorf(errExactMatch, name)
 	return fmt.Errorf(errExactMatch, "LoadBalancer")
 }

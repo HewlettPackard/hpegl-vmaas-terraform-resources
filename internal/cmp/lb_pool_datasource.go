@@ -8,6 +8,7 @@ import (
 	"log"
 
 	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
+	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/models"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/utils"
 	"github.com/tshihad/tftags"
 )
@@ -25,37 +26,44 @@ func (p *loadBalancerpoolds) Read(ctx context.Context, d *utils.Data, meta inter
 	log.Printf("[DEBUG] Get Load balancer")
 	name := d.GetString("name")
 
-	// Pre check
-	if err := d.Error(); err != nil {
-		return err
-	}
-
-	lb, err := p.lbClient.GetSpecificLoadBalancers(ctx, 186)
+	lb, err := p.lbClient.GetLoadBalancers(ctx)
 	if err != nil {
 		return err
 	}
+	var lbPools models.GetLBPools
 
-	// var lbPools models.GetLBPools
-	// for i, _ := range lb.GetNetworkLoadBalancerResp {
-	// 	lbPools, err = p.lbClient.GetLBPools(ctx, lb.GetNetworkLoadBalancerResp[i].ID)
-	// 	if err != nil {
-	// 		return err
-	// 	}
-	// }
+	if len(lb.GetNetworkLoadBalancerResp) == 2 {
+		for i, _ := range lb.GetNetworkLoadBalancerResp {
+			i = i + 1
+			lbPools, err = p.lbClient.GetLBPools(ctx, lb.GetNetworkLoadBalancerResp[i].ID)
+			if err != nil {
+				return err
+			}
 
-	//var lbPools models.GetLBPools
-	//for i, _ := range lb.GetSpecificNetworkLoadBalancerResp {
-	lbPools, err := p.lbClient.GetLBPools(ctx, lb.GetSpecificNetworkLoadBalancerResp.ID)
-	if err != nil {
-		return err
+			for i, n := range lbPools.GetLBPoolsResp {
+				if n.Name == name {
+					log.Print("[DEBUG]", lbPools.GetLBPoolsResp[i].ID)
+
+					return tftags.Set(d, lbPools.GetLBPoolsResp[i])
+				}
+			}
+		}
 	}
-	//	}
 
-	for i, n := range lbPools.GetLBPoolsResp {
-		if n.Name == name {
-			log.Print("[DEBUG]", lbPools.GetLBPoolsResp[i].ID)
+	if len(lb.GetNetworkLoadBalancerResp) > 2 {
+		for i, _ := range lb.GetNetworkLoadBalancerResp {
+			lbPools, err = p.lbClient.GetLBPools(ctx, lb.GetNetworkLoadBalancerResp[i].ID)
+			if err != nil {
+				return err
+			}
 
-			return tftags.Set(d, lbPools.GetLBPoolsResp[i])
+			for i, n := range lbPools.GetLBPoolsResp {
+				if n.Name == name {
+					log.Print("[DEBUG]", lbPools.GetLBPoolsResp[i].ID)
+
+					return tftags.Set(d, lbPools.GetLBPoolsResp[i])
+				}
+			}
 		}
 	}
 
