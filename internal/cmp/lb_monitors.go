@@ -108,6 +108,7 @@ func (lb *loadBalancerMonitor) Update(ctx context.Context, d *utils.Data, meta i
 	updateReq := models.CreateLBMonitor{
 		CreateLBMonitorReq: models.CreateLBMonitorReq{
 			Name:               d.GetString("name"),
+			LbID:               d.GetInt("lb_id"),
 			Description:        d.GetString("description"),
 			MonitorType:        d.GetString("monitor_type"),
 			MonitorTimeout:     d.GetInt("monitor_timeout"),
@@ -128,22 +129,17 @@ func (lb *loadBalancerMonitor) Update(ctx context.Context, d *utils.Data, meta i
 		return err
 	}
 
-	lbDetails, err := lb.lbClient.GetLoadBalancers(ctx)
-	if err != nil {
-		return err
-	}
 	retry := &utils.CustomRetry{
 		InitialDelay: time.Second * 15,
 		RetryDelay:   time.Second * 30,
 	}
-	_, err = retry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return lb.lbClient.UpdateLBMonitor(ctx, updateReq, lbDetails.GetNetworkLoadBalancerResp[0].ID, id)
+	_, err := retry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
+		return lb.lbClient.UpdateLBMonitor(ctx, updateReq,
+			updateReq.CreateLBMonitorReq.LbID, id)
 	})
 	if err != nil {
 		return err
 	}
 
-	//return d.Error()
-
-	return nil
+	return tftags.Set(d, updateReq.CreateLBMonitorReq)
 }

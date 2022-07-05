@@ -44,7 +44,6 @@ func (lb *loadBalancer) Update(ctx context.Context, d *utils.Data, meta interfac
 			Name:        d.GetString("name"),
 			Description: d.GetString("description"),
 			Enabled:     d.GetBool("enabled"),
-			Visibility:  d.GetString("visibility"),
 			ResourcePermissions: models.EnableResourcePermissions{
 				All: d.GetBool("all"),
 			},
@@ -60,24 +59,6 @@ func (lb *loadBalancer) Update(ctx context.Context, d *utils.Data, meta interfac
 	updateReq.NetworkLoadBalancer.Config.Loglevel = "INFO"
 	updateReq.NetworkLoadBalancer.Config.Size = "SMALL"
 
-	// lbResp, err := lb.lbClient.UpdateLoadBalancer(ctx, updateReq.NetworkLoadBalancer.ID, updateReq)
-	// if err != nil {
-	// 	return err
-	// }
-	// if !lbResp.Success {
-	// 	return fmt.Errorf(successErr, "updating loadBalancer")
-	// }
-	// updateReq.NetworkLoadBalancer.ID = lbResp.NetworkLoadBalancerResp.ID
-
-	// // wait until created
-	// retry := &utils.CustomRetry{
-	// 	InitialDelay: time.Second * 15,
-	// 	RetryDelay:   time.Second * 30,
-	// }
-
-	if err := d.Error(); err != nil {
-		return err
-	}
 	retry := &utils.CustomRetry{
 		InitialDelay: time.Second * 15,
 		RetryDelay:   time.Second * 30,
@@ -89,12 +70,8 @@ func (lb *loadBalancer) Update(ctx context.Context, d *utils.Data, meta interfac
 		return err
 	}
 
-	// _, err := lb.lbClient.UpdateLoadBalancer(ctx, id, updateReq)
-	// if err != nil {
-	// 	return err
-	// }
-
-	return d.Error()
+	//return d.Error()
+	return tftags.Set(d, updateReq.NetworkLoadBalancer)
 }
 
 func (lb *loadBalancer) Create(ctx context.Context, d *utils.Data, meta interface{}) error {
@@ -116,23 +93,9 @@ func (lb *loadBalancer) Create(ctx context.Context, d *utils.Data, meta interfac
 		},
 	}
 
-	// // Get load balancer type id for NSX-T
-	// typeRetry := utils.CustomRetry{}
-	// typeRetry.RetryParallel(ctx, meta, func(ctx context.Context) (interface{}, error) {
-	// 	return lb.lbClient.GetLoadBalancerTypes(ctx, map[string]string{
-	// 		nameKey: nsxt,
-	// 	})
-	// })
-
-	// typeResp, err := typeRetry.Wait()
-	// if err != nil {
-	// 	return err
-	// }
 	allTypes, _ := lb.lbClient.GetLoadBalancerTypes(ctx, map[string]string{
 		nameKey: nsxt,
 	})
-
-	//types := typeResp.(models.GetLoadBalancerTypes)
 
 	for i, n := range allTypes.LoadBalancerTypes {
 		if n.Name == nsxt {

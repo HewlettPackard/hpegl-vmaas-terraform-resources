@@ -95,6 +95,7 @@ func (lb *loadBalancerPool) Update(ctx context.Context, d *utils.Data, meta inte
 	updateReq := models.CreateLBPool{
 		CreateLBPoolReq: models.CreateLBPoolReq{
 			Name:        d.GetString("name"),
+			LbID:        d.GetInt("lb_id"),
 			Description: d.GetString("description"),
 			VipBalance:  d.GetString("vip_balance"),
 			MinActive:   d.GetInt("min_active"),
@@ -114,26 +115,21 @@ func (lb *loadBalancerPool) Update(ctx context.Context, d *utils.Data, meta inte
 		},
 	}
 
-	if err := d.Error(); err != nil {
-		return err
-	}
+	updateReq.CreateLBPoolReq.PoolConfig.SnatTranslationType = "LBSnatAutoMap"
 
-	lbDetails, err := lb.lbClient.GetLoadBalancers(ctx)
-	if err != nil {
-		return err
-	}
 	retry := &utils.CustomRetry{
 		InitialDelay: time.Second * 15,
 		RetryDelay:   time.Second * 30,
 	}
-	_, err = retry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return lb.lbClient.UpdateLBPool(ctx, updateReq, lbDetails.GetNetworkLoadBalancerResp[0].ID, id)
+	_, err := retry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
+		return lb.lbClient.UpdateLBPool(ctx, updateReq,
+			updateReq.CreateLBPoolReq.LbID, id)
 	})
 	if err != nil {
 		return err
 	}
 
-	return nil
+	return tftags.Set(d, updateReq.CreateLBPoolReq)
 }
 
 func (lb *loadBalancerPool) Delete(ctx context.Context, d *utils.Data, meta interface{}) error {

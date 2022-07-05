@@ -24,11 +24,6 @@ func LoadBalancer() *schema.Resource {
 				Computed:    true,
 				Description: "Type of Network loadbalancer",
 			},
-			// "lb_id": {
-			// 	Type:        schema.TypeInt,
-			// 	Computed:    true,
-			// 	Description: "Parent lb ID, router_id can be obtained by using LB datasource/resource.",
-			// },
 			"description": {
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -52,7 +47,7 @@ func LoadBalancer() *schema.Resource {
 			},
 			"resource_permission": {
 				Type:        schema.TypeList,
-				Required:    true,
+				Optional:    true,
 				Description: "permission access for Loadbalancer",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{

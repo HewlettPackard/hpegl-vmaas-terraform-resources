@@ -120,6 +120,7 @@ func (lb *loadBalancerProfile) Update(ctx context.Context, d *utils.Data, meta i
 	updateReq := models.CreateLBProfile{
 		CreateLBProfileReq: models.CreateLBProfileReq{
 			Name:        d.GetString("name"),
+			LbID:        d.GetInt("lb_id"),
 			Description: d.GetString("description"),
 			ServiceType: d.GetString("service_type"),
 			ProfileConfig: models.LBProfile{
@@ -141,24 +142,25 @@ func (lb *loadBalancerProfile) Update(ctx context.Context, d *utils.Data, meta i
 		},
 	}
 
-	if err := d.Error(); err != nil {
-		return err
-	}
+	updateReq.CreateLBProfileReq.ProfileConfig.ProfileType = "application-profile"
+	updateReq.CreateLBProfileReq.ProfileConfig.ConnectionCloseTimeout = 15
+	updateReq.CreateLBProfileReq.ProfileConfig.FastTCPIdleTimeout = 15
+	updateReq.CreateLBProfileReq.ProfileConfig.RequestHeaderSize = 30
+	updateReq.CreateLBProfileReq.ProfileConfig.ResponseHeaderSize = 40
+	updateReq.CreateLBProfileReq.ProfileConfig.ResponseTimeout = 40
+	updateReq.CreateLBProfileReq.ProfileConfig.HTTPIdleTimeoutName = 50
 
-	lbDetails, err := lb.lbClient.GetLoadBalancers(ctx)
-	if err != nil {
-		return err
-	}
 	retry := &utils.CustomRetry{
 		InitialDelay: time.Second * 15,
 		RetryDelay:   time.Second * 30,
 	}
-	_, err = retry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return lb.lbClient.UpdateLBProfile(ctx, updateReq, lbDetails.GetNetworkLoadBalancerResp[0].ID, id)
+	_, err := retry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
+		return lb.lbClient.UpdateLBProfile(ctx, updateReq,
+			updateReq.CreateLBProfileReq.LbID, id)
 	})
 	if err != nil {
 		return err
 	}
 
-	return nil
+	return tftags.Set(d, updateReq.CreateLBProfileReq)
 }
