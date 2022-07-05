@@ -1,26 +1,209 @@
-# Use the latest 2.1 version of CircleCI pipeline process engine.
-# See: https://circleci.com/docs/2.0/configuration-reference
+# (c) Copyright 2022 Hewlett Packard Enterprise Development LP
 version: 2.1
 
-# Define a job to be invoked later in a workflow.
-# See: https://circleci.com/docs/2.0/configuration-reference/#jobs
+defaults: &defaults
+  docker:
+    - image: 657273346644.dkr.ecr.us-east-1.amazonaws.com/hpe-hcss/go-build:v0.1.5
+      environment:
+        GO111MODULE: "on"
+
+common-context: &common-context
+  context: ecr-6644
+
+common-filters: &filters
+  filters:
+    tags:
+      only: /.*/
+
+common-settings: &common
+  <<: [*common-context, *filters]
+
+restore_cache:  &restore_cache
+  restore_cache:
+    key: gopkg-v1-{{ checksum "go.mod" }}-{{ checksum "go.sum" }}
+
+workflows:
+  secret-scanning:
+    jobs:
+      - secret-scanning:
+          # for AWS creds to download image
+          <<: *common-context
+
+  build_terraform:
+    jobs:
+      - checkout-workspace:
+          <<: *filters
+      - copyright-check:
+          <<: *common
+          requires:
+            - checkout-workspace
+      - go-vendor:
+          <<: *common
+          requires:
+            - copyright-check
+      - go-test:
+          <<: *common
+          requires:
+            - go-vendor
+      - go-lint:
+          <<: *common
+          requires:
+            - go-vendor
+      - go-build:
+          <<: *common
+          requires:
+            - go-lint
+
+  acceptance:
+    jobs:
+      - acceptance-run:
+          <<: *filters
+          filters:
+            branches:
+              only: master
+
 jobs:
-  say-hello:
-    # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
-    # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
+  secret-scanning:
     docker:
-      - image: cimg/base:stable
-    # Add steps to the job
-    # See: https://circleci.com/docs/2.0/configuration-reference/#steps
+      - image: 657273346644.dkr.ecr.us-east-1.amazonaws.com/hpe-hcss/secrets-scanner:v0.3.3
+    working_directory: /src
     steps:
+      # also injects host key
       - checkout
       - run:
-          name: "Say hello"
-          command: "echo Hello, World!"
+          name: Check for secrets leaked
+          command: scanner
 
-# Invoke jobs via workflows
-# See: https://circleci.com/docs/2.0/configuration-reference/#workflows
-workflows:
-  say-hello-workflow:
-    jobs:
-      - say-hello
+  checkout-workspace:
+    docker:
+      - image: circleci/golang:1.15.8
+    steps:
+      - checkout
+      - persist_to_workspace:
+          root: ~/project
+          paths: ['.']
+
+  copyright-check:
+    docker:
+      - image: 657273346644.dkr.ecr.us-east-1.amazonaws.com/hpe-hcss/copyright-tool:0.3.0
+    steps:
+      - attach_workspace:
+          at: ~/project
+      - run:
+          name: Check copyright
+          command: |
+            copyright-tool --check
+
+  go-vendor:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/project
+      - run:
+          name: go-vendor
+          command: |
+            git config --global url.https://$GITHUB_TOKEN@github.com/.insteadOf https://github.com/
+            make vendor
+      - persist_to_workspace:
+          root: ~/project
+          paths:
+            - vendor
+            - go.mod
+            - go.sum
+      - save_cache:
+          key: gopkg-v1-{{ checksum "go.mod" }}-{{ checksum "go.sum" }}
+          paths:
+            - /go/pkg
+
+  go-test:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/project
+      - <<: *restore_cache
+      - run:
+          name: go-test
+          command: |
+            make unit-test
+
+  go-lint:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/project
+      - <<: *restore_cache
+      - run:
+          name: go-lint
+          command: |
+            make lint
+
+  go-build:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/project
+      - <<: *restore_cache
+      - run:
+          name: go-build
+          command: |
+            make build
+
+  acceptance-run:
+    machine:
+      image: ubuntu-1604:201903-01
+    steps:
+      - checkout
+      - persist_to_workspace:
+          root: ~/project
+          paths: ['.']
+      - run:
+          name: Install dependencies
+          command: |
+            sudo apt-get install -y wget jq
+            wget https://golang.org/dl/go1.17.linux-amd64.tar.gz
+            sudo rm -rf /usr/local/go
+            sudo tar -C /usr/local -xzf go1.17.linux-amd64.tar.gz
+            echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.bashrc
+
+            wget https://releases.hashicorp.com/terraform/1.0.0/terraform_1.2.2_linux_amd64.zip
+            sudo unzip terraform_1.2.2_linux_amd64.zip -d /usr/local/bin
+
+      - attach_workspace:
+          at: ~/project
+      - run:
+          name: Set environment values
+          command:
+            |
+            echo "export HPEGL_IAM_SERVICE_URL=${HPEGL_IAM_SERVICE_URL}" >> ~/.bashrc
+            echo "export HPEGL_TENANT_ID=${HPEGL_TENANT_ID}" >> ~/.bashrc
+            echo "export HPEGL_USER_SECRET=${HPEGL_USER_SECRET}" >> ~/.bashrc
+            echo "export HPEGL_USER_ID=${HPEGL_USER_ID}" >> ~/.bashrc
+            echo "export HPEGL_VMAAS_API_URL=${HPEGL_VMAAS_API_URL}" >> ~/.bashrc
+            echo "export HPEGL_VMAAS_LOCATION=${HPEGL_VMAAS_LOCATION}" >> ~/.bashrc
+            echo "export HPEGL_VMAAS_SPACE_NAME=${HPEGL_VMAAS_SPACE_NAME}" >> ~/.bashrc
+            echo "export TF_CLI_ARGS_apply="-parallelism=2"  >> ~/.bashrc
+            echo "export TF_CLI_ARGS_plan="-parallelism=2"  >> ~/.bashrc
+            echo "export TF_CLI_ARGS_destroy="-parallelism=2"  >> ~/.bashrc
+
+      - run:
+          name: go-vendor
+          command: |
+            go env -w GOPRIVATE="github.com/hpe-hcss/*"
+            git config --global url.https://$GITHUB_TOKEN@github.com/.insteadOf https://github.com/
+            make vendor
+      - persist_to_workspace:
+          root: ~/project
+          paths:
+            - vendor
+            - go.mod
+            - go.sum
+      - save_cache:
+          key: gopkg-v1-{{ checksum "go.mod" }}-{{ checksum "go.sum" }}
+          paths:
+            - /go/pkg
+      - run:
+          name: Run acceptance test
+          no_output_timeout: 20m
+          command: |
+            source ~/.bashrc
+            make acceptance

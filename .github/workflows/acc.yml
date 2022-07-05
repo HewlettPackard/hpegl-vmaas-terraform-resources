@@ -1,13 +1,16 @@
-name: acc
+name: GitHub Actions CI - Acceptance
 
 on:
   push:
     branches:
       - master
 jobs:
-
   acc:
-    runs-on: [self-hosted, Linux, ubuntu]
+    runs-on: ubuntu-20.04
+     strategy:
+      matrix:
+        go: [ '1.17' ]
+    name: Acceptance Tests
     steps:
 
       - name: Checkout workspace
@@ -23,7 +26,11 @@ jobs:
 
       - name: Run Acceptance test
         env:
-          HPEGL_IAM_TOKEN: ${{secrets.HPEGL_IAM_TOKEN}}
-          TF_ACC_CMP_SUBJECT: ${{secrets.CMP_SUBJECT}}
-          TF_ACC_MOCK_IAM: true
+          HPEGL_IAM_SERVICE_URL: ${{ secrets.HPEGL_IAM_SERVICE_URL }}
+          HPEGL_TENANT_ID: ${{ secrets.HPEGL_TENANT_ID }}
+          HPEGL_USER_SECRET: ${{ secrets.HPEGL_USER_SECRET }}
+          HPEGL_USER_ID: ${{ secrets.HPEGL_USER_ID }}
+          HPEGL_VMAAS_API_URL: ${{ secrets.HPEGL_VMAAS_API_URL }}
+          HPEGL_VMAAS_LOCATION: ${{ secrets.HPEGL_VMAAS_LOCATION }}
+          HPEGL_VMAAS_SPACE_NAME: ${{ secrets.HPEGL_VMAAS_SPACE_NAME}}"
         run: make acceptance
