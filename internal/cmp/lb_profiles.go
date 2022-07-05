@@ -86,8 +86,8 @@ func (lb *loadBalancerProfile) Create(ctx context.Context, d *utils.Data, meta i
 
 	// wait until created
 	retry := &utils.CustomRetry{
-		RetryDelay:   1,
-		InitialDelay: 1,
+		InitialDelay: time.Second * 15,
+		RetryDelay:   time.Second * 30,
 	}
 	_, err = retry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
 		return lb.lbClient.GetSpecificLBProfile(ctx, createReq.CreateLBProfileReq.LbID,

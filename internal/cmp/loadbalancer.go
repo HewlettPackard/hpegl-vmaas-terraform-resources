@@ -117,8 +117,8 @@ func (lb *loadBalancer) Create(ctx context.Context, d *utils.Data, meta interfac
 
 	// wait until created
 	retry := &utils.CustomRetry{
-		RetryDelay:   1,
-		InitialDelay: 1,
+		InitialDelay: time.Second * 15,
+		RetryDelay:   time.Second * 30,
 	}
 	_, err = retry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
 		return lb.lbClient.GetSpecificLoadBalancers(ctx, lbResp.NetworkLoadBalancerResp.ID)
