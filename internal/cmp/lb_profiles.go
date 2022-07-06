@@ -66,9 +66,6 @@ func (lb *loadBalancerProfile) Create(ctx context.Context, d *utils.Data, meta i
 		},
 	}
 
-	// createReq.CreateLBProfileReq.ProfileConfig.ProfileType = "application-profile"
-	// createReq.CreateLBProfileReq.ProfileConfig.ConnectionCloseTimeout = 15
-	// createReq.CreateLBProfileReq.ProfileConfig.FastTCPIdleTimeout = 15
 	createReq.CreateLBProfileReq.ProfileConfig.ProfileType = ProfileType
 	createReq.CreateLBProfileReq.ProfileConfig.RequestHeaderSize = RequestHeaderSize
 	createReq.CreateLBProfileReq.ProfileConfig.ResponseHeaderSize = ResponseHeaderSize
@@ -149,8 +146,6 @@ func (lb *loadBalancerProfile) Update(ctx context.Context, d *utils.Data, meta i
 	}
 
 	updateReq.CreateLBProfileReq.ProfileConfig.ProfileType = ProfileType
-	//updateReq.CreateLBProfileReq.ProfileConfig.ConnectionCloseTimeout = 15
-	//updateReq.CreateLBProfileReq.ProfileConfig.FastTCPIdleTimeout = 15
 	updateReq.CreateLBProfileReq.ProfileConfig.RequestHeaderSize = RequestHeaderSize
 	updateReq.CreateLBProfileReq.ProfileConfig.ResponseHeaderSize = ResponseHeaderSize
 	updateReq.CreateLBProfileReq.ProfileConfig.ResponseTimeout = ResponseTimeout

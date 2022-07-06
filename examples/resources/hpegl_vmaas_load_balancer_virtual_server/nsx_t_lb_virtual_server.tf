@@ -2,8 +2,8 @@
 
 
 resource "hpegl_vmaas_load_balancer_virtual_server" "tf_lb_virtual_server" {
-  lb_id = data.hpegl_vmaas_lb.lb.id 
-  vip_name  =  "virtual-0"       
+  lb_id = data.hpegl_vmaas_load_balancer.lb.id 
+  vip_name  =  "virtual-server"       
   description  = "creating load balancer virtual server"
   vip_address     = "10.11.12.13"
   vip_port = "80"
@@ -11,6 +11,6 @@ resource "hpegl_vmaas_load_balancer_virtual_server" "tf_lb_virtual_server" {
   ssl_server_cert = 0
   config{
     persistence = "COOKIE"
-    application_profile = 0
+    application_profile = 3720
   }
 }

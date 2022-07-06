@@ -18,7 +18,7 @@ func LoadBalancerMonitor() *schema.Resource {
 			"lb_id": {
 				Type:        schema.TypeInt,
 				Required:    true,
-				Description: "Parent lb ID, router_id can be obtained by using router datasource/resource.",
+				Description: "Parent lb ID, lb_id can be obtained by using LB datasource/resource.",
 				ForceNew:    true,
 			},
 			"name": {

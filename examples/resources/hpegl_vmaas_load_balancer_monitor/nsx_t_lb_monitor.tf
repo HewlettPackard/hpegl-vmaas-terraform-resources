@@ -2,7 +2,7 @@
 
 resource "hpegl_vmaas_load_balancer_monitor" "tf_lb_monitor" {
   name  =  "TEST-MONITOR"  
-  lb_id = data.hpegl_vmaas_lb.lb.id     
+  lb_id = data.hpegl_vmaas_load_balancer.lb.id     
   description  = "Creating lb monitor"
   monitor_type = "LBTcpMonitorProfile"
   monitor_timeout = 15

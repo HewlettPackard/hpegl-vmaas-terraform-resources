@@ -22,11 +22,11 @@ func LoadBalancerData() *schema.Resource {
 			"lb_id": {
 				Type:        schema.TypeInt,
 				Computed:    true,
-				Description: "Parent lb ID, router_id can be obtained by using LB datasource/resource.",
+				Description: "Parent lb ID, lb_id can be obtained by using LB datasource/resource.",
 			},
 		},
 		ReadContext: LoadBalancerReadContext,
-		Description: `The ` + DSLoadBalancer + ` data source can be used to discover the ID of a hpegl vmaas lb.
+		Description: `The ` + DSLoadBalancer + ` data source can be used to discover the ID of a hpegl vmaas network load balancer.
 		This can then be used with resources or data sources that require a ` + DSLoadBalancer + `,
 		such as the ` + ResLoadBalancer + ` resource.`,
 		SchemaVersion:  0,

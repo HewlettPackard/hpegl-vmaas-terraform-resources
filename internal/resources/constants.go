@@ -21,7 +21,7 @@ const (
 	DSNetworkInterface = "hpegl_vmaas_network_interface"
 	DSCloudFolder      = "hpegl_vmaas_cloud_folder"
 	DSRouter           = "hpegl_vmaas_router"
-	DSLoadBalancer     = "hpegl_vmaas_lb"
+	DSLoadBalancer     = "hpegl_vmaas_load_balancer"
 	DSEdgeCluster      = "hpegl_vmaas_edge_cluster"
 	DSTransportZone    = "hpegl_vmaas_transport_zone"
 
@@ -30,7 +30,7 @@ const (
 	ResInstanceClone              = "hpegl_vmaas_instance_clone"
 	ResNetwork                    = "hpegl_vmaas_network"
 	ResRouter                     = "hpegl_vmaas_router"
-	ResLoadBalancer               = "hpegl_vmaas_lb"
+	ResLoadBalancer               = "hpegl_vmaas_load_balancer"
 	ResLoadBalancerMonitors       = "hpegl_vmaas_load_balancer_monitor"
 	ResLoadBalancerProfiles       = "hpegl_vmaas_load_balancer_profile"
 	ResLoadBalancerPools          = "hpegl_vmaas_load_balancer_pool"
