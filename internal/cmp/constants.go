@@ -24,9 +24,19 @@ const (
 	tier1GatewayType             = "NSX-T Tier-1 Gateway"
 	routerFirewallExternalPolicy = "GatewayPolicy"
 
-	// load balancer
+	// load balancer consts
 	ApplicationProfile       = "application-profile"
 	ServiceTypeLBHttpProfile = "LBHttpProfile"
+	tier1                    = "/infra/tier-1s/26cdb82e-0057-4461-ad4d-cddd61d77b1f"
+	networkServerID          = 1
+	size                     = "SMALL"
+	loglevel                 = "INFO"
+	ProfileType              = "application-profile"
+	RequestHeaderSize        = 30
+	ResponseHeaderSize       = 40
+	ResponseTimeout          = 40
+	HTTPIdleTimeout          = 50
+	SnatTranslationType      = "LBSnatAutoMap"
 
 	syncedTypeValue = "Synced"
 )

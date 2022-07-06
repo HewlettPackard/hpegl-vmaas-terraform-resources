@@ -52,7 +52,7 @@ func (lb *loadBalancerProfile) Create(ctx context.Context, d *utils.Data, meta i
 				RequestHeaderSize:      d.GetInt("request_header_size"),
 				ResponseHeaderSize:     d.GetInt("response_header_size"),
 				ResponseTimeout:        d.GetInt("response_timeout"),
-				HTTPIdleTimeoutName:    d.GetInt("http_idle_timeout"),
+				HTTPIdleTimeout:        d.GetInt("http_idle_timeout"),
 				FastTCPIdleTimeout:     d.GetInt("fast_tcp_idle_timeout"),
 				ConnectionCloseTimeout: d.GetInt("connection_close_timeout"),
 				HaFlowMirroring:        d.GetBool("ha_flow_mirroring"),
@@ -66,13 +66,14 @@ func (lb *loadBalancerProfile) Create(ctx context.Context, d *utils.Data, meta i
 		},
 	}
 
-	createReq.CreateLBProfileReq.ProfileConfig.ProfileType = "application-profile"
-	createReq.CreateLBProfileReq.ProfileConfig.ConnectionCloseTimeout = 15
-	createReq.CreateLBProfileReq.ProfileConfig.FastTCPIdleTimeout = 15
-	createReq.CreateLBProfileReq.ProfileConfig.RequestHeaderSize = 30
-	createReq.CreateLBProfileReq.ProfileConfig.ResponseHeaderSize = 40
-	createReq.CreateLBProfileReq.ProfileConfig.ResponseTimeout = 40
-	createReq.CreateLBProfileReq.ProfileConfig.HTTPIdleTimeoutName = 50
+	// createReq.CreateLBProfileReq.ProfileConfig.ProfileType = "application-profile"
+	// createReq.CreateLBProfileReq.ProfileConfig.ConnectionCloseTimeout = 15
+	// createReq.CreateLBProfileReq.ProfileConfig.FastTCPIdleTimeout = 15
+	createReq.CreateLBProfileReq.ProfileConfig.ProfileType = ProfileType
+	createReq.CreateLBProfileReq.ProfileConfig.RequestHeaderSize = RequestHeaderSize
+	createReq.CreateLBProfileReq.ProfileConfig.ResponseHeaderSize = ResponseHeaderSize
+	createReq.CreateLBProfileReq.ProfileConfig.ResponseTimeout = ResponseTimeout
+	createReq.CreateLBProfileReq.ProfileConfig.HTTPIdleTimeout = HTTPIdleTimeout
 
 	lbProfileResp, err := lb.lbClient.CreateLBProfile(ctx, createReq, createReq.CreateLBProfileReq.LbID)
 	if err != nil {
@@ -133,7 +134,7 @@ func (lb *loadBalancerProfile) Update(ctx context.Context, d *utils.Data, meta i
 				RequestHeaderSize:      d.GetInt("request_header_size"),
 				ResponseHeaderSize:     d.GetInt("response_header_size"),
 				ResponseTimeout:        d.GetInt("response_timeout"),
-				HTTPIdleTimeoutName:    d.GetInt("http_idle_timeout"),
+				HTTPIdleTimeout:        d.GetInt("http_idle_timeout"),
 				FastTCPIdleTimeout:     d.GetInt("fast_tcp_idle_timeout"),
 				ConnectionCloseTimeout: d.GetInt("connection_close_timeout"),
 				HaFlowMirroring:        d.GetBool("ha_flow_mirroring"),
@@ -147,13 +148,13 @@ func (lb *loadBalancerProfile) Update(ctx context.Context, d *utils.Data, meta i
 		},
 	}
 
-	updateReq.CreateLBProfileReq.ProfileConfig.ProfileType = "application-profile"
-	updateReq.CreateLBProfileReq.ProfileConfig.ConnectionCloseTimeout = 15
-	updateReq.CreateLBProfileReq.ProfileConfig.FastTCPIdleTimeout = 15
-	updateReq.CreateLBProfileReq.ProfileConfig.RequestHeaderSize = 30
-	updateReq.CreateLBProfileReq.ProfileConfig.ResponseHeaderSize = 40
-	updateReq.CreateLBProfileReq.ProfileConfig.ResponseTimeout = 40
-	updateReq.CreateLBProfileReq.ProfileConfig.HTTPIdleTimeoutName = 50
+	updateReq.CreateLBProfileReq.ProfileConfig.ProfileType = ProfileType
+	//updateReq.CreateLBProfileReq.ProfileConfig.ConnectionCloseTimeout = 15
+	//updateReq.CreateLBProfileReq.ProfileConfig.FastTCPIdleTimeout = 15
+	updateReq.CreateLBProfileReq.ProfileConfig.RequestHeaderSize = RequestHeaderSize
+	updateReq.CreateLBProfileReq.ProfileConfig.ResponseHeaderSize = ResponseHeaderSize
+	updateReq.CreateLBProfileReq.ProfileConfig.ResponseTimeout = ResponseTimeout
+	updateReq.CreateLBProfileReq.ProfileConfig.HTTPIdleTimeout = HTTPIdleTimeout
 
 	retry := &utils.CustomRetry{
 		InitialDelay: time.Second * 15,

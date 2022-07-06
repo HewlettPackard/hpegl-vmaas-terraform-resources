@@ -49,8 +49,9 @@ func LoadBalancerPools() *schema.Resource {
 					Schema: map[string]*schema.Schema{
 						"snat_translation_type": {
 							Type:             schema.TypeString,
+							Default:          "LBSnatAutoMap",
 							ValidateDiagFunc: validations.StringInSlice([]string{"LBSnatAutoMap", "LBSnatDisabled", "LBSnatIpPool"}, false),
-							Required:         true,
+							Optional:         true,
 							Description:      "Network Loadbalancer Supported values are `LBSnatAutoMap`,`LBSnatDisabled`, `LBSnatIpPool`",
 						},
 						"passive_monitor_path": {

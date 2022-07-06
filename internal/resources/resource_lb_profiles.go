@@ -43,7 +43,8 @@ func LoadBalancerProfiles() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"profile_type": {
-							Type: schema.TypeString,
+							Type:    schema.TypeString,
+							Default: "application-profile",
 							ValidateDiagFunc: validations.StringInSlice([]string{
 								"application-profile", "ssl-profile", "persistence-profile",
 							}, false),
@@ -52,26 +53,31 @@ func LoadBalancerProfiles() *schema.Resource {
 						"request_header_size": {
 							Type:        schema.TypeInt,
 							Optional:    true,
+							Default:     30,
 							Description: "request_header_size for Network Load balancer Profile",
 						},
 						"response_header_size": {
 							Type:        schema.TypeInt,
 							Optional:    true,
+							Default:     40,
 							Description: "response_header_size for Network Load balancer Profile",
 						},
 						"http_idle_timeout": {
 							Type:        schema.TypeInt,
 							Optional:    true,
+							Default:     50,
 							Description: "http_idle_timeout for Network Load balancer Profile",
 						},
 						"fast_tcp_idle_timeout": {
 							Type:        schema.TypeInt,
 							Optional:    true,
+							Default:     15,
 							Description: "fast_tcp_idle_timeout for Network Load balancer Profile",
 						},
 						"connection_close_timeout": {
 							Type:        schema.TypeInt,
 							Optional:    true,
+							Default:     15,
 							Description: "connection_close_timeout for Network Load balancer Profile",
 						},
 						"ha_flow_mirroring": {

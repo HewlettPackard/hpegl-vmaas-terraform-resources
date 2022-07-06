@@ -62,7 +62,7 @@ func LoadBalancer() *schema.Resource {
 			},
 			"config": {
 				Type:        schema.TypeList,
-				Optional:    true,
+				Required:    true,
 				Description: "Network Load Balancer Configuration",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -78,7 +78,7 @@ func LoadBalancer() *schema.Resource {
 							Default:     "SMALL",
 							Description: `In Filter. Supported Values are "SMALL", "MEDIUM", "LARGE"`,
 						},
-						"loglevel": {
+						"log_level": {
 							Type:        schema.TypeString,
 							Optional:    true,
 							Default:     "INFO",
@@ -87,7 +87,7 @@ func LoadBalancer() *schema.Resource {
 						"tier1": {
 							Type:        schema.TypeString,
 							Optional:    true,
-							Default:     true,
+							Default:     "/infra/tier-1s/26cdb82e-0057-4461-ad4d-cddd61d77b1f",
 							Description: "Network Loadbalancer NSX-T tier1 gateway",
 						},
 					},

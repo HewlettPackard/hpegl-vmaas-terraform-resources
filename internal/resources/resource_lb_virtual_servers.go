@@ -43,7 +43,7 @@ func LoadBalancerVirtualServers() *schema.Resource {
 			},
 			"pool": {
 				Type:        schema.TypeInt,
-				Required:    true,
+				Optional:    true,
 				Description: "pool of Network loadbalancer virtual server",
 			},
 			"ssl_cert": {

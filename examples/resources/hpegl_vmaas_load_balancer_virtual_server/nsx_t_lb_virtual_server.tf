@@ -7,7 +7,6 @@ resource "hpegl_vmaas_load_balancer_virtual_server" "tf_lb_virtual_server" {
   description  = "creating load balancer virtual server"
   vip_address     = "10.11.12.13"
   vip_port = "80"
-  pool = data.hpegl_vmaas_load_balancer_pool.lb_pool.id 
   ssl_cert = 0 
   ssl_server_cert = 0
   config{

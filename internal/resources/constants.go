@@ -24,7 +24,6 @@ const (
 	DSLoadBalancer     = "hpegl_vmaas_lb"
 	DSEdgeCluster      = "hpegl_vmaas_edge_cluster"
 	DSTransportZone    = "hpegl_vmaas_transport_zone"
-	DSLoadBalancerPool = "hpegl_vmaas_load_balancer_pool"
 
 	// resource key
 	ResInstance                   = "hpegl_vmaas_instance"
