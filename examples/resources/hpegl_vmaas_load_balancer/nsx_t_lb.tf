@@ -8,8 +8,8 @@ resource "hpegl_vmaas_load_balancer" "tf_load_balancer" {
     all = true
   }
   config {
-    log_level = "Info"
-    size = "Small"
+    log_level = "INFO"
+    size = "SMALL"
     admin_state = true
     tier1 = "/infra/tier-1s/26cdb82e-0057-4461-ad4d-cddd61d77b1f"
   }

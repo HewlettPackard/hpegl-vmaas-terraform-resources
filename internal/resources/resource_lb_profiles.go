@@ -93,6 +93,7 @@ func LoadBalancerProfiles() *schema.Resource {
 						},
 						"cookie_mode": {
 							Type:             schema.TypeString,
+							Default:          "INSERT",
 							ValidateDiagFunc: validations.StringInSlice([]string{"INSERT", "PREFIX", "REWRITE"}, false),
 							Optional:         true,
 							Description:      "Network Loadbalancer Supported values are `INSERT`,`PREFIX`, `REWRITE`",
