@@ -111,11 +111,13 @@ func LoadBalancerProfiles() *schema.Resource {
 						"cookie_fallback": {
 							Type:        schema.TypeBool,
 							Optional:    true,
+							Default:     true,
 							Description: "cookie_fallback for Network Load balancer Profile",
 						},
 						"cookie_garbling": {
 							Type:        schema.TypeBool,
 							Optional:    true,
+							Default:     true,
 							Description: "cookie_garbling for Network Load balancer Profile",
 						},
 					},
