@@ -37,7 +37,40 @@ func (lb *loadBalancer) Read(ctx context.Context, d *utils.Data, meta interface{
 }
 
 func (lb *loadBalancer) Update(ctx context.Context, d *utils.Data, meta interface{}) error {
-	return nil
+	id := d.GetID()
+	updateReq := models.CreateLoadBalancerRequest{
+		NetworkLoadBalancer: models.CreateNetworkLoadBalancerRequest{
+			Name:        d.GetString("name"),
+			Description: d.GetString("description"),
+			Enabled:     d.GetBool("enabled"),
+			ResourcePermissions: models.EnableResourcePermissions{
+				All: d.GetBool("all"),
+			},
+			Config: models.CreateConfig{
+				AdminState: d.GetBool("admin_state"),
+				Loglevel:   d.GetString("log_level"),
+				Size:       d.GetString("size"),
+				Tier1:      d.GetString("tier1"),
+			},
+		},
+	}
+
+	updateReq.NetworkLoadBalancer.Config.Loglevel = loglevel
+	updateReq.NetworkLoadBalancer.Config.Size = size
+	updateReq.NetworkLoadBalancer.Config.Tier1 = tier1
+
+	retry := &utils.CustomRetry{
+		InitialDelay: time.Second * 15,
+		RetryDelay:   time.Second * 30,
+	}
+	_, err := retry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
+		return lb.lbClient.UpdateLoadBalancer(ctx, id, updateReq)
+	})
+	if err != nil {
+		return err
+	}
+
+	return tftags.Set(d, updateReq.NetworkLoadBalancer)
 }
 
 func (lb *loadBalancer) Create(ctx context.Context, d *utils.Data, meta interface{}) error {
@@ -47,50 +80,39 @@ func (lb *loadBalancer) Create(ctx context.Context, d *utils.Data, meta interfac
 			Name:        d.GetString("name"),
 			Description: d.GetString("description"),
 			Enabled:     d.GetBool("enabled"),
-			Visibility:  d.GetString("visibility"),
 			ResourcePermissions: models.EnableResourcePermissions{
 				All: d.GetBool("all"),
 			},
 			Config: models.CreateConfig{
 				AdminState: d.GetBool("admin_state"),
-				Loglevel:   d.GetString("loglevel"),
+				Loglevel:   d.GetString("log_level"),
 				Size:       d.GetString("size"),
 				Tier1:      d.GetString("tier1"),
 			},
 		},
 	}
 
-	// Get load balancer type id for NSX-T
-	typeRetry := utils.CustomRetry{}
-	typeRetry.RetryParallel(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return lb.lbClient.GetLoadBalancerTypes(ctx, map[string]string{
-			nameKey: nsxt,
-		})
+	allTypes, _ := lb.lbClient.GetLoadBalancerTypes(ctx, map[string]string{
+		nameKey: nsxt,
 	})
 
-	typeResp, err := typeRetry.Wait()
-	if err != nil {
-		return err
-	}
-
-	types := typeResp.(models.GetLoadBalancerTypes)
-
-	for i, n := range types.LoadBalancerTypes {
+	for i, n := range allTypes.LoadBalancerTypes {
 		if n.Name == nsxt {
-			createReq.NetworkLoadBalancer.Type = types.LoadBalancerTypes[i].Name
-			createReq.NetworkLoadBalancer.NetworkServerID = 1
+			createReq.NetworkLoadBalancer.Type = allTypes.LoadBalancerTypes[i].Name
+			createReq.NetworkLoadBalancer.NetworkServerID = networkServerID
 			break
 		}
 	}
-	createReq.NetworkLoadBalancer.Config.Loglevel = "INFO"
-	createReq.NetworkLoadBalancer.Config.Size = "SMALL"
-
+	// setting default values
+	createReq.NetworkLoadBalancer.Config.Loglevel = loglevel
+	createReq.NetworkLoadBalancer.Config.Size = size
+	createReq.NetworkLoadBalancer.Config.Tier1 = tier1
 	lbResp, err := lb.lbClient.CreateLoadBalancer(ctx, createReq)
 	if err != nil {
 		return err
 	}
 	if !lbResp.Success {
-		return fmt.Errorf(successErr, "creating loadBalancer")
+		return fmt.Errorf(successErr, "creating LB")
 	}
 	createReq.NetworkLoadBalancer.ID = lbResp.NetworkLoadBalancerResp.ID
 
@@ -99,7 +121,6 @@ func (lb *loadBalancer) Create(ctx context.Context, d *utils.Data, meta interfac
 		InitialDelay: time.Second * 15,
 		RetryDelay:   time.Second * 30,
 	}
-
 	_, err = retry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
 		return lb.lbClient.GetSpecificLoadBalancers(ctx, lbResp.NetworkLoadBalancerResp.ID)
 	})
