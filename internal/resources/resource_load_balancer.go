@@ -21,8 +21,8 @@ func LoadBalancer() *schema.Resource {
 			},
 			"type": {
 				Type:        schema.TypeString,
-				Description: "Type of Network loadbalancer",
 				Computed:    true,
+				Description: "Type of Network loadbalancer",
 			},
 			"description": {
 				Type:        schema.TypeString,
@@ -47,7 +47,7 @@ func LoadBalancer() *schema.Resource {
 			},
 			"resource_permission": {
 				Type:        schema.TypeList,
-				Required:    true,
+				Optional:    true,
 				Description: "permission access for Loadbalancer",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -62,7 +62,7 @@ func LoadBalancer() *schema.Resource {
 			},
 			"config": {
 				Type:        schema.TypeList,
-				Optional:    true,
+				Required:    true,
 				Description: "Network Load Balancer Configuration",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -75,17 +75,19 @@ func LoadBalancer() *schema.Resource {
 						"size": {
 							Type:        schema.TypeString,
 							Optional:    true,
+							Default:     "SMALL",
 							Description: `In Filter. Supported Values are "SMALL", "MEDIUM", "LARGE"`,
 						},
-						"loglevel": {
+						"log_level": {
 							Type:        schema.TypeString,
 							Optional:    true,
+							Default:     "INFO",
 							Description: `In Filter. Supported Values are "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL", "ALERT", "EMERGENCY"`,
 						},
 						"tier1": {
 							Type:        schema.TypeString,
 							Optional:    true,
-							Default:     true,
+							Default:     "/infra/tier-1s/26cdb82e-0057-4461-ad4d-cddd61d77b1f",
 							Description: "Network Loadbalancer NSX-T tier1 gateway",
 						},
 					},
@@ -97,10 +99,10 @@ func LoadBalancer() *schema.Resource {
 			StateContext: schema.ImportStatePassthroughContext,
 		},
 		ReadContext:   LoadBalancerReadContext,
-		UpdateContext: LoadbalancerCreateContext,
+		UpdateContext: LoadbalancerUpdateContext,
 		CreateContext: LoadbalancerCreateContext,
 		DeleteContext: LoadbalancerDeleteContext,
-		Description: `loadbalancer resource facilitates creating,
+		Description: `loadbalancer resource facilitates creating, updating
 		and deleting NSX-T  Network Load Balancers.`,
 	}
 }
@@ -131,6 +133,20 @@ func LoadbalancerCreateContext(ctx context.Context, rd *schema.ResourceData, met
 	}
 
 	return LoadbalancerReadContext(ctx, rd, meta)
+}
+
+func LoadbalancerUpdateContext(ctx context.Context, rd *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	c, err := client.GetClientFromMetaMap(meta)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	data := utils.NewData(rd)
+	if err := c.CmpClient.LoadBalancer.Update(ctx, data, meta); err != nil {
+		return diag.FromErr(err)
+	}
+
+	return nil
 }
 
 func LoadbalancerDeleteContext(ctx context.Context, rd *schema.ResourceData, meta interface{}) diag.Diagnostics {

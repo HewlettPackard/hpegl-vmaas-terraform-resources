@@ -20,17 +20,21 @@ func LoadBalancerVirtualServers() *schema.Resource {
 				Required:    true,
 				Description: "vip_name of Network loadbalancer virtual server name",
 			},
+			"lb_id": {
+				Type:        schema.TypeInt,
+				Required:    true,
+				Description: "Parent lb ID, lb_id can be obtained by using LB datasource/resource.",
+				ForceNew:    true,
+			},
 			"description": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "description of Network loadbalancer virtual server",
-				ForceNew:    true,
 			},
 			"vip_address": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "vip_address of Network loadbalancer virtual server",
-				ForceNew:    true,
 			},
 			"vip_port": {
 				Type:        schema.TypeString,
@@ -39,7 +43,7 @@ func LoadBalancerVirtualServers() *schema.Resource {
 			},
 			"pool": {
 				Type:        schema.TypeInt,
-				Required:    true,
+				Optional:    true,
 				Description: "pool of Network loadbalancer virtual server",
 			},
 			"ssl_cert": {
