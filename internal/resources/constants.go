@@ -22,6 +22,7 @@ const (
 	DSCloudFolder      = "hpegl_vmaas_cloud_folder"
 	DSRouter           = "hpegl_vmaas_router"
 	DSLoadBalancer     = "hpegl_vmaas_load_balancer"
+	DSLBTier1          = "hpegl_vmaas_lb_tier1"
 	DSEdgeCluster      = "hpegl_vmaas_edge_cluster"
 	DSTransportZone    = "hpegl_vmaas_transport_zone"
 
