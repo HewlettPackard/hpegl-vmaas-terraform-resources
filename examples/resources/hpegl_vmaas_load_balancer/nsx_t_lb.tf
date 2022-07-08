@@ -5,7 +5,7 @@ resource "hpegl_vmaas_load_balancer" "tf_load_balancer" {
   description  = "creating load balancer for test"
   enabled      =    true        
   visibility   = "public"
-  resource_permission {
+  resource_permissions {
     all = true
   }
   config {

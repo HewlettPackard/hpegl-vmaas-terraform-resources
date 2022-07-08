@@ -40,22 +40,37 @@ func LoadBalancer() *schema.Resource {
 				Description: "Network Loadbalancer configuration enabled",
 				Default:     true,
 			},
-			"visibility": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "Network Loadbalancer is public/private visibility mode",
-			},
-			"resource_permission": {
-				Type:        schema.TypeList,
-				Required:    true,
-				Description: "permission access for Loadbalancer",
+			"resource_permissions": {
+				Type:     schema.TypeList,
+				Optional: true,
+				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"all": {
 							Type:        schema.TypeBool,
-							Default:     true,
 							Optional:    true,
-							Description: "If `true` then resource_permission rule will be active/enabled.",
+							Default:     true,
+							Description: "Pass `true` to allow access to all groups.",
+						},
+						"sites": {
+							Type:        schema.TypeList,
+							Optional:    true,
+							Description: "List of sites/groups",
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"id": {
+										Type:        schema.TypeInt,
+										Required:    true,
+										Description: "ID of the site/group",
+									},
+									"default": {
+										Type:        schema.TypeBool,
+										Optional:    true,
+										Default:     false,
+										Description: "Group Default Selection",
+									},
+								},
+							},
 						},
 					},
 				},
