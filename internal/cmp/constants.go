@@ -25,17 +25,9 @@ const (
 	routerFirewallExternalPolicy = "GatewayPolicy"
 
 	// load balancer consts
-	ApplicationProfile       = "application-profile"
-	ServiceTypeLBHttpProfile = "LBHttpProfile"
-	networkServerID          = 1
-	size                     = "SMALL"
-	loglevel                 = "INFO"
-	ProfileType              = "application-profile"
-	RequestHeaderSize        = 30
-	ResponseHeaderSize       = 40
-	ResponseTimeout          = 40
-	HTTPIdleTimeout          = 50
-	SnatTranslationType      = "LBSnatAutoMap"
+	networkServerID = 1
+	size            = "SMALL"
+	loglevel        = "INFO"
 
 	syncedTypeValue = "Synced"
 )
