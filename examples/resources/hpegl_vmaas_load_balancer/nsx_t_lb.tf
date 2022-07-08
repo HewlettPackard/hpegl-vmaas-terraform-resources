@@ -1,8 +1,8 @@
 # (C) Copyright 2022 Hewlett Packard Enterprise Development LP
 
 resource "hpegl_vmaas_load_balancer" "tf_lb" {
-  name  = "lab-1"       
-  description  = "UPDATING load balancer for test"
+  name  = "tf_lb"       
+  description  = "CREATING load balancer for test"
   enabled      =    true        
   resource_permissions {
     all = true
