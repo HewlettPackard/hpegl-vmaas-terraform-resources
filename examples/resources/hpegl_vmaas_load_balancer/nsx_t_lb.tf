@@ -10,6 +10,6 @@ resource "hpegl_vmaas_load_balancer" "tf_load_balancer" {
   }
   config {
     admin_state = true
-    tier1  = data.hpegl_vmaas_router.tier1_router.provider_id
+    tier1  = data.hpegl_vmaas_router.tier0_router.provider_id
   }
 }

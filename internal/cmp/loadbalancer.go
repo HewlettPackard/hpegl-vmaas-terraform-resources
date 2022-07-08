@@ -38,26 +38,13 @@ func (lb *loadBalancer) Read(ctx context.Context, d *utils.Data, meta interface{
 
 func (lb *loadBalancer) Update(ctx context.Context, d *utils.Data, meta interface{}) error {
 	id := d.GetID()
-	updateReq := models.CreateLoadBalancerRequest{
-		NetworkLoadBalancer: models.CreateNetworkLoadBalancerRequest{
-			Name:        d.GetString("name"),
-			Description: d.GetString("description"),
-			Enabled:     d.GetBool("enabled"),
-			ResourcePermissions: models.EnableResourcePermissions{
-				All: d.GetBool("all"),
-			},
-			Config: models.CreateConfig{
-				AdminState: d.GetBool("admin_state"),
-				Loglevel:   d.GetString("log_level"),
-				Size:       d.GetString("size"),
-				Tier1:      d.GetString("tier1"),
-			},
-		},
+	var updateReq models.CreateLoadBalancerRequest
+	if err := tftags.Get(d, &updateReq.NetworkLoadBalancer); err != nil {
+		return err
 	}
 
 	updateReq.NetworkLoadBalancer.Config.Loglevel = loglevel
 	updateReq.NetworkLoadBalancer.Config.Size = size
-	updateReq.NetworkLoadBalancer.Config.Tier1 = tier1
 
 	retry := &utils.CustomRetry{
 		InitialDelay: time.Second * 15,
@@ -75,21 +62,9 @@ func (lb *loadBalancer) Update(ctx context.Context, d *utils.Data, meta interfac
 
 func (lb *loadBalancer) Create(ctx context.Context, d *utils.Data, meta interface{}) error {
 	setMeta(meta, lb.lbClient.Client)
-	createReq := models.CreateLoadBalancerRequest{
-		NetworkLoadBalancer: models.CreateNetworkLoadBalancerRequest{
-			Name:        d.GetString("name"),
-			Description: d.GetString("description"),
-			Enabled:     d.GetBool("enabled"),
-			ResourcePermissions: models.EnableResourcePermissions{
-				All: d.GetBool("all"),
-			},
-			Config: models.CreateConfig{
-				AdminState: d.GetBool("admin_state"),
-				Loglevel:   d.GetString("log_level"),
-				Size:       d.GetString("size"),
-				Tier1:      d.GetString("tier1"),
-			},
-		},
+	var createReq models.CreateLoadBalancerRequest
+	if err := tftags.Get(d, &createReq.NetworkLoadBalancer); err != nil {
+		return err
 	}
 
 	allTypes, _ := lb.lbClient.GetLoadBalancerTypes(ctx, map[string]string{
@@ -103,10 +78,9 @@ func (lb *loadBalancer) Create(ctx context.Context, d *utils.Data, meta interfac
 			break
 		}
 	}
-	// setting default values
+
 	createReq.NetworkLoadBalancer.Config.Loglevel = loglevel
 	createReq.NetworkLoadBalancer.Config.Size = size
-	createReq.NetworkLoadBalancer.Config.Tier1 = tier1
 	lbResp, err := lb.lbClient.CreateLoadBalancer(ctx, createReq)
 	if err != nil {
 		return err

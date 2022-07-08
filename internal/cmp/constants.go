@@ -1,4 +1,4 @@
-// (C) Copyright 2021 Hewlett Packard Enterprise Development LP
+// (C) Copyright 2021-2022 Hewlett Packard Enterprise Development LP
 
 package cmp
 
@@ -23,6 +23,19 @@ const (
 	tier0GatewayType             = "NSX-T Tier-0 Gateway"
 	tier1GatewayType             = "NSX-T Tier-1 Gateway"
 	routerFirewallExternalPolicy = "GatewayPolicy"
+
+	// load balancer consts
+	ApplicationProfile       = "application-profile"
+	ServiceTypeLBHttpProfile = "LBHttpProfile"
+	networkServerID          = 1
+	size                     = "SMALL"
+	loglevel                 = "INFO"
+	ProfileType              = "application-profile"
+	RequestHeaderSize        = 30
+	ResponseHeaderSize       = 40
+	ResponseTimeout          = 40
+	HTTPIdleTimeout          = 50
+	SnatTranslationType      = "LBSnatAutoMap"
 
 	syncedTypeValue = "Synced"
 )
