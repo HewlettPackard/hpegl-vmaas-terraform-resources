@@ -72,9 +72,8 @@ func LoadBalancerMonitor() *schema.Resource {
 				Optional:    true,
 			},
 			"request_method": {
-				Type:        schema.TypeString,
-				Description: "request method to send the monitor details",
-				Optional:    true,
+				Type:     schema.TypeString,
+				Optional: true,
 				ValidateDiagFunc: validations.StringInSlice([]string{"GET", "POST", "OPTIONS",
 					"HEAD", "PUT"}, false),
 				Default:     "GET",

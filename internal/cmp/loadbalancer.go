@@ -47,7 +47,6 @@ func (lb *loadBalancer) Create(ctx context.Context, d *utils.Data, meta interfac
 			Name:        d.GetString("name"),
 			Description: d.GetString("description"),
 			Enabled:     d.GetBool("enabled"),
-			Visibility:  d.GetString("visibility"),
 			ResourcePermissions: models.EnableResourcePermissions{
 				All: d.GetBool("all"),
 			},
