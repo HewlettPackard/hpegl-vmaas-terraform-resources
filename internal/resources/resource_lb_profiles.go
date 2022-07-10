@@ -219,12 +219,27 @@ func LoadBalancerProfiles() *schema.Resource {
 			},
 		},
 		ReadContext:   loadbalancerProfileReadContext,
-		UpdateContext: loadbalancerProfileReadContext,
+		UpdateContext: loadbalancerProfileUpdateContext,
 		CreateContext: loadbalancerProfileCreateContext,
 		DeleteContext: loadbalancerProfileDeleteContext,
 		Description: `loadbalancer Profile resource facilitates creating,
 		and deleting NSX-T  Network Load Balancers.`,
 	}
+}
+
+
+func loadbalancerProfileUpdateContext(ctx context.Context, rd *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	c, err := client.GetClientFromMetaMap(meta)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	data := utils.NewData(rd)
+	if err := c.CmpClient.LoadBalancerProfile.Update(ctx, data, meta); err != nil {
+		return diag.FromErr(err)
+	}
+
+	return nil
 }
 
 func loadbalancerProfileReadContext(ctx context.Context, rd *schema.ResourceData, meta interface{}) diag.Diagnostics {
