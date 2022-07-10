@@ -154,10 +154,10 @@ func LoadBalancerProfiles() *schema.Resource {
 							Optional:    true,
 							Description: "max_idle_time for Network Load balancer Profile",
 						},
-						"cookie_age": {
+						"max_cookie_age": {
 							Type:        schema.TypeInt,
 							Optional:    true,
-							Description: "cookie_age for Network Load balancer Profile",
+							Description: "max_cookie_age for Network Load balancer Profile",
 						},
 						"ha_persistence_mirroring": {
 							Type:        schema.TypeBool,
