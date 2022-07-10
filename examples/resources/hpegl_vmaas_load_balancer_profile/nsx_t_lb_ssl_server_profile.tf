@@ -13,6 +13,6 @@ resource "hpegl_vmaas_load_balancer_profile" "tf_lb_profile" {
     tags {
         tag = "tag1"
         scope = "scope1"
-    }s
+    }
   }
 }
