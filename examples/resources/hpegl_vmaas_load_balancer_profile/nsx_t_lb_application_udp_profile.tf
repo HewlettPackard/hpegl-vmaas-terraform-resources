@@ -8,7 +8,7 @@ resource "hpegl_vmaas_load_balancer_profile" "tf_lb_profile" {
   service_type     = "LBFastUdpProfile"
   config {
     profile_type = "application-profile"
-    idle_timeout = 300
+    fast_udp_idle_timeout = 300
     ha_flow_mirroring = false
     tags {
         tag = "tag1"

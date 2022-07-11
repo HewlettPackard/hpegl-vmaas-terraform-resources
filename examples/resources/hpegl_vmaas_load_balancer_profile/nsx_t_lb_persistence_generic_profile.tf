@@ -10,10 +10,10 @@ resource "hpegl_vmaas_load_balancer_profile" "tf_lb_profile" {
     profile_type = "persistence-profile"
     share_persistence = false
     ha_persistence_mirroring = false
-    persistence_entry_timeout - 300
+    persistence_entry_timeout = 300
     tags {
         tag = "tag1"
         scope = "scope1"
-    }s
+    }
   }
 }

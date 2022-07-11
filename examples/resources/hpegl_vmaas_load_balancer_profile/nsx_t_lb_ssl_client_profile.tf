@@ -8,13 +8,13 @@ resource "hpegl_vmaas_load_balancer_profile" "tf_lb_profile" {
   service_type     = "LBClientSslProfile"
   config {
     profile_type = "ssl-profile"
-    ssl_suite = "Balanced"
+    ssl_suite = "BALANCED"
     session_cache = true
-    session_cache_timeout = 300
+    session_cache_entry_timeout = 300
     prefer_server_cipher = true
     tags {
         tag = "tag1"
         scope = "scope1"
-    }s
+    }
   }
 }

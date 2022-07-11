@@ -23,6 +23,12 @@ const (
 	tier0GatewayType             = "NSX-T Tier-0 Gateway"
 	tier1GatewayType             = "NSX-T Tier-1 Gateway"
 	routerFirewallExternalPolicy = "GatewayPolicy"
+	// load balancer consts
+	RequestHeaderSize  = 30
+	ResponseHeaderSize = 40
+	ResponseTimeout    = 40
+	HTTPIdleTimeout    = 50
+	ApplicationProfile = "ssl-profile"
 
 	syncedTypeValue = "Synced"
 )

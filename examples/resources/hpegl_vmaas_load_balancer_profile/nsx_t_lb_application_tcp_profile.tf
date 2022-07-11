@@ -4,13 +4,13 @@
 resource "hpegl_vmaas_load_balancer_profile" "tf_lb_profile" {
   lb_id = data.hpegl_vmaas_load_balancer.lb.id  
   name  =  "APPLICATION-TCP-Profile"       
-  description  = "creating LB Profile"
+  description  = "Create LB Profile"
   service_type     = "LBFastTcpProfile"
   config {
     profile_type = "application-profile"
-    idle_timeout = 1800
+    fast_tcp_idle_timeout = 1800
     connection_close_timeout = 8
-    ha_flow_mirroring = false
+    ha_flow_mirroring = true
     tags {
         tag = "tag1"
         scope = "scope1"

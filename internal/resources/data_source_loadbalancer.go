@@ -1,4 +1,4 @@
-// (C) Copyright 2022 Hewlett Packard Enterprise Development LP
+// (C) Copyright 2021 Hewlett Packard Enterprise Development LP
 
 package resources
 
@@ -17,47 +17,12 @@ func LoadBalancerData() *schema.Resource {
 			"name": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: f(generalNamedesc, "ResLoadBalancer", "ResLoadBalancer"),
+				Description: f(generalNamedesc, "LoadBalancer", "LoadBalancer"),
 			},
-			"type": {
-				Type:        schema.TypeString,
-				Description: "This field can be used as type for the " + ResLoadBalancer,
-				Computed:    true,
-			},
-			"network_server_id": {
+			"lb_id": {
 				Type:        schema.TypeInt,
 				Computed:    true,
-				Description: "NSX-T Integration ID",
-				ForceNew:    true,
-			},
-			"config": {
-				Type:        schema.TypeList,
-				Computed:    true,
-				Description: "Network Load Balancer Configuration",
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"admin_state": {
-							Type:        schema.TypeBool,
-							Computed:    true,
-							Description: "If `true` then admin State rule will be active/enabled.",
-						},
-						"size": {
-							Type:        schema.TypeString,
-							Optional:    true,
-							Description: `In Filter. Supported Values are "SMALL", "MEDIUM", "LARGE"`,
-						},
-						"loglevel": {
-							Type:        schema.TypeString,
-							Optional:    true,
-							Description: `In Filter. Supported Values are "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL", "ALERT", "EMERGENCY"`,
-						},
-						"tier1": {
-							Type:        schema.TypeString,
-							Computed:    true,
-							Description: "Network Loadbalancer NSX-T tier1 gateway",
-						},
-					},
-				},
+				Description: "Parent lb ID, lb_id can be obtained by using LB datasource/resource.",
 			},
 		},
 		ReadContext: LoadBalancerReadContext,
@@ -79,7 +44,7 @@ func LoadBalancerReadContext(ctx context.Context, d *schema.ResourceData, meta i
 	}
 
 	data := utils.NewData(d)
-	err = c.CmpClient.LoadBalancer.Read(ctx, data, meta)
+	err = c.CmpClient.DSLoadBalancer.Read(ctx, data, meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}
