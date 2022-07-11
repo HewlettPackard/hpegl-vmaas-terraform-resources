@@ -2,6 +2,7 @@
 
 # TCP Monitor
 resource "hpegl_vmaas_load_balancer_monitor" "tf_lb_monitor" {
+  lb_id = data.hpegl_vmaas_load_balancer.tf_lb.id
   name  =  "TCP-MONITOR"       
   description  = "Creating lb monitor for TCP"
   type = "LBTcpMonitorProfile"

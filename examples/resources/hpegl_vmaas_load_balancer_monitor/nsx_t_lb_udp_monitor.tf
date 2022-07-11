@@ -2,6 +2,7 @@
 
 # UDP Monitor
 resource "hpegl_vmaas_load_balancer_monitor" "tf_lb_monitor" {
+  lb_id = data.hpegl_vmaas_load_balancer.tf_lb.id
   name  =  "UDP-MONITOR"       
   description  = "Creating lb monitor for UDP"
   type = "LBUdpMonitorProfile"

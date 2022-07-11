@@ -2,6 +2,7 @@
 
 # ICMP Monitor
 resource "hpegl_vmaas_load_balancer_monitor" "tf_lb_monitor" {
+  lb_id = data.hpegl_vmaas_load_balancer.tf_lb.id
   name  =  "ICMP-MONITOR"       
   description  = "Creating lb monitor for ICMP"
   type = "LBIcmpMonitorProfile"
