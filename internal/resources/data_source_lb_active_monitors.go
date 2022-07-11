@@ -11,13 +11,13 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func LoadBalancerData() *schema.Resource {
+func ActiveMonitorData() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"name": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: f(generalNamedesc, "LoadBalancer", "LoadBalancer"),
+				Description: f(generalNamedesc, "ActiveMonitor", "ActiveMonitor"),
 			},
 			"lb_id": {
 				Type:        schema.TypeInt,
@@ -25,10 +25,10 @@ func LoadBalancerData() *schema.Resource {
 				Description: "Parent lb ID, lb_id can be obtained by using LB datasource/resource.",
 			},
 		},
-		ReadContext: LoadBalancerReadContext,
-		Description: `The ` + DSLoadBalancer + ` data source can be used to discover the ID of a hpegl vmaas network load balancer.
-		This can then be used with resources or data sources that require a ` + DSLoadBalancer + `,
-		such as the ` + ResLoadBalancer + ` resource.`,
+		ReadContext: ActiveMonitorReadContext,
+		Description: `The ` + DSActiveMonitor + ` data source can be used to discover the ID of a hpegl vmaas network load balancer.
+		This can then be used with resources or data sources that require a ` + DSActiveMonitor + `,
+		such as the ` + ResActiveMonitor + ` resource.`,
 		SchemaVersion:  0,
 		StateUpgraders: nil,
 		Importer: &schema.ResourceImporter{
@@ -37,14 +37,14 @@ func LoadBalancerData() *schema.Resource {
 	}
 }
 
-func LoadBalancerReadContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func ActiveMonitorReadContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, err := client.GetClientFromMetaMap(meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
 	data := utils.NewData(d)
-	err = c.CmpClient.DSLoadBalancer.Read(ctx, data, meta)
+	err = c.CmpClient.DSActiveMonitor.Read(ctx, data, meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}

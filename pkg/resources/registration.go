@@ -41,6 +41,7 @@ func (r Registration) SupportedDataSources() map[string]*schema.Resource {
 		resources.DSEdgeCluster:      resources.EdgeClusterData(),
 		resources.DSTransportZone:    resources.TransportZoneData(),
 		resources.DSLoadBalancer:     resources.LoadBalancerData(),
+		resources.DSActiveMonitor:    resources.ActiveMonitorData(),
 		resources.DSLBMonitor:        resources.LBMonitorData(),
 		resources.DSLBProfile:        resources.LBProfileData(),
 		resources.DSLBPool:           resources.LBPoolData(),
