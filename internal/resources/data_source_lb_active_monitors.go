@@ -19,6 +19,11 @@ func ActiveMonitorData() *schema.Resource {
 				Required:    true,
 				Description: f(generalNamedesc, "ActiveMonitor", "ActiveMonitor"),
 			},
+			"type": {
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: f(generalNamedesc, "MonitorType", "MonitorType"),
+			},
 			"lb_id": {
 				Type:        schema.TypeInt,
 				Computed:    true,

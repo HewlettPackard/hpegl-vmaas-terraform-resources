@@ -12,18 +12,18 @@ import (
 	"github.com/tshihad/tftags"
 )
 
-type activeMonitords struct {
+type passiveMonitords struct {
 	lbClient *client.LoadBalancerAPIService
 }
 
-func newActiveMonitorDS(activeMonitorClient *client.LoadBalancerAPIService) *activeMonitords {
-	return &activeMonitords{lbClient: activeMonitorClient}
+func newPassiveMonitorDS(passiveMonitorClient *client.LoadBalancerAPIService) *passiveMonitords {
+	return &passiveMonitords{lbClient: passiveMonitorClient}
 }
 
-func (n *activeMonitords) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
+func (n *passiveMonitords) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
 	setMeta(meta, n.lbClient.Client)
-	log.Printf("[DEBUG] Get Active Monitors")
-	name := d.GetString("name")
+	log.Printf("[DEBUG] Get Passive Monitors")
+	monitorType := d.GetString("type")
 	lbID := d.GetInt("lb_id")
 
 	// Pre check
@@ -37,12 +37,12 @@ func (n *activeMonitords) Read(ctx context.Context, d *utils.Data, meta interfac
 	}
 
 	for i, n := range lb.GetLBMonitorsResp {
-		if n.Name == name {
+		if n.Type == monitorType {
 			log.Print("[DEBUG]", lb.GetLBMonitorsResp[i].ID)
 
 			return tftags.Set(d, lb.GetLBMonitorsResp[i])
 
 		}
 	}
-	return fmt.Errorf(errExactMatch, "Active Monitors")
+	return fmt.Errorf(errExactMatch, "Passive Monitors")
 }
