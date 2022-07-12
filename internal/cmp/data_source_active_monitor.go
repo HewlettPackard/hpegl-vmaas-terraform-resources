@@ -24,14 +24,14 @@ func (n *activeMonitords) Read(ctx context.Context, d *utils.Data, meta interfac
 	setMeta(meta, n.lbClient.Client)
 	log.Printf("[DEBUG] Get Active Monitors")
 	name := d.GetString("name")
-	//lbID := d.GetInt("lb_id")
+	lbID := d.GetInt("lb_id")
 
 	// Pre check
 	if err := d.Error(); err != nil {
 		return err
 	}
 
-	lb, err := n.lbClient.GetLBMonitors(ctx, 248)
+	lb, err := n.lbClient.GetLBMonitors(ctx, lbID)
 	if err != nil {
 		return err
 	}

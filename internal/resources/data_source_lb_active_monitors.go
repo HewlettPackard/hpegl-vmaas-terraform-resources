@@ -21,7 +21,7 @@ func ActiveMonitorData() *schema.Resource {
 			},
 			"lb_id": {
 				Type:        schema.TypeInt,
-				Computed:    true,
+				Required:    true,
 				Description: "Parent lb ID, lb_id can be obtained by using LB datasource/resource.",
 			},
 		},
