@@ -40,34 +40,10 @@ func (lb *loadBalancerPool) Read(ctx context.Context, d *utils.Data, meta interf
 func (lb *loadBalancerPool) Create(ctx context.Context, d *utils.Data, meta interface{}) error {
 	setMeta(meta, lb.lbClient.Client)
 
-	var createReq models.CreateLBPoolReq
-	if err := tftags.Get(d, &createReq); err != nil {
+	var createReq models.CreateLBPool
+	if err := tftags.Get(d, &createReq.CreateLBPoolReq); err != nil {
 		return err
 	}
-
-	// createReq := models.CreateLBPool{
-	// 	CreateLBPoolReq: models.CreateLBPoolReq{
-	// 		Name:        d.GetString("name"),
-	// 		LbID:        d.GetInt("lb_id"),
-	// 		Description: d.GetString("description"),
-	// 		VipBalance:  d.GetString("vip_balance"),
-	// 		MinActive:   d.GetInt("min_active"),
-	// 		PoolConfig: models.PoolConfig{
-	// 			SnatTranslationType:   d.GetString("snat_translation_type"),
-	// 			PassiveMonitorPath:    d.GetInt("passive_monitor_path"),
-	// 			ActiveMonitorPaths:    d.GetInt("active_monitor_paths"),
-	// 			TCPMultiplexing:       d.GetBool("tcp_multiplexing"),
-	// 			TCPMultiplexingNumber: d.GetInt("tcp_multiplexing_number"),
-	// 			SnatIPAddress:         d.GetString("snat_ip_address"),
-	// 			MemberGroup: models.MemberGroup{
-	// 				Name:             d.GetString("name"),
-	// 				Path:             d.GetString("path"),
-	// 				IPRevisionFilter: d.GetString("ip_revision_filter"),
-	// 				Port:             d.GetInt("port"),
-	// 			},
-	// 		},
-	// 	},
-	// }
 
 	createReq.CreateLBPoolReq.PoolConfig.SnatTranslationType = SnatTranslationType
 	lbPoolResp, err := lb.lbClient.CreateLBPool(ctx, createReq, createReq.CreateLBPoolReq.LbID)
@@ -97,32 +73,10 @@ func (lb *loadBalancerPool) Create(ctx context.Context, d *utils.Data, meta inte
 func (lb *loadBalancerPool) Update(ctx context.Context, d *utils.Data, meta interface{}) error {
 	id := d.GetID()
 
-	var updateReq models.CreateLBPoolReq
-	if err := tftags.Get(d, &createReq); err != nil {
+	var updateReq models.CreateLBPool
+	if err := tftags.Get(d, &updateReq.CreateLBPoolReq); err != nil {
 		return err
 	}
-	// updateReq := models.CreateLBPool{
-	// 	CreateLBPoolReq: models.CreateLBPoolReq{
-	// 		Name:        d.GetString("name"),
-	// 		LbID:        d.GetInt("lb_id"),
-	// 		Description: d.GetString("description"),
-	// 		VipBalance:  d.GetString("vip_balance"),
-	// 		MinActive:   d.GetInt("min_active"),
-	// 		PoolConfig: models.PoolConfig{
-	// 			SnatTranslationType:   d.GetString("snat_translation_type"),
-	// 			PassiveMonitorPath:    d.GetInt("passive_monitor_path"),
-	// 			ActiveMonitorPaths:    d.GetInt("active_monitor_paths"),
-	// 			TCPMultiplexingNumber: d.GetInt("tcp_multiplexing_number"),
-	// 			SnatIPAddress:         d.GetString("snat_ip_address"),
-	// 			MemberGroup: models.MemberGroup{
-	// 				Name:             d.GetString("name"),
-	// 				Path:             d.GetString("path"),
-	// 				IPRevisionFilter: d.GetString("ip_revision_filter"),
-	// 				Port:             d.GetInt("port"),
-	// 			},
-	// 		},
-	// 	},
-	// }
 
 	updateReq.CreateLBPoolReq.PoolConfig.SnatTranslationType = SnatTranslationType
 

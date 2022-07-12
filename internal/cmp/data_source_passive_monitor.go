@@ -23,21 +23,21 @@ func newPassiveMonitorDS(passiveMonitorClient *client.LoadBalancerAPIService) *p
 func (n *passiveMonitords) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
 	setMeta(meta, n.lbClient.Client)
 	log.Printf("[DEBUG] Get Passive Monitors")
-	monitorType := d.GetString("type")
-	lbID := d.GetInt("lb_id")
+	monitorType := d.GetString("name")
+	//lbID := d.GetInt("lb_id")
 
 	// Pre check
 	if err := d.Error(); err != nil {
 		return err
 	}
 
-	lb, err := n.lbClient.GetLBMonitors(ctx, lbID)
+	lb, err := n.lbClient.GetLBMonitors(ctx, 248)
 	if err != nil {
 		return err
 	}
 
 	for i, n := range lb.GetLBMonitorsResp {
-		if n.Type == monitorType {
+		if n.Name == monitorType {
 			log.Print("[DEBUG]", lb.GetLBMonitorsResp[i].ID)
 
 			return tftags.Set(d, lb.GetLBMonitorsResp[i])

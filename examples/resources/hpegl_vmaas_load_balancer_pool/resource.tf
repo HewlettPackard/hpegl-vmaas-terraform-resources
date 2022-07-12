@@ -5,11 +5,11 @@ resource "hpegl_vmaas_load_balancer_pool" "test_lb_pool" {
   name  =  "TEST-POOL"       
   description  = "creating load balancer pool"
   min_active_members     = 1
-  algorithm = "ROUND_ROBIN"
+  algorithm = "WEIGHTED_ROUND_ROBIN"
   config {
     snat_translation_type = "LBSnatAutoMap"
-    passive_monitor_path = data.hpegl_vmaas_passive_monitor.tf_lb_monitor
-    active_monitor_paths = data.hpegl_vmaas_active_monitor.tf_lb_monitor
+    active_monitor_paths = data.hpegl_vmaas_active_monitor.tf_lb_active.id
+    passive_monitor_path = data.hpegl_vmaas_passive_monitor.tf_lb_passive.id
     tcp_multiplexing = false
     tcp_multiplexing_number = 6 
     snat_ip_address = ""

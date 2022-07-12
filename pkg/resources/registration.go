@@ -42,10 +42,11 @@ func (r Registration) SupportedDataSources() map[string]*schema.Resource {
 		resources.DSTransportZone:    resources.TransportZoneData(),
 		resources.DSLoadBalancer:     resources.LoadBalancerData(),
 		resources.DSActiveMonitor:    resources.ActiveMonitorData(),
-		resources.DSLBMonitor:        resources.LBMonitorData(),
-		resources.DSLBProfile:        resources.LBProfileData(),
-		resources.DSLBPool:           resources.LBPoolData(),
-		resources.DSLBVirtualServer:  resources.LBVirtualServerData(),
+		resources.DSPassiveMonitor:   resources.PassiveMonitorData(),
+		//resources.DSLBMonitor:        resources.LBMonitorData(),
+		resources.DSLBProfile: resources.LBProfileData(),
+		//	resources.DSLBPool:           resources.LBPoolData(),
+		resources.DSLBVirtualServer: resources.LBVirtualServerData(),
 	}
 }
 
