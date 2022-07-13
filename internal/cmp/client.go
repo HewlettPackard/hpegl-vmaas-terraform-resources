@@ -44,6 +44,7 @@ type Client struct {
 	DSLBApplicationProfile    DataSource
 	DSLBPersistenceProfile    DataSource
 	DSLBSslClientProfile      DataSource
+	DSLBSslServerProfile      DataSource
 }
 
 // NewClient returns configured client
@@ -95,10 +96,10 @@ func NewClient(client *apiClient.APIClient, cfg apiClient.Configuration) *Client
 		DSLBApplicationProfile: newApplicationProfileDS(&apiClient.LoadBalancerAPIService{Client: client, Cfg: cfg}),
 		DSLBPersistenceProfile: newPersistenceProfileDS(&apiClient.LoadBalancerAPIService{Client: client, Cfg: cfg}),
 		DSLBSslClientProfile:   newSslClientProfileDS(&apiClient.LoadBalancerAPIService{Client: client, Cfg: cfg}),
-
-		DSDomain:      newDomain(&apiClient.DomainAPIService{Client: client, Cfg: cfg}),
-		NetworkProxy:  newNetworkProxy(&apiClient.NetworksAPIService{Client: client, Cfg: cfg}),
-		TransportZone: newTransportZone(&apiClient.RouterAPIService{Client: client, Cfg: cfg}),
-		EdgeCluster:   newEdgeCluster(&apiClient.RouterAPIService{Client: client, Cfg: cfg}),
+		DSLBSslServerProfile:   newSslServerProfileDS(&apiClient.LoadBalancerAPIService{Client: client, Cfg: cfg}),
+		DSDomain:               newDomain(&apiClient.DomainAPIService{Client: client, Cfg: cfg}),
+		NetworkProxy:           newNetworkProxy(&apiClient.NetworksAPIService{Client: client, Cfg: cfg}),
+		TransportZone:          newTransportZone(&apiClient.RouterAPIService{Client: client, Cfg: cfg}),
+		EdgeCluster:            newEdgeCluster(&apiClient.RouterAPIService{Client: client, Cfg: cfg}),
 	}
 }

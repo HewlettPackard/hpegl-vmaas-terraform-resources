@@ -45,6 +45,7 @@ func (r Registration) SupportedDataSources() map[string]*schema.Resource {
 		resources.DSLBApplicationProfile: resources.LBApplicationProfileData(),
 		resources.DSLBPersistenceProfile: resources.LBPersistenceProfileData(),
 		resources.DSLBSslClientProfile:   resources.LBSslClientProfileData(),
+		resources.DSLBSslServerProfile:   resources.LBSslServerProfileData(),
 
 		resources.DSLBPool: resources.LBPoolData(),
 	}

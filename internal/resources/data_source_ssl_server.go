@@ -11,7 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func LBSslClientProfileData() *schema.Resource {
+func LBSslServerProfileData() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"name": {
@@ -25,10 +25,10 @@ func LBSslClientProfileData() *schema.Resource {
 				Description: "Parent lb ID, lb_id can be obtained by using LB datasource/resource.",
 			},
 		},
-		ReadContext: SSLClientProfileReadContext,
-		Description: `The ` + DSLBSslClientProfile + ` data source can be used to discover the ID of a hpegl vmaas network load balancer.
-		This can then be used with resources or data sources that require a ` + DSLBSslClientProfile + `,
-		such as the ` + ResLBSslClientProfile + ` resource.`,
+		ReadContext: SSLServerProfileReadContext,
+		Description: `The ` + DSLBSslServerProfile + ` data source can be used to discover the ID of a hpegl vmaas network load balancer.
+		This can then be used with resources or data sources that require a ` + DSLBSslServerProfile + `,
+		such as the ` + ResLBSslServerProfile + ` resource.`,
 		SchemaVersion:  0,
 		StateUpgraders: nil,
 		Importer: &schema.ResourceImporter{
@@ -37,14 +37,14 @@ func LBSslClientProfileData() *schema.Resource {
 	}
 }
 
-func SSLClientProfileReadContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func SSLServerProfileReadContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, err := client.GetClientFromMetaMap(meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
 	data := utils.NewData(d)
-	err = c.CmpClient.DSLBSslClientProfile.Read(ctx, data, meta)
+	err = c.CmpClient.DSLBSslServerProfile.Read(ctx, data, meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}

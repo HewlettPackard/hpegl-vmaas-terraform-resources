@@ -30,6 +30,7 @@ const (
 	DSLBApplicationProfile = "hpegl_vmaas_load_balancer_application_profile"
 	DSLBPersistenceProfile = "hpegl_vmaas_load_balancer_persistence_profile"
 	DSLBSslClientProfile   = "hpegl_vmaas_load_balancer_ssl_client_profile"
+	DSLBSslServerProfile   = "hpegl_vmaas_load_balancer_ssl_server_profile"
 	DSLBVirtualServer      = "hpegl_vmaas_load_balancer_virtual_server"
 
 	// resource key
@@ -44,6 +45,7 @@ const (
 	ResLBApplicationProfile       = "hpegl_vmaas_load_balancer_application_profile"
 	ResLBPersistenceProfile       = "hpegl_vmaas_load_balancer_persistence_profile"
 	ResLBSslClientProfile         = "hpegl_vmaas_load_balancer_ssl_client_profile"
+	ResLBSslServerProfile         = "hpegl_vmaas_load_balancer_ssl_server_profile"
 	ResLoadBalancerVirtualServers = "hpegl_vmaas_load_balancer_virtual_server"
 	ResRouterNat                  = "hpegl_vmaas_router_nat_rule"
 	ResRouterFirewallRuleGroup    = "hpegl_vmaas_router_firewall_rule_group"
