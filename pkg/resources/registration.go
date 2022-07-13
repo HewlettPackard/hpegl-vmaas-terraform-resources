@@ -43,6 +43,7 @@ func (r Registration) SupportedDataSources() map[string]*schema.Resource {
 		resources.DSLoadBalancer:     resources.LoadBalancerData(),
 		//resources.DSLBMonitor:        resources.LBMonitorData(),
 		resources.DSLBApplicationProfile: resources.LBApplicationProfileData(),
+		resources.DSLBPersistenceProfile: resources.LBPersistenceProfileData(),
 
 		resources.DSLBPool: resources.LBPoolData(),
 	}
