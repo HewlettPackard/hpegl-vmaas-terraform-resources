@@ -15,7 +15,7 @@ import (
 func LoadBalancerVirtualServers() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
-			"vip_name": {
+			"name": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "vip_name of Network loadbalancer virtual server name",
@@ -42,6 +42,11 @@ func LoadBalancerVirtualServers() *schema.Resource {
 				Required:    true,
 				Description: "pool of Network loadbalancer virtual server",
 			},
+			"type": {
+				Type:        schema.TypeInt,
+				Required:    true,
+				Description: "vip protocol of Network loadbalancer virtual server",
+			},
 			"ssl_cert": {
 				Type:        schema.TypeInt,
 				Required:    true,
@@ -54,7 +59,7 @@ func LoadBalancerVirtualServers() *schema.Resource {
 			},
 			"config": {
 				Type:        schema.TypeList,
-				Required:    true,
+				Optional:    true,
 				Description: "virtual server Configuration",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -88,12 +93,26 @@ func LoadBalancerVirtualServers() *schema.Resource {
 			},
 		},
 		ReadContext:   loadbalancerVirtualServerReadContext,
-		UpdateContext: loadbalancerVirtualServerReadContext,
+		UpdateContext: loadbalancerVirtualServerUpdateContext,
 		CreateContext: loadbalancerVirtualServerCreateContext,
 		DeleteContext: loadbalancerVirtualServerDeleteContext,
 		Description: `loadbalancer Virtual Server resource facilitates creating,
 		and deleting NSX-T  Network Load Balancers.`,
 	}
+}
+
+func loadbalancerVirtualServerUpdateContext(ctx context.Context, rd *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	c, err := client.GetClientFromMetaMap(meta)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	data := utils.NewData(rd)
+	if err := c.CmpClient.LoadBalancerVirtualServer.Update(ctx, data, meta); err != nil {
+		return diag.FromErr(err)
+	}
+
+	return nil
 }
 
 func loadbalancerVirtualServerReadContext(ctx context.Context, rd *schema.ResourceData, meta interface{}) diag.Diagnostics {
