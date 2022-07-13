@@ -15,6 +15,12 @@ import (
 func LoadBalancerVirtualServers() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
+			"lb_id": {
+				Type:        schema.TypeInt,
+				Required:    true,
+				Description: "Parent lb ID, lb_id can be obtained by using LB datasource/resource.",
+				ForceNew:    true,
+			},
 			"name": {
 				Type:        schema.TypeString,
 				Required:    true,
@@ -24,13 +30,11 @@ func LoadBalancerVirtualServers() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "description of Network loadbalancer virtual server",
-				ForceNew:    true,
 			},
 			"vip_address": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "vip_address of Network loadbalancer virtual server",
-				ForceNew:    true,
 			},
 			"vip_port": {
 				Type:        schema.TypeString,
@@ -42,26 +46,31 @@ func LoadBalancerVirtualServers() *schema.Resource {
 				Required:    true,
 				Description: "pool of Network loadbalancer virtual server",
 			},
+			"vip_host_name": {
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "vip_host_name of Network loadbalancer virtual server",
+			},
 			"type": {
-				Type:        schema.TypeInt,
+				Type:        schema.TypeString,
 				Required:    true,
 				Description: "vip protocol of Network loadbalancer virtual server",
 			},
-			"ssl_cert": {
-				Type:        schema.TypeInt,
-				Optional:    true,
-				Default:     22,
+			"ssl_client_cert": {
+				Type:     schema.TypeInt,
+				Required: true,
+				//Default:     22,
 				Description: "ssl_cert of Network loadbalancer virtual server",
 			},
 			"ssl_server_cert": {
-				Type:        schema.TypeInt,
-				Optional:    true,
-				Default:     22,
+				Type:     schema.TypeInt,
+				Required: true,
+				//Default:     22,
 				Description: "ssl_server_cert of the Network loadbalancer virtual server",
 			},
 			"config": {
 				Type:        schema.TypeList,
-				Optional:    true,
+				Required:    true,
 				Description: "virtual server Configuration",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -72,7 +81,7 @@ func LoadBalancerVirtualServers() *schema.Resource {
 							Description:      "Network Loadbalancer Supported values are `SOURCE_IP`,`COOKIE`, `DISBALED`"},
 						"persistence_profile": {
 							Type:        schema.TypeInt,
-							Optional:    true,
+							Required:    true,
 							Description: "persistence_profile of virtual server Configuration",
 						},
 						"application_profile": {
@@ -81,13 +90,13 @@ func LoadBalancerVirtualServers() *schema.Resource {
 							Description: "application_profile of virtual server Configuration",
 						},
 						"ssl_client_profile": {
-							Type:        schema.TypeString,
-							Optional:    true,
+							Type:        schema.TypeInt,
+							Required:    true,
 							Description: "ssl_client_profile of virtual server Configuration",
 						},
 						"ssl_server_profile": {
-							Type:        schema.TypeString,
-							Optional:    true,
+							Type:        schema.TypeInt,
+							Required:    true,
 							Description: "ssl_server_profile of virtual server Configuration",
 						},
 					},
