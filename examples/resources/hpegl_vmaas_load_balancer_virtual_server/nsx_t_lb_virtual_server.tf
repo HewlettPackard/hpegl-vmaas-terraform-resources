@@ -1,7 +1,7 @@
 # (C) Copyright 2022 Hewlett Packard Enterprise Development LP
 
 resource "hpegl_vmaas_load_balancer_virtual_server" "tf_lb_virtual_server" {
-  lb_id = data.hpegl_vmaas_load_balancer.tf_lb.id
+  lb_id = 248
   name  =  "virtual"       
   description  = "creating load balancer virtual server"
   vip_address     = "10.11.12.13"
@@ -9,7 +9,7 @@ resource "hpegl_vmaas_load_balancer_virtual_server" "tf_lb_virtual_server" {
   vip_port = "80"
   vip_host_name = "host VS"
   pool = data.hpegl_vmaas_load_balancer_pool.tf_pool.id
-  ssl_cert = 22
+  ssl_client_cert = 22
   ssl_server_cert = 22
   config{
     persistence = "COOKIE"
