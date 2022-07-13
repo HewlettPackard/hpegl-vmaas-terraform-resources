@@ -49,12 +49,14 @@ func LoadBalancerVirtualServers() *schema.Resource {
 			},
 			"ssl_cert": {
 				Type:        schema.TypeInt,
-				Required:    true,
+				Optional:    true,
+				Default:     22,
 				Description: "ssl_cert of Network loadbalancer virtual server",
 			},
 			"ssl_server_cert": {
 				Type:        schema.TypeInt,
-				Required:    true,
+				Optional:    true,
+				Default:     22,
 				Description: "ssl_server_cert of the Network loadbalancer virtual server",
 			},
 			"config": {
