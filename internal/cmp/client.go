@@ -58,7 +58,6 @@ func NewClient(client *apiClient.APIClient, cfg apiClient.Configuration) *Client
 			&apiClient.NetworksAPIService{Client: client, Cfg: cfg},
 			&apiClient.RouterAPIService{Client: client, Cfg: cfg},
 		),
-		//LoadBalancer:              newLoadBalancer(&apiClient.LoadBalancerAPIService{Client: client, Cfg: cfg}),
 		LoadBalancer:              newLoadBalancer(&apiClient.LoadBalancerAPIService{Client: client, Cfg: cfg}, &apiClient.RouterAPIService{Client: client, Cfg: cfg}),
 		LoadBalancerMonitor:       newLoadBalancerMonitor(&apiClient.LoadBalancerAPIService{Client: client, Cfg: cfg}),
 		LoadBalancerProfile:       newLoadBalancerProfile(&apiClient.LoadBalancerAPIService{Client: client, Cfg: cfg}),
