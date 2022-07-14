@@ -23,9 +23,5 @@ const (
 	tier0GatewayType             = "NSX-T Tier-0 Gateway"
 	tier1GatewayType             = "NSX-T Tier-1 Gateway"
 	routerFirewallExternalPolicy = "GatewayPolicy"
-
-	// load balancer consts
-	networkServerID = 1
-
-	syncedTypeValue = "Synced"
+	syncedTypeValue              = "Synced"
 )

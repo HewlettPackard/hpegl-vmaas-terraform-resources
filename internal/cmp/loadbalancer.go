@@ -15,13 +15,21 @@ import (
 
 type loadBalancer struct {
 	lbClient *client.LoadBalancerAPIService
+	rClient  *client.RouterAPIService
 }
 
-func newLoadBalancer(loadBalancerClient *client.LoadBalancerAPIService) *loadBalancer {
+func newLoadBalancer(loadBalancerClient *client.LoadBalancerAPIService, routerClient *client.RouterAPIService) *loadBalancer {
 	return &loadBalancer{
 		lbClient: loadBalancerClient,
+		rClient:  routerClient,
 	}
 }
+
+// func newRouterTypes(routerClient *client.RouterAPIService) *router {
+// 	return &router{
+// 		rClient: routerClient,
+// 	}
+// }
 
 func (lb *loadBalancer) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
 	var loadBalancerResp models.GetSpecificNetworkLoadBalancerResp
@@ -57,6 +65,50 @@ func (lb *loadBalancer) Update(ctx context.Context, d *utils.Data, meta interfac
 	return tftags.Set(d, updateReq.NetworkLoadBalancer)
 }
 
+func (lb *loadBalancer) loadBalancerAlignRequest(ctx context.Context, meta interface{},
+	createReq *models.CreateLoadBalancerRequest) error {
+
+	allTypes, _ := lb.lbClient.GetLoadBalancerTypes(ctx, map[string]string{
+		nameKey: nsxt,
+	})
+
+	//var r *loadBalancer
+	// Get network service ID
+	setMeta(meta, lb.rClient.Client)
+	nsRetry := utils.CustomRetry{}
+	nsRetry.RetryParallel(ctx, meta, func(ctx context.Context) (interface{}, error) {
+		return lb.rClient.GetNetworkServices(ctx, nil)
+	})
+
+	// Align Network Server
+	nsResp, err := nsRetry.Wait()
+	if err != nil {
+		return err
+	}
+	networkService := nsResp.(models.GetNetworkServicesResp)
+
+	for i, n := range networkService.NetworkServices {
+		if n.TypeName == nsxt {
+			//routerReq.NetworkRouter.NetworkServer.ID = networkService.NetworkServices[i].ID
+			//routerReq.NetworkRouter.NetworkServerID = networkService.NetworkServices[i].ID
+			//createReq.NetworkLoadBalancer.Type = allTypes.LoadBalancerTypes[i].Name
+			createReq.NetworkLoadBalancer.NetworkServerID = networkService.NetworkServices[i].ID
+
+			break
+		}
+	}
+
+	for i, n := range allTypes.LoadBalancerTypes {
+		if n.Name == nsxt {
+			createReq.NetworkLoadBalancer.Type = allTypes.LoadBalancerTypes[i].Name
+			//createReq.NetworkLoadBalancer.NetworkServerID = 1
+			break
+		}
+	}
+
+	return nil
+}
+
 func (lb *loadBalancer) Create(ctx context.Context, d *utils.Data, meta interface{}) error {
 	setMeta(meta, lb.lbClient.Client)
 	var createReq models.CreateLoadBalancerRequest
@@ -64,17 +116,12 @@ func (lb *loadBalancer) Create(ctx context.Context, d *utils.Data, meta interfac
 		return err
 	}
 
-	allTypes, _ := lb.lbClient.GetLoadBalancerTypes(ctx, map[string]string{
-		nameKey: nsxt,
-	})
-
-	for i, n := range allTypes.LoadBalancerTypes {
-		if n.Name == nsxt {
-			createReq.NetworkLoadBalancer.Type = allTypes.LoadBalancerTypes[i].Name
-			createReq.NetworkLoadBalancer.NetworkServerID = networkServerID
-			break
-		}
+	// align createReq and fill json related fields
+	if err := lb.loadBalancerAlignRequest(ctx, meta, &createReq); err != nil {
+		return err
 	}
+
+	//return fmt.Errorf("%d", createReq.NetworkLoadBalancer.NetworkServerID)
 
 	lbResp, err := lb.lbClient.CreateLoadBalancer(ctx, createReq)
 	if err != nil {

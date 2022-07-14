@@ -19,7 +19,7 @@ func LoadBalancer() *schema.Resource {
 				Required:    true,
 				Description: "Network loadbalancer name",
 			},
-			"nsx_t": {
+			"lb_type": {
 				Type:        schema.TypeString,
 				Computed:    true,
 				Description: "Type of Network loadbalancer",
@@ -60,7 +60,8 @@ func LoadBalancer() *schema.Resource {
 								Schema: map[string]*schema.Schema{
 									"id": {
 										Type:        schema.TypeInt,
-										Required:    true,
+										Optional:    true,
+										Default:     false,
 										Description: "ID of the site/group",
 									},
 									"default": {
@@ -102,7 +103,7 @@ func LoadBalancer() *schema.Resource {
 						"tier1_gateways": {
 							Type:        schema.TypeString,
 							Required:    true,
-							Description: "Network Loadbalancer NSX-T tier1 gateway",
+							Description: "Provider ID of the Tier1 Gateway. Use " + DSRouter + " datasource to obtain the provider_id  here.",
 						},
 					},
 				},
