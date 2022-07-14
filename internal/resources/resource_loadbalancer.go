@@ -19,7 +19,7 @@ func LoadBalancer() *schema.Resource {
 				Required:    true,
 				Description: "Network loadbalancer name",
 			},
-			"type": {
+			"nsx_t": {
 				Type:        schema.TypeString,
 				Computed:    true,
 				Description: "Type of Network loadbalancer",
@@ -27,7 +27,7 @@ func LoadBalancer() *schema.Resource {
 			"description": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "creating Network loadbalancer",
+				Description: "Creating the  Network loadbalancer",
 			},
 			"network_server_id": {
 				Type:        schema.TypeInt,
@@ -37,25 +37,40 @@ func LoadBalancer() *schema.Resource {
 			"enabled": {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Description: "Network Loadbalancer configuration enabled",
+				Description: "Pass `true` to allow for enabled and Pass `false` to disabled",
 				Default:     true,
 			},
-			"visibility": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "Network Loadbalancer is public/private visibility mode",
-			},
-			"resource_permission": {
-				Type:        schema.TypeList,
-				Optional:    true,
-				Description: "permission access for Loadbalancer",
+			"group_access": {
+				Type:     schema.TypeList,
+				Optional: true,
+				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"all": {
 							Type:        schema.TypeBool,
-							Default:     true,
 							Optional:    true,
-							Description: "If `true` then resource_permission rule will be active/enabled.",
+							Default:     true,
+							Description: "Pass `true` to allow access to all groups.",
+						},
+						"sites": {
+							Type:        schema.TypeList,
+							Optional:    true,
+							Description: "List of sites/groups",
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"id": {
+										Type:        schema.TypeInt,
+										Required:    true,
+										Description: "ID of the site/group",
+									},
+									"default": {
+										Type:        schema.TypeBool,
+										Optional:    true,
+										Default:     false,
+										Description: "Group Default Selection",
+									},
+								},
+							},
 						},
 					},
 				},
@@ -74,20 +89,19 @@ func LoadBalancer() *schema.Resource {
 						},
 						"size": {
 							Type:        schema.TypeString,
-							Optional:    true,
 							Default:     "SMALL",
+							Optional:    true,
 							Description: `In Filter. Supported Values are "SMALL", "MEDIUM", "LARGE"`,
 						},
 						"log_level": {
 							Type:        schema.TypeString,
-							Optional:    true,
 							Default:     "INFO",
+							Optional:    true,
 							Description: `In Filter. Supported Values are "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL", "ALERT", "EMERGENCY"`,
 						},
-						"tier1": {
+						"tier1_gateways": {
 							Type:        schema.TypeString,
-							Optional:    true,
-							Default:     "/infra/tier-1s/26cdb82e-0057-4461-ad4d-cddd61d77b1f",
+							Required:    true,
 							Description: "Network Loadbalancer NSX-T tier1 gateway",
 						},
 					},
@@ -98,7 +112,7 @@ func LoadBalancer() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
-		ReadContext:   LoadBalancerReadContext,
+		ReadContext:   LoadbalancerReadContext,
 		UpdateContext: LoadbalancerUpdateContext,
 		CreateContext: LoadbalancerCreateContext,
 		DeleteContext: LoadbalancerDeleteContext,

@@ -43,9 +43,6 @@ func (lb *loadBalancer) Update(ctx context.Context, d *utils.Data, meta interfac
 		return err
 	}
 
-	updateReq.NetworkLoadBalancer.Config.Loglevel = loglevel
-	updateReq.NetworkLoadBalancer.Config.Size = size
-
 	retry := &utils.CustomRetry{
 		InitialDelay: time.Second * 15,
 		RetryDelay:   time.Second * 30,
@@ -79,8 +76,6 @@ func (lb *loadBalancer) Create(ctx context.Context, d *utils.Data, meta interfac
 		}
 	}
 
-	createReq.NetworkLoadBalancer.Config.Loglevel = loglevel
-	createReq.NetworkLoadBalancer.Config.Size = size
 	lbResp, err := lb.lbClient.CreateLoadBalancer(ctx, createReq)
 	if err != nil {
 		return err
