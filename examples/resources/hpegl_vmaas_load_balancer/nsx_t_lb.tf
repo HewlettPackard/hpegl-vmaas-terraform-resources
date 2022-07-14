@@ -4,11 +4,9 @@ resource "hpegl_vmaas_load_balancer" "tf_lb" {
   name  = "lab-2"       
   description  = "CREATE load balancer for test"
   enabled      =  true 
-
   group_access {
     all = true
   }
-
   config {
     admin_state = true
     size = "SMALL"
