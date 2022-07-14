@@ -26,8 +26,6 @@ const (
 
 	// load balancer consts
 	networkServerID = 1
-	size            = "SMALL"
-	loglevel        = "INFO"
 
 	syncedTypeValue = "Synced"
 )
