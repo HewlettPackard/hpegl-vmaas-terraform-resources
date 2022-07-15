@@ -3,12 +3,12 @@
 # TCP Monitor
 resource "hpegl_vmaas_load_balancer_monitor" "tf_lb_monitor" {
   lb_id = data.hpegl_vmaas_load_balancer.tf_lb.id
-  name  =  "TCP-MONITOR"       
-  description  = "Creating lb monitor for TCP"
+  name  =  "tf_TCP_MONITOR"       
+  description  = "TCP_MONITOR create using tf"
   type = "LBTcpMonitorProfile"
   fall_count = 3
   interval =  5 
-  alias_port = 80
+  monitor_port = 80
   rise_count = 3
   timeout = 15
   request_body = "request body data"

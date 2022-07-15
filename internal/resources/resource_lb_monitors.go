@@ -85,8 +85,10 @@ func LoadBalancerMonitor() *schema.Resource {
 				Optional:    true,
 			},
 			"request_version": {
-				Type:        schema.TypeString,
-				Description: "request version to send the monitor version details",
+				Type: schema.TypeString,
+				ValidateDiagFunc: validations.StringInSlice([]string{"HTTP_VERSION_1_0",
+					"HTTP_VERSION_1_1"}, false),
+				Description: "Supported values are `HTTP_VERSION_1_0`,`HTTP_VERSION_1_1`",
 				Optional:    true,
 			},
 			"response_data": {
@@ -116,11 +118,11 @@ func LoadBalancerMonitor() *schema.Resource {
 				Description: "send type method like GET,POST",
 				Optional:    true,
 			},
-			"alias_port": {
-				Type:        schema.TypeInt,
-				Optional:    true,
-				Description: "Network loadbalancer Monitor alias port",
-			},
+			// "monitor_port": {
+			// 	Type:        schema.TypeInt,
+			// 	Optional:    true,
+			// 	Description: "Network loadbalancer Monitor alias port",
+			// },
 		},
 		ReadContext:   loadbalancerMonitorReadContext,
 		UpdateContext: loadbalancerMonitorUpdateContext,

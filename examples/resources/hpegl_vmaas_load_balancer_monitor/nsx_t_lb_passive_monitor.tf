@@ -3,10 +3,9 @@
 # PASSIVE Monitor
 resource "hpegl_vmaas_load_balancer_monitor" "tf_lb_monitor" {
   lb_id = data.hpegl_vmaas_load_balancer.tf_lb.id
-  name  =  "PASSIVE-MONITOR"       
-  description  = "Creating lb monitor for PASSIVE"
+  name  =  "tf_PASSIVE_MONITOR"       
+  description  = "PASSIVE_MONITOR create using tf"
   type = "LBPassiveMonitorProfile"
   timeout = 15
-  data_length = 56
   max_fail = 5
 }
