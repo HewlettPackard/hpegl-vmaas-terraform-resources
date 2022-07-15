@@ -13,10 +13,8 @@ jobs:
         go: [ '1.17' ]
     name: Acceptance Tests
     steps:
-
       - name: Checkout workspace
         uses: actions/checkout@v2
-
       - name: Set up Go
         uses: actions/setup-go@v2
         with:
