@@ -21,7 +21,7 @@ func LoadBalancerData() *schema.Resource {
 			},
 			"lb_id": {
 				Type:        schema.TypeInt,
-				Required:    true,
+				Computed:    true,
 				Description: "Parent lb ID, lb_id can be obtained by using LB datasource/resource.",
 			},
 		},
