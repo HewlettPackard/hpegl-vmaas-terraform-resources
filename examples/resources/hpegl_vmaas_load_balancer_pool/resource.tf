@@ -12,6 +12,5 @@ resource "hpegl_vmaas_load_balancer_pool" "lb_pool" {
     passive_monitor_path = data.hpegl_vmaas_passive_monitor.tf_lb_passive.id
     tcp_multiplexing = false
     tcp_multiplexing_number = 6 
-    snat_ip_address = ""
   }
 }
