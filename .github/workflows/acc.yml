@@ -1,10 +1,10 @@
-name: GitHub Actions CI - Acceptance
+name: acc
 
 on:
-  workflow_dispatch:
   push:
     branches:
       - master
+  workflow_dispatch:
 jobs:
   acc:
     runs-on: ubuntu-20.04
