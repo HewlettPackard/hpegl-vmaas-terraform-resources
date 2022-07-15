@@ -50,12 +50,12 @@ func (lb *loadBalancer) Create(ctx context.Context, d *utils.Data, meta interfac
 			ResourcePermissions: models.EnableResourcePermissions{
 				All: d.GetBool("all"),
 			},
-			// Config: models.CreateConfig{
-			// 	AdminState: d.GetBool("admin_state"),
-			// 	Loglevel:   d.GetString("loglevel"),
-			// 	Size:       d.GetString("size"),
-			// 	Tier1:      d.GetString("tier1"),
-			// },
+			Config: models.CreateConfig{
+				AdminState: d.GetBool("admin_state"),
+				Loglevel:   d.GetString("loglevel"),
+				Size:       d.GetString("size"),
+				Tier1:      d.GetString("tier1"),
+			},
 		},
 	}
 
