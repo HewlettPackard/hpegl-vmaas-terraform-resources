@@ -45,7 +45,6 @@ func (lb *loadBalancerPool) Create(ctx context.Context, d *utils.Data, meta inte
 		return err
 	}
 
-	createReq.CreateLBPoolReq.PoolConfig.SnatTranslationType = SnatTranslationType
 	lbPoolResp, err := lb.lbClient.CreateLBPool(ctx, createReq, createReq.CreateLBPoolReq.LbID)
 	if err != nil {
 		return err
@@ -77,8 +76,6 @@ func (lb *loadBalancerPool) Update(ctx context.Context, d *utils.Data, meta inte
 	if err := tftags.Get(d, &updateReq.CreateLBPoolReq); err != nil {
 		return err
 	}
-
-	updateReq.CreateLBPoolReq.PoolConfig.SnatTranslationType = SnatTranslationType
 
 	retry := &utils.CustomRetry{
 		InitialDelay: time.Second * 15,
