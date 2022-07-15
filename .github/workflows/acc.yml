@@ -8,7 +8,7 @@ on:
 jobs:
   acc:
     runs-on: ubuntu-20.04
-     strategy:
+    strategy:
       matrix:
         go: [ '1.17' ]
     name: Acceptance Tests
