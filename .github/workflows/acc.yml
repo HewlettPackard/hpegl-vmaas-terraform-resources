@@ -1,6 +1,7 @@
 name: GitHub Actions CI - Acceptance
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - master
