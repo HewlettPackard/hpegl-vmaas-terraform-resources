@@ -5,6 +5,7 @@ package resources
 import (
 	"context"
 
+	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/resources/schemas"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/resources/validations"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/utils"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/client"
@@ -37,99 +38,19 @@ func LoadBalancerMonitor() *schema.Resource {
 				Required:         true,
 				Description:      "Network Loadbalancer Supported values are `LBHttpMonitorProfile`,`LBHttpsMonitorProfile`, `LBIcmpMonitorProfile`, `LBPassiveMonitorProfile`,`LBTcpMonitorProfile`, `LBUdpMonitorProfile`",
 			},
-			"fall_count": {
-				Type:        schema.TypeInt,
-				Optional:    true,
-				Default:     3,
-				Description: "Network loadbalancer Monitor fall counts",
-			},
-			"interval": {
-				Type:        schema.TypeInt,
-				Default:     5,
-				Description: "Interval time for Network loadbalancer Monitor",
-				Optional:    true,
-			},
-			"monitor_port": {
-				Type:        schema.TypeInt,
-				Description: "Interval time for Network loadbalancer Monitor",
-				Optional:    true,
-			},
-			"rise_count": {
-				Type:        schema.TypeInt,
-				Optional:    true,
-				Default:     3,
-				Description: "Network loadbalancer Monitor rise counts",
-			},
-			"timeout": {
-				Type:        schema.TypeInt,
-				Optional:    true,
-				Default:     15,
-				Description: "Timeout for Network loadbalancer Monitor",
-			},
-			"request_body": {
-				Type:        schema.TypeString,
-				Description: "request body to send the monitor details",
-				Optional:    true,
-			},
-			"request_method": {
-				Type:     schema.TypeString,
-				Optional: true,
-				ValidateDiagFunc: validations.StringInSlice([]string{"GET", "POST", "OPTIONS",
-					"HEAD", "PUT"}, false),
-				Default:     "GET",
-				Description: "Supported values are `GET`,`POST`,`OPTIONS`, `HEAD`,`PUT`",
-			},
-			"request_url": {
-				Type:        schema.TypeString,
-				Description: "request url to send the monitor urls",
-				Optional:    true,
-			},
-			"request_version": {
-				Type: schema.TypeString,
-				ValidateDiagFunc: validations.StringInSlice([]string{"HTTP_VERSION_1_0",
-					"HTTP_VERSION_1_1"}, false),
-				Description: "Supported values are `HTTP_VERSION_1_0`,`HTTP_VERSION_1_1`",
-				Optional:    true,
-			},
-			"response_data": {
-				Type:        schema.TypeString,
-				Description: "response data to get the monitor data",
-				Optional:    true,
-			},
-			"response_status_codes": {
-				Type:        schema.TypeString,
-				Description: "response status codes for the monitor calls",
-				Optional:    true,
-			},
-			"data_length": {
-				Type:        schema.TypeInt,
-				Default:     56,
-				Description: "data length is for the ICMP monitor type",
-				Optional:    true,
-			},
-			"max_fail": {
-				Type:        schema.TypeInt,
-				Default:     5,
-				Description: "maximum failure for the ICMP monitor type",
-				Optional:    true,
-			},
-			"send_type": {
-				Type:        schema.TypeString,
-				Description: "send type method like GET,POST",
-				Optional:    true,
-			},
-			// "monitor_port": {
-			// 	Type:        schema.TypeInt,
-			// 	Optional:    true,
-			// 	Description: "Network loadbalancer Monitor alias port",
-			// },
+			"http_monitor":    schemas.HttpMonitorSchema(),
+			"https_monitor":   schemas.HttpsMonitorSchema(),
+			"icmp_monitor":    schemas.IcmpMonitorSchema(),
+			"passive_monitor": schemas.PassiveMonitorSchema(),
+			"tcp_monitor":     schemas.TcpMonitorSchema(),
+			"udp_monitor":     schemas.UdpMonitorSchema(),
 		},
 		ReadContext:   loadbalancerMonitorReadContext,
 		UpdateContext: loadbalancerMonitorUpdateContext,
 		CreateContext: loadbalancerMonitorCreateContext,
 		DeleteContext: loadbalancerMonitorDeleteContext,
-		Description: `loadbalancer Monitor resource facilitates creating,
-		and deleting NSX-T  Network Load Balancers.`,
+		Description: `loadbalancer Monitor resource facilitates creating,updating
+		and deleting NSX-T Network Load Balancers.`,
 	}
 }
 

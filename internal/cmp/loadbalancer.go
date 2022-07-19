@@ -47,16 +47,16 @@ func (lb *loadBalancer) Create(ctx context.Context, d *utils.Data, meta interfac
 			Name:        d.GetString("name"),
 			Description: d.GetString("description"),
 			Enabled:     d.GetBool("enabled"),
-			Visibility:  d.GetString("visibility"),
+			//Visibility:  d.GetString("visibility"),
 			ResourcePermissions: models.EnableResourcePermissions{
 				All: d.GetBool("all"),
 			},
-			Config: models.CreateConfig{
-				AdminState: d.GetBool("admin_state"),
-				Loglevel:   d.GetString("loglevel"),
-				Size:       d.GetString("size"),
-				Tier1:      d.GetString("tier1"),
-			},
+			// Config: models.CreateConfig{
+			// 	AdminState: d.GetBool("admin_state"),
+			// 	Loglevel:   d.GetString("loglevel"),
+			// 	Size:       d.GetString("size"),
+			// 	Tier1:      d.GetString("tier1"),
+			// },
 		},
 	}
 

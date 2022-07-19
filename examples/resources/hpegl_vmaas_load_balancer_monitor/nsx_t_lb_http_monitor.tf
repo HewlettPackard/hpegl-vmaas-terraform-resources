@@ -1,20 +1,22 @@
 # (C) Copyright 2022 Hewlett Packard Enterprise Development LP
 
 # HTTP Monitor
-resource "hpegl_vmaas_load_balancer_monitor" "tf_lb_monitor" {
-  lb_id = data.hpegl_vmaas_load_balancer.tf_lb.id  
+resource "hpegl_vmaas_load_balancer_monitor" "tf_HTTP_MONITOR" {
+  lb_id = data.hpegl_vmaas_load_balancer.tf_lb.id 
   name  =  "tf_HTTP_MONITOR"       
-  description  = "HTTP_MONITOR created using tf"
+  description  = "HTTP_MONITOR creating using tf"
   type = "LBHttpMonitorProfile"
-  fall_count = 3
-  interval =  5  
-  monitor_port = 80
-  rise_count = 3
-  timeout = 15
-  request_body = "request input body data"
-  request_method = "GET"
-  request_url = "https://request.com"
-  request_version  = "HTTP_VERSION_1_0" 
-  response_data = "success"
-  response_status_codes  = "201,200"
+  http_monitor {
+    fall_count = 8
+    interval =  10  
+    monitor_port = 50
+    rise_count = 5
+    timeout = 30
+    request_body = "request input body data"
+    request_method = "GET"
+    request_url = "https://request.com"
+    request_version  = "HTTP_VERSION_1_0" 
+    response_data = "Failed"
+    response_status_codes  = "500"
+  }
 }
