@@ -58,7 +58,7 @@ func (lb *loadBalancerProfile) Create(ctx context.Context, d *utils.Data, meta i
 				RequestHeaderSize:      d.GetInt("request_header_size"),
 				ResponseHeaderSize:     d.GetInt("response_header_size"),
 				ResponseTimeout:        d.GetInt("response_timeout"),
-				HTTPIdleTimeoutName:    d.GetInt("http_idle_timeout"),
+				HTTPIdleTimeout:        d.GetInt("http_idle_timeout"),
 				FastTCPIdleTimeout:     d.GetInt("fast_tcp_idle_timeout"),
 				ConnectionCloseTimeout: d.GetInt("connection_close_timeout"),
 				HaFlowMirroring:        d.GetBool("ha_flow_mirroring"),
@@ -87,7 +87,7 @@ func (lb *loadBalancerProfile) Create(ctx context.Context, d *utils.Data, meta i
 	createReq.CreateLBProfileReq.ProfileConfig.RequestHeaderSize = 30
 	createReq.CreateLBProfileReq.ProfileConfig.ResponseHeaderSize = 40
 	createReq.CreateLBProfileReq.ProfileConfig.ResponseTimeout = 40
-	createReq.CreateLBProfileReq.ProfileConfig.HTTPIdleTimeoutName = 50
+	createReq.CreateLBProfileReq.ProfileConfig.HTTPIdleTimeout = 50
 
 	lbProfileResp, err := lb.lbClient.CreateLBProfile(ctx, createReq, lbDetails.GetNetworkLoadBalancerResp[0].ID)
 	if err != nil {

@@ -1,4 +1,4 @@
-// (C) Copyright 2021 Hewlett Packard Enterprise Development LP
+// (C) Copyright 2021-2022 Hewlett Packard Enterprise Development LP
 
 package cmp
 
@@ -23,6 +23,5 @@ const (
 	tier0GatewayType             = "NSX-T Tier-0 Gateway"
 	tier1GatewayType             = "NSX-T Tier-1 Gateway"
 	routerFirewallExternalPolicy = "GatewayPolicy"
-
-	syncedTypeValue = "Synced"
+	syncedTypeValue              = "Synced"
 )

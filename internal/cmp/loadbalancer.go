@@ -15,11 +15,13 @@ import (
 
 type loadBalancer struct {
 	lbClient *client.LoadBalancerAPIService
+	rClient  *client.RouterAPIService
 }
 
-func newLoadBalancer(loadBalancerClient *client.LoadBalancerAPIService) *loadBalancer {
+func newLoadBalancer(loadBalancerClient *client.LoadBalancerAPIService, routerClient *client.RouterAPIService) *loadBalancer {
 	return &loadBalancer{
 		lbClient: loadBalancerClient,
+		rClient:  routerClient,
 	}
 }
 
@@ -37,60 +39,80 @@ func (lb *loadBalancer) Read(ctx context.Context, d *utils.Data, meta interface{
 }
 
 func (lb *loadBalancer) Update(ctx context.Context, d *utils.Data, meta interface{}) error {
+	id := d.GetID()
+	var updateReq models.CreateLoadBalancerRequest
+	if err := tftags.Get(d, &updateReq.NetworkLoadBalancer); err != nil {
+		return err
+	}
+
+	retry := &utils.CustomRetry{
+		InitialDelay: time.Second * 15,
+		RetryDelay:   time.Second * 30,
+	}
+	_, err := retry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
+		return lb.lbClient.UpdateLoadBalancer(ctx, id, updateReq)
+	})
+	if err != nil {
+		return err
+	}
+
+	return tftags.Set(d, updateReq.NetworkLoadBalancer)
+}
+
+func (lb *loadBalancer) loadBalancerAlignRequest(ctx context.Context, meta interface{},
+	createReq *models.CreateLoadBalancerRequest) error {
+
+	allTypes, _ := lb.lbClient.GetLoadBalancerTypes(ctx, map[string]string{
+		nameKey: nsxt,
+	})
+
+	// Get network service ID
+	setMeta(meta, lb.rClient.Client)
+	nsRetry := utils.CustomRetry{}
+	nsRetry.RetryParallel(ctx, meta, func(ctx context.Context) (interface{}, error) {
+		return lb.rClient.GetNetworkServices(ctx, nil)
+	})
+
+	// Align Network Server
+	nsResp, err := nsRetry.Wait()
+	if err != nil {
+		return err
+	}
+	networkService := nsResp.(models.GetNetworkServicesResp)
+
+	for i, n := range networkService.NetworkServices {
+		if n.TypeName == nsxt {
+			createReq.NetworkLoadBalancer.NetworkServerID = networkService.NetworkServices[i].ID
+			break
+		}
+	}
+	for i, n := range allTypes.LoadBalancerTypes {
+		if n.Name == nsxt {
+			createReq.NetworkLoadBalancer.Type = allTypes.LoadBalancerTypes[i].Name
+			break
+		}
+	}
 	return nil
 }
 
 func (lb *loadBalancer) Create(ctx context.Context, d *utils.Data, meta interface{}) error {
 	setMeta(meta, lb.lbClient.Client)
-	createReq := models.CreateLoadBalancerRequest{
-		NetworkLoadBalancer: models.CreateNetworkLoadBalancerRequest{
-			Name:        d.GetString("name"),
-			Description: d.GetString("description"),
-			Enabled:     d.GetBool("enabled"),
-			Visibility:  d.GetString("visibility"),
-			ResourcePermissions: models.EnableResourcePermissions{
-				All: d.GetBool("all"),
-			},
-			Config: models.CreateConfig{
-				AdminState: d.GetBool("admin_state"),
-				Loglevel:   d.GetString("loglevel"),
-				Size:       d.GetString("size"),
-				Tier1:      d.GetString("tier1"),
-			},
-		},
-	}
-
-	// Get load balancer type id for NSX-T
-	typeRetry := utils.CustomRetry{}
-	typeRetry.RetryParallel(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return lb.lbClient.GetLoadBalancerTypes(ctx, map[string]string{
-			nameKey: nsxt,
-		})
-	})
-
-	typeResp, err := typeRetry.Wait()
-	if err != nil {
+	var createReq models.CreateLoadBalancerRequest
+	if err := tftags.Get(d, &createReq.NetworkLoadBalancer); err != nil {
 		return err
 	}
 
-	types := typeResp.(models.GetLoadBalancerTypes)
-
-	for i, n := range types.LoadBalancerTypes {
-		if n.Name == nsxt {
-			createReq.NetworkLoadBalancer.Type = types.LoadBalancerTypes[i].Name
-			createReq.NetworkLoadBalancer.NetworkServerID = 1
-			break
-		}
+	// align createReq and fill json related fields
+	if err := lb.loadBalancerAlignRequest(ctx, meta, &createReq); err != nil {
+		return err
 	}
-	createReq.NetworkLoadBalancer.Config.Loglevel = "INFO"
-	createReq.NetworkLoadBalancer.Config.Size = "SMALL"
 
 	lbResp, err := lb.lbClient.CreateLoadBalancer(ctx, createReq)
 	if err != nil {
 		return err
 	}
 	if !lbResp.Success {
-		return fmt.Errorf(successErr, "creating loadBalancer")
+		return fmt.Errorf(successErr, "creating LB")
 	}
 	createReq.NetworkLoadBalancer.ID = lbResp.NetworkLoadBalancerResp.ID
 
@@ -99,7 +121,6 @@ func (lb *loadBalancer) Create(ctx context.Context, d *utils.Data, meta interfac
 		InitialDelay: time.Second * 15,
 		RetryDelay:   time.Second * 30,
 	}
-
 	_, err = retry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
 		return lb.lbClient.GetSpecificLoadBalancers(ctx, lbResp.NetworkLoadBalancerResp.ID)
 	})
