@@ -5,6 +5,7 @@ package resources
 import (
 	"context"
 
+	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/resources/schemas"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/resources/validations"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/utils"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/client"
@@ -42,179 +43,14 @@ func LoadBalancerProfiles() *schema.Resource {
 				Description: "profile Configuration",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"profile_type": {
-							Type: schema.TypeString,
-							ValidateDiagFunc: validations.StringInSlice([]string{
-								"application-profile", "ssl-profile", "persistence-profile",
-							}, false),
-							Required:    true,
-							Description: "Network Loadbalancer Supported values are `application-profile`, `ssl-profile`, `persistence-profile`",
-						},
-						"fast_tcp_idle_timeout": {
-							Type:             schema.TypeInt,
-							Optional:         true,
-							Default:          1800,
-							ValidateDiagFunc: validations.IntBetween(1, 2147483647),
-							Description:      "http_idle_timeout for Network Load balancer Profile",
-						},
-						"fast_udp_idle_timeout": {
-							Type:             schema.TypeInt,
-							Optional:         true,
-							Default:          300,
-							ValidateDiagFunc: validations.IntBetween(1, 2147483647),
-							Description:      "fast_udp_idle_timeout for Network Load balancer Profile",
-						},
-						"http_idle_timeout": {
-							Type:             schema.TypeInt,
-							Optional:         true,
-							Default:          15,
-							ValidateDiagFunc: validations.IntBetween(1, 5400),
-							Description:      "http_idle_timeout for Network Load balancer Profile",
-						},
-						"ha_flow_mirroring": {
-							Type:        schema.TypeBool,
-							Optional:    true,
-							Default:     false,
-							Description: "ha_flow_mirroring for Network Load balancer Profile",
-						},
-						"connection_close_timeout": {
-							Type:             schema.TypeInt,
-							Optional:         true,
-							Default:          30,
-							ValidateDiagFunc: validations.IntBetween(1, 60),
-							Description:      "connection_close_timeout for Network Load balancer Profile",
-						},
-						"request_header_size": {
-							Type:     schema.TypeInt,
-							Optional: true,
-							//Default:     1024,
-							ValidateDiagFunc: validations.IntBetween(1, 65536),
-							Description:      "request_header_size for Network Load balancer Profile",
-						},
-						"response_header_size": {
-							Type:             schema.TypeInt,
-							Optional:         true,
-							ValidateDiagFunc: validations.IntBetween(1, 65536),
-							//Default:     4096,
-							Description: "response_header_size for Network Load balancer Profile",
-						},
-						"redirection": {
-							Type:        schema.TypeString,
-							Optional:    true,
-							Description: "redirection for Network Load balancer Profile",
-						},
-						"x_forwarded_for": {
-							Type:        schema.TypeString,
-							Optional:    true,
-							Description: "x_forwarded_for for Network Load balancer Profile",
-						},
-						"request_body_size": {
-							Type:        schema.TypeString,
-							Optional:    true,
-							Description: "request_body_size for Network Load balancer Profile",
-						},
-						"response_timeout": {
-							Type:             schema.TypeInt,
-							Optional:         true,
-							ValidateDiagFunc: validations.IntBetween(1, 2147483647),
-							Description:      "response_timeout for Network Load balancer Profile",
-						},
-						"ntlm_authentication": {
-							Type:        schema.TypeBool,
-							Optional:    true,
-							Description: "ntlm_authentication for Network Load balancer Profile",
-						},
-						"share_persistence": {
-							Type:        schema.TypeBool,
-							Optional:    true,
-							Description: "ntlm_authentication for Network Load balancer Profile",
-						},
-						"cookie_name": {
-							Type:        schema.TypeString,
-							Optional:    true,
-							Description: "cookie_name for Network Load balancer Profile",
-						},
-						"cookie_fallback": {
-							Type:        schema.TypeBool,
-							Optional:    true,
-							Description: "cookie_fallback for Network Load balancer Profile",
-						},
-						"cookie_garbling": {
-							Type:        schema.TypeBool,
-							Optional:    true,
-							Description: "cookie_garbling for Network Load balancer Profile",
-						},
-						"cookie_mode": {
-							Type:             schema.TypeString,
-							ValidateDiagFunc: validations.StringInSlice([]string{"INSERT", "PREFIX", "REWRITE"}, false),
-							Optional:         true,
-							Default:          "INSERT",
-							Description:      "Network Loadbalancer Supported values are `INSERT`,`PREFIX`, `REWRITE`",
-						},
-						"cookie_type": {
-							Type:             schema.TypeString,
-							ValidateDiagFunc: validations.StringInSlice([]string{"LBPersistenceCookieTime", "LBSessionCookieTime"}, false),
-							Optional:         true,
-							Description:      "Network Loadbalancer Supported values are `LBPersistenceCookieTime`,`LBSessionCookieTime`",
-						},
-						"cookie_domain": {
-							Type:        schema.TypeString,
-							Optional:    true,
-							Description: "cookie_domain for Network Load balancer Profile",
-						},
-						"cookie_path": {
-							Type:        schema.TypeString,
-							Optional:    true,
-							Description: "cookie_path for Network Load balancer Profile",
-						},
-						"max_idle_time": {
-							Type:        schema.TypeInt,
-							Optional:    true,
-							Description: "max_idle_time for Network Load balancer Profile",
-						},
-						"max_cookie_age": {
-							Type:        schema.TypeInt,
-							Optional:    true,
-							Description: "max_cookie_age for Network Load balancer Profile",
-						},
-						"ha_persistence_mirroring": {
-							Type:        schema.TypeBool,
-							Optional:    true,
-							Description: "ha_persistence_mirroring for Network Load balancer Profile",
-						},
-						"persistence_entry_timeout": {
-							Type:             schema.TypeInt,
-							Optional:         true,
-							Default:          300,
-							ValidateDiagFunc: validations.IntBetween(1, 2147483647),
-							Description:      "persistence_entry_timeout for Network Load balancer Profile",
-						},
-						"purge_entries_when_full": {
-							Type:        schema.TypeBool,
-							Optional:    true,
-							Description: "purge_entries_when_full for Network Load balancer Profile",
-						},
-						"ssl_suite": {
-							Type:             schema.TypeString,
-							ValidateDiagFunc: validations.StringInSlice([]string{"BALANCED", "HIGH_SECURITY", "HIGH_COMPATIBILITY", "CUSTOM"}, false),
-							Optional:         true,
-							Description:      "Network Loadbalancer Supported values are `BALANCED`,`HIGH_SECURITY`, `HIGH_COMPATIBILITY`,`CUSTOM`",
-						},
-						"session_cache": {
-							Type:        schema.TypeBool,
-							Optional:    true,
-							Description: "session_cache for Network Load balancer Profile",
-						},
-						"session_cache_entry_timeout": {
-							Type:        schema.TypeInt,
-							Optional:    true,
-							Description: "session_cache_entry_timeout for Network Load balancer Profile",
-						},
-						"prefer_server_cipher": {
-							Type:        schema.TypeBool,
-							Optional:    true,
-							Description: "prefer_server_cipher for Network Load balancer Profile",
-						},
+						"http_profile":     schemas.HttpProfileSchema(),
+						"tcp_profile":      schemas.TcpProfileSchema(),
+						"udp_profile":      schemas.UdpProfileSchema(),
+						"cookie_profile":   schemas.CookieProfileSchema(),
+						"sourceip_profile": schemas.SourceIPProfileSchema(),
+						"generic_profile":  schemas.GenericProfileSchema(),
+						"client_profile":   schemas.ClientProfileSchema(),
+						"server_profile":   schemas.ServerProfileSchema(),
 						"tags": {
 							Type:        schema.TypeList,
 							Optional:    true,

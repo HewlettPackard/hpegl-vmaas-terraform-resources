@@ -1,15 +1,17 @@
 # (C) Copyright 2022 Hewlett Packard Enterprise Development LP
 
 # SSL Profile for SERVER service
-resource "hpegl_vmaas_load_balancer_profile" "tf_lb_profile" {
-  lb_id = data.hpegl_vmaas_load_balancer.lb.id  
-  name  =  "SSL-SERVER-Profile"       
-  description  = "creating LB Profile"
+resource "hpegl_vmaas_load_balancer_profile" "tf_SSL-SERVER" {
+  lb_id = data.hpegl_vmaas_load_balancer.tf_lb.id  
+  name  =  "tf_SSL-SERVER"       
+  description  = "SSL-SERVER creating using tf"
   service_type     = "LBServerSslProfile"
   config {
-    profile_type = "ssl-profile"
-    ssl_suite = "Balanced"
-    session_cache = true
+    server_profile{
+      profile_type = "ssl-profile"
+      ssl_suite = "BALANCED"
+      session_cache = true
+    }
     tags {
         tag = "tag1"
         scope = "scope1"
