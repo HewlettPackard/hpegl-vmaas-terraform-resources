@@ -28,7 +28,7 @@ func LBPersistenceProfileData() *schema.Resource {
 		ReadContext: PersistenceProfileReadContext,
 		Description: `The ` + DSLBPersistenceProfile + ` data source can be used to discover the ID of a hpegl vmaas network load balancer.
 		This can then be used with resources or data sources that require a ` + DSLBPersistenceProfile + `,
-		such as the ` + ResLoadBalancerProfiles + ` resource.`,
+		such as the ` + ResLBPersistenceProfile + ` resource.`,
 		SchemaVersion:  0,
 		StateUpgraders: nil,
 		Importer: &schema.ResourceImporter{

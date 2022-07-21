@@ -28,7 +28,7 @@ func LBApplicationProfileData() *schema.Resource {
 		ReadContext: ApplicationProfileReadContext,
 		Description: `The ` + DSLBApplicationProfile + ` data source can be used to discover the ID of a hpegl vmaas network load balancer.
 		This can then be used with resources or data sources that require a ` + DSLBApplicationProfile + `,
-		such as the ` + ResLoadBalancerProfiles + ` resource.`,
+		such as the ` + ResLBApplicationProfile + ` resource.`,
 		SchemaVersion:  0,
 		StateUpgraders: nil,
 		Importer: &schema.ResourceImporter{
