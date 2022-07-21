@@ -19,15 +19,15 @@ func LoadBalancer() *schema.Resource {
 				Required:    true,
 				Description: "Network loadbalancer name",
 			},
-			"type": {
+			"lb_type": {
 				Type:        schema.TypeString,
-				Description: "Type of Network loadbalancer",
 				Computed:    true,
+				Description: "Type of Network loadbalancer",
 			},
 			"description": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "creating Network loadbalancer",
+				Description: "Creating the  Network loadbalancer",
 			},
 			"network_server_id": {
 				Type:        schema.TypeInt,
@@ -37,32 +37,48 @@ func LoadBalancer() *schema.Resource {
 			"enabled": {
 				Type:        schema.TypeBool,
 				Optional:    true,
-				Description: "Network Loadbalancer configuration enabled",
+				Description: "Pass `true` to allow for enabled and Pass `false` to disabled",
 				Default:     true,
 			},
-			"visibility": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "Network Loadbalancer is public/private visibility mode",
-			},
-			"resource_permission": {
-				Type:        schema.TypeList,
-				Required:    true,
-				Description: "permission access for Loadbalancer",
+			"group_access": {
+				Type:     schema.TypeList,
+				Optional: true,
+				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"all": {
 							Type:        schema.TypeBool,
-							Default:     true,
 							Optional:    true,
-							Description: "If `true` then resource_permission rule will be active/enabled.",
+							Default:     true,
+							Description: "Pass `true` to allow access to all groups.",
+						},
+						"sites": {
+							Type:        schema.TypeList,
+							Optional:    true,
+							Description: "List of sites/groups",
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"id": {
+										Type:        schema.TypeInt,
+										Optional:    true,
+										Default:     false,
+										Description: "ID of the site/group",
+									},
+									"default": {
+										Type:        schema.TypeBool,
+										Optional:    true,
+										Default:     false,
+										Description: "Group Default Selection",
+									},
+								},
+							},
 						},
 					},
 				},
 			},
 			"config": {
 				Type:        schema.TypeList,
-				Optional:    true,
+				Required:    true,
 				Description: "Network Load Balancer Configuration",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -74,19 +90,20 @@ func LoadBalancer() *schema.Resource {
 						},
 						"size": {
 							Type:        schema.TypeString,
+							Default:     "SMALL",
 							Optional:    true,
 							Description: `In Filter. Supported Values are "SMALL", "MEDIUM", "LARGE"`,
 						},
-						"loglevel": {
+						"log_level": {
 							Type:        schema.TypeString,
+							Default:     "INFO",
 							Optional:    true,
 							Description: `In Filter. Supported Values are "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL", "ALERT", "EMERGENCY"`,
 						},
-						"tier1": {
+						"tier1_gateways": {
 							Type:        schema.TypeString,
-							Optional:    true,
-							Default:     true,
-							Description: "Network Loadbalancer NSX-T tier1 gateway",
+							Required:    true,
+							Description: "Provider ID of the Tier1 Gateway. Use " + DSRouter + " datasource to obtain the provider_id  here.",
 						},
 					},
 				},
@@ -96,11 +113,11 @@ func LoadBalancer() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
-		ReadContext:   LoadBalancerReadContext,
-		UpdateContext: LoadbalancerCreateContext,
+		ReadContext:   LoadbalancerReadContext,
+		UpdateContext: LoadbalancerUpdateContext,
 		CreateContext: LoadbalancerCreateContext,
 		DeleteContext: LoadbalancerDeleteContext,
-		Description: `loadbalancer resource facilitates creating,
+		Description: `loadbalancer resource facilitates creating, updating
 		and deleting NSX-T  Network Load Balancers.`,
 	}
 }
@@ -131,6 +148,20 @@ func LoadbalancerCreateContext(ctx context.Context, rd *schema.ResourceData, met
 	}
 
 	return LoadbalancerReadContext(ctx, rd, meta)
+}
+
+func LoadbalancerUpdateContext(ctx context.Context, rd *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	c, err := client.GetClientFromMetaMap(meta)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	data := utils.NewData(rd)
+	if err := c.CmpClient.LoadBalancer.Update(ctx, data, meta); err != nil {
+		return diag.FromErr(err)
+	}
+
+	return nil
 }
 
 func LoadbalancerDeleteContext(ctx context.Context, rd *schema.ResourceData, meta interface{}) diag.Diagnostics {
