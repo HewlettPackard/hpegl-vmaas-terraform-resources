@@ -78,6 +78,7 @@ func LoadBalancerPools() *schema.Resource {
 							Optional:    true,
 							Description: "snat_ip_address for Network loadbalancer pool",
 						},
+
 						"member_group": {
 							Type:        schema.TypeList,
 							Optional:    true,
@@ -106,6 +107,25 @@ func LoadBalancerPools() *schema.Resource {
 									},
 								},
 							},
+						},
+					},
+				},
+			},
+			"tags": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "tags Configuration",
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"tag": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "tag for Network Load balancer Profile",
+						},
+						"scope": {
+							Type:        schema.TypeString,
+							Optional:    true,
+							Description: "scope for Network Load balancer Profile",
 						},
 					},
 				},

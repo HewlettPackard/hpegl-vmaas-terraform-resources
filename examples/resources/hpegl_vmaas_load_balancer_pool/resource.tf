@@ -1,9 +1,9 @@
 # (C) Copyright 2022 Hewlett Packard Enterprise Development LP
 
-resource "hpegl_vmaas_load_balancer_pool" "lb_pool" {
+resource "hpegl_vmaas_load_balancer_pool" "tf_POOL" {
   lb_id = data.hpegl_vmaas_load_balancer.tf_lb.id 
   name  =  "tf_POOL"       
-  description  = "pool created using tf"
+  description  = "POOL created using tf"
   min_active_members     = 1
   algorithm = "WEIGHTED_ROUND_ROBIN"
   config {
@@ -13,4 +13,8 @@ resource "hpegl_vmaas_load_balancer_pool" "lb_pool" {
     tcp_multiplexing = false
     tcp_multiplexing_number = 6 
   }
+  tags {
+    tag = "tag1"
+    scope = "scope1"
+  } 
 }
