@@ -18,8 +18,6 @@ import (
 // This must be unique, hpegl will error-out if it isn't
 const keyForGLClientMap = "vmaasClient"
 
-var serviceURL string
-
 // Assert that InitialiseClient satisfies the client.Initialisation interface
 var _ client.Initialisation = (*InitialiseClient)(nil)
 

@@ -24,7 +24,7 @@ func getAPIClient() (*api_client.APIClient, api_client.Configuration) {
 	}
 
 	cfg := api_client.Configuration{
-		Host: os.Getenv("HPEGL_VMAAS_API_URL"),
+		Host:          os.Getenv("HPEGL_VMAAS_API_URL"),
 		DefaultHeader: headers,
 		DefaultQueryParams: map[string]string{
 			constants.LocationKey: os.Getenv("HPEGL_VMAAS_LOCATION"),
