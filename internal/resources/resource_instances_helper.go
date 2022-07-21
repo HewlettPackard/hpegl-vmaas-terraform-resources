@@ -207,8 +207,9 @@ func getInstanceDefaultSchema(isClone bool) *schema.Resource {
 						},
 						"folder_code": {
 							Type:        schema.TypeString,
-							Required:    true,
-							Description: "Folder in which all VMs to be spawned, use hpegl_vmaas_folder.code datasource",
+							Optional:    isClone,
+							Required:    !isClone,
+							Description: "Folder in which all VMs to be spawned, use hpegl_vmaas_cloud_folder.code datasource",
 						},
 						"asset_tag": {
 							Type:        schema.TypeString,
