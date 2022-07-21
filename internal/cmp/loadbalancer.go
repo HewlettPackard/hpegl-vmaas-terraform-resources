@@ -59,40 +59,11 @@ func (lb *loadBalancer) Update(ctx context.Context, d *utils.Data, meta interfac
 	return tftags.Set(d, updateReq.NetworkLoadBalancer)
 }
 
-<<<<<<< HEAD
-func (lb *loadBalancer) Create(ctx context.Context, d *utils.Data, meta interface{}) error {
-	setMeta(meta, lb.lbClient.Client)
-	createReq := models.CreateLoadBalancerRequest{
-		NetworkLoadBalancer: models.CreateNetworkLoadBalancerRequest{
-			Name:        d.GetString("name"),
-			Description: d.GetString("description"),
-			Enabled:     d.GetBool("enabled"),
-			//Visibility:  d.GetString("visibility"),
-			ResourcePermissions: models.EnableResourcePermissions{
-				All: d.GetBool("all"),
-			},
-			Config: models.CreateConfig{
-				AdminState: d.GetBool("admin_state"),
-				Loglevel:   d.GetString("loglevel"),
-				Size:       d.GetString("size"),
-				Tier1:      d.GetString("tier1"),
-			},
-		},
-	}
-
-	// Get load balancer type id for NSX-T
-	typeRetry := utils.CustomRetry{}
-	typeRetry.RetryParallel(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return lb.lbClient.GetLoadBalancerTypes(ctx, map[string]string{
-			nameKey: nsxt,
-		})
-=======
 func (lb *loadBalancer) loadBalancerAlignRequest(ctx context.Context, meta interface{},
 	createReq *models.CreateLoadBalancerRequest) error {
 
 	allTypes, _ := lb.lbClient.GetLoadBalancerTypes(ctx, map[string]string{
 		nameKey: nsxt,
->>>>>>> f11f8fa49d2f54d212e2ce783075c0e46ade747e
 	})
 
 	// Get network service ID
