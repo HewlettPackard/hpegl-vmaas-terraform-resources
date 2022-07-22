@@ -8,11 +8,11 @@ resource "hpegl_vmaas_load_balancer_monitor" "tf_TCP_MONITOR" {
   type = "LBTcpMonitorProfile"
   tcp_monitor {
     fall_count = 3
-  interval =  5 
-  monitor_port = 80
-  rise_count = 3
-  timeout = 15
-  request_body = "request body data"
-  response_data = "success"
-}
+    interval =  5 
+    monitor_port = 80
+    rise_count = 3
+    timeout = 15
+    request_body = "request body data"
+    response_data = "success"
+  }
 }
