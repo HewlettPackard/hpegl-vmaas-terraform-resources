@@ -19,42 +19,48 @@ func NewLoadBalancerMonitorValidate(diff *schema.ResourceDiff) *LoadBalancerMoni
 }
 
 func (l *LoadBalancerMonitor) DiffValidate() error {
-	err := l.validateMonitorServiceTypes()
+	err := l.validateHttp()
 	if err != nil {
 		return err
 	}
 
+	err = l.validateHttps()
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
-func (l *LoadBalancerMonitor) validateMonitorServiceTypes() error {
-	serviceType := "type"
-	if l.diff.HasChange(serviceType) {
+func (l *LoadBalancerMonitor) validateHttp() error {
+	serviceType := "http_monitor.0.request_version"
+	if l.diff.HasChange((serviceType)) {
 		service := l.diff.Get(serviceType)
 		switch service {
-		case "LBHttpMonitorProfile":
-			if l.diff.Get("http_monitor") != nil {
-				return fmt.Errorf("please provide http_monitor configurations for serviceType LBHttpMonitorProfile")
+		case "HTTP_VERSION_1_0":
+			if l.diff.Get("type") != "LBHttpMonitorProfile" || l.diff.Get("type") == "" {
+				return fmt.Errorf("please provide type as LBHttpMonitorProfile for http_monitor")
 			}
-		case "LBHttpsMonitorProfile":
-			if l.diff.Get("https_monitor") != nil {
-				return fmt.Errorf("please provide https_monitor configurations for serviceType LBHttpsMonitorProfile")
+		case "HTTP_VERSION_1_1":
+			if l.diff.Get("type") != "LBHttpMonitorProfile" || l.diff.Get("type") == "" {
+				return fmt.Errorf("please provide type as LBHttpMonitorProfile for http_monitor")
 			}
-		case "LBIcmpMonitorProfile":
-			if l.diff.Get("icmp_monitor") != nil {
-				return fmt.Errorf("please provide icmp_monitor configurations for serviceType LBIcmpMonitorProfile")
+		}
+	}
+	return nil
+}
+
+func (l *LoadBalancerMonitor) validateHttps() error {
+	serviceType := "https_monitor.0.request_version"
+	if l.diff.HasChange((serviceType)) {
+		service := l.diff.Get(serviceType)
+		switch service {
+		case "HTTP_VERSION_1_0":
+			if l.diff.Get("type") != "LBHttpsMonitorProfile" || l.diff.Get("type") == "" {
+				return fmt.Errorf("please provide type as LBHttpMonitorProfile for http_monitor")
 			}
-		case "LBPassiveMonitorProfile":
-			if l.diff.Get("passive_monitor") != nil {
-				return fmt.Errorf("please provide passive_monitor configurations for serviceType LBPassiveMonitorProfile")
-			}
-		case "LBTcpMonitorProfile":
-			if l.diff.Get("tcp_monitor") != nil {
-				return fmt.Errorf("please provide tcp_monitor configurations for serviceType LBTcpMonitorProfile")
-			}
-		case "LBUdpMonitorProfile":
-			if l.diff.Get("udp_monitor") != nil {
-				return fmt.Errorf("please provide udp_monitor configurations for serviceType LBUdpMonitorProfile")
+		case "HTTP_VERSION_1_1":
+			if l.diff.Get("type") != "LBHttpsMonitorProfile" || l.diff.Get("type") == "" {
+				return fmt.Errorf("please provide type as LBHttpMonitorProfile for http_monitor")
 			}
 		}
 	}

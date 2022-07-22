@@ -175,7 +175,7 @@ func IcmpMonitorSchema() *schema.Schema {
 		MaxItems:    1,
 		ExactlyOneOf: []string{"http_monitor", "https_monitor", "icmp_monitor",
 			"passive_monitor", "tcp_monitor", "udp_monitor"},
-		ConflictsWith: []string{"http_monitor", "http_monitor",
+		ConflictsWith: []string{"http_monitor", "https_monitor",
 			"passive_monitor", "tcp_monitor", "udp_monitor"},
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
@@ -227,7 +227,7 @@ func PassiveMonitorSchema() *schema.Schema {
 		MaxItems:    1,
 		ExactlyOneOf: []string{"http_monitor", "https_monitor", "icmp_monitor",
 			"passive_monitor", "tcp_monitor", "udp_monitor"},
-		ConflictsWith: []string{"http_monitor", "http_monitor",
+		ConflictsWith: []string{"http_monitor", "https_monitor",
 			"icmp_monitor", "tcp_monitor", "udp_monitor"},
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
@@ -256,7 +256,7 @@ func TcpMonitorSchema() *schema.Schema {
 		MaxItems:    1,
 		ExactlyOneOf: []string{"http_monitor", "https_monitor", "icmp_monitor",
 			"passive_monitor", "tcp_monitor", "udp_monitor"},
-		ConflictsWith: []string{"http_monitor", "http_monitor",
+		ConflictsWith: []string{"http_monitor", "https_monitor",
 			"icmp_monitor", "passive_monitor", "udp_monitor"},
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
@@ -312,7 +312,7 @@ func UdpMonitorSchema() *schema.Schema {
 		MaxItems:    1,
 		ExactlyOneOf: []string{"http_monitor", "https_monitor", "icmp_monitor",
 			"passive_monitor", "tcp_monitor", "udp_monitor"},
-		ConflictsWith: []string{"http_monitor", "http_monitor",
+		ConflictsWith: []string{"http_monitor", "https_monitor",
 			"icmp_monitor", "passive_monitor", "tcp_monitor"},
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
