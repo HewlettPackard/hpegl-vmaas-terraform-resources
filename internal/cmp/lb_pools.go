@@ -50,20 +50,20 @@ func (lb *loadBalancerPool) Create(ctx context.Context, d *utils.Data, meta inte
 			Description: d.GetString("description"),
 			VipBalance:  d.GetString("vip_balance"),
 			MinActive:   d.GetInt("min_active"),
-			PoolConfig: models.PoolConfig{
-				SnatTranslationType:   d.GetString("snat_translation_type"),
-				PassiveMonitorPath:    d.GetInt("passive_monitor_path"),
-				ActiveMonitorPaths:    d.GetInt("active_monitor_paths"),
-				TCPMultiplexing:       d.GetBool("tcp_multiplexing"),
-				TCPMultiplexingNumber: d.GetInt("tcp_multiplexing_number"),
-				SnatIPAddress:         d.GetString("snat_ip_address"),
-				MemberGroup: models.MemberGroup{
-					Name:             d.GetString("name"),
-					Path:             d.GetString("path"),
-					IPRevisionFilter: d.GetString("ip_revision_filter"),
-					Port:             d.GetInt("port"),
-				},
-			},
+			// PoolConfig: models.PoolConfig{
+			// 	SnatTranslationType:   d.GetString("snat_translation_type"),
+			// 	PassiveMonitorPath:    d.GetInt("passive_monitor_path"),
+			// 	ActiveMonitorPaths:    d.GetInt("active_monitor_paths"),
+			// 	TCPMultiplexing:       d.GetBool("tcp_multiplexing"),
+			// 	TCPMultiplexingNumber: d.GetInt("tcp_multiplexing_number"),
+			// 	SnatIPAddress:         d.GetString("snat_ip_address"),
+			// 	MemberGroup: models.MemberGroup{
+			// 		Name:             d.GetString("name"),
+			// 		Path:             d.GetString("path"),
+			// 		IPRevisionFilter: d.GetString("ip_revision_filter"),
+			// 		Port:             d.GetInt("port"),
+			// 	},
+			// },
 		},
 	}
 

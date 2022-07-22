@@ -57,13 +57,13 @@ func (lb *loadBalancerVirtualServer) Create(ctx context.Context, d *utils.Data, 
 			Pool:          d.GetInt("pool"),
 			SSLServerCert: d.GetInt("ssl_server_cert"),
 			SSLCert:       d.GetInt("ssl_cert"),
-			VirtualServerConfig: models.VirtualServerConfig{
-				Persistence:        d.GetString("persistence"),
-				PersistenceProfile: d.GetInt("persistence_profile"),
-				ApplicationProfile: d.GetInt("application_profile"),
-				SSLClientProfile:   d.GetString("ssl_client_profile"),
-				SSLServerProfile:   d.GetString("ssl_server_profile"),
-			},
+			// VirtualServerConfig: models.VirtualServerConfig{
+			// 	Persistence:        d.GetString("persistence"),
+			// 	PersistenceProfile: d.GetInt("persistence_profile"),
+			// 	ApplicationProfile: d.GetInt("application_profile"),
+			// 	SSLClientProfile:   d.GetString("ssl_client_profile"),
+			// 	SSLServerProfile:   d.GetString("ssl_server_profile"),
+			// },
 		},
 	}
 
