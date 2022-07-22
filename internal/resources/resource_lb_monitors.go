@@ -5,6 +5,7 @@ package resources
 import (
 	"context"
 
+	diffvalidation "github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/resources/diffValidation"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/resources/schemas"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/resources/validations"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/utils"
@@ -49,6 +50,7 @@ func LoadBalancerMonitor() *schema.Resource {
 		UpdateContext: loadbalancerMonitorUpdateContext,
 		CreateContext: loadbalancerMonitorCreateContext,
 		DeleteContext: loadbalancerMonitorDeleteContext,
+		CustomizeDiff: monitorCustomDiff,
 		Description: `loadbalancer Monitor resource facilitates creating,updating
 		and deleting NSX-T Network Load Balancers.`,
 	}
@@ -108,4 +110,8 @@ func loadbalancerMonitorDeleteContext(ctx context.Context, rd *schema.ResourceDa
 	}
 
 	return nil
+}
+
+func monitorCustomDiff(ctx context.Context, diff *schema.ResourceDiff, meta interface{}) error {
+	return diffvalidation.NewLoadBalancerMonitorValidate(diff).DiffValidate()
 }

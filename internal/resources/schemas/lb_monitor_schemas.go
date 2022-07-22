@@ -11,6 +11,10 @@ func HttpMonitorSchema() *schema.Schema {
 		Optional:    true,
 		Description: "HTTP Monitor configuration",
 		MaxItems:    1,
+		ExactlyOneOf: []string{"http_monitor", "https_monitor", "icmp_monitor",
+			"passive_monitor", "tcp_monitor", "udp_monitor"},
+		ConflictsWith: []string{"https_monitor", "icmp_monitor",
+			"passive_monitor", "tcp_monitor", "udp_monitor"},
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
 				"fall_count": {
@@ -65,7 +69,7 @@ func HttpMonitorSchema() *schema.Schema {
 					ValidateDiagFunc: validations.StringInSlice([]string{"HTTP_VERSION_1_0",
 						"HTTP_VERSION_1_1"}, false),
 					Description: "HTTP request version. Valid values are HTTP_VERSION_1_0 and HTTP_VERSION_1_1",
-					Optional:    true,
+					Required:    true,
 				},
 				"response_data": {
 					Type:        schema.TypeString,
@@ -88,6 +92,10 @@ func HttpsMonitorSchema() *schema.Schema {
 		Optional:    true,
 		Description: "Https Monitor configuration",
 		MaxItems:    1,
+		ExactlyOneOf: []string{"http_monitor", "https_monitor", "icmp_monitor",
+			"passive_monitor", "tcp_monitor", "udp_monitor"},
+		ConflictsWith: []string{"http_monitor", "icmp_monitor",
+			"passive_monitor", "tcp_monitor", "udp_monitor"},
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
 				"fall_count": {
@@ -165,6 +173,10 @@ func IcmpMonitorSchema() *schema.Schema {
 		Optional:    true,
 		Description: "Icmp Monitor configuration",
 		MaxItems:    1,
+		ExactlyOneOf: []string{"http_monitor", "https_monitor", "icmp_monitor",
+			"passive_monitor", "tcp_monitor", "udp_monitor"},
+		ConflictsWith: []string{"http_monitor", "http_monitor",
+			"passive_monitor", "tcp_monitor", "udp_monitor"},
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
 				"fall_count": {
@@ -213,6 +225,10 @@ func PassiveMonitorSchema() *schema.Schema {
 		Optional:    true,
 		Description: "Passive Monitor configuration",
 		MaxItems:    1,
+		ExactlyOneOf: []string{"http_monitor", "https_monitor", "icmp_monitor",
+			"passive_monitor", "tcp_monitor", "udp_monitor"},
+		ConflictsWith: []string{"http_monitor", "http_monitor",
+			"icmp_monitor", "tcp_monitor", "udp_monitor"},
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
 				"timeout": {
@@ -238,6 +254,10 @@ func TcpMonitorSchema() *schema.Schema {
 		Optional:    true,
 		Description: "Tcp Monitor configuration",
 		MaxItems:    1,
+		ExactlyOneOf: []string{"http_monitor", "https_monitor", "icmp_monitor",
+			"passive_monitor", "tcp_monitor", "udp_monitor"},
+		ConflictsWith: []string{"http_monitor", "http_monitor",
+			"icmp_monitor", "passive_monitor", "udp_monitor"},
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
 				"fall_count": {
@@ -290,6 +310,10 @@ func UdpMonitorSchema() *schema.Schema {
 		Optional:    true,
 		Description: "Udp Monitor configuration",
 		MaxItems:    1,
+		ExactlyOneOf: []string{"http_monitor", "https_monitor", "icmp_monitor",
+			"passive_monitor", "tcp_monitor", "udp_monitor"},
+		ConflictsWith: []string{"http_monitor", "http_monitor",
+			"icmp_monitor", "passive_monitor", "tcp_monitor"},
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
 				"fall_count": {
