@@ -5,6 +5,7 @@ package resources
 import (
 	"context"
 
+	diffvalidation "github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/resources/diffValidation"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/resources/schemas"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/resources/validations"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/utils"
@@ -78,6 +79,7 @@ func LoadBalancerProfiles() *schema.Resource {
 		UpdateContext: loadbalancerProfileUpdateContext,
 		CreateContext: loadbalancerProfileCreateContext,
 		DeleteContext: loadbalancerProfileDeleteContext,
+		CustomizeDiff: profileCustomDiff,
 		Description: `loadbalancer Profile resource facilitates creating,
 		and deleting NSX-T  Network Load Balancers.`,
 	}
@@ -137,4 +139,8 @@ func loadbalancerProfileDeleteContext(ctx context.Context, rd *schema.ResourceDa
 	}
 
 	return nil
+}
+
+func profileCustomDiff(ctx context.Context, diff *schema.ResourceDiff, meta interface{}) error {
+	return diffvalidation.NewLoadBalancerProfileValidate(diff).DiffValidate()
 }

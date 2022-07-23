@@ -11,6 +11,12 @@ func HttpProfileSchema() *schema.Schema {
 		Optional:    true,
 		Description: "HTTP Profile configuration",
 		MaxItems:    1,
+		ExactlyOneOf: []string{"http_profile", "tcp_profile", "udp_profile",
+			"cookie_profile", "sourceip_profile", "generic_profile",
+			"client_profile", "server_profile"},
+		ConflictsWith: []string{"tcp_profile", "udp_profile",
+			"cookie_profile", "sourceip_profile", "generic_profile",
+			"client_profile", "server_profile"},
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
 				"profile_type": {
@@ -82,6 +88,12 @@ func TcpProfileSchema() *schema.Schema {
 		Optional:    true,
 		Description: "TCP Profile configuration",
 		MaxItems:    1,
+		ExactlyOneOf: []string{"http_profile", "tcp_profile", "udp_profile",
+			"cookie_profile", "sourceip_profile", "generic_profile",
+			"client_profile", "server_profile"},
+		ConflictsWith: []string{"http_profile", "udp_profile",
+			"cookie_profile", "sourceip_profile", "generic_profile",
+			"client_profile", "server_profile"},
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
 				"profile_type": {
@@ -124,6 +136,12 @@ func UdpProfileSchema() *schema.Schema {
 		Optional:    true,
 		Description: "UDP Profile configuration",
 		MaxItems:    1,
+		ExactlyOneOf: []string{"http_profile", "tcp_profile", "udp_profile",
+			"cookie_profile", "sourceip_profile", "generic_profile",
+			"client_profile", "server_profile"},
+		ConflictsWith: []string{"http_profile", "tcp_profile",
+			"cookie_profile", "sourceip_profile", "generic_profile",
+			"client_profile", "server_profile"},
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
 				"profile_type": {
@@ -159,6 +177,12 @@ func CookieProfileSchema() *schema.Schema {
 		Optional:    true,
 		Description: "Cookie Profile configuration",
 		MaxItems:    1,
+		ExactlyOneOf: []string{"http_profile", "tcp_profile", "udp_profile",
+			"cookie_profile", "sourceip_profile", "generic_profile",
+			"client_profile", "server_profile"},
+		ConflictsWith: []string{"http_profile", "tcp_profile",
+			"udp_profile", "sourceip_profile", "generic_profile",
+			"client_profile", "server_profile"},
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
 				"profile_type": {
@@ -242,6 +266,12 @@ func SourceIPProfileSchema() *schema.Schema {
 		Optional:    true,
 		Description: "SourceIP Profile configuration",
 		MaxItems:    1,
+		ExactlyOneOf: []string{"http_profile", "tcp_profile", "udp_profile",
+			"cookie_profile", "sourceip_profile", "generic_profile",
+			"client_profile", "server_profile"},
+		ConflictsWith: []string{"http_profile", "tcp_profile",
+			"udp_profile", "cookie_profile", "generic_profile",
+			"client_profile", "server_profile"},
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
 				"profile_type": {
@@ -289,6 +319,12 @@ func GenericProfileSchema() *schema.Schema {
 		Optional:    true,
 		Description: "Generic Profile configuration",
 		MaxItems:    1,
+		ExactlyOneOf: []string{"http_profile", "tcp_profile", "udp_profile",
+			"cookie_profile", "sourceip_profile", "generic_profile",
+			"client_profile", "server_profile"},
+		ConflictsWith: []string{"http_profile", "tcp_profile",
+			"udp_profile", "cookie_profile", "sourceip_profile",
+			"client_profile", "server_profile"},
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
 				"profile_type": {
@@ -330,6 +366,12 @@ func ClientProfileSchema() *schema.Schema {
 		Optional:    true,
 		Description: "Client Profile configuration",
 		MaxItems:    1,
+		ExactlyOneOf: []string{"http_profile", "tcp_profile", "udp_profile",
+			"cookie_profile", "sourceip_profile", "generic_profile",
+			"client_profile", "server_profile"},
+		ConflictsWith: []string{"http_profile", "tcp_profile",
+			"udp_profile", "cookie_profile", "sourceip_profile",
+			"generic_profile", "server_profile"},
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
 				"profile_type": {
@@ -377,6 +419,12 @@ func ServerProfileSchema() *schema.Schema {
 		Optional:    true,
 		Description: "Server Profile configuration",
 		MaxItems:    1,
+		ExactlyOneOf: []string{"http_profile", "tcp_profile", "udp_profile",
+			"cookie_profile", "sourceip_profile", "generic_profile",
+			"client_profile", "server_profile"},
+		ConflictsWith: []string{"http_profile", "tcp_profile",
+			"udp_profile", "cookie_profile", "sourceip_profile",
+			"generic_profile", "client_profile"},
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
 				"profile_type": {
