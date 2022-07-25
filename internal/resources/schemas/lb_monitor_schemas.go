@@ -69,7 +69,7 @@ func HttpMonitorSchema() *schema.Schema {
 					ValidateDiagFunc: validations.StringInSlice([]string{"HTTP_VERSION_1_0",
 						"HTTP_VERSION_1_1"}, false),
 					Description: "HTTP request version. Valid values are HTTP_VERSION_1_0 and HTTP_VERSION_1_1",
-					Required:    true,
+					Optional:    true,
 				},
 				"response_data": {
 					Type:        schema.TypeString,
