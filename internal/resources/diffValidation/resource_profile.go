@@ -3,6 +3,8 @@
 package diffvalidation
 
 import (
+	"fmt"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
@@ -26,14 +28,17 @@ func (l *LoadBalancerProfile) DiffValidate() error {
 }
 
 func (l *LoadBalancerProfile) validateProfileServiceTypes() error {
-	// serviceType := "config.0.http_profile.0.profile_type"
-	// if l.diff.HasChange(serviceType) {
-	// 	service := l.diff.Get(serviceType)
-	// 	switch service {
-	// 	case "application-profile":
-	// 		if l.diff.Get("service_type") != "LBHttpProfile" {
-	// 			return fmt.Errorf("please provide http_monitor configurations for serviceType LBHttpMonitorProfile")
-	// 		}
+	serviceType := "http_profile.0.profile_type"
+	if l.diff.HasChange(serviceType) {
+		service := l.diff.Get(serviceType)
+		switch service {
+		case "application-profile":
+			if l.diff.Get("service_type") != "LBHttpProfile" {
+				return fmt.Errorf("please provide http_monitor configurations for serviceType LBHttpMonitorProfile")
+			}
+
+		}
+	}
 
 	// actionPath := "config.0.action"
 	// if r.diff.HasChange(actionPath) {

@@ -7,20 +7,20 @@ resource "hpegl_vmaas_load_balancer_profile" "tf_PERSISTENCE-COOKIE" {
   name  =  "tf_PERSISTENCE-COOKIE"       
   description  = "PERSISTENCE-COOKIE creating using tf"
   service_type     = "LBCookiePersistenceProfile"
+  cookie_profile{
+    profile_type = "persistence-profile"
+    cookie_name = "cookie1"
+    cookie_fallback = true
+    cookie_garbling = true
+    cookie_mode = "INSERT"
+    cookie_type = "LBPersistenceCookieTime"
+    cookie_domain = "domain1"
+    cookie_path = "http://cookie.com"
+    max_idle_time = 60
+    max_cookie_age = 2
+    share_persistence = true
+  }
   config {
-    cookie_profile{
-      profile_type = "persistence-profile"
-      cookie_name = "cookie1"
-      cookie_fallback = true
-      cookie_garbling = true
-      cookie_mode = "INSERT"
-      cookie_type = "LBPersistenceCookieTime"
-      cookie_domain = "domain1"
-      cookie_path = "http://cookie.com"
-      max_idle_time = 60
-      max_cookie_age = 2
-      share_persistence = true
-    }
     tags {
         tag = "tag1"
         scope = "scope1"

@@ -6,12 +6,12 @@ resource "hpegl_vmaas_load_balancer_profile" "tf_SSL-SERVER" {
   name  =  "tf_SSL-SERVER"       
   description  = "SSL-SERVER creating using tf"
   service_type     = "LBServerSslProfile"
+  server_profile{
+    profile_type = "ssl-profile"
+    ssl_suite = "BALANCED"
+    session_cache = true
+  }
   config {
-    server_profile{
-      profile_type = "ssl-profile"
-      ssl_suite = "BALANCED"
-      session_cache = true
-    }
     tags {
         tag = "tag1"
         scope = "scope1"

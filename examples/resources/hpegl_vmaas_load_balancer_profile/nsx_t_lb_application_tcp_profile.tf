@@ -7,13 +7,13 @@ resource "hpegl_vmaas_load_balancer_profile" "tf_APPLICATION-TCP" {
   name  =  "tf_APPLICATION-TCP"       
   description  = "APPLICATION-TCP creating using tf"
   service_type     = "LBFastTcpProfile"
+  tcp_profile {
+    profile_type = "application-profile"
+    fast_tcp_idle_timeout = 1800
+    connection_close_timeout = 8
+    ha_flow_mirroring = true
+  }
   config {
-    tcp_profile {
-      profile_type = "application-profile"
-      fast_tcp_idle_timeout = 1800
-      connection_close_timeout = 8
-      ha_flow_mirroring = true
-    }
     tags {
         tag = "tag1"
         scope = "scope1"

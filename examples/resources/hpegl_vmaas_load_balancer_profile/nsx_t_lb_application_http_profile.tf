@@ -7,8 +7,7 @@ resource "hpegl_vmaas_load_balancer_profile" "tf_APPLICATION-HTTP" {
   name  =  "tf_APPLICATION-HTTP"       
   description  = "APPLICATION-HTTP-Profile creating using tf"
   service_type     = "LBHttpProfile"
-  config {
-    http_profile {
+  http_profile {
       profile_type = "application-profile"
       http_idle_timeout = 300
       request_header_size = 1024
@@ -18,7 +17,8 @@ resource "hpegl_vmaas_load_balancer_profile" "tf_APPLICATION-HTTP" {
       request_body_size = 20
       response_timeout = 60
       ntlm_authentication = true
-    }
+  }
+  config {
     tags {
         tag = "tag1"
         scope = "scope1"
