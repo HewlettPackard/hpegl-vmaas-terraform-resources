@@ -8,6 +8,16 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
+const (
+	serviceTypes   = "type"
+	httpMonitor    = "http_monitor"
+	httpsMonitor   = "https_monitor"
+	icmpMonitor    = "icmp_monitor"
+	passiveMonitor = "passive_monitor"
+	tcpMonitor     = "tcp_monitor"
+	udpMonitor     = "udp_monitor"
+)
+
 type LoadBalancerMonitor struct {
 	diff *schema.ResourceDiff
 }
@@ -48,11 +58,11 @@ func (l *LoadBalancerMonitor) DiffValidate() error {
 }
 
 func (l *LoadBalancerMonitor) validateHttp() error {
-	serviceType := "type"
-	httpMonitor := "http_monitor"
+	serviceType := serviceTypes
+	http_monitor := httpMonitor
 	if l.diff.HasChange(serviceType) {
 		service := l.diff.Get(serviceType)
-		monitorType := l.diff.Get(httpMonitor)
+		monitorType := l.diff.Get(http_monitor)
 		if service == "LBHttpMonitorProfile" {
 			if len((monitorType).([]interface{})) == 0 {
 				return fmt.Errorf("please provide http_monitor configurations for serviceType LBHttpMonitorProfile")
@@ -63,11 +73,11 @@ func (l *LoadBalancerMonitor) validateHttp() error {
 }
 
 func (l *LoadBalancerMonitor) validateHttps() error {
-	serviceType := "type"
-	httpMonitor := "https_monitor"
+	serviceType := serviceTypes
+	https_monitor := httpsMonitor
 	if l.diff.HasChange(serviceType) {
 		service := l.diff.Get(serviceType)
-		monitorType := l.diff.Get(httpMonitor)
+		monitorType := l.diff.Get(https_monitor)
 		if service == "LBHttpsMonitorProfile" {
 			if len((monitorType).([]interface{})) == 0 {
 				return fmt.Errorf("please provide https_monitor configurations for Type LBHttpsMonitorProfile")
@@ -78,11 +88,11 @@ func (l *LoadBalancerMonitor) validateHttps() error {
 }
 
 func (l *LoadBalancerMonitor) validateIcmp() error {
-	serviceType := "type"
-	httpMonitor := "icmp_monitor"
+	serviceType := serviceTypes
+	icmp_monitor := icmpMonitor
 	if l.diff.HasChange(serviceType) {
 		service := l.diff.Get(serviceType)
-		monitorType := l.diff.Get(httpMonitor)
+		monitorType := l.diff.Get(icmp_monitor)
 		if service == "LBIcmpMonitorProfile" {
 			if len((monitorType).([]interface{})) == 0 {
 				return fmt.Errorf("please provide icmp_monitor configurations for Type LBIcmpMonitorProfile")
@@ -93,11 +103,11 @@ func (l *LoadBalancerMonitor) validateIcmp() error {
 }
 
 func (l *LoadBalancerMonitor) validatePassive() error {
-	serviceType := "type"
-	httpMonitor := "passive_monitor"
+	serviceType := serviceTypes
+	passive_monitor := passiveMonitor
 	if l.diff.HasChange(serviceType) {
 		service := l.diff.Get(serviceType)
-		monitorType := l.diff.Get(httpMonitor)
+		monitorType := l.diff.Get(passive_monitor)
 		if service == "LBPassiveMonitorProfile" {
 			if len((monitorType).([]interface{})) == 0 {
 				return fmt.Errorf("please provide passive_monitor configurations for Type LBPassiveMonitorProfile")
@@ -108,11 +118,11 @@ func (l *LoadBalancerMonitor) validatePassive() error {
 }
 
 func (l *LoadBalancerMonitor) validateTcp() error {
-	serviceType := "type"
-	httpMonitor := "tcp_monitor"
+	serviceType := serviceTypes
+	tcp_monitor := tcpMonitor
 	if l.diff.HasChange(serviceType) {
 		service := l.diff.Get(serviceType)
-		monitorType := l.diff.Get(httpMonitor)
+		monitorType := l.diff.Get(tcp_monitor)
 		if service == "LBTcpMonitorProfile" {
 			if len((monitorType).([]interface{})) == 0 {
 				return fmt.Errorf("please provide tcp_monitor configurations for Type LBTcpMonitorProfile")
@@ -123,11 +133,11 @@ func (l *LoadBalancerMonitor) validateTcp() error {
 }
 
 func (l *LoadBalancerMonitor) validateUdp() error {
-	serviceType := "type"
-	httpMonitor := "udp_monitor"
+	serviceType := serviceTypes
+	udp_monitor := udpMonitor
 	if l.diff.HasChange(serviceType) {
 		service := l.diff.Get(serviceType)
-		monitorType := l.diff.Get(httpMonitor)
+		monitorType := l.diff.Get(udp_monitor)
 		if service == "LBUdpMonitorProfile" {
 			if len((monitorType).([]interface{})) == 0 {
 				return fmt.Errorf("please provide udp_monitor configurations for Type LBUdpMonitorProfile")
