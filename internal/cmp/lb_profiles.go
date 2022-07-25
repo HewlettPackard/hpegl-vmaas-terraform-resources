@@ -154,7 +154,6 @@ func (lb *loadBalancerProfile) profileAlignprofileTypeRequest(ctx context.Contex
 		profileReq.ProfileConfig.CookiePath = profileReq.TfCookieConfig.CookiePath
 		profileReq.ProfileConfig.CookieType = profileReq.TfCookieConfig.CookieType
 		profileReq.ProfileConfig.MaxCookieAge = profileReq.TfCookieConfig.MaxCookieAge
-		profileReq.ProfileConfig.MaxCookieLife = profileReq.TfCookieConfig.MaxCookieLife
 		profileReq.ProfileConfig.MaxIdleTime = profileReq.TfCookieConfig.MaxIdleTime
 		profileReq.ProfileConfig.ProfileType = profileReq.TfCookieConfig.ProfileType
 		profileReq.ProfileConfig.SharePersistence = profileReq.TfCookieConfig.SharePersistence
