@@ -40,7 +40,7 @@ func LoadBalancerProfiles() *schema.Resource {
 				Description:      "Network Loadbalancer Supported values are `LBHttpProfile`,`LBFastTcpProfile`, `LBFastUdpProfile`, `LBClientSslProfile`,`LBServerSslProfile`, `LBCookiePersistenceProfile`,`LBGenericPersistenceProfile`,`LBSourceIpPersistenceProfile`"},
 			"config": {
 				Type:        schema.TypeList,
-				Required:    true,
+				Optional:    true,
 				Description: "profile Configuration",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
