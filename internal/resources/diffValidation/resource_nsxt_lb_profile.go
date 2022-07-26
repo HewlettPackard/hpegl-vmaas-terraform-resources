@@ -27,6 +27,10 @@ const (
 	LBGenericPersistenceProfile  = "LBGenericPersistenceProfile"
 	LBClientSslProfile           = "LBClientSslProfile"
 	LBServerSslProfile           = "LBServerSslProfile"
+
+	applicationProfile = "application-profile"
+	persistenceProfile = "persistence-profile"
+	sslProfile         = "ssl-profile"
 )
 
 type LoadBalancerProfile struct {
@@ -47,8 +51,19 @@ func (l *LoadBalancerProfile) DiffValidate() error {
 		if err != nil {
 			return err
 		}
+
+		err = l.validateApplication(httpProfile, LBHttpProfile)
+		if err != nil {
+			return err
+		}
+
 	case LBFastTcpProfile:
 		err := l.validateProfile(tcpProfile, LBFastTcpProfile)
+		if err != nil {
+			return err
+		}
+
+		err = l.validateApplication(tcpProfile, LBFastTcpProfile)
 		if err != nil {
 			return err
 		}
@@ -57,8 +72,18 @@ func (l *LoadBalancerProfile) DiffValidate() error {
 		if err != nil {
 			return err
 		}
+
+		err = l.validateApplication(udpProfile, LBFastUdpProfile)
+		if err != nil {
+			return err
+		}
 	case LBCookiePersistenceProfile:
 		err := l.validateProfile(cookieProfile, LBCookiePersistenceProfile)
+		if err != nil {
+			return err
+		}
+
+		err = l.validatePersistence(cookieProfile, LBCookiePersistenceProfile)
 		if err != nil {
 			return err
 		}
@@ -67,8 +92,18 @@ func (l *LoadBalancerProfile) DiffValidate() error {
 		if err != nil {
 			return err
 		}
+
+		err = l.validatePersistence(sourceIpProfile, LBSourceIpPersistenceProfile)
+		if err != nil {
+			return err
+		}
 	case LBGenericPersistenceProfile:
 		err := l.validateProfile(genericProfile, LBGenericPersistenceProfile)
+		if err != nil {
+			return err
+		}
+
+		err = l.validatePersistence(genericProfile, LBGenericPersistenceProfile)
 		if err != nil {
 			return err
 		}
@@ -77,10 +112,53 @@ func (l *LoadBalancerProfile) DiffValidate() error {
 		if err != nil {
 			return err
 		}
+
+		err = l.validateSsl(clientProfile, LBClientSslProfile)
+		if err != nil {
+			return err
+		}
 	case LBServerSslProfile:
 		err := l.validateProfile(serverProfile, LBServerSslProfile)
 		if err != nil {
 			return err
+		}
+
+		err = l.validateSsl(serverProfile, LBServerSslProfile)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (l *LoadBalancerProfile) validateApplication(profileTypes string, service_type string) error {
+	p := l.diff.Get(profileTypes)
+	for _, profile := range p.([]interface{}) {
+		profile_type := profile.(map[string]interface{})["profile_type"].(string)
+		if profile_type != applicationProfile {
+			return fmt.Errorf("please provide profile_type as " + applicationProfile + " " + "for serviceType" + " " + service_type)
+		}
+	}
+	return nil
+}
+
+func (l *LoadBalancerProfile) validatePersistence(profileTypes string, service_type string) error {
+	p := l.diff.Get(profileTypes)
+	for _, profile := range p.([]interface{}) {
+		profile_type := profile.(map[string]interface{})["profile_type"].(string)
+		if profile_type != persistenceProfile {
+			return fmt.Errorf("please provide profile_type as " + persistenceProfile + " " + " for serviceType" + " " + service_type)
+		}
+	}
+	return nil
+}
+
+func (l *LoadBalancerProfile) validateSsl(profileTypes string, service_type string) error {
+	p := l.diff.Get(profileTypes)
+	for _, profile := range p.([]interface{}) {
+		profile_type := profile.(map[string]interface{})["profile_type"].(string)
+		if profile_type != sslProfile {
+			return fmt.Errorf("please provide profile_type as " + sslProfile + " " + "for serviceType" + " " + service_type)
 		}
 	}
 	return nil
@@ -93,86 +171,3 @@ func (l *LoadBalancerProfile) validateProfile(profile_type string, service_type 
 	}
 	return nil
 }
-
-// func (l *LoadBalancerProfile) validateProfile() error {
-// 	if l.diff.HasChange(serviceTypes) {
-// 		service := l.diff.Get(serviceTypes)
-// 		profileType := l.diff.Get(httpProfile)
-// 		if service == LBHttpProfile {
-// 			if len((profileType).([]interface{})) == 0 {
-// 				return fmt.Errorf("please provide http_profile configurations for serviceType LBHttpProfile")
-// 			}
-// 		}
-// 	}
-
-// 	if l.diff.HasChange(serviceTypes) {
-// 		service := l.diff.Get(serviceTypes)
-// 		profileType := l.diff.Get(tcpProfile)
-// 		if service == LBFastTcpProfile {
-// 			if len((profileType).([]interface{})) == 0 {
-// 				return fmt.Errorf("please provide tcp_profile configurations for serviceType LBFastTcpProfile")
-// 			}
-// 		}
-// 	}
-
-// 	if l.diff.HasChange(serviceTypes) {
-// 		service := l.diff.Get(serviceTypes)
-// 		profileType := l.diff.Get(udpProfile)
-// 		if service == LBFastUdpProfile {
-// 			if len((profileType).([]interface{})) == 0 {
-// 				return fmt.Errorf("please provide udp_profile configurations for serviceType LBFastUdpProfile")
-// 			}
-// 		}
-// 	}
-
-// 	if l.diff.HasChange(serviceTypes) {
-// 		service := l.diff.Get(serviceTypes)
-// 		profileType := l.diff.Get(cookieProfile)
-// 		if service == LBCookiePersistenceProfile {
-// 			if len((profileType).([]interface{})) == 0 {
-// 				return fmt.Errorf("please provide cookie_profile configurations for serviceType LBCookiePersistenceProfile")
-// 			}
-// 		}
-// 	}
-
-// 	if l.diff.HasChange(serviceTypes) {
-// 		service := l.diff.Get(serviceTypes)
-// 		profileType := l.diff.Get(sourceIpProfile)
-// 		if service == LBSourceIpPersistenceProfile {
-// 			if len((profileType).([]interface{})) == 0 {
-// 				return fmt.Errorf("please provide sourceip_profile configurations for serviceType LBSourceIpPersistenceProfile")
-// 			}
-// 		}
-// 	}
-
-// 	if l.diff.HasChange(serviceTypes) {
-// 		service := l.diff.Get(serviceTypes)
-// 		profileType := l.diff.Get(genericProfile)
-// 		if service == LBGenericPersistenceProfile {
-// 			if len((profileType).([]interface{})) == 0 {
-// 				return fmt.Errorf("please provide generic_profile configurations for serviceType LBGenericPersistenceProfile")
-// 			}
-// 		}
-// 	}
-
-// 	if l.diff.HasChange(serviceTypes) {
-// 		service := l.diff.Get(serviceTypes)
-// 		profileType := l.diff.Get(clientProfile)
-// 		if service == LBClientSslProfile {
-// 			if len((profileType).([]interface{})) == 0 {
-// 				return fmt.Errorf("please provide client_profile configurations for serviceType LBClientSslProfile")
-// 			}
-// 		}
-// 	}
-
-// 	if l.diff.HasChange(serviceTypes) {
-// 		service := l.diff.Get(serviceTypes)
-// 		profileType := l.diff.Get(serverProfile)
-// 		if service == LBServerSslProfile {
-// 			if len((profileType).([]interface{})) == 0 {
-// 				return fmt.Errorf("please provide server_profile configurations for serviceType LBServerSslProfile")
-// 			}
-// 		}
-// 	}
-// 	return nil
-// }
