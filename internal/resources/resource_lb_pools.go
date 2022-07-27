@@ -78,7 +78,6 @@ func LoadBalancerPools() *schema.Resource {
 							Optional:    true,
 							Description: "snat_ip_address for Network loadbalancer pool",
 						},
-
 						"member_group": {
 							Type:        schema.TypeList,
 							Optional:    true,
