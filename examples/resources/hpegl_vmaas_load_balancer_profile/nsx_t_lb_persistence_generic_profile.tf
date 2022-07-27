@@ -5,9 +5,9 @@ resource "hpegl_vmaas_load_balancer_profile" "tf_PERSISTENCE-GENERIC" {
   lb_id = data.hpegl_vmaas_load_balancer.tf_lb.id  
   name  =  "tf_PERSISTENCE-GENERIC"       
   description  = "PERSISTENCE-GENERIC creating using tf"
-  service_type     = "LBGenericPersistenceProfile"
+  profile_type = "persistence-profile"
   generic_profile{
-    profile_type = "persistence-profile"
+    service_type     = "LBGenericPersistenceProfile"
     share_persistence = false
     ha_persistence_mirroring = false
     persistence_entry_timeout = 30

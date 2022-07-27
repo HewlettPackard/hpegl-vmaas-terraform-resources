@@ -6,9 +6,9 @@ resource "hpegl_vmaas_load_balancer_profile" "tf_PERSISTENCE-COOKIE" {
   lb_id = data.hpegl_vmaas_load_balancer.tf_lb.id  
   name  =  "tf_PERSISTENCE-COOKIE"       
   description  = "PERSISTENCE-COOKIE creating using tf"
-  service_type     = "LBCookiePersistenceProfile"
+  profile_type = "persistence-profile"
   cookie_profile{
-    profile_type = "persistence-profile"
+    service_type = "LBCookiePersistenceProfile"
     cookie_name = "cookie1"
     cookie_fallback = true
     cookie_garbling = true

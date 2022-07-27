@@ -33,11 +33,14 @@ func LoadBalancerProfiles() *schema.Resource {
 				Required:    true,
 				Description: "Creating the Network Load balancer Profile",
 			},
-			"service_type": {
-				Type:             schema.TypeString,
-				ValidateDiagFunc: validations.StringInSlice([]string{"LBHttpProfile", "LBFastTcpProfile", "LBFastUdpProfile", "LBClientSslProfile", "LBServerSslProfile", "LBCookiePersistenceProfile", "LBGenericPersistenceProfile", "LBSourceIpPersistenceProfile"}, false),
-				Required:         true,
-				Description:      "Network Loadbalancer Supported values are `LBHttpProfile`,`LBFastTcpProfile`, `LBFastUdpProfile`, `LBClientSslProfile`,`LBServerSslProfile`, `LBCookiePersistenceProfile`,`LBGenericPersistenceProfile`,`LBSourceIpPersistenceProfile`",
+			"profile_type": {
+				Type: schema.TypeString,
+				ValidateDiagFunc: validations.StringInSlice([]string{
+					"application-profile", "ssl-profile", "persistence-profile",
+				}, false),
+				Optional:    true,
+				Default:     "application-profile",
+				Description: "Network Loadbalancer Supported values are `application-profile`, `ssl-profile`, `persistence-profile`",
 			},
 			"http_profile":     schemas.HttpProfileSchema(),
 			"tcp_profile":      schemas.TcpProfileSchema(),
