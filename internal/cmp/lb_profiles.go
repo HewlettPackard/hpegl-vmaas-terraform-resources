@@ -45,6 +45,7 @@ func (lb *loadBalancerProfile) Create(ctx context.Context, d *utils.Data, meta i
 		return err
 	}
 
+	//return fmt.Errorf("%v", createReq.CreateLBProfileReq.ProfileType)
 	// align createReq and fill json related fields
 	if err := lb.profileAlignprofileTypeRequest(ctx, meta, &createReq.CreateLBProfileReq); err != nil {
 		return err
@@ -128,7 +129,8 @@ func (lb *loadBalancerProfile) profileAlignprofileTypeRequest(ctx context.Contex
 		profileReq.ProfileConfig.HTTPIdleTimeout = profileReq.TfHttpConfig.HTTPIdleTimeout
 		profileReq.ProfileConfig.HTTPsRedirect = profileReq.TfHttpConfig.HTTPsRedirect
 		profileReq.ProfileConfig.NtlmAuthentication = profileReq.TfHttpConfig.NtlmAuthentication
-		profileReq.ProfileConfig.ProfileType = profileReq.TfHttpConfig.ProfileType
+		profileReq.ProfileConfig.ProfileType = profileReq.ProfileType
+		profileReq.ServiceType = profileReq.TfHttpConfig.ServiceType
 		profileReq.ProfileConfig.RequestBodySize = profileReq.TfHttpConfig.RequestBodySize
 		profileReq.ProfileConfig.RequestHeaderSize = profileReq.TfHttpConfig.RequestHeaderSize
 		profileReq.ProfileConfig.ResponseHeaderSize = profileReq.TfHttpConfig.ResponseHeaderSize
@@ -138,12 +140,14 @@ func (lb *loadBalancerProfile) profileAlignprofileTypeRequest(ctx context.Contex
 		profileReq.ProfileConfig.ConnectionCloseTimeout = profileReq.TfTcpConfig.ConnectionCloseTimeout
 		profileReq.ProfileConfig.FastTCPIdleTimeout = profileReq.TfTcpConfig.FastTCPIdleTimeout
 		profileReq.ProfileConfig.HaFlowMirroring = profileReq.TfTcpConfig.HaFlowMirroring
-		profileReq.ProfileConfig.ProfileType = profileReq.TfTcpConfig.ProfileType
+		profileReq.ProfileConfig.ProfileType = profileReq.ProfileType
+		profileReq.ServiceType = profileReq.TfTcpConfig.ServiceType
 
 	} else if profileReq.TfUdpConfig != nil && profileReq.ServiceType == udpProfile {
 		profileReq.ProfileConfig.FastUDPIdleTimeout = profileReq.TfUdpConfig.FastUDPIdleTimeout
 		profileReq.ProfileConfig.HaFlowMirroring = profileReq.TfUdpConfig.HaFlowMirroring
-		profileReq.ProfileConfig.ProfileType = profileReq.TfUdpConfig.ProfileType
+		profileReq.ServiceType = profileReq.TfUdpConfig.ServiceType
+		profileReq.ProfileConfig.ProfileType = profileReq.ProfileType
 
 	} else if profileReq.TfCookieConfig != nil && profileReq.ServiceType == cookieProfile {
 		profileReq.ProfileConfig.CookieDomain = profileReq.TfCookieConfig.CookieDomain
@@ -155,31 +159,36 @@ func (lb *loadBalancerProfile) profileAlignprofileTypeRequest(ctx context.Contex
 		profileReq.ProfileConfig.CookieType = profileReq.TfCookieConfig.CookieType
 		profileReq.ProfileConfig.MaxCookieAge = profileReq.TfCookieConfig.MaxCookieAge
 		profileReq.ProfileConfig.MaxIdleTime = profileReq.TfCookieConfig.MaxIdleTime
-		profileReq.ProfileConfig.ProfileType = profileReq.TfCookieConfig.ProfileType
+		profileReq.ServiceType = profileReq.TfCookieConfig.ServiceType
+		profileReq.ProfileConfig.ProfileType = profileReq.ProfileType
 		profileReq.ProfileConfig.SharePersistence = profileReq.TfCookieConfig.SharePersistence
 
 	} else if profileReq.TfGenericConfig != nil && profileReq.ServiceType == genericProfile {
 		profileReq.ProfileConfig.HaPersistenceMirroring = profileReq.TfGenericConfig.HaPersistenceMirroring
 		profileReq.ProfileConfig.PersistenceEntryTimeout = profileReq.TfGenericConfig.PersistenceEntryTimeout
-		profileReq.ProfileConfig.ProfileType = profileReq.TfGenericConfig.ProfileType
+		profileReq.ProfileConfig.ProfileType = profileReq.ProfileType
+		profileReq.ServiceType = profileReq.TfGenericConfig.ServiceType
 		profileReq.ProfileConfig.SharePersistence = profileReq.TfGenericConfig.SharePersistence
 
 	} else if profileReq.TfSourceConfig != nil && profileReq.ServiceType == sourceProfile {
 		profileReq.ProfileConfig.HaPersistenceMirroring = profileReq.TfSourceConfig.HaPersistenceMirroring
 		profileReq.ProfileConfig.PersistenceEntryTimeout = profileReq.TfSourceConfig.PersistenceEntryTimeout
-		profileReq.ProfileConfig.ProfileType = profileReq.TfSourceConfig.ProfileType
+		profileReq.ProfileConfig.ProfileType = profileReq.ProfileType
+		profileReq.ServiceType = profileReq.TfSourceConfig.ServiceType
 		profileReq.ProfileConfig.PurgeEntries = profileReq.TfSourceConfig.PurgeEntries
 		profileReq.ProfileConfig.SharePersistence = profileReq.TfSourceConfig.SharePersistence
 
 	} else if profileReq.TfServerConfig != nil && profileReq.ServiceType == serverProfile {
-		profileReq.ProfileConfig.ProfileType = profileReq.TfServerConfig.ProfileType
+		profileReq.ProfileConfig.ProfileType = profileReq.ProfileType
 		profileReq.ProfileConfig.SSLSuite = profileReq.TfServerConfig.SSLSuite
+		profileReq.ServiceType = profileReq.TfServerConfig.ServiceType
 		profileReq.ProfileConfig.SessionCache = profileReq.TfServerConfig.SessionCache
 
 	} else if profileReq.TfClientConfig != nil && profileReq.ServiceType == clientProfile {
 		profileReq.ProfileConfig.PreferServerCipher = profileReq.TfClientConfig.PreferServerCipher
-		profileReq.ProfileConfig.ProfileType = profileReq.TfClientConfig.ProfileType
+		profileReq.ProfileConfig.ProfileType = profileReq.ProfileType
 		profileReq.ProfileConfig.SSLSuite = profileReq.TfClientConfig.SSLSuite
+		profileReq.ServiceType = profileReq.TfClientConfig.ServiceType
 		profileReq.ProfileConfig.SessionCache = profileReq.TfClientConfig.SessionCache
 		profileReq.ProfileConfig.SessionCacheEntryTimeout = profileReq.TfClientConfig.SessionCacheEntryTimeout
 	}
