@@ -45,7 +45,6 @@ func (lb *loadBalancerProfile) Create(ctx context.Context, d *utils.Data, meta i
 		return err
 	}
 
-	//return fmt.Errorf("%v", createReq.CreateLBProfileReq.ProfileType)
 	// align createReq and fill json related fields
 	if err := lb.profileAlignprofileTypeRequest(ctx, meta, &createReq.CreateLBProfileReq); err != nil {
 		return err
