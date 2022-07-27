@@ -17,17 +17,17 @@ func PoolMemeberGroupData() *schema.Resource {
 			"name": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: f(generalNamedesc, "ActiveMonitor", "ActiveMonitor"),
+				Description: f(generalNamedesc, "MemberGroup", "MemberGroup"),
 			},
 			"id": {
 				Type:        schema.TypeInt,
 				Computed:    true,
-				Description: "Parent lb ID, lb_id can be obtained by using LB datasource/resource.",
+				Description: "id can be obtained by using LB datasource/resource.",
 			},
 			"external_id": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: "Parent lb ID, lb_id can be obtained by using LB datasource/resource.",
+				Description: "external_id is the path for the pool member group",
 			},
 		},
 		ReadContext: PoolMemeberGroupReadContext,
