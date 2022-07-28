@@ -5,6 +5,8 @@ package resources
 import (
 	"context"
 
+	diffvalidation "github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/resources/diffValidation"
+	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/resources/schemas"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/resources/validations"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/utils"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/client"
@@ -58,48 +60,53 @@ func LoadBalancerVirtualServers() *schema.Resource {
 				Default:          "http",
 				Description:      "vip protocol of Network loadbalancer virtual server",
 			},
-			"ssl_client_cert": {
-				Type:        schema.TypeInt,
-				Optional:    true,
-				Default:     22,
-				Description: "ssl_cert of Network loadbalancer virtual server",
+			"tcp_application_profile":  schemas.TcpAppProfileSchema(),
+			"udp_application_profile":  schemas.UdpAppProfileSchema(),
+			"http_application_profile": schemas.HttpAppProfileSchema(),
+			"persistence": {
+				Type:             schema.TypeString,
+				ValidateDiagFunc: validations.StringInSlice([]string{"SOURCE_IP", "COOKIE"}, false),
+				Optional:         true,
+				Description:      "vip_host_name of Network loadbalancer virtual server",
 			},
+			"cookie_persistence_profile":   schemas.CookiePersProfileSchema(),
+			"sourceip_persistence_profile": schemas.SourceipPersProfileSchema(),
 			"ssl_server_cert": {
 				Type:        schema.TypeInt,
 				Optional:    true,
 				Default:     22,
 				Description: "ssl_server_cert of the Network loadbalancer virtual server",
 			},
-			"config": {
+			"ssl_server_config": {
 				Type:        schema.TypeList,
 				Optional:    true,
 				Description: "virtual server Configuration",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"persistence": {
-							Type:             schema.TypeString,
-							ValidateDiagFunc: validations.StringInSlice([]string{"SOURCE_IP", "COOKIE", "DISBALED"}, false),
-							Optional:         true,
-							Description:      "Network Loadbalancer Supported values are `SOURCE_IP`,`COOKIE`, `DISBALED`"},
-						"persistence_profile": {
-							Type:        schema.TypeInt,
-							Optional:    true,
-							Description: "persistence_profile of virtual server Configuration",
-						},
-						"application_profile": {
-							Type:        schema.TypeInt,
-							Optional:    true,
-							Description: "application_profile of virtual server Configuration",
-						},
-						"ssl_client_profile": {
-							Type:        schema.TypeInt,
-							Optional:    true,
-							Description: "ssl_client_profile of virtual server Configuration",
-						},
 						"ssl_server_profile": {
 							Type:        schema.TypeInt,
 							Optional:    true,
-							Description: "ssl_server_profile of virtual server Configuration",
+							Description: "Network Loadbalancer Supported values are `SOURCE_IP`,`COOKIE`, `DISBALED`",
+						},
+					},
+				},
+			},
+			"ssl_client_cert": {
+				Type:        schema.TypeInt,
+				Optional:    true,
+				Default:     22,
+				Description: "ssl_cert of Network loadbalancer virtual server",
+			},
+			"ssl_client_config": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "virtual server Configuration",
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"ssl_client_profile": {
+							Type:        schema.TypeInt,
+							Optional:    true,
+							Description: "Network Loadbalancer Supported values are `SOURCE_IP`,`COOKIE`, `DISBALED`",
 						},
 					},
 				},
@@ -109,6 +116,7 @@ func LoadBalancerVirtualServers() *schema.Resource {
 		UpdateContext: loadbalancerVirtualServerUpdateContext,
 		CreateContext: loadbalancerVirtualServerCreateContext,
 		DeleteContext: loadbalancerVirtualServerDeleteContext,
+		CustomizeDiff: virtualServerCustomDiff,
 		Description: `loadbalancer Virtual Server resource facilitates creating,
 		and deleting NSX-T  Network Load Balancers.`,
 	}
@@ -168,4 +176,8 @@ func loadbalancerVirtualServerDeleteContext(ctx context.Context, rd *schema.Reso
 	}
 
 	return nil
+}
+
+func virtualServerCustomDiff(ctx context.Context, diff *schema.ResourceDiff, meta interface{}) error {
+	return diffvalidation.NewLoadBalancerVirtualServerValidate(diff).DiffValidate()
 }

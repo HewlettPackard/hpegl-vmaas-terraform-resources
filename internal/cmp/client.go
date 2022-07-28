@@ -92,7 +92,6 @@ func NewClient(client *apiClient.APIClient, cfg apiClient.Configuration) *Client
 		CloudFolder:            newCloudFolder(&apiClient.CloudsAPIService{Client: client, Cfg: cfg}),
 		DSRouter:               newRouterDS(&apiClient.RouterAPIService{Client: client, Cfg: cfg}),
 		DSLoadBalancer:         newLoadBalancerDS(&apiClient.LoadBalancerAPIService{Client: client, Cfg: cfg}),
-		DSLBPool:               newPoolDS(&apiClient.LoadBalancerAPIService{Client: client, Cfg: cfg}),
 		DSLBApplicationProfile: newApplicationProfileDS(&apiClient.LoadBalancerAPIService{Client: client, Cfg: cfg}),
 		DSLBPersistenceProfile: newPersistenceProfileDS(&apiClient.LoadBalancerAPIService{Client: client, Cfg: cfg}),
 		DSLBSslClientProfile:   newSslClientProfileDS(&apiClient.LoadBalancerAPIService{Client: client, Cfg: cfg}),
