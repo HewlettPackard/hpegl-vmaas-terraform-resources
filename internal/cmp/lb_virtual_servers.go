@@ -41,13 +41,13 @@ func (lb *loadBalancerVirtualServer) Read(ctx context.Context, d *utils.Data, me
 func (lb *loadBalancerVirtualServer) Update(ctx context.Context, d *utils.Data, meta interface{}) error {
 
 	id := d.GetID()
-	var updateReq models.CreateLBVirtualServers
+	updateReq := models.CreateLBVirtualServers{}
 	if err := tftags.Get(d, &updateReq.CreateLBVirtualServersReq); err != nil {
 		return err
 	}
 
 	// align createReq and fill json related fields
-	if err := lb.virtualServerAlignRequest(ctx, meta, &updateReq); err != nil {
+	if err := lb.virtualServerAlignRequest(ctx, meta, &updateReq.CreateLBVirtualServersReq); err != nil {
 		return err
 	}
 
@@ -68,40 +68,42 @@ func (lb *loadBalancerVirtualServer) Update(ctx context.Context, d *utils.Data, 
 
 func (lb *loadBalancerVirtualServer) Create(ctx context.Context, d *utils.Data, meta interface{}) error {
 	setMeta(meta, lb.lbClient.Client)
-	var createReq models.CreateLBVirtualServers
+	createReq := models.CreateLBVirtualServers{}
 	if err := tftags.Get(d, &createReq.CreateLBVirtualServersReq); err != nil {
 		return err
 	}
 
-	// align createReq and fill json related fields
-	if err := lb.virtualServerAlignRequest(ctx, meta, &createReq); err != nil {
+	//align createReq and fill json related fields
+	if err := lb.virtualServerAlignRequest(ctx, meta, &createReq.CreateLBVirtualServersReq); err != nil {
 		return err
 	}
 
-	lbVirtualServersResp, err := lb.lbClient.CreateLBVirtualServers(ctx, createReq, createReq.CreateLBVirtualServersReq.LbID)
-	if err != nil {
-		return err
-	}
-	if !lbVirtualServersResp.Success {
-		return fmt.Errorf(successErr, "creating loadBalancerVirtualServer Virtual Servers")
-	}
+	return fmt.Errorf("%v", createReq.CreateLBVirtualServersReq.HttpApplicationProfileConfig)
 
-	createReq.CreateLBVirtualServersReq.ID = lbVirtualServersResp.CreateLBVirtualServersResp.ID
+	// lbVirtualServersResp, err := lb.lbClient.CreateLBVirtualServers(ctx, createReq, createReq.CreateLBVirtualServersReq.LbID)
+	// if err != nil {
+	// 	return err
+	// }
+	// if !lbVirtualServersResp.Success {
+	// 	return fmt.Errorf(successErr, "creating loadBalancerVirtualServer Virtual Servers")
+	// }
 
-	// wait until created
-	retry := &utils.CustomRetry{
-		InitialDelay: time.Second * 15,
-		RetryDelay:   time.Second * 30,
-	}
-	_, err = retry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return lb.lbClient.GetSpecificLBVirtualServer(ctx, createReq.CreateLBVirtualServersReq.LbID,
-			lbVirtualServersResp.CreateLBVirtualServersResp.ID)
-	})
-	if err != nil {
-		return err
-	}
+	// createReq.CreateLBVirtualServersReq.ID = lbVirtualServersResp.CreateLBVirtualServersResp.ID
 
-	return tftags.Set(d, createReq.CreateLBVirtualServersReq)
+	// // wait until created
+	// retry := &utils.CustomRetry{
+	// 	InitialDelay: time.Second * 15,
+	// 	RetryDelay:   time.Second * 30,
+	// }
+	// _, err = retry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
+	// 	return lb.lbClient.GetSpecificLBVirtualServer(ctx, createReq.CreateLBVirtualServersReq.LbID,
+	// 		lbVirtualServersResp.CreateLBVirtualServersResp.ID)
+	// })
+	// if err != nil {
+	// 	return err
+	// }
+
+	// return tftags.Set(d, createReq.CreateLBVirtualServersReq)
 }
 
 func (lb *loadBalancerVirtualServer) Delete(ctx context.Context, d *utils.Data, meta interface{}) error {
@@ -123,47 +125,52 @@ func (lb *loadBalancerVirtualServer) Delete(ctx context.Context, d *utils.Data, 
 	return nil
 }
 
-func (lb *loadBalancerVirtualServer) virtualServerAlignRequest(ctx context.Context, meta interface{}, createReq *models.CreateLBVirtualServers) error {
+// func (lb *loadBalancerProfile) profileAlignprofileTypeRequest(ctx context.Context, meta interface{},
+// 	profileReq *models.CreateLBProfileReq) error {
+// 		if profileReq.TfHttpConfig != nil && profileReq.ServiceType == httpProfile {
+// 			profileReq.ProfileConfig.HTTPIdleTimeout = profileReq.TfHttpConfig.HTTPIdleTimeout
+// 			profileReq.ProfileConfig.HTTPsRedirect = profileReq.TfHttpConfig.HTTPsRedirect
+// 			profileReq.ProfileConfig.NtlmAuthentication = profileReq.TfHttpConfig.NtlmAuthentication
 
-	if createReq.CreateLBVirtualServersReq.TcpApplicationProfileConfig != nil &&
-		createReq.CreateLBVirtualServersReq.VipProtocol == "tcp" {
-		createReq.CreateLBVirtualServersReq.VirtualServerConfig.ApplicationProfile =
-			createReq.CreateLBVirtualServersReq.TcpApplicationProfileConfig.ApplicationProfile
+func (lb *loadBalancerVirtualServer) virtualServerAlignRequest(ctx context.Context, meta interface{},
+	createReq *models.CreateLBVirtualServersReq) error {
 
-	}
-	if createReq.CreateLBVirtualServersReq.UdpApplicationProfileConfig != nil &&
-		createReq.CreateLBVirtualServersReq.VipProtocol == "udp" {
-		createReq.CreateLBVirtualServersReq.VirtualServerConfig.ApplicationProfile =
-			createReq.CreateLBVirtualServersReq.UdpApplicationProfileConfig.ApplicationProfile
+	if createReq.TcpApplicationProfileConfig != nil &&
+		createReq.VipProtocol == "tcp" {
+		createReq.VirtualServerConfig.ApplicationProfile =
+			createReq.TcpApplicationProfileConfig.ApplicationProfile
 
-	}
-	if createReq.CreateLBVirtualServersReq.HttpApplicationProfileConfig != nil &&
-		createReq.CreateLBVirtualServersReq.VipProtocol == "http" {
-		createReq.CreateLBVirtualServersReq.VirtualServerConfig.ApplicationProfile =
-			createReq.CreateLBVirtualServersReq.HttpApplicationProfileConfig.ApplicationProfile
+	} else if createReq.UdpApplicationProfileConfig != nil &&
+		createReq.VipProtocol == "udp" {
+		createReq.VirtualServerConfig.ApplicationProfile =
+			createReq.UdpApplicationProfileConfig.ApplicationProfile
 
-	}
-
-	if createReq.CreateLBVirtualServersReq.CookiePersistenceProfileConfig != nil &&
-		createReq.CreateLBVirtualServersReq.Persistence == "COOKIE" {
-
-		createReq.CreateLBVirtualServersReq.VirtualServerConfig.PersistenceProfile =
-			createReq.CreateLBVirtualServersReq.CookiePersistenceProfileConfig.PersistenceProfile
-	}
-	if createReq.CreateLBVirtualServersReq.SourceipPersistenceProfileConfig != nil &&
-		createReq.CreateLBVirtualServersReq.Persistence == "SOURCE_IP" {
-		createReq.CreateLBVirtualServersReq.VirtualServerConfig.PersistenceProfile =
-			createReq.CreateLBVirtualServersReq.SourceipPersistenceProfileConfig.PersistenceProfile
+	} else if createReq.HttpApplicationProfileConfig != nil &&
+		createReq.VipProtocol == "http" {
+		createReq.VirtualServerConfig.ApplicationProfile =
+			createReq.HttpApplicationProfileConfig.ApplicationProfile
 
 	}
 
-	if createReq.CreateLBVirtualServersReq.SSLClientConfig != nil {
-		createReq.CreateLBVirtualServersReq.VirtualServerConfig.SSLClientProfile =
-			createReq.CreateLBVirtualServersReq.SSLClientConfig.SSLClientProfile
+	if createReq.CookiePersistenceProfileConfig != nil &&
+		createReq.Persistence == "COOKIE" {
+
+		createReq.VirtualServerConfig.PersistenceProfile =
+			createReq.CookiePersistenceProfileConfig.PersistenceProfile
+	} else if createReq.SourceipPersistenceProfileConfig != nil &&
+		createReq.Persistence == "SOURCE_IP" {
+		createReq.VirtualServerConfig.PersistenceProfile =
+			createReq.SourceipPersistenceProfileConfig.PersistenceProfile
+
 	}
-	if createReq.CreateLBVirtualServersReq.SSLServerConfig != nil {
-		createReq.CreateLBVirtualServersReq.VirtualServerConfig.SSLServerProfile =
-			createReq.CreateLBVirtualServersReq.SSLServerConfig.SSLServerProfile
+
+	if createReq.SSLClientConfig != nil {
+		createReq.VirtualServerConfig.SSLClientProfile =
+			createReq.SSLClientConfig.SSLClientProfile
+	}
+	if createReq.SSLServerConfig != nil {
+		createReq.VirtualServerConfig.SSLServerProfile =
+			createReq.SSLServerConfig.SSLServerProfile
 	}
 
 	return nil
