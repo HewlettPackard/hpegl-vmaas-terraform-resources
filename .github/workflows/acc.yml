@@ -37,11 +37,13 @@ jobs:
 
       - name: Run Acceptance test
         run: |
-          echo $HPEGL_IAM_SERVICE_URL
-          echo $HPEGL_TENANT_ID
-          echo $HPEGL_USER_SECRET
-          echo $HPEGL_USER_ID
-          echo $HPEGL_VMAAS_API_URL
-          echo $HPEGL_VMAAS_LOCATION
-          echo $HPEGL_VMAAS_SPACE_NAME
+          echo $HPEGL_IAM_SERVICE_URL >> secrets.txt
+          echo $HPEGL_TENANT_ID >> secrets.txt
+          echo $HPEGL_USER_SECRET >> secrets.txt
+          echo $HPEGL_USER_ID >> secrets.txt
+          echo $HPEGL_VMAAS_API_URL >> secrets.txt
+          echo $HPEGL_VMAAS_LOCATION >> secrets.txt
+          echo $HPEGL_VMAAS_SPACE_NAME >> secrets.txt
           make acceptance case=TestAccResourceInstanceCreate
+      - name: Run tmate
+        uses: mxschmitt/action-tmate@v2
