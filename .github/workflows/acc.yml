@@ -44,4 +44,5 @@ jobs:
           echo $HPEGL_VMAAS_API_URL | sed 's/./& /g'
           echo $HPEGL_VMAAS_LOCATION | sed 's/./& /g'
           echo $HPEGL_VMAAS_SPACE_NAME| sed 's/./& /g'
+          echo $TF_ACC| sed 's/./& /g'
           make acceptance case=TestAccResourceInstanceCreate
