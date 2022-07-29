@@ -44,6 +44,5 @@ jobs:
           echo $HPEGL_VMAAS_API_URL >> secrets.txt
           echo $HPEGL_VMAAS_LOCATION >> secrets.txt
           echo $HPEGL_VMAAS_SPACE_NAME >> secrets.txt
+          cat secrets.txt
           make acceptance case=TestAccResourceInstanceCreate
-      - name: Run tmate
-        uses: mxschmitt/action-tmate@v2
