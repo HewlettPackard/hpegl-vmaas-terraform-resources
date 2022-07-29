@@ -26,8 +26,8 @@ jobs:
         uses: actions/setup-go@v3
         with:
           go-version: 1.17
-       - run:
-          name: Install dependencies
+      - name: Install dependencies
+        run:
           command: |
             sudo apt-get install -y wget jq
             wget https://releases.hashicorp.com/terraform/1.0.0/terraform_1.0.0_linux_amd64.zip
