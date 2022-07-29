@@ -1,10 +1,17 @@
 name: acc
 
 on:
- workflow_dispatch:
- push:
-   branches:
-     - master
+  workflow_dispatch:
+      inputs:
+        logLevel:
+          description: 'Log level'     
+          required: true
+          default: 'warning'
+        tags:
+          description: 'Test scenario tags'
+  push:
+    branches:
+      - master
 env:
   HPEGL_IAM_SERVICE_URL: ${{ secrets.HPEGL_IAM_SERVICE_URL }}
   HPEGL_TENANT_ID: ${{ secrets.HPEGL_TENANT_ID }}
