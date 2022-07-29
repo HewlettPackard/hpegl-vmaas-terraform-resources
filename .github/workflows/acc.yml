@@ -1,8 +1,8 @@
 name: acc
 
-on:
-  push:
-  workflow_dispatch:
+on: [push, workflow_dispatch]
+  branches:
+      - master
 env:
   HPEGL_IAM_SERVICE_URL: ${{ secrets.HPEGL_IAM_SERVICE_URL }}
   HPEGL_TENANT_ID: ${{ secrets.HPEGL_TENANT_ID }}
