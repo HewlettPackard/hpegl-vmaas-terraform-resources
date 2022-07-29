@@ -22,26 +22,27 @@ func HttpProfileSchema() *schema.Schema {
 				"service_type": {
 					Type:             schema.TypeString,
 					ValidateDiagFunc: validations.StringInSlice([]string{"LBHttpProfile", "LBFastTcpProfile", "LBFastUdpProfile", "LBClientSslProfile", "LBServerSslProfile", "LBCookiePersistenceProfile", "LBGenericPersistenceProfile", "LBSourceIpPersistenceProfile"}, false),
-					Required:         true,
+					Optional:         true,
+					Default:          "LBHttpProfile",
 					Description:      "Network Loadbalancer Supported values are `LBHttpProfile`,`LBFastTcpProfile`, `LBFastUdpProfile`, `LBClientSslProfile`,`LBServerSslProfile`, `LBCookiePersistenceProfile`,`LBGenericPersistenceProfile`,`LBSourceIpPersistenceProfile`",
 				},
 				"http_idle_timeout": {
 					Type:             schema.TypeInt,
-					Required:         true,
+					Optional:         true,
 					Default:          15,
 					ValidateDiagFunc: validations.IntBetween(1, 5400),
 					Description:      "http_idle_timeout for Network Load balancer Profile",
 				},
 				"request_header_size": {
 					Type:             schema.TypeInt,
-					Required:         true,
+					Optional:         true,
 					Default:          1024,
 					ValidateDiagFunc: validations.IntBetween(1, 65536),
 					Description:      "request_header_size for Network Load balancer Profile",
 				},
 				"response_header_size": {
 					Type:             schema.TypeInt,
-					Required:         true,
+					Optional:         true,
 					ValidateDiagFunc: validations.IntBetween(1, 65536),
 					Default:          4096,
 					Description:      "response_header_size for Network Load balancer Profile",
@@ -52,11 +53,11 @@ func HttpProfileSchema() *schema.Schema {
 					Description: "redirection for Network Load balancer Profile",
 				},
 				"x_forwarded_for": {
-					Type:        schema.TypeString,
+					Type:             schema.TypeString,
 					ValidateDiagFunc: validations.StringInSlice([]string{"INSERT", "REPLACE"}, false),
-					Optional:    true,
-					Default:     "INSERT", "REPLACE"
-					Description: "x_forwarded_for for Network Load balancer Profile",
+					Optional:         true,
+					Default:          "INSERT",
+					Description:      "x_forwarded_for for Network Load balancer Profile",
 				},
 				"request_body_size": {
 					Type:        schema.TypeString,
@@ -65,7 +66,7 @@ func HttpProfileSchema() *schema.Schema {
 				},
 				"response_timeout": {
 					Type:             schema.TypeInt,
-					Required:         true,
+					Optional:         true,
 					Default:          60,
 					ValidateDiagFunc: validations.IntBetween(1, 2147483647),
 					Description:      "response_timeout for Network Load balancer Profile",
@@ -95,10 +96,12 @@ func TcpProfileSchema() *schema.Schema {
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
 				"service_type": {
-					Type:             schema.TypeString,
-					ValidateDiagFunc: validations.StringInSlice([]string{"LBHttpProfile", "LBFastTcpProfile", "LBFastUdpProfile", "LBClientSslProfile", "LBServerSslProfile", "LBCookiePersistenceProfile", "LBGenericPersistenceProfile", "LBSourceIpPersistenceProfile"}, false),
-					Required:         true,
-					Description:      "Network Loadbalancer Supported values are `LBHttpProfile`,`LBFastTcpProfile`, `LBFastUdpProfile`, `LBClientSslProfile`,`LBServerSslProfile`, `LBCookiePersistenceProfile`,`LBGenericPersistenceProfile`,`LBSourceIpPersistenceProfile`",
+					Type: schema.TypeString,
+					ValidateDiagFunc: validations.StringInSlice([]string{"LBHttpProfile",
+						"LBFastTcpProfile", "LBFastUdpProfile", "LBClientSslProfile", "LBServerSslProfile", "LBCookiePersistenceProfile", "LBGenericPersistenceProfile", "LBSourceIpPersistenceProfile"}, false),
+					Optional:    true,
+					Default:     "LBFastTcpProfile",
+					Description: "Network Loadbalancer Supported values are `LBHttpProfile`,`LBFastTcpProfile`, `LBFastUdpProfile`, `LBClientSslProfile`,`LBServerSslProfile`, `LBCookiePersistenceProfile`,`LBGenericPersistenceProfile`,`LBSourceIpPersistenceProfile`",
 				},
 				"fast_tcp_idle_timeout": {
 					Type:             schema.TypeInt,
@@ -142,7 +145,8 @@ func UdpProfileSchema() *schema.Schema {
 				"service_type": {
 					Type:             schema.TypeString,
 					ValidateDiagFunc: validations.StringInSlice([]string{"LBHttpProfile", "LBFastTcpProfile", "LBFastUdpProfile", "LBClientSslProfile", "LBServerSslProfile", "LBCookiePersistenceProfile", "LBGenericPersistenceProfile", "LBSourceIpPersistenceProfile"}, false),
-					Required:         true,
+					Optional:         true,
+					Default:          "LBFastUdpProfile",
 					Description:      "Network Loadbalancer Supported values are `LBHttpProfile`,`LBFastTcpProfile`, `LBFastUdpProfile`, `LBClientSslProfile`,`LBServerSslProfile`, `LBCookiePersistenceProfile`,`LBGenericPersistenceProfile`,`LBSourceIpPersistenceProfile`",
 				},
 				"fast_udp_idle_timeout": {
@@ -178,10 +182,13 @@ func CookieProfileSchema() *schema.Schema {
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
 				"service_type": {
-					Type:             schema.TypeString,
-					ValidateDiagFunc: validations.StringInSlice([]string{"LBHttpProfile", "LBFastTcpProfile", "LBFastUdpProfile", "LBClientSslProfile", "LBServerSslProfile", "LBCookiePersistenceProfile", "LBGenericPersistenceProfile", "LBSourceIpPersistenceProfile"}, false),
-					Required:         true,
-					Description:      "Network Loadbalancer Supported values are `LBHttpProfile`,`LBFastTcpProfile`, `LBFastUdpProfile`, `LBClientSslProfile`,`LBServerSslProfile`, `LBCookiePersistenceProfile`,`LBGenericPersistenceProfile`,`LBSourceIpPersistenceProfile`",
+					Type: schema.TypeString,
+					ValidateDiagFunc: validations.StringInSlice([]string{"LBHttpProfile",
+						"LBFastTcpProfile", "LBFastUdpProfile", "LBClientSslProfile",
+						"LBServerSslProfile", "LBCookiePersistenceProfile", "LBGenericPersistenceProfile", "LBSourceIpPersistenceProfile"}, false),
+					Optional:    true,
+					Default:     "LBCookiePersistenceProfile",
+					Description: "Network Loadbalancer Supported values are `LBHttpProfile`,`LBFastTcpProfile`, `LBFastUdpProfile`, `LBClientSslProfile`,`LBServerSslProfile`, `LBCookiePersistenceProfile`,`LBGenericPersistenceProfile`,`LBSourceIpPersistenceProfile`",
 				},
 				"cookie_name": {
 					Type:        schema.TypeString,
@@ -259,10 +266,14 @@ func SourceIPProfileSchema() *schema.Schema {
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
 				"service_type": {
-					Type:             schema.TypeString,
-					ValidateDiagFunc: validations.StringInSlice([]string{"LBHttpProfile", "LBFastTcpProfile", "LBFastUdpProfile", "LBClientSslProfile", "LBServerSslProfile", "LBCookiePersistenceProfile", "LBGenericPersistenceProfile", "LBSourceIpPersistenceProfile"}, false),
-					Required:         true,
-					Description:      "Network Loadbalancer Supported values are `LBHttpProfile`,`LBFastTcpProfile`, `LBFastUdpProfile`, `LBClientSslProfile`,`LBServerSslProfile`, `LBCookiePersistenceProfile`,`LBGenericPersistenceProfile`,`LBSourceIpPersistenceProfile`",
+					Type: schema.TypeString,
+					ValidateDiagFunc: validations.StringInSlice([]string{"LBHttpProfile",
+						"LBFastTcpProfile", "LBFastUdpProfile", "LBClientSslProfile",
+						"LBServerSslProfile", "LBCookiePersistenceProfile",
+						"LBGenericPersistenceProfile", "LBSourceIpPersistenceProfile"}, false),
+					Optional:    true,
+					Default:     "LBSourceIpPersistenceProfile",
+					Description: "Network Loadbalancer Supported values are `LBHttpProfile`,`LBFastTcpProfile`, `LBFastUdpProfile`, `LBClientSslProfile`,`LBServerSslProfile`, `LBCookiePersistenceProfile`,`LBGenericPersistenceProfile`,`LBSourceIpPersistenceProfile`",
 				},
 				"share_persistence": {
 					Type:        schema.TypeBool,
@@ -309,10 +320,14 @@ func GenericProfileSchema() *schema.Schema {
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
 				"service_type": {
-					Type:             schema.TypeString,
-					ValidateDiagFunc: validations.StringInSlice([]string{"LBHttpProfile", "LBFastTcpProfile", "LBFastUdpProfile", "LBClientSslProfile", "LBServerSslProfile", "LBCookiePersistenceProfile", "LBGenericPersistenceProfile", "LBSourceIpPersistenceProfile"}, false),
-					Required:         true,
-					Description:      "Network Loadbalancer Supported values are `LBHttpProfile`,`LBFastTcpProfile`, `LBFastUdpProfile`, `LBClientSslProfile`,`LBServerSslProfile`, `LBCookiePersistenceProfile`,`LBGenericPersistenceProfile`,`LBSourceIpPersistenceProfile`",
+					Type: schema.TypeString,
+					ValidateDiagFunc: validations.StringInSlice([]string{"LBHttpProfile",
+						"LBFastTcpProfile", "LBFastUdpProfile", "LBClientSslProfile",
+						"LBServerSslProfile", "LBCookiePersistenceProfile",
+						"LBGenericPersistenceProfile", "LBSourceIpPersistenceProfile"}, false),
+					Optional:    true,
+					Default:     "LBGenericPersistenceProfile",
+					Description: "Network Loadbalancer Supported values are `LBHttpProfile`,`LBFastTcpProfile`, `LBFastUdpProfile`, `LBClientSslProfile`,`LBServerSslProfile`, `LBCookiePersistenceProfile`,`LBGenericPersistenceProfile`,`LBSourceIpPersistenceProfile`",
 				},
 				"share_persistence": {
 					Type:        schema.TypeBool,
@@ -353,10 +368,14 @@ func ClientProfileSchema() *schema.Schema {
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
 				"service_type": {
-					Type:             schema.TypeString,
-					ValidateDiagFunc: validations.StringInSlice([]string{"LBHttpProfile", "LBFastTcpProfile", "LBFastUdpProfile", "LBClientSslProfile", "LBServerSslProfile", "LBCookiePersistenceProfile", "LBGenericPersistenceProfile", "LBSourceIpPersistenceProfile"}, false),
-					Required:         true,
-					Description:      "Network Loadbalancer Supported values are `LBHttpProfile`,`LBFastTcpProfile`, `LBFastUdpProfile`, `LBClientSslProfile`,`LBServerSslProfile`, `LBCookiePersistenceProfile`,`LBGenericPersistenceProfile`,`LBSourceIpPersistenceProfile`",
+					Type: schema.TypeString,
+					ValidateDiagFunc: validations.StringInSlice([]string{"LBHttpProfile",
+						"LBFastTcpProfile", "LBFastUdpProfile", "LBClientSslProfile",
+						"LBServerSslProfile", "LBCookiePersistenceProfile",
+						"LBGenericPersistenceProfile", "LBSourceIpPersistenceProfile"}, false),
+					Optional:    true,
+					Default:     "LBClientSslProfile",
+					Description: "Network Loadbalancer Supported values are `LBHttpProfile`,`LBFastTcpProfile`, `LBFastUdpProfile`, `LBClientSslProfile`,`LBServerSslProfile`, `LBCookiePersistenceProfile`,`LBGenericPersistenceProfile`,`LBSourceIpPersistenceProfile`",
 				},
 				"ssl_suite": {
 					Type:             schema.TypeString,
@@ -403,10 +422,14 @@ func ServerProfileSchema() *schema.Schema {
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
 				"service_type": {
-					Type:             schema.TypeString,
-					ValidateDiagFunc: validations.StringInSlice([]string{"LBHttpProfile", "LBFastTcpProfile", "LBFastUdpProfile", "LBClientSslProfile", "LBServerSslProfile", "LBCookiePersistenceProfile", "LBGenericPersistenceProfile", "LBSourceIpPersistenceProfile"}, false),
-					Required:         true,
-					Description:      "Network Loadbalancer Supported values are `LBHttpProfile`,`LBFastTcpProfile`, `LBFastUdpProfile`, `LBClientSslProfile`,`LBServerSslProfile`, `LBCookiePersistenceProfile`,`LBGenericPersistenceProfile`,`LBSourceIpPersistenceProfile`",
+					Type: schema.TypeString,
+					ValidateDiagFunc: validations.StringInSlice([]string{"LBHttpProfile",
+						"LBFastTcpProfile", "LBFastUdpProfile", "LBClientSslProfile",
+						"LBServerSslProfile", "LBCookiePersistenceProfile",
+						"LBGenericPersistenceProfile", "LBSourceIpPersistenceProfile"}, false),
+					Optional:    true,
+					Default:     "LBServerSslProfile",
+					Description: "Network Loadbalancer Supported values are `LBHttpProfile`,`LBFastTcpProfile`, `LBFastUdpProfile`, `LBClientSslProfile`,`LBServerSslProfile`, `LBCookiePersistenceProfile`,`LBGenericPersistenceProfile`,`LBSourceIpPersistenceProfile`",
 				},
 				"ssl_suite": {
 					Type:             schema.TypeString,
