@@ -11,7 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func PoolMemeberGroupData() *schema.Resource {
+func LBPoolMemeberGroupData() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"name": {
@@ -32,8 +32,7 @@ func PoolMemeberGroupData() *schema.Resource {
 		},
 		ReadContext: PoolMemeberGroupReadContext,
 		Description: `The ` + DSPoolMemeberGroup + ` data source can be used to discover the ID of a hpegl vmaas network load balancer.
-		This can then be used with resources or data sources that require a ` + DSPoolMemeberGroup + `,
-		such as the ` + ResPoolMemeberGroup + ` resource.`,
+		This can then be used for the  data sources`,
 		SchemaVersion:  0,
 		StateUpgraders: nil,
 		Importer: &schema.ResourceImporter{

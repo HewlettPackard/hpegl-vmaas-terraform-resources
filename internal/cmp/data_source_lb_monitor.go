@@ -12,17 +12,17 @@ import (
 	"github.com/tshihad/tftags"
 )
 
-type passiveMonitords struct {
+type lbMonitords struct {
 	lbClient *client.LoadBalancerAPIService
 }
 
-func newPassiveMonitorDS(passiveMonitorClient *client.LoadBalancerAPIService) *passiveMonitords {
-	return &passiveMonitords{lbClient: passiveMonitorClient}
+func newLBMonitorDS(lbMonitorClient *client.LoadBalancerAPIService) *lbMonitords {
+	return &lbMonitords{lbClient: lbMonitorClient}
 }
 
-func (n *passiveMonitords) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
+func (n *lbMonitords) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
 	setMeta(meta, n.lbClient.Client)
-	log.Printf("[DEBUG] Get Passive Monitors")
+	log.Printf("[DEBUG] Get LB Monitors")
 	name := d.GetString("name")
 	lbID := d.GetInt("lb_id")
 
@@ -44,5 +44,5 @@ func (n *passiveMonitords) Read(ctx context.Context, d *utils.Data, meta interfa
 
 		}
 	}
-	return fmt.Errorf(errExactMatch, "Passive Monitors")
+	return fmt.Errorf(errExactMatch, "LB Monitors")
 }

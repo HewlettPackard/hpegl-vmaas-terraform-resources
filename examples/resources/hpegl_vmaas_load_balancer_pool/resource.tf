@@ -9,12 +9,12 @@ resource "hpegl_vmaas_load_balancer_pool" "tf_POOL" {
   algorithm = "WEIGHTED_ROUND_ROBIN"
   config {
     snat_translation_type = "LBSnatAutoMap"
-    active_monitor_paths = data.hpegl_vmaas_active_monitor.tf_lb_active.id
-    passive_monitor_path = data.hpegl_vmaas_passive_monitor.tf_lb_passive.id
+    active_monitor_paths = data.hpegl_vmaas_load_balancer_monitor.tf_lb_active.id
+    passive_monitor_path = data.hpegl_vmaas_load_balancer_monitor.tf_lb_passive.id
     tcp_multiplexing = false
     tcp_multiplexing_number = 6 
     member_group {
-      group = data.hpegl_vmaas_pool_member_group.tf_pool_group.external_id
+      group = data.hpegl_vmaas_lb_pool_member_group.tf_pool_group.external_id
       max_ip_list_size = 1
       ip_revision_filter = "IPV4"
       port = 80

@@ -16,7 +16,7 @@ type poolMemberGroupds struct {
 	lbClient *client.LoadBalancerAPIService
 }
 
-func newPoolMemberGroupDS(poolMemberGroupClient *client.LoadBalancerAPIService) *poolMemberGroupds {
+func newLBPoolMemberGroupDS(poolMemberGroupClient *client.LoadBalancerAPIService) *poolMemberGroupds {
 	return &poolMemberGroupds{lbClient: poolMemberGroupClient}
 }
 
