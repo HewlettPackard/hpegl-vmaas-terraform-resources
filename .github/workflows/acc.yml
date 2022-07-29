@@ -36,4 +36,4 @@ jobs:
         run: make tools
 
       - name: Run Acceptance test
-        run: make acceptance
+        run: make acceptance case=TestAccResourceInstanceCreate
