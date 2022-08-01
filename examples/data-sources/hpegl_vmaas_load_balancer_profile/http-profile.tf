@@ -2,5 +2,5 @@
 
 data "hpegl_vmaas_load_balancer_profile" "tf_http_profile" {
   lb_id = data.hpegl_vmaas_load_balancer.tf_lb.id
-  name = "default-http-lb-app-profile"
+  name = "APPLICATION-HTTP-Profile"
 }

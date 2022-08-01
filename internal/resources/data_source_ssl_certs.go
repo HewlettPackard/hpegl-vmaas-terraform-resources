@@ -21,7 +21,7 @@ func LBVirtualServerSslCertData() *schema.Resource {
 			},
 			"id": {
 				Type:        schema.TypeInt,
-				Required:    true,
+				Computed:    true,
 				Description: "Parent ID, id can be obtained by using LB datasource/resource.",
 			},
 		},
