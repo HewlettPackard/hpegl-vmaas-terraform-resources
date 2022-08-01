@@ -11,7 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func LBSslClientProfileData() *schema.Resource {
+func LBVirtualServerSslCertData() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"name": {
@@ -19,16 +19,15 @@ func LBSslClientProfileData() *schema.Resource {
 				Required:    true,
 				Description: f(generalNamedesc, "LoadBalancer", "LoadBalancer"),
 			},
-			"lb_id": {
+			"id": {
 				Type:        schema.TypeInt,
 				Required:    true,
-				Description: "Parent lb ID, lb_id can be obtained by using LB datasource/resource.",
+				Description: "Parent ID, id can be obtained by using LB datasource/resource.",
 			},
 		},
-		ReadContext: SSLClientProfileReadContext,
-		Description: `The ` + DSLBSslClientProfile + ` data source can be used to discover the ID of a hpegl vmaas network load balancer.
-		This can then be used with resources or data sources that require a ` + DSLBSslClientProfile + `,
-		such as the ` + ResLBSslClientProfile + ` resource.`,
+		ReadContext: LBVirtualServerSslCertReadContext,
+		Description: `The ` + DSLBVirtualServerSslCert + ` data source can be used to discover the ID of a hpegl vmaas network load balancer.
+		This can then be used with resources or data sources`,
 		SchemaVersion:  0,
 		StateUpgraders: nil,
 		Importer: &schema.ResourceImporter{
@@ -37,14 +36,14 @@ func LBSslClientProfileData() *schema.Resource {
 	}
 }
 
-func SSLClientProfileReadContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func LBVirtualServerSslCertReadContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, err := client.GetClientFromMetaMap(meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
 	data := utils.NewData(d)
-	err = c.CmpClient.DSLBSslClientProfile.Read(ctx, data, meta)
+	err = c.CmpClient.DSLBVirtualServerSslCert.Read(ctx, data, meta)
 	if err != nil {
 		return diag.FromErr(err)
 	}

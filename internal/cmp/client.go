@@ -7,44 +7,44 @@ import apiClient "github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
 // Client is the cmp client which will implements all the
 // functions in interface.go
 type Client struct {
-	Instance                  Resource
-	InstanceClone             Resource
-	Router                    Resource
-	ResNetwork                Resource
-	RouterNat                 Resource
-	RouterFirewallRuleGroup   Resource
-	RouterRoute               Resource
-	RouterBgpNeighbor         Resource
-	LoadBalancer              Resource
-	LoadBalancerMonitor       Resource
-	LoadBalancerProfile       Resource
-	LoadBalancerPool          Resource
-	LoadBalancerVirtualServer Resource
-	Network                   DataSource
-	NetworkType               DataSource
-	NetworkPool               DataSource
-	Plan                      DataSource
-	Group                     DataSource
-	Cloud                     DataSource
-	ResourcePool              DataSource
-	Layout                    DataSource
-	Datastore                 DataSource
-	PowerSchedule             DataSource
-	Template                  DataSource
-	Environment               DataSource
-	NetworkInterface          DataSource
-	CloudFolder               DataSource
-	DSRouter                  DataSource
-	DSDomain                  DataSource
-	NetworkProxy              DataSource
-	EdgeCluster               DataSource
-	TransportZone             DataSource
-	DSLoadBalancer            DataSource
-	DSLBPool                  DataSource
-	DSLBApplicationProfile    DataSource
-	DSLBPersistenceProfile    DataSource
-	DSLBSslClientProfile      DataSource
-	DSLBSslServerProfile      DataSource
+	Instance                    Resource
+	InstanceClone               Resource
+	Router                      Resource
+	ResNetwork                  Resource
+	RouterNat                   Resource
+	RouterFirewallRuleGroup     Resource
+	RouterRoute                 Resource
+	RouterBgpNeighbor           Resource
+	LoadBalancer                Resource
+	LoadBalancerMonitor         Resource
+	LoadBalancerProfile         Resource
+	LoadBalancerPool            Resource
+	LoadBalancerVirtualServer   Resource
+	Network                     DataSource
+	NetworkType                 DataSource
+	NetworkPool                 DataSource
+	Plan                        DataSource
+	Group                       DataSource
+	Cloud                       DataSource
+	ResourcePool                DataSource
+	Layout                      DataSource
+	Datastore                   DataSource
+	PowerSchedule               DataSource
+	Template                    DataSource
+	Environment                 DataSource
+	NetworkInterface            DataSource
+	CloudFolder                 DataSource
+	DSRouter                    DataSource
+	DSDomain                    DataSource
+	NetworkProxy                DataSource
+	EdgeCluster                 DataSource
+	TransportZone               DataSource
+	DSLoadBalancer              DataSource
+	DSLBPool                    DataSource
+	DSLBApplicationProfile      DataSource
+	DSLBPersistenceProfile      DataSource
+	DSLBVirtualServerSslCert    DataSource
+	DSLBVirtualServerSslProfile DataSource
 }
 
 // NewClient returns configured client
@@ -89,17 +89,17 @@ func NewClient(client *apiClient.APIClient, cfg apiClient.Configuration) *Client
 		Environment:   newEnvironment(&apiClient.EnvironmentAPIService{Client: client, Cfg: cfg}),
 		NetworkInterface: newNetworkInterface(&apiClient.CloudsAPIService{Client: client, Cfg: cfg},
 			&apiClient.ProvisioningAPIService{Client: client, Cfg: cfg}),
-		CloudFolder:            newCloudFolder(&apiClient.CloudsAPIService{Client: client, Cfg: cfg}),
-		DSRouter:               newRouterDS(&apiClient.RouterAPIService{Client: client, Cfg: cfg}),
-		DSLoadBalancer:         newLoadBalancerDS(&apiClient.LoadBalancerAPIService{Client: client, Cfg: cfg}),
-		DSLBApplicationProfile: newApplicationProfileDS(&apiClient.LoadBalancerAPIService{Client: client, Cfg: cfg}),
-		DSLBPool:               newPoolDS(&apiClient.LoadBalancerAPIService{Client: client, Cfg: cfg}),
-		DSLBPersistenceProfile: newPersistenceProfileDS(&apiClient.LoadBalancerAPIService{Client: client, Cfg: cfg}),
-		DSLBSslClientProfile:   newSslClientProfileDS(&apiClient.LoadBalancerAPIService{Client: client, Cfg: cfg}),
-		DSLBSslServerProfile:   newSslServerProfileDS(&apiClient.LoadBalancerAPIService{Client: client, Cfg: cfg}),
-		DSDomain:               newDomain(&apiClient.DomainAPIService{Client: client, Cfg: cfg}),
-		NetworkProxy:           newNetworkProxy(&apiClient.NetworksAPIService{Client: client, Cfg: cfg}),
-		TransportZone:          newTransportZone(&apiClient.RouterAPIService{Client: client, Cfg: cfg}),
-		EdgeCluster:            newEdgeCluster(&apiClient.RouterAPIService{Client: client, Cfg: cfg}),
+		CloudFolder:                 newCloudFolder(&apiClient.CloudsAPIService{Client: client, Cfg: cfg}),
+		DSRouter:                    newRouterDS(&apiClient.RouterAPIService{Client: client, Cfg: cfg}),
+		DSLoadBalancer:              newLoadBalancerDS(&apiClient.LoadBalancerAPIService{Client: client, Cfg: cfg}),
+		DSLBApplicationProfile:      newApplicationProfileDS(&apiClient.LoadBalancerAPIService{Client: client, Cfg: cfg}),
+		DSLBPool:                    newPoolDS(&apiClient.LoadBalancerAPIService{Client: client, Cfg: cfg}),
+		DSLBPersistenceProfile:      newPersistenceProfileDS(&apiClient.LoadBalancerAPIService{Client: client, Cfg: cfg}),
+		DSLBVirtualServerSslCert:    newsslVirtualServerCertDS(&apiClient.LoadBalancerAPIService{Client: client, Cfg: cfg}),
+		DSLBVirtualServerSslProfile: newsslVirtualServerProfileDS(&apiClient.LoadBalancerAPIService{Client: client, Cfg: cfg}),
+		DSDomain:                    newDomain(&apiClient.DomainAPIService{Client: client, Cfg: cfg}),
+		NetworkProxy:                newNetworkProxy(&apiClient.NetworksAPIService{Client: client, Cfg: cfg}),
+		TransportZone:               newTransportZone(&apiClient.RouterAPIService{Client: client, Cfg: cfg}),
+		EdgeCluster:                 newEdgeCluster(&apiClient.RouterAPIService{Client: client, Cfg: cfg}),
 	}
 }

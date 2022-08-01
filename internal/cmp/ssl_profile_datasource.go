@@ -12,17 +12,17 @@ import (
 	"github.com/tshihad/tftags"
 )
 
-type sslServerProfileds struct {
-	lbServer *client.LoadBalancerAPIService
+type sslVirtualServerProfileds struct {
+	lbClient *client.LoadBalancerAPIService
 }
 
-func newSslServerProfileDS(sslServerProfileServer *client.LoadBalancerAPIService) *sslServerProfileds {
-	return &sslServerProfileds{lbServer: sslServerProfileServer}
+func newsslVirtualServerProfileDS(sslVirtualServerProfileClient *client.LoadBalancerAPIService) *sslVirtualServerProfileds {
+	return &sslVirtualServerProfileds{lbClient: sslVirtualServerProfileClient}
 }
 
-func (n *sslServerProfileds) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
-	setMeta(meta, n.lbServer.Client)
-	log.Printf("[DEBUG] Get SSLServer Profile")
+func (n *sslVirtualServerProfileds) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
+	setMeta(meta, n.lbClient.Client)
+	log.Printf("[DEBUG] Get SSL Profiles")
 	name := d.GetString("name")
 	lbID := d.GetInt("lb_id")
 
@@ -31,7 +31,7 @@ func (n *sslServerProfileds) Read(ctx context.Context, d *utils.Data, meta inter
 		return err
 	}
 
-	lb, err := n.lbServer.GetLBProfiles(ctx, lbID)
+	lb, err := n.lbClient.GetLBProfiles(ctx, lbID)
 	if err != nil {
 		return err
 	}
@@ -45,5 +45,5 @@ func (n *sslServerProfileds) Read(ctx context.Context, d *utils.Data, meta inter
 		}
 	}
 
-	return fmt.Errorf(errExactMatch, "SSLServer Profile")
+	return fmt.Errorf(errExactMatch, "SSL Profiles")
 }
