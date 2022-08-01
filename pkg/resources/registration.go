@@ -41,13 +41,10 @@ func (r Registration) SupportedDataSources() map[string]*schema.Resource {
 		resources.DSEdgeCluster:      resources.EdgeClusterData(),
 		resources.DSTransportZone:    resources.TransportZoneData(),
 		//resources.DSLBMonitor:            resources.LBMonitorData(),
-		resources.DSLBProfile:                 resources.LBProfileData(),
-		resources.DSLBPool:                    resources.LBPoolData(),
-		resources.DSLoadBalancer:              resources.LoadBalancerData(),
-		resources.DSLBApplicationProfile:      resources.LBApplicationProfileData(),
-		resources.DSLBPersistenceProfile:      resources.LBPersistenceProfileData(),
-		resources.DSLBVirtualServerSslCert:    resources.LBVirtualServerSslCertData(),
-		resources.DSLBVirtualServerSslProfile: resources.LBVirtualServerSslProfileData(),
+		resources.DSLBProfile:              resources.LBProfileData(),
+		resources.DSLBPool:                 resources.LBPoolData(),
+		resources.DSLoadBalancer:           resources.LoadBalancerData(),
+		resources.DSLBVirtualServerSslCert: resources.LBVirtualServerSslCertData(),
 	}
 }
 

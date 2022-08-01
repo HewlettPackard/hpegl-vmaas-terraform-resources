@@ -12,17 +12,17 @@ import (
 	"github.com/tshihad/tftags"
 )
 
-type applicationProfileds struct {
+type VirtualServerProfileds struct {
 	lbClient *client.LoadBalancerAPIService
 }
 
-func newApplicationProfileDS(applicationProfileClient *client.LoadBalancerAPIService) *applicationProfileds {
-	return &applicationProfileds{lbClient: applicationProfileClient}
+func newVirtualServerProfileDS(VirtualServerProfileClient *client.LoadBalancerAPIService) *VirtualServerProfileds {
+	return &VirtualServerProfileds{lbClient: VirtualServerProfileClient}
 }
 
-func (n *applicationProfileds) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
+func (n *VirtualServerProfileds) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
 	setMeta(meta, n.lbClient.Client)
-	log.Printf("[DEBUG] Get Application Profile")
+	log.Printf("[DEBUG] Get Profiles")
 	name := d.GetString("name")
 	lbID := d.GetInt("lb_id")
 
@@ -45,5 +45,5 @@ func (n *applicationProfileds) Read(ctx context.Context, d *utils.Data, meta int
 		}
 	}
 
-	return fmt.Errorf(errExactMatch, "Application Profile")
+	return fmt.Errorf(errExactMatch, "Profiles")
 }
