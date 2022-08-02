@@ -51,99 +51,6 @@ func (l *LoadBalancerProfile) DiffValidate() error {
 	return nil
 }
 
-func (l *LoadBalancerProfile) validateAppProfile(http string, tcp string, udp string) error {
-	h := l.diff.Get(http)
-	t := l.diff.Get(tcp)
-	u := l.diff.Get(udp)
-
-	if len((h).([]interface{})) != 0 && len((t).([]interface{})) == 0 && len((u).([]interface{})) == 0 {
-		for _, profile := range h.([]interface{}) {
-			profile_type := profile.(map[string]interface{})["service_type"].(string)
-			if profile_type != LBHttpProfile {
-				return fmt.Errorf("please provide service_type as " + LBHttpProfile + " for " + http + " configuration")
-			}
-		}
-	}
-
-	if len((h).([]interface{})) == 0 && len((t).([]interface{})) != 0 && len((u).([]interface{})) == 0 {
-		for _, profile := range t.([]interface{}) {
-			profile_type := profile.(map[string]interface{})["service_type"].(string)
-			if profile_type != LBFastTcpProfile {
-				return fmt.Errorf("please provide service_type as " + LBFastTcpProfile + " for " + tcp + " configuration")
-			}
-		}
-	}
-
-	if len((h).([]interface{})) == 0 && len((t).([]interface{})) == 0 && len((u).([]interface{})) != 0 {
-		for _, profile := range u.([]interface{}) {
-			profile_type := profile.(map[string]interface{})["service_type"].(string)
-			if profile_type != LBFastUdpProfile {
-				return fmt.Errorf("please provide service_type as " + LBFastUdpProfile + " for " + udp + " configuration")
-			}
-		}
-	}
-
-	return nil
-}
-func (l *LoadBalancerProfile) validatePersProfile(cookie string, sourceIp string, generic string) error {
-	c := l.diff.Get(cookie)
-	s := l.diff.Get(sourceIp)
-	g := l.diff.Get(generic)
-
-	if len((c).([]interface{})) != 0 && len((s).([]interface{})) == 0 && len((g).([]interface{})) == 0 {
-		for _, profile := range c.([]interface{}) {
-			profile_type := profile.(map[string]interface{})["service_type"].(string)
-			if profile_type != LBCookiePersistenceProfile {
-				return fmt.Errorf("please provide service_type as " + LBCookiePersistenceProfile + " for " + cookie + " configuration")
-			}
-		}
-	}
-
-	if len((c).([]interface{})) == 0 && len((s).([]interface{})) != 0 && len((g).([]interface{})) == 0 {
-		for _, profile := range s.([]interface{}) {
-			profile_type := profile.(map[string]interface{})["service_type"].(string)
-			if profile_type != LBSourceIpPersistenceProfile {
-				return fmt.Errorf("please provide service_type as " + LBSourceIpPersistenceProfile + " for " + sourceIp + " configuration")
-			}
-		}
-	}
-
-	if len((c).([]interface{})) == 0 && len((s).([]interface{})) == 0 && len((g).([]interface{})) != 0 {
-		for _, profile := range g.([]interface{}) {
-			profile_type := profile.(map[string]interface{})["service_type"].(string)
-			if profile_type != LBGenericPersistenceProfile {
-				return fmt.Errorf("please provide service_type as " + LBGenericPersistenceProfile + " for " + generic + " configuration")
-			}
-		}
-	}
-
-	return nil
-}
-func (l *LoadBalancerProfile) validateSslProfile(server string, client string) error {
-	s := l.diff.Get(server)
-	c := l.diff.Get(client)
-
-	if len((s).([]interface{})) != 0 && len((c).([]interface{})) == 0 {
-		for _, profile := range s.([]interface{}) {
-			profile_type := profile.(map[string]interface{})["service_type"].(string)
-			if profile_type != LBServerSslProfile {
-				return fmt.Errorf("please provide service_type as " + LBServerSslProfile + " for " + server + " configuration")
-			}
-		}
-	}
-
-	if len((s).([]interface{})) == 0 && len((c).([]interface{})) != 0 {
-		for _, profile := range c.([]interface{}) {
-			profile_type := profile.(map[string]interface{})["service_type"].(string)
-			if profile_type != LBClientSslProfile {
-				return fmt.Errorf("please provide service_type as " + LBClientSslProfile + " for " + client + " configuration")
-			}
-		}
-	}
-
-	return nil
-}
-
 func (l *LoadBalancerProfile) validateProfile() error {
 	types := l.diff.Get(profiles)
 	switch types {
@@ -164,5 +71,98 @@ func (l *LoadBalancerProfile) validateProfile() error {
 			return err
 		}
 	}
+	return nil
+}
+
+func (l *LoadBalancerProfile) validateAppProfile(http string, tcp string, udp string) error {
+	httpType := l.diff.Get(http)
+	tcpType := l.diff.Get(tcp)
+	udpType := l.diff.Get(udp)
+
+	if len((httpType).([]interface{})) != 0 && len((tcpType).([]interface{})) == 0 && len((udpType).([]interface{})) == 0 {
+		for _, profile := range httpType.([]interface{}) {
+			profile_type := profile.(map[string]interface{})["service_type"].(string)
+			if profile_type != LBHttpProfile {
+				return fmt.Errorf("please provide service_type as " + LBHttpProfile + " for " + http + " configuration")
+			}
+		}
+	}
+
+	if len((httpType).([]interface{})) == 0 && len((tcpType).([]interface{})) != 0 && len((udpType).([]interface{})) == 0 {
+		for _, profile := range tcpType.([]interface{}) {
+			profile_type := profile.(map[string]interface{})["service_type"].(string)
+			if profile_type != LBFastTcpProfile {
+				return fmt.Errorf("please provide service_type as " + LBFastTcpProfile + " for " + tcp + " configuration")
+			}
+		}
+	}
+
+	if len((httpType).([]interface{})) == 0 && len((tcpType).([]interface{})) == 0 && len((udpType).([]interface{})) != 0 {
+		for _, profile := range udpType.([]interface{}) {
+			profile_type := profile.(map[string]interface{})["service_type"].(string)
+			if profile_type != LBFastUdpProfile {
+				return fmt.Errorf("please provide service_type as " + LBFastUdpProfile + " for " + udp + " configuration")
+			}
+		}
+	}
+
+	return nil
+}
+func (l *LoadBalancerProfile) validatePersProfile(cookie string, sourceIp string, generic string) error {
+	cookieType := l.diff.Get(cookie)
+	sourceIpType := l.diff.Get(sourceIp)
+	genericType := l.diff.Get(generic)
+
+	if len((cookieType).([]interface{})) != 0 && len((sourceIpType).([]interface{})) == 0 && len((genericType).([]interface{})) == 0 {
+		for _, profile := range cookieType.([]interface{}) {
+			profile_type := profile.(map[string]interface{})["service_type"].(string)
+			if profile_type != LBCookiePersistenceProfile {
+				return fmt.Errorf("please provide service_type as " + LBCookiePersistenceProfile + " for " + cookie + " configuration")
+			}
+		}
+	}
+
+	if len((cookieType).([]interface{})) == 0 && len((sourceIpType).([]interface{})) != 0 && len((genericType).([]interface{})) == 0 {
+		for _, profile := range sourceIpType.([]interface{}) {
+			profile_type := profile.(map[string]interface{})["service_type"].(string)
+			if profile_type != LBSourceIpPersistenceProfile {
+				return fmt.Errorf("please provide service_type as " + LBSourceIpPersistenceProfile + " for " + sourceIp + " configuration")
+			}
+		}
+	}
+
+	if len((cookieType).([]interface{})) == 0 && len((sourceIpType).([]interface{})) == 0 && len((genericType).([]interface{})) != 0 {
+		for _, profile := range genericType.([]interface{}) {
+			profile_type := profile.(map[string]interface{})["service_type"].(string)
+			if profile_type != LBGenericPersistenceProfile {
+				return fmt.Errorf("please provide service_type as " + LBGenericPersistenceProfile + " for " + generic + " configuration")
+			}
+		}
+	}
+
+	return nil
+}
+func (l *LoadBalancerProfile) validateSslProfile(server string, client string) error {
+	serverType := l.diff.Get(server)
+	clientType := l.diff.Get(client)
+
+	if len((serverType).([]interface{})) != 0 && len((clientType).([]interface{})) == 0 {
+		for _, profile := range serverType.([]interface{}) {
+			profile_type := profile.(map[string]interface{})["service_type"].(string)
+			if profile_type != LBServerSslProfile {
+				return fmt.Errorf("please provide service_type as " + LBServerSslProfile + " for " + server + " configuration")
+			}
+		}
+	}
+
+	if len((serverType).([]interface{})) == 0 && len((clientType).([]interface{})) != 0 {
+		for _, profile := range clientType.([]interface{}) {
+			profile_type := profile.(map[string]interface{})["service_type"].(string)
+			if profile_type != LBClientSslProfile {
+				return fmt.Errorf("please provide service_type as " + LBClientSslProfile + " for " + client + " configuration")
+			}
+		}
+	}
+
 	return nil
 }
