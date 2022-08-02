@@ -2,5 +2,5 @@
 
 data "hpegl_vmaas_load_balancer_profile" "tf_sourceip_profile" {
   lb_id = data.hpegl_vmaas_load_balancer.tf_lb.id
-  name = "default-source-ip-lb-persistence-profile"
+  name = "tf_PERSISTENCE-SOURCEIP"
 }

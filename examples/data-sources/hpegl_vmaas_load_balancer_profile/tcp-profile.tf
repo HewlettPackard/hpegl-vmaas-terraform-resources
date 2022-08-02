@@ -2,5 +2,5 @@
 
 data "hpegl_vmaas_load_balancer_profile" "tf_tcp_profile" {
   lb_id = data.hpegl_vmaas_load_balancer.tf_lb.id
-  name = "default-tcp-lb-app-profile"
+  name = "tf_APPLICATION-TCP"
 }
