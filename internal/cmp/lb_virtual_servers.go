@@ -126,21 +126,21 @@ func (lb *loadBalancerVirtualServer) Delete(ctx context.Context, d *utils.Data, 
 func (lb *loadBalancerVirtualServer) virtualServerAlignRequest(ctx context.Context, meta interface{},
 	createReq *models.CreateLBVirtualServersReq) error {
 
-	if createReq.TcpApplicationProfileConfig != nil && createReq.VipProtocol == "tcp" {
+	if createReq.TcpApplicationProfileConfig != nil && createReq.VipProtocol == TCP {
 		createReq.VirtualServerConfig.ApplicationProfile = createReq.TcpApplicationProfileConfig.ApplicationProfile
 
-	} else if createReq.UdpApplicationProfileConfig != nil && createReq.VipProtocol == "udp" {
+	} else if createReq.UdpApplicationProfileConfig != nil && createReq.VipProtocol == UDP {
 		createReq.VirtualServerConfig.ApplicationProfile = createReq.UdpApplicationProfileConfig.ApplicationProfile
 
-	} else if createReq.HttpApplicationProfileConfig != nil && createReq.VipProtocol == "http" {
+	} else if createReq.HttpApplicationProfileConfig != nil && createReq.VipProtocol == HTTP {
 		createReq.VirtualServerConfig.ApplicationProfile = createReq.HttpApplicationProfileConfig.ApplicationProfile
 
 	}
 
-	if createReq.CookiePersistenceProfileConfig != nil && createReq.Persistence == "COOKIE" {
+	if createReq.CookiePersistenceProfileConfig != nil && createReq.Persistence == COOKIE {
 		createReq.VirtualServerConfig.PersistenceProfile = createReq.CookiePersistenceProfileConfig.PersistenceProfile
 		createReq.VirtualServerConfig.Persistence = createReq.Persistence
-	} else if createReq.SourceipPersistenceProfileConfig != nil && createReq.Persistence == "SOURCE_IP" {
+	} else if createReq.SourceipPersistenceProfileConfig != nil && createReq.Persistence == SOURCEIP {
 		createReq.VirtualServerConfig.Persistence = createReq.Persistence
 		createReq.VirtualServerConfig.PersistenceProfile = createReq.SourceipPersistenceProfileConfig.PersistenceProfile
 

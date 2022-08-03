@@ -1,6 +1,5 @@
 # (C) Copyright 2022 Hewlett Packard Enterprise Development LP
 
-
 resource "hpegl_vmaas_load_balancer_virtual_server" "tf_lb_virtual_server" {
   lb_id = data.hpegl_vmaas_load_balancer.tf_lb.id
   name  =  "tf_virtual-server"       
