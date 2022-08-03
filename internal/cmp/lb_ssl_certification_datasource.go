@@ -12,15 +12,15 @@ import (
 	"github.com/tshihad/tftags"
 )
 
-type sslVirtualServerCertds struct {
+type lb_sslVirtualServerCertds struct {
 	lbClient *client.LoadBalancerAPIService
 }
 
-func newsslVirtualServerCertDS(sslVirtualServerCertClient *client.LoadBalancerAPIService) *sslVirtualServerCertds {
-	return &sslVirtualServerCertds{lbClient: sslVirtualServerCertClient}
+func newLBsslVirtualServerCertDS(sslVirtualServerCertClient *client.LoadBalancerAPIService) *lb_sslVirtualServerCertds {
+	return &lb_sslVirtualServerCertds{lbClient: sslVirtualServerCertClient}
 }
 
-func (n *sslVirtualServerCertds) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
+func (n *lb_sslVirtualServerCertds) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
 	setMeta(meta, n.lbClient.Client)
 	log.Printf("[DEBUG] Get SSL Certs")
 	name := d.GetString("name")

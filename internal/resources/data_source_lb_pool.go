@@ -17,7 +17,7 @@ func LBPoolData() *schema.Resource {
 			"name": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: f(generalNamedesc, "LoadBalancer", "LoadBalancer"),
+				Description: f(generalNamedesc, "LoadBalancer Pool", "LoadBalancer Pool"),
 			},
 			"lb_id": {
 				Type:        schema.TypeInt,

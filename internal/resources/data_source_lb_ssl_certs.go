@@ -17,7 +17,7 @@ func LBVirtualServerSslCertData() *schema.Resource {
 			"name": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: f(generalNamedesc, "LoadBalancer", "LoadBalancer"),
+				Description: f(generalNamedesc, "LoadBalancer SSL_CA_certs", "LoadBalancer SSL_CA_certs"),
 			},
 			"id": {
 				Type:        schema.TypeInt,

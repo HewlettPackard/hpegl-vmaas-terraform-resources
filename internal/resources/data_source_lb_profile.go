@@ -17,7 +17,7 @@ func LBProfileData() *schema.Resource {
 			"name": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: f(generalNamedesc, "LoadBalancer", "LoadBalancer"),
+				Description: f(generalNamedesc, "LoadBalancer Profile", "LoadBalancer Profile"),
 			},
 			"lb_id": {
 				Type:        schema.TypeInt,
