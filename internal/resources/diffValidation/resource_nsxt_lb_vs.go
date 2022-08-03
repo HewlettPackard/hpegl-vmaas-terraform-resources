@@ -36,22 +36,30 @@ func NewLoadBalancerVirtualServerValidate(diff *schema.ResourceDiff) *loadBalanc
 	}
 }
 
+func (l *loadBalancerVirtualServer) validateProfile(type1 string, value string) error {
+	profileType := l.diff.Get(value)
+	if len((profileType).([]interface{})) == 0 {
+		return fmt.Errorf("please provide " + value + " " + "configurations for Type" + " " + type1)
+	}
+	return nil
+}
+
 func (l *loadBalancerVirtualServer) DiffValidate() error {
 	types := l.diff.Get(applicationTypes)
 	switch types {
 	case TCP:
-		err := l.validateAppProfile(TCP, TCPProfile)
+		err := l.validateProfile(TCP, TCPProfile)
 		if err != nil {
 			return err
 		}
 	case UDP:
-		err := l.validateAppProfile(UDP, UDPProfile)
+		err := l.validateProfile(UDP, UDPProfile)
 		if err != nil {
 			return err
 		}
 
 	case HTTP:
-		err := l.validateAppProfile(HTTP, HTTPProfile)
+		err := l.validateProfile(HTTP, HTTPProfile)
 		if err != nil {
 			return err
 		}
@@ -59,32 +67,15 @@ func (l *loadBalancerVirtualServer) DiffValidate() error {
 	persTypes := l.diff.Get(persistenceTypes)
 	switch persTypes {
 	case COOKIE:
-		err := l.validatePersProfile(COOKIE, CookieProfile)
+		err := l.validateProfile(COOKIE, CookieProfile)
 		if err != nil {
 			return err
 		}
 	case SOURCE_IP:
-		err := l.validatePersProfile(SOURCE_IP, SourceProfile)
+		err := l.validateProfile(SOURCE_IP, SourceProfile)
 		if err != nil {
 			return err
 		}
-	}
-
-	return nil
-}
-
-func (l *loadBalancerVirtualServer) validateAppProfile(types string, value string) error {
-	appType := l.diff.Get(value)
-	if len((appType).([]interface{})) == 0 {
-		return fmt.Errorf("please provide " + value + " " + "configurations for Type" + " " + types)
-	}
-	return nil
-}
-
-func (l *loadBalancerVirtualServer) validatePersProfile(types string, value string) error {
-	persType := l.diff.Get(value)
-	if len((persType).([]interface{})) == 0 {
-		return fmt.Errorf("please provide " + value + " " + "configurations for Type" + " " + types)
 	}
 	return nil
 }
