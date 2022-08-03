@@ -58,7 +58,6 @@ linters:
     - exhaustivestruct
     - cyclop
     - varnamelen
-    - maintidx
     - ireturn
     #Temporarily disabling wrapcheck
     # - wrapcheck
