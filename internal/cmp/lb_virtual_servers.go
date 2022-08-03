@@ -31,11 +31,11 @@ func (lb *loadBalancerVirtualServer) Read(ctx context.Context, d *utils.Data, me
 		return err
 	}
 
-	getPoolLoadBalancer, err := lb.lbClient.GetSpecificLBVirtualServer(ctx, lbVSResp.LbID, lbVSResp.ID)
+	getlbVirtualServerResp, err := lb.lbClient.GetSpecificLBVirtualServer(ctx, lbVSResp.LbID, lbVSResp.ID)
 	if err != nil {
 		return err
 	}
-	return tftags.Set(d, getPoolLoadBalancer.GetSpecificLBVirtualServersResp)
+	return tftags.Set(d, getlbVirtualServerResp.GetSpecificLBVirtualServersResp)
 }
 
 func (lb *loadBalancerVirtualServer) Update(ctx context.Context, d *utils.Data, meta interface{}) error {
