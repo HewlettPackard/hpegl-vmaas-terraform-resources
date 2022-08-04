@@ -50,7 +50,6 @@ func (lb *loadBalancerProfile) Create(ctx context.Context, d *utils.Data, meta i
 		return err
 	}
 
-	//return fmt.Errorf("%v", createReq.CreateLBProfileReq.TfHTTPConfig)
 	lbProfileResp, err := lb.lbClient.CreateLBProfile(ctx, createReq, createReq.CreateLBProfileReq.LbID)
 	if err != nil {
 		return err
