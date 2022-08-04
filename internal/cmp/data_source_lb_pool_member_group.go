@@ -14,10 +14,14 @@ import (
 
 type poolMemberGroupds struct {
 	lbClient *client.LoadBalancerAPIService
+	rClient  *client.RouterAPIService
 }
 
-func newLBPoolMemberGroupDS(poolMemberGroupClient *client.LoadBalancerAPIService) *poolMemberGroupds {
-	return &poolMemberGroupds{lbClient: poolMemberGroupClient}
+func newLBPoolMemberGroupDS(loadBalancerClient *client.LoadBalancerAPIService, routerClient *client.RouterAPIService) *poolMemberGroupds {
+	return &poolMemberGroupds{
+		lbClient: loadBalancerClient,
+		rClient:  routerClient,
+	}
 }
 
 func (n *poolMemberGroupds) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
@@ -30,18 +34,38 @@ func (n *poolMemberGroupds) Read(ctx context.Context, d *utils.Data, meta interf
 		return err
 	}
 
-	lb, err := n.lbClient.GetLBPoolMemberGroup(ctx)
+	setMeta(meta, n.rClient.Client)
+	// Get network server ID for nsx-t
+	serverResp, err := n.rClient.GetNetworkServices(ctx, nil)
 	if err != nil {
 		return err
 	}
 
-	for i, n := range lb.MemeberGroup {
-		if n.Name == name {
-			log.Print("[DEBUG]", lb.MemeberGroup[i].ExternalID)
+	var serverID int
+	for i, n := range serverResp.NetworkServices {
+		if n.TypeName == nsxt {
+			serverID = serverResp.NetworkServices[i].ID
 
-			return tftags.Set(d, lb.MemeberGroup[i])
-
+			break
 		}
 	}
+
+	if serverID == 0 {
+		return fmt.Errorf(errExactMatch, "network server")
+	} else {
+		lb, err := n.lbClient.GetLBPoolMemberGroup(ctx, serverID)
+		if err != nil {
+			return err
+		}
+
+		for i, n := range lb.MemeberGroup {
+			if n.Name == name {
+				log.Print("[DEBUG]", lb.MemeberGroup[i].ExternalID)
+
+				return tftags.Set(d, lb.MemeberGroup[i])
+			}
+		}
+	}
+
 	return fmt.Errorf(errExactMatch, "Pool Member Group")
 }
