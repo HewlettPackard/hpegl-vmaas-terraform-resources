@@ -81,7 +81,7 @@ func LoadBalancerVirtualServers() *schema.Resource {
 			"ssl_server_cert": {
 				Type:        schema.TypeInt,
 				Required:    true,
-				Description: "ssl_server_cert of the Network loadbalancer virtual server",
+				Description: "ID of the ssl_server_cert. Use " + DSLBVirtualServerSslCert + "datasource to obtain the id  here",
 			},
 			"ssl_server_config": {
 				Type:        schema.TypeList,
@@ -92,7 +92,7 @@ func LoadBalancerVirtualServers() *schema.Resource {
 						"ssl_server_profile": {
 							Type:        schema.TypeInt,
 							Required:    true,
-							Description: "Network Loadbalancer Supported values are `SOURCE_IP`,`COOKIE`",
+							Description: "ID of the ssl_server_profile. Use " + DSLBProfile + "datasource to obtain the id  here",
 						},
 					},
 				},
@@ -100,7 +100,7 @@ func LoadBalancerVirtualServers() *schema.Resource {
 			"ssl_client_cert": {
 				Type:        schema.TypeInt,
 				Required:    true,
-				Description: "ssl_cert of Network loadbalancer virtual server",
+				Description: "ID of the ssl_client_cert. Use " + DSLBVirtualServerSslCert + "datasource to obtain the id  here",
 			},
 			"ssl_client_config": {
 				Type:        schema.TypeList,
@@ -111,7 +111,7 @@ func LoadBalancerVirtualServers() *schema.Resource {
 						"ssl_client_profile": {
 							Type:        schema.TypeInt,
 							Required:    true,
-							Description: "Network Loadbalancer Supported values are `SOURCE_IP`,`COOKIE`",
+							Description: "ID of the ssl_client_profile. Use " + DSLBProfile + "datasource to obtain the id  here",
 						},
 					},
 				},
