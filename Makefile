@@ -83,7 +83,7 @@ acceptance:
 	@if [ "${case}" != "" ]; then \
 		TF_ACC=true go test -run $(case) -v -timeout=2000s -cover $(ACC_TEST_FILE_LOCATION); \
 	else \
-		TF_ACC=true go test -v -timeout=9000s -cover $(ACC_TEST_FILE_LOCATION); \
+		TF_ACC=true go test -v -timeout=10000s -cover $(ACC_TEST_FILE_LOCATION); \
 	fi
 
 build: vendor $(NAME)
@@ -111,5 +111,5 @@ all: lint test
 tools:
 	go env -w GO111MODULE=on
 	go env -w GOPRIVATE="github.com/hpe-hcss/*"
-	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.31.0
+	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.43.0
 .PHONY: tools

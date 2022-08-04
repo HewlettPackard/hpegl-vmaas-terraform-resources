@@ -9,7 +9,6 @@ acc:
       bgp {
         ecmp = true
         enable_bgp = true
-        inter_sr_ibgp = false
         local_as_num = 65000
         multipath_relax = true
         restart_mode = "HELPER_ONLY"

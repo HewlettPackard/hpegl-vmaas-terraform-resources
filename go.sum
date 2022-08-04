@@ -91,6 +91,8 @@ github.com/Djarvur/go-err113 v0.0.0-20210108212216-aea10b59be24 h1:sHglBQTwgx+rW
 github.com/Djarvur/go-err113 v0.0.0-20210108212216-aea10b59be24/go.mod h1:4UJr5HIiMZrwgkSPdsjy2uOQExX/WEILpIrO9UPGuXs=
 github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk v0.1.0-beta10 h1:CYtSUYb2UAs6gm+Su1zwTdI+l9pX+24cEqiaw/JcegE=
 github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk v0.1.0-beta10/go.mod h1:gPk3WuH1P3kF3ROxyHERgKMMFHR+W0Fsspg5vsA0+O0=
+github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk v0.1.0-beta11 h1:w/NSD3aFtarRg61k3ybvDwHA7bFXwfbWu6IvVHsltZc=
+github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk v0.1.0-beta11/go.mod h1:gPk3WuH1P3kF3ROxyHERgKMMFHR+W0Fsspg5vsA0+O0=
 github.com/Masterminds/goutils v1.1.0/go.mod h1:8cTjp+g8YejhMuvIA5y2vz3BpJxksy863GQaJW2MFNU=
 github.com/Masterminds/goutils v1.1.1 h1:5nUrii3FMTL5diU80unEVvNevw1nH4+ZV4DSLVJLSYI=
 github.com/Masterminds/goutils v1.1.1/go.mod h1:8cTjp+g8YejhMuvIA5y2vz3BpJxksy863GQaJW2MFNU=

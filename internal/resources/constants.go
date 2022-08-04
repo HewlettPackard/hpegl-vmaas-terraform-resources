@@ -24,9 +24,11 @@ const (
 	DSEdgeCluster            = "hpegl_vmaas_edge_cluster"
 	DSTransportZone          = "hpegl_vmaas_transport_zone"
 	DSLoadBalancer           = "hpegl_vmaas_load_balancer"
+	DSPoolMemeberGroup       = "hpegl_vmaas_lb_pool_member_group"
 	DSLBMonitor              = "hpegl_vmaas_load_balancer_monitor"
 	DSLBProfile              = "hpegl_vmaas_load_balancer_profile"
 	DSLBPool                 = "hpegl_vmaas_load_balancer_pool"
+	DSLBVirtualServer        = "hpegl_vmaas_load_balancer_virtual_server"
 	DSLBVirtualServerSslCert = "hpegl_vmaas_load_balancer_virtual_server_ssl_cert"
 
 	// resource key

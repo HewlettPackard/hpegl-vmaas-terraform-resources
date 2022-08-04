@@ -43,6 +43,8 @@ type Client struct {
 	DSLBPool                  DataSource
 	DSLBProfile               DataSource
 	DSLBVirtualServerSslCert  DataSource
+	DSLBMonitor               DataSource
+	DSPoolMemeberGroup        DataSource
 }
 
 // NewClient returns configured client
@@ -93,6 +95,8 @@ func NewClient(client *apiClient.APIClient, cfg apiClient.Configuration) *Client
 		DSRouter:                 newRouterDS(&apiClient.RouterAPIService{Client: client, Cfg: cfg}),
 		DSLoadBalancer:           newLoadBalancerDS(&apiClient.LoadBalancerAPIService{Client: client, Cfg: cfg}),
 		DSLBProfile:              newLBVirtualServerProfileDS(&apiClient.LoadBalancerAPIService{Client: client, Cfg: cfg}),
+		DSLBMonitor:              newLBMonitorDS(&apiClient.LoadBalancerAPIService{Client: client, Cfg: cfg}),
+		DSPoolMemeberGroup:       newLBPoolMemberGroupDS(&apiClient.LoadBalancerAPIService{Client: client, Cfg: cfg}),
 		DSLBPool:                 newLBPoolDS(&apiClient.LoadBalancerAPIService{Client: client, Cfg: cfg}),
 		DSLBVirtualServerSslCert: newLBsslVirtualServerCertDS(&apiClient.LoadBalancerAPIService{Client: client, Cfg: cfg}),
 		DSDomain:                 newDomain(&apiClient.DomainAPIService{Client: client, Cfg: cfg}),
