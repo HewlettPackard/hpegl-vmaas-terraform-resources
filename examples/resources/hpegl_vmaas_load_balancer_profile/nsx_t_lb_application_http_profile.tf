@@ -8,7 +8,7 @@ resource "hpegl_vmaas_load_balancer_profile" "tf_APPLICATION-HTTP" {
   description  = "APPLICATION-HTTP-Profile creating using tf"
   profile_type = "application-profile"
   http_profile {
-      service_type     = "LBFastHttpProfile"
+      service_type     = "LBHttpProfile"
       http_idle_timeout = 30
       request_header_size = 1024
       response_header_size = 4096
