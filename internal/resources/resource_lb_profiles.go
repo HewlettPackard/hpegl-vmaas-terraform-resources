@@ -38,9 +38,9 @@ func LoadBalancerProfiles() *schema.Resource {
 				ValidateDiagFunc: validations.StringInSlice([]string{
 					"application-profile", "ssl-profile", "persistence-profile",
 				}, false),
-				Required:     true,
-				InputDefault: "application-profile",
-				Description:  "Network Loadbalancer Supported values are `application-profile`, `ssl-profile`, `persistence-profile`",
+				Optional:    true,
+				Default:     "application-profile",
+				Description: "Network Loadbalancer Supported values are `application-profile`, `ssl-profile`, `persistence-profile`",
 			},
 			"http_profile":     schemas.HttpProfileSchema(),
 			"tcp_profile":      schemas.TcpProfileSchema(),
