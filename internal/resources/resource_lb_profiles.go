@@ -30,7 +30,7 @@ func LoadBalancerProfiles() *schema.Resource {
 			},
 			"description": {
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 				Description: "Creating the Network Load balancer Profile",
 			},
 			"profile_type": {
