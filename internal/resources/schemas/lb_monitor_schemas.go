@@ -16,16 +16,16 @@ func HTTPMonitorSchema() *schema.Schema {
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
 				"fall_count": {
-					Type:        schema.TypeInt,
-					Optional:    true,
-					Default:     3,
-					Description: "Number of consecutive checks that must fail before marking it down.",
+					Type:         schema.TypeInt,
+					Required:     true,
+					InputDefault: 3,
+					Description:  "Number of consecutive checks that must fail before marking it down.",
 				},
 				"interval": {
-					Type:        schema.TypeInt,
-					Default:     5,
-					Description: "The frequency at which the system issues the monitor check (in seconds).",
-					Optional:    true,
+					Type:         schema.TypeInt,
+					InputDefault: 5,
+					Description:  "The frequency at which the system issues the monitor check (in seconds).",
+					Required:     true,
 				},
 				"monitor_port": {
 					Type:        schema.TypeInt,
@@ -33,16 +33,16 @@ func HTTPMonitorSchema() *schema.Schema {
 					Optional:    true,
 				},
 				"rise_count": {
-					Type:        schema.TypeInt,
-					Optional:    true,
-					Default:     3,
-					Description: "Number of consecutive checks that must pass before marking it up",
+					Type:         schema.TypeInt,
+					Required:     true,
+					InputDefault: 3,
+					Description:  "Number of consecutive checks that must pass before marking it up",
 				},
 				"timeout": {
-					Type:        schema.TypeInt,
-					Optional:    true,
-					Default:     15,
-					Description: "Timeout for Network loadbalancer Monitor",
+					Type:         schema.TypeInt,
+					Required:     true,
+					InputDefault: 15,
+					Description:  "Timeout for Network loadbalancer Monitor",
 				},
 				"request_body": {
 					Type:        schema.TypeString,
@@ -51,9 +51,9 @@ func HTTPMonitorSchema() *schema.Schema {
 				},
 				"request_method": {
 					Type:             schema.TypeString,
-					Optional:         true,
+					Required:         true,
 					ValidateDiagFunc: validations.StringInSlice([]string{"GET", "POST", "OPTIONS", "HEAD", "PUT"}, false),
-					Default:          "GET",
+					InputDefault:     "GET",
 					Description:      "Health check method for HTTP monitor type. Valid values are GET, HEAD, PUT, POST and OPTIONS",
 				},
 				"request_url": {
@@ -65,7 +65,7 @@ func HTTPMonitorSchema() *schema.Schema {
 					Type:             schema.TypeString,
 					ValidateDiagFunc: validations.StringInSlice([]string{"HTTP_VERSION_1_0", "HTTP_VERSION_1_1"}, false),
 					Description:      "HTTP request version. Valid values are HTTP_VERSION_1_0 and HTTP_VERSION_1_1",
-					Optional:         true,
+					Required:         true,
 				},
 				"response_data": {
 					Type:        schema.TypeString,
@@ -93,16 +93,16 @@ func HTTPSMonitorSchema() *schema.Schema {
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
 				"fall_count": {
-					Type:        schema.TypeInt,
-					Optional:    true,
-					Default:     3,
-					Description: "Number of consecutive checks that must fail before marking it down.",
+					Type:         schema.TypeInt,
+					Required:     true,
+					InputDefault: 3,
+					Description:  "Number of consecutive checks that must fail before marking it down.",
 				},
 				"interval": {
-					Type:        schema.TypeInt,
-					Default:     5,
-					Description: "The frequency at which the system issues the monitor check (in seconds).",
-					Optional:    true,
+					Type:         schema.TypeInt,
+					InputDefault: 5,
+					Description:  "The frequency at which the system issues the monitor check (in seconds).",
+					Required:     true,
 				},
 				"monitor_port": {
 					Type:        schema.TypeInt,
@@ -110,16 +110,16 @@ func HTTPSMonitorSchema() *schema.Schema {
 					Optional:    true,
 				},
 				"rise_count": {
-					Type:        schema.TypeInt,
-					Optional:    true,
-					Default:     3,
-					Description: "Number of consecutive checks that must pass before marking it up",
+					Type:         schema.TypeInt,
+					Required:     true,
+					InputDefault: 3,
+					Description:  "Number of consecutive checks that must pass before marking it up",
 				},
 				"timeout": {
-					Type:        schema.TypeInt,
-					Optional:    true,
-					Default:     15,
-					Description: "Number of seconds the target has to respond to the monitor request",
+					Type:         schema.TypeInt,
+					Required:     true,
+					InputDefault: 15,
+					Description:  "Number of seconds the target has to respond to the monitor request",
 				},
 				"request_body": {
 					Type:        schema.TypeString,
@@ -128,9 +128,9 @@ func HTTPSMonitorSchema() *schema.Schema {
 				},
 				"request_method": {
 					Type:             schema.TypeString,
-					Optional:         true,
+					Required:         true,
 					ValidateDiagFunc: validations.StringInSlice([]string{"GET", "POST", "OPTIONS", "HEAD", "PUT"}, false),
-					Default:          "GET",
+					InputDefault:     "GET",
 					Description:      "Health check method for HTTPs monitor type. Valid values are GET, HEAD, PUT, POST and OPTIONS",
 				},
 				"request_url": {
@@ -170,16 +170,16 @@ func IcmpMonitorSchema() *schema.Schema {
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
 				"fall_count": {
-					Type:        schema.TypeInt,
-					Optional:    true,
-					Default:     3,
-					Description: "Number of consecutive checks that must fail before marking it down.",
+					Type:         schema.TypeInt,
+					Required:     true,
+					InputDefault: 3,
+					Description:  "Number of consecutive checks that must fail before marking it down.",
 				},
 				"interval": {
-					Type:        schema.TypeInt,
-					Default:     5,
-					Description: "The frequency at which the system issues the monitor check (in seconds).",
-					Optional:    true,
+					Type:         schema.TypeInt,
+					InputDefault: 5,
+					Description:  "The frequency at which the system issues the monitor check (in seconds).",
+					Required:     true,
 				},
 				"monitor_port": {
 					Type:        schema.TypeInt,
@@ -188,22 +188,22 @@ func IcmpMonitorSchema() *schema.Schema {
 				},
 				"rise_count": {
 
-					Type:        schema.TypeInt,
-					Optional:    true,
-					Default:     3,
-					Description: "Number of consecutive checks that must pass before marking it up",
+					Type:         schema.TypeInt,
+					Required:     true,
+					InputDefault: 3,
+					Description:  "Number of consecutive checks that must pass before marking it up",
 				},
 				"timeout": {
-					Type:        schema.TypeInt,
-					Optional:    true,
-					Default:     15,
-					Description: "Number of seconds the target has to respond to the monitor request",
+					Type:         schema.TypeInt,
+					Required:     true,
+					InputDefault: 15,
+					Description:  "Number of seconds the target has to respond to the monitor request",
 				},
 				"data_length": {
-					Type:        schema.TypeInt,
-					Default:     56,
-					Description: "data length is for the ICMP monitor type",
-					Optional:    true,
+					Type:         schema.TypeInt,
+					InputDefault: 56,
+					Description:  "data length is for the ICMP monitor type",
+					Required:     true,
 				},
 			},
 		},
@@ -221,16 +221,16 @@ func PassiveMonitorSchema() *schema.Schema {
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
 				"timeout": {
-					Type:        schema.TypeInt,
-					Optional:    true,
-					Default:     15,
-					Description: "Number of seconds the target has to respond to the monitor request",
+					Type:         schema.TypeInt,
+					Required:     true,
+					InputDefault: 15,
+					Description:  "Number of seconds the target has to respond to the monitor request",
 				},
 				"max_fail": {
-					Type:        schema.TypeInt,
-					Default:     5,
-					Description: "maximum failure for the ICMP monitor type",
-					Optional:    true,
+					Type:         schema.TypeInt,
+					InputDefault: 5,
+					Description:  "maximum failure for the ICMP monitor type",
+					Required:     true,
 				},
 			},
 		},
@@ -248,16 +248,16 @@ func TCPMonitorSchema() *schema.Schema {
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
 				"fall_count": {
-					Type:        schema.TypeInt,
-					Optional:    true,
-					Default:     3,
-					Description: "Number of consecutive checks that must fail before marking it down.",
+					Type:         schema.TypeInt,
+					Required:     true,
+					InputDefault: 3,
+					Description:  "Number of consecutive checks that must fail before marking it down.",
 				},
 				"interval": {
-					Type:        schema.TypeInt,
-					Default:     5,
-					Description: "The frequency at which the system issues the monitor check (in seconds).",
-					Optional:    true,
+					Type:         schema.TypeInt,
+					InputDefault: 5,
+					Description:  "The frequency at which the system issues the monitor check (in seconds).",
+					Required:     true,
 				},
 				"monitor_port": {
 					Type:        schema.TypeInt,
@@ -265,16 +265,16 @@ func TCPMonitorSchema() *schema.Schema {
 					Optional:    true,
 				},
 				"rise_count": {
-					Type:        schema.TypeInt,
-					Optional:    true,
-					Default:     3,
-					Description: "Number of consecutive checks that must pass before marking it up",
+					Type:         schema.TypeInt,
+					Required:     true,
+					InputDefault: 3,
+					Description:  "Number of consecutive checks that must pass before marking it up",
 				},
 				"timeout": {
-					Type:        schema.TypeInt,
-					Optional:    true,
-					Default:     15,
-					Description: "Number of seconds the target has to respond to the monitor request",
+					Type:         schema.TypeInt,
+					Required:     true,
+					InputDefault: 15,
+					Description:  "Number of seconds the target has to respond to the monitor request",
 				},
 				"request_body": {
 					Type:        schema.TypeString,
@@ -302,33 +302,33 @@ func UDPMonitorSchema() *schema.Schema {
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
 				"fall_count": {
-					Type:        schema.TypeInt,
-					Optional:    true,
-					Default:     3,
-					Description: "Number of consecutive checks that must fail before marking it down.",
+					Type:         schema.TypeInt,
+					Required:     true,
+					InputDefault: 3,
+					Description:  "Number of consecutive checks that must fail before marking it down.",
 				},
 				"interval": {
-					Type:        schema.TypeInt,
-					Default:     5,
-					Description: "The frequency at which the system issues the monitor check (in seconds).",
-					Optional:    true,
+					Type:         schema.TypeInt,
+					InputDefault: 5,
+					Description:  "The frequency at which the system issues the monitor check (in seconds).",
+					Required:     true,
 				},
 				"monitor_port": {
 					Type:        schema.TypeInt,
 					Description: "If the monitor port is specified, it would override pool member port setting for healthcheck.",
-					Optional:    true,
+					Required:    true,
 				},
 				"rise_count": {
-					Type:        schema.TypeInt,
-					Optional:    true,
-					Default:     3,
-					Description: "Number of consecutive checks that must pass before marking it up",
+					Type:         schema.TypeInt,
+					Required:     true,
+					InputDefault: 3,
+					Description:  "Number of consecutive checks that must pass before marking it up",
 				},
 				"timeout": {
-					Type:        schema.TypeInt,
-					Optional:    true,
-					Default:     15,
-					Description: "Number of seconds the target has to respond to the monitor request",
+					Type:         schema.TypeInt,
+					Required:     true,
+					InputDefault: 15,
+					Description:  "Number of seconds the target has to respond to the monitor request",
 				},
 				"request_body": {
 					Type:        schema.TypeString,
