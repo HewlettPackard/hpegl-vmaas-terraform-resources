@@ -124,12 +124,12 @@ func (lb *loadBalancerVirtualServer) Delete(ctx context.Context, d *utils.Data, 
 }
 
 func (lb *loadBalancerVirtualServer) virtualServerAlignRequest(createReq *models.CreateLBVirtualServersReq) error {
-	if createReq.TcpApplicationProfileConfig != nil && createReq.VipProtocol == TCP {
-		createReq.VirtualServerConfig.ApplicationProfile = createReq.TcpApplicationProfileConfig.ApplicationProfile
-	} else if createReq.UdpApplicationProfileConfig != nil && createReq.VipProtocol == UDP {
-		createReq.VirtualServerConfig.ApplicationProfile = createReq.UdpApplicationProfileConfig.ApplicationProfile
-	} else if createReq.HttpApplicationProfileConfig != nil && createReq.VipProtocol == HTTP {
-		createReq.VirtualServerConfig.ApplicationProfile = createReq.HttpApplicationProfileConfig.ApplicationProfile
+	if createReq.TCPApplicationProfileConfig != nil && createReq.VipProtocol == TCP {
+		createReq.VirtualServerConfig.ApplicationProfile = createReq.TCPApplicationProfileConfig.ApplicationProfile
+	} else if createReq.UDPApplicationProfileConfig != nil && createReq.VipProtocol == UDP {
+		createReq.VirtualServerConfig.ApplicationProfile = createReq.UDPApplicationProfileConfig.ApplicationProfile
+	} else if createReq.HTTPApplicationProfileConfig != nil && createReq.VipProtocol == HTTP {
+		createReq.VirtualServerConfig.ApplicationProfile = createReq.HTTPApplicationProfileConfig.ApplicationProfile
 	}
 
 	if createReq.CookiePersistenceProfileConfig != nil && createReq.Persistence == COOKIE {
