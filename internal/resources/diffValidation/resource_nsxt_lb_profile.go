@@ -58,94 +58,70 @@ func (l *LoadBalancerProfile) validateProfile() error {
 		httpType := l.diff.Get(http)
 		tcpType := l.diff.Get(tcp)
 		udpType := l.diff.Get(udp)
-		err := l.validateProfileTypes(httpType, tcpType, udpType, applicationProfile)
-		if err != nil {
-			return err
+		if len((httpType).([]interface{})) != 0 {
+			err := l.validateProfilesTypes(httpType, LBHttpProfile)
+			if err != nil {
+				return err
+			}
+		} else if len((tcpType).([]interface{})) != 0 {
+			err := l.validateProfilesTypes(tcpType, LBFastTcpProfile)
+			if err != nil {
+				return err
+			}
+		} else if len((udpType).([]interface{})) != 0 {
+			err := l.validateProfilesTypes(udpType, LBFastUdpProfile)
+			if err != nil {
+				return err
+			}
 		}
+
 	case persistenceProfile:
 		cookieType := l.diff.Get(cookieProfile)
 		sourceipType := l.diff.Get(sourceIpProfile)
 		genericType := l.diff.Get(genericProfile)
-		err := l.validateProfileTypes(cookieType, sourceipType, genericType, persistenceProfile)
-		if err != nil {
-			return err
+		if len((cookieType).([]interface{})) != 0 {
+			err := l.validateProfilesTypes(cookieType, LBCookiePersistenceProfile)
+			if err != nil {
+				return err
+			}
+		} else if len((sourceipType).([]interface{})) != 0 {
+			err := l.validateProfilesTypes(sourceipType, LBSourceIpPersistenceProfile)
+			if err != nil {
+				return err
+			}
+		} else if len((genericType).([]interface{})) != 0 {
+			err := l.validateProfilesTypes(genericType, LBGenericPersistenceProfile)
+			if err != nil {
+				return err
+			}
 		}
 
 	case sslProfile:
 		serverType := l.diff.Get(serverProfile)
 		clientType := l.diff.Get(clientProfile)
-		err := l.validateProfileTypes(serverType, clientType, nil, sslProfile)
-		if err != nil {
-			return err
+		if len((serverType).([]interface{})) != 0 {
+			err := l.validateProfilesTypes(serverType, LBServerSslProfile)
+			if err != nil {
+				return err
+			}
+		} else if len((clientType).([]interface{})) != 0 {
+			err := l.validateProfilesTypes(clientType, LBClientSslProfile)
+			if err != nil {
+				return err
+			}
 		}
 	}
+
 	return nil
 }
 
-func (l *LoadBalancerProfile) validateProfileTypes(serviceType1 interface{}, serviceType2 interface{}, serviceType3 interface{}, profileType string) error {
-
-	if profileType == applicationProfile {
-		if len((serviceType1).([]interface{})) != 0 && len((serviceType2).([]interface{})) == 0 && len((serviceType3).([]interface{})) == 0 {
-			for _, profile := range serviceType1.([]interface{}) {
-				profile_type := profile.(map[string]interface{})["service_type"].(string)
-				if profile_type != LBHttpProfile {
-					return fmt.Errorf("please provide service_type as " + LBHttpProfile + " for HTTP Profile Configuration")
-				}
-			}
-		} else if len((serviceType2).([]interface{})) != 0 && len((serviceType1).([]interface{})) == 0 && len((serviceType3).([]interface{})) == 0 {
-			for _, profile := range serviceType2.([]interface{}) {
-				profile_type := profile.(map[string]interface{})["service_type"].(string)
-				if profile_type != LBFastTcpProfile {
-					return fmt.Errorf("please provide service_type as " + LBFastTcpProfile + " for TCP Profile Configuration")
-				}
-			}
-		} else if len((serviceType3).([]interface{})) != 0 && len((serviceType2).([]interface{})) == 0 && len((serviceType1).([]interface{})) == 0 {
-			for _, profile := range serviceType3.([]interface{}) {
-				profile_type := profile.(map[string]interface{})["service_type"].(string)
-				if profile_type != LBFastUdpProfile {
-					return fmt.Errorf("please provide service_type as " + LBFastUdpProfile + " for UDP Profile Configuration")
-				}
-			}
-		}
-	} else if profileType == persistenceProfile {
-		if len((serviceType1).([]interface{})) != 0 && len((serviceType2).([]interface{})) == 0 && len((serviceType3).([]interface{})) == 0 {
-			for _, profile := range serviceType1.([]interface{}) {
-				profile_type := profile.(map[string]interface{})["service_type"].(string)
-				if profile_type != LBCookiePersistenceProfile {
-					return fmt.Errorf("please provide service_type as " + LBCookiePersistenceProfile + " for COOKIE Profile Configuration")
-				}
-			}
-		} else if len((serviceType2).([]interface{})) != 0 && len((serviceType1).([]interface{})) == 0 && len((serviceType3).([]interface{})) == 0 {
-			for _, profile := range serviceType2.([]interface{}) {
-				profile_type := profile.(map[string]interface{})["service_type"].(string)
-				if profile_type != LBSourceIpPersistenceProfile {
-					return fmt.Errorf("please provide service_type as " + LBSourceIpPersistenceProfile + " for SOURCEIP Profile Configuration")
-				}
-			}
-		} else if len((serviceType3).([]interface{})) != 0 && len((serviceType2).([]interface{})) == 0 && len((serviceType1).([]interface{})) == 0 {
-			for _, profile := range serviceType3.([]interface{}) {
-				profile_type := profile.(map[string]interface{})["service_type"].(string)
-				if profile_type != LBGenericPersistenceProfile {
-					return fmt.Errorf("please provide service_type as " + LBGenericPersistenceProfile + " for GENERIC Profile Configuration")
-				}
-			}
-		}
-	} else if profileType == sslProfile {
-		if len((serviceType1).([]interface{})) != 0 && len((serviceType2).([]interface{})) == 0 {
-			for _, profile := range serviceType1.([]interface{}) {
-				profile_type := profile.(map[string]interface{})["service_type"].(string)
-				if profile_type != LBServerSslProfile {
-					return fmt.Errorf("please provide service_type as " + LBServerSslProfile + " for SSL-SERVER Profile Configuration")
-				}
-			}
-		} else if len((serviceType2).([]interface{})) != 0 && len((serviceType1).([]interface{})) == 0 {
-			for _, profile := range serviceType2.([]interface{}) {
-				profile_type := profile.(map[string]interface{})["service_type"].(string)
-				if profile_type != LBClientSslProfile {
-					return fmt.Errorf("please provide service_type as " + LBClientSslProfile + " for SSL-CLIENT Profile Configuration")
-				}
-			}
+func (l *LoadBalancerProfile) validateProfilesTypes(profileType interface{}, serviceType string) error {
+	for _, profile := range profileType.([]interface{}) {
+		service_type := profile.(map[string]interface{})["service_type"].(string)
+		if service_type != serviceType {
+			return fmt.Errorf("please provide service_type as " + serviceType + " for the Configuration")
 		}
 	}
+
 	return nil
 }
