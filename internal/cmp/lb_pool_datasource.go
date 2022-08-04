@@ -12,15 +12,15 @@ import (
 	"github.com/tshihad/tftags"
 )
 
-type lb_poolds struct {
+type lbPoolds struct {
 	lbClient *client.LoadBalancerAPIService
 }
 
-func newLBPoolDS(poolClient *client.LoadBalancerAPIService) *lb_poolds {
-	return &lb_poolds{lbClient: poolClient}
+func newLBPoolDS(poolClient *client.LoadBalancerAPIService) *lbPoolds {
+	return &lbPoolds{lbClient: poolClient}
 }
 
-func (n *lb_poolds) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
+func (n *lbPoolds) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
 	setMeta(meta, n.lbClient.Client)
 	log.Printf("[DEBUG] Get Pool")
 	name := d.GetString("name")
@@ -41,7 +41,6 @@ func (n *lb_poolds) Read(ctx context.Context, d *utils.Data, meta interface{}) e
 			log.Print("[DEBUG]", lb.GetLBPoolsResp[i].ID)
 
 			return tftags.Set(d, lb.GetLBPoolsResp[i])
-
 		}
 	}
 

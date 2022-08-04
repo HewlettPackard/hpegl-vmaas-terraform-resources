@@ -5,16 +5,14 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func HttpMonitorSchema() *schema.Schema {
+func HTTPMonitorSchema() *schema.Schema {
 	return &schema.Schema{
-		Type:        schema.TypeList,
-		Optional:    true,
-		Description: "HTTP Monitor configuration",
-		MaxItems:    1,
-		ExactlyOneOf: []string{"http_monitor", "https_monitor", "icmp_monitor",
-			"passive_monitor", "tcp_monitor", "udp_monitor"},
-		ConflictsWith: []string{"https_monitor", "icmp_monitor",
-			"passive_monitor", "tcp_monitor", "udp_monitor"},
+		Type:          schema.TypeList,
+		Optional:      true,
+		Description:   "HTTP Monitor configuration",
+		MaxItems:      1,
+		ExactlyOneOf:  []string{"http_monitor", "https_monitor", "icmp_monitor", "passive_monitor", "tcp_monitor", "udp_monitor"},
+		ConflictsWith: []string{"https_monitor", "icmp_monitor", "passive_monitor", "tcp_monitor", "udp_monitor"},
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
 				"fall_count": {
@@ -52,12 +50,11 @@ func HttpMonitorSchema() *schema.Schema {
 					Optional:    true,
 				},
 				"request_method": {
-					Type:     schema.TypeString,
-					Optional: true,
-					ValidateDiagFunc: validations.StringInSlice([]string{"GET", "POST", "OPTIONS",
-						"HEAD", "PUT"}, false),
-					Default:     "GET",
-					Description: "Health check method for HTTP monitor type. Valid values are GET, HEAD, PUT, POST and OPTIONS",
+					Type:             schema.TypeString,
+					Optional:         true,
+					ValidateDiagFunc: validations.StringInSlice([]string{"GET", "POST", "OPTIONS", "HEAD", "PUT"}, false),
+					Default:          "GET",
+					Description:      "Health check method for HTTP monitor type. Valid values are GET, HEAD, PUT, POST and OPTIONS",
 				},
 				"request_url": {
 					Type:        schema.TypeString,
@@ -65,11 +62,10 @@ func HttpMonitorSchema() *schema.Schema {
 					Optional:    true,
 				},
 				"request_version": {
-					Type: schema.TypeString,
-					ValidateDiagFunc: validations.StringInSlice([]string{"HTTP_VERSION_1_0",
-						"HTTP_VERSION_1_1"}, false),
-					Description: "HTTP request version. Valid values are HTTP_VERSION_1_0 and HTTP_VERSION_1_1",
-					Optional:    true,
+					Type:             schema.TypeString,
+					ValidateDiagFunc: validations.StringInSlice([]string{"HTTP_VERSION_1_0", "HTTP_VERSION_1_1"}, false),
+					Description:      "HTTP request version. Valid values are HTTP_VERSION_1_0 and HTTP_VERSION_1_1",
+					Optional:         true,
 				},
 				"response_data": {
 					Type:        schema.TypeString,
@@ -86,16 +82,14 @@ func HttpMonitorSchema() *schema.Schema {
 	}
 }
 
-func HttpsMonitorSchema() *schema.Schema {
+func HTTPSMonitorSchema() *schema.Schema {
 	return &schema.Schema{
-		Type:        schema.TypeList,
-		Optional:    true,
-		Description: "Https Monitor configuration",
-		MaxItems:    1,
-		ExactlyOneOf: []string{"http_monitor", "https_monitor", "icmp_monitor",
-			"passive_monitor", "tcp_monitor", "udp_monitor"},
-		ConflictsWith: []string{"http_monitor", "icmp_monitor",
-			"passive_monitor", "tcp_monitor", "udp_monitor"},
+		Type:          schema.TypeList,
+		Optional:      true,
+		Description:   "Https Monitor configuration",
+		MaxItems:      1,
+		ExactlyOneOf:  []string{"http_monitor", "https_monitor", "icmp_monitor", "passive_monitor", "tcp_monitor", "udp_monitor"},
+		ConflictsWith: []string{"http_monitor", "icmp_monitor", "passive_monitor", "tcp_monitor", "udp_monitor"},
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
 				"fall_count": {
@@ -112,7 +106,7 @@ func HttpsMonitorSchema() *schema.Schema {
 				},
 				"monitor_port": {
 					Type:        schema.TypeInt,
-					Description: "If the monitor port is specified, it would override pool member port setting for healthcheck. A port range is not supported",
+					Description: "If the monitor port is specified, it would override pool member port setting for healthcheck.",
 					Optional:    true,
 				},
 				"rise_count": {
@@ -133,12 +127,11 @@ func HttpsMonitorSchema() *schema.Schema {
 					Optional:    true,
 				},
 				"request_method": {
-					Type:     schema.TypeString,
-					Optional: true,
-					ValidateDiagFunc: validations.StringInSlice([]string{"GET", "POST", "OPTIONS",
-						"HEAD", "PUT"}, false),
-					Default:     "GET",
-					Description: "Health check method for HTTPs monitor type. Valid values are GET, HEAD, PUT, POST and OPTIONS",
+					Type:             schema.TypeString,
+					Optional:         true,
+					ValidateDiagFunc: validations.StringInSlice([]string{"GET", "POST", "OPTIONS", "HEAD", "PUT"}, false),
+					Default:          "GET",
+					Description:      "Health check method for HTTPs monitor type. Valid values are GET, HEAD, PUT, POST and OPTIONS",
 				},
 				"request_url": {
 					Type:        schema.TypeString,
@@ -146,11 +139,10 @@ func HttpsMonitorSchema() *schema.Schema {
 					Optional:    true,
 				},
 				"request_version": {
-					Type: schema.TypeString,
-					ValidateDiagFunc: validations.StringInSlice([]string{"HTTP_VERSION_1_0",
-						"HTTP_VERSION_1_1"}, false),
-					Description: "HTTP request version. Valid values are HTTP_VERSION_1_0 and HTTP_VERSION_1_1",
-					Optional:    true,
+					Type:             schema.TypeString,
+					ValidateDiagFunc: validations.StringInSlice([]string{"HTTP_VERSION_1_0", "HTTP_VERSION_1_1"}, false),
+					Description:      "HTTP request version. Valid values are HTTP_VERSION_1_0 and HTTP_VERSION_1_1",
+					Optional:         true,
 				},
 				"response_data": {
 					Type:        schema.TypeString,
@@ -169,14 +161,12 @@ func HttpsMonitorSchema() *schema.Schema {
 
 func IcmpMonitorSchema() *schema.Schema {
 	return &schema.Schema{
-		Type:        schema.TypeList,
-		Optional:    true,
-		Description: "Icmp Monitor configuration",
-		MaxItems:    1,
-		ExactlyOneOf: []string{"http_monitor", "https_monitor", "icmp_monitor",
-			"passive_monitor", "tcp_monitor", "udp_monitor"},
-		ConflictsWith: []string{"http_monitor", "https_monitor",
-			"passive_monitor", "tcp_monitor", "udp_monitor"},
+		Type:          schema.TypeList,
+		Optional:      true,
+		Description:   "Icmp Monitor configuration",
+		MaxItems:      1,
+		ExactlyOneOf:  []string{"http_monitor", "https_monitor", "icmp_monitor", "passive_monitor", "tcp_monitor", "udp_monitor"},
+		ConflictsWith: []string{"http_monitor", "https_monitor", "passive_monitor", "tcp_monitor", "udp_monitor"},
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
 				"fall_count": {
@@ -193,10 +183,11 @@ func IcmpMonitorSchema() *schema.Schema {
 				},
 				"monitor_port": {
 					Type:        schema.TypeInt,
-					Description: "If the monitor port is specified, it would override pool member port setting for healthcheck. A port range is not supported",
+					Description: "If the monitor port is specified, it would override pool member port setting for healthcheck.",
 					Optional:    true,
 				},
 				"rise_count": {
+
 					Type:        schema.TypeInt,
 					Optional:    true,
 					Default:     3,
@@ -221,14 +212,12 @@ func IcmpMonitorSchema() *schema.Schema {
 
 func PassiveMonitorSchema() *schema.Schema {
 	return &schema.Schema{
-		Type:        schema.TypeList,
-		Optional:    true,
-		Description: "Passive Monitor configuration",
-		MaxItems:    1,
-		ExactlyOneOf: []string{"http_monitor", "https_monitor", "icmp_monitor",
-			"passive_monitor", "tcp_monitor", "udp_monitor"},
-		ConflictsWith: []string{"http_monitor", "https_monitor",
-			"icmp_monitor", "tcp_monitor", "udp_monitor"},
+		Type:          schema.TypeList,
+		Optional:      true,
+		Description:   "Passive Monitor configuration",
+		MaxItems:      1,
+		ExactlyOneOf:  []string{"http_monitor", "https_monitor", "icmp_monitor", "passive_monitor", "tcp_monitor", "udp_monitor"},
+		ConflictsWith: []string{"http_monitor", "https_monitor", "icmp_monitor", "tcp_monitor", "udp_monitor"},
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
 				"timeout": {
@@ -248,16 +237,14 @@ func PassiveMonitorSchema() *schema.Schema {
 	}
 }
 
-func TcpMonitorSchema() *schema.Schema {
+func TCPMonitorSchema() *schema.Schema {
 	return &schema.Schema{
-		Type:        schema.TypeList,
-		Optional:    true,
-		Description: "Tcp Monitor configuration",
-		MaxItems:    1,
-		ExactlyOneOf: []string{"http_monitor", "https_monitor", "icmp_monitor",
-			"passive_monitor", "tcp_monitor", "udp_monitor"},
-		ConflictsWith: []string{"http_monitor", "https_monitor",
-			"icmp_monitor", "passive_monitor", "udp_monitor"},
+		Type:          schema.TypeList,
+		Optional:      true,
+		Description:   "Tcp Monitor configuration",
+		MaxItems:      1,
+		ExactlyOneOf:  []string{"http_monitor", "https_monitor", "icmp_monitor", "passive_monitor", "tcp_monitor", "udp_monitor"},
+		ConflictsWith: []string{"http_monitor", "https_monitor", "icmp_monitor", "passive_monitor", "udp_monitor"},
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
 				"fall_count": {
@@ -274,7 +261,7 @@ func TcpMonitorSchema() *schema.Schema {
 				},
 				"monitor_port": {
 					Type:        schema.TypeInt,
-					Description: "If the monitor port is specified, it would override pool member port setting for healthcheck. A port range is not supported",
+					Description: "If the monitor port is specified, it would override pool member port setting for healthcheck.",
 					Optional:    true,
 				},
 				"rise_count": {
@@ -304,16 +291,14 @@ func TcpMonitorSchema() *schema.Schema {
 	}
 }
 
-func UdpMonitorSchema() *schema.Schema {
+func UDPMonitorSchema() *schema.Schema {
 	return &schema.Schema{
-		Type:        schema.TypeList,
-		Optional:    true,
-		Description: "Udp Monitor configuration",
-		MaxItems:    1,
-		ExactlyOneOf: []string{"http_monitor", "https_monitor", "icmp_monitor",
-			"passive_monitor", "tcp_monitor", "udp_monitor"},
-		ConflictsWith: []string{"http_monitor", "https_monitor",
-			"icmp_monitor", "passive_monitor", "tcp_monitor"},
+		Type:          schema.TypeList,
+		Optional:      true,
+		Description:   "Udp Monitor configuration",
+		MaxItems:      1,
+		ExactlyOneOf:  []string{"http_monitor", "https_monitor", "icmp_monitor", "passive_monitor", "tcp_monitor", "udp_monitor"},
+		ConflictsWith: []string{"http_monitor", "https_monitor", "icmp_monitor", "passive_monitor", "tcp_monitor"},
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
 				"fall_count": {
@@ -330,7 +315,7 @@ func UdpMonitorSchema() *schema.Schema {
 				},
 				"monitor_port": {
 					Type:        schema.TypeInt,
-					Description: "If the monitor port is specified, it would override pool member port setting for healthcheck. A port range is not supported",
+					Description: "If the monitor port is specified, it would override pool member port setting for healthcheck.",
 					Optional:    true,
 				},
 				"rise_count": {

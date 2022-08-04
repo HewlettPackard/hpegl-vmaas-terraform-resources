@@ -26,8 +26,8 @@ func LBVirtualServerSslCertData() *schema.Resource {
 			},
 		},
 		ReadContext: LBVirtualServerSslCertReadContext,
-		Description: `The ` + DSLBVirtualServerSslCert + ` data source can be used to discover the ID of a hpegl vmaas network load balancer.
-		This can then be used with resources or data sources`,
+		Description: `The ` + DSLBVirtualServerSslCert + ` data source can be used to discover the ID 
+		of a hpegl vmaas network load balancer. This can then be used with resources or data sources`,
 		SchemaVersion:  0,
 		StateUpgraders: nil,
 		Importer: &schema.ResourceImporter{

@@ -25,7 +25,7 @@ func LoadBalancerVirtualServers() *schema.Resource {
 			},
 			"name": {
 				Type:        schema.TypeString,
-				Optional:    true,
+				Required:    true,
 				Description: "vip_name of Network loadbalancer virtual server name",
 			},
 			"description": {
@@ -35,12 +35,12 @@ func LoadBalancerVirtualServers() *schema.Resource {
 			},
 			"vip_address": {
 				Type:        schema.TypeString,
-				Optional:    true,
+				Required:    true,
 				Description: "vip_address of Network loadbalancer virtual server",
 			},
 			"vip_port": {
 				Type:        schema.TypeString,
-				Optional:    true,
+				Required:    true,
 				Description: "vip_port of network loadbalancer virtual server",
 			},
 			"pool": {
@@ -54,20 +54,27 @@ func LoadBalancerVirtualServers() *schema.Resource {
 				Description: "vip_host_name of Network loadbalancer virtual server",
 			},
 			"type": {
-				Type:             schema.TypeString,
-				ValidateDiagFunc: validations.StringInSlice([]string{"http", "tcp", "udp"}, false),
-				Optional:         true,
-				Default:          "http",
-				Description:      "vip protocol of Network loadbalancer virtual server",
+				Type: schema.TypeString,
+				ValidateDiagFunc: validations.StringInSlice([]string{
+					"http",
+					"tcp",
+					"udp",
+				}, false),
+				Optional:    true,
+				Default:     "http",
+				Description: "vip protocol of Network loadbalancer virtual server",
 			},
-			"tcp_application_profile":  schemas.TcpAppProfileSchema(),
-			"udp_application_profile":  schemas.UdpAppProfileSchema(),
-			"http_application_profile": schemas.HttpAppProfileSchema(),
+			"tcp_application_profile":  schemas.TCPAppProfileSchema(),
+			"udp_application_profile":  schemas.UDPAppProfileSchema(),
+			"http_application_profile": schemas.HTTPAppProfileSchema(),
 			"persistence": {
-				Type:             schema.TypeString,
-				ValidateDiagFunc: validations.StringInSlice([]string{"SOURCE_IP", "COOKIE"}, false),
-				Optional:         true,
-				Description:      "vip_host_name of Network loadbalancer virtual server",
+				Type: schema.TypeString,
+				ValidateDiagFunc: validations.StringInSlice([]string{
+					"SOURCE_IP",
+					"COOKIE",
+				}, false),
+				Optional:    true,
+				Description: "vip_host_name of Network loadbalancer virtual server",
 			},
 			"cookie_persistence_profile":   schemas.CookiePersProfileSchema(),
 			"sourceip_persistence_profile": schemas.SourceipPersProfileSchema(),
@@ -85,7 +92,7 @@ func LoadBalancerVirtualServers() *schema.Resource {
 						"ssl_server_profile": {
 							Type:        schema.TypeInt,
 							Optional:    true,
-							Description: "Network Loadbalancer Supported values are `SOURCE_IP`,`COOKIE`, `DISBALED`",
+							Description: "Network Loadbalancer Supported values are `SOURCE_IP`,`COOKIE`",
 						},
 					},
 				},
@@ -104,7 +111,7 @@ func LoadBalancerVirtualServers() *schema.Resource {
 						"ssl_client_profile": {
 							Type:        schema.TypeInt,
 							Optional:    true,
-							Description: "Network Loadbalancer Supported values are `SOURCE_IP`,`COOKIE`, `DISBALED`",
+							Description: "Network Loadbalancer Supported values are `SOURCE_IP`,`COOKIE`",
 						},
 					},
 				},

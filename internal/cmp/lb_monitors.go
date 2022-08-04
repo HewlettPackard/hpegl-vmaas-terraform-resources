@@ -35,8 +35,8 @@ func (lb *loadBalancerMonitor) Read(ctx context.Context, d *utils.Data, meta int
 	if err != nil {
 		return err
 	}
-	return tftags.Set(d, getMonitorLoadBalancer.GetSpecificLBMonitorResp)
 
+	return tftags.Set(d, getMonitorLoadBalancer.GetSpecificLBMonitorResp)
 }
 
 func (lb *loadBalancerMonitor) Create(ctx context.Context, d *utils.Data, meta interface{}) error {
@@ -47,7 +47,7 @@ func (lb *loadBalancerMonitor) Create(ctx context.Context, d *utils.Data, meta i
 		return err
 	}
 	// align createReq and fill json related fields
-	if err := lb.monitorAlignMonitorTypeRequest(ctx, meta, &createReq); err != nil {
+	if err := lb.monitorAlignMonitorTypeRequest(&createReq); err != nil {
 		return err
 	}
 
@@ -106,7 +106,7 @@ func (lb *loadBalancerMonitor) Update(ctx context.Context, d *utils.Data, meta i
 	}
 
 	// align createReq and fill json related fields
-	if err := lb.monitorAlignMonitorTypeRequest(ctx, meta, &updateReq); err != nil {
+	if err := lb.monitorAlignMonitorTypeRequest(&updateReq); err != nil {
 		return err
 	}
 
@@ -125,7 +125,7 @@ func (lb *loadBalancerMonitor) Update(ctx context.Context, d *utils.Data, meta i
 	return tftags.Set(d, updateReq.CreateLBMonitorReq)
 }
 
-func (lb *loadBalancerMonitor) monitorAlignMonitorTypeRequest(ctx context.Context, meta interface{}, monitorReq *models.CreateLBMonitor) error {
+func (lb *loadBalancerMonitor) monitorAlignMonitorTypeRequest(monitorReq *models.CreateLBMonitor) error {
 	if monitorReq.CreateLBMonitorReq.TfHttpConfig != nil {
 		monitorReq.CreateLBMonitorReq.RequestBody = monitorReq.CreateLBMonitorReq.TfHttpConfig.RequestBody
 		monitorReq.CreateLBMonitorReq.AliasPort = monitorReq.CreateLBMonitorReq.TfHttpConfig.AliasPort
@@ -177,5 +177,6 @@ func (lb *loadBalancerMonitor) monitorAlignMonitorTypeRequest(ctx context.Contex
 		monitorReq.CreateLBMonitorReq.RiseCount = monitorReq.CreateLBMonitorReq.TfUdpConfig.RiseCount
 		monitorReq.CreateLBMonitorReq.Timeout = monitorReq.CreateLBMonitorReq.TfUdpConfig.Timeout
 	}
+
 	return nil
 }

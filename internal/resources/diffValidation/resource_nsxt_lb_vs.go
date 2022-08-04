@@ -10,72 +10,74 @@ import (
 
 const (
 	applicationTypes = "type"
-	HTTP             = "http"
-	UDP              = "udp"
-	TCP              = "tcp"
+	http             = "http"
+	udp              = "udp"
+	tcp              = "tcp"
 
-	TCPProfile  = "tcp_application_profile"
-	UDPProfile  = "udp_application_profile"
-	HTTPProfile = "http_application_profile"
+	tcpProfile  = "tcp_application_profile"
+	udpProfile  = "udp_application_profile"
+	httpProfile = "http_application_profile"
 
 	persistenceTypes = "persistence"
-	SOURCE_IP        = "SOURCE_IP"
-	COOKIE           = "COOKIE"
+	sourceIP         = "SOURCE_IP"
+	cookie           = "COOKIE"
 
 	CookieProfile = "cookie_persistence_profile"
 	SourceProfile = "sourceip_persistence_profile"
 )
 
-type loadBalancerVirtualServer struct {
+type LoadBalancerVirtualServers struct {
 	diff *schema.ResourceDiff
 }
 
-func NewLoadBalancerVirtualServerValidate(diff *schema.ResourceDiff) *loadBalancerVirtualServer {
-	return &loadBalancerVirtualServer{
+func NewLoadBalancerVirtualServerValidate(diff *schema.ResourceDiff) *LoadBalancerVirtualServers {
+	return &LoadBalancerVirtualServers{
 		diff: diff,
 	}
 }
 
-func (l *loadBalancerVirtualServer) validateProfile(type1 string, value string) error {
+func (l *LoadBalancerVirtualServers) validateProfile(type1 string, value string) error {
 	profileType := l.diff.Get(value)
 	if len((profileType).([]interface{})) == 0 {
 		return fmt.Errorf("please provide " + value + " " + "configurations for Type" + " " + type1)
 	}
+
 	return nil
 }
 
-func (l *loadBalancerVirtualServer) DiffValidate() error {
+func (l *LoadBalancerVirtualServers) DiffValidate() error {
 	types := l.diff.Get(applicationTypes)
 	switch types {
-	case TCP:
-		err := l.validateProfile(TCP, TCPProfile)
+	case tcp:
+		err := l.validateProfile(tcp, tcpProfile)
 		if err != nil {
 			return err
 		}
-	case UDP:
-		err := l.validateProfile(UDP, UDPProfile)
+	case udp:
+		err := l.validateProfile(udp, udpProfile)
 		if err != nil {
 			return err
 		}
 
-	case HTTP:
-		err := l.validateProfile(HTTP, HTTPProfile)
+	case http:
+		err := l.validateProfile(http, httpProfile)
 		if err != nil {
 			return err
 		}
 	}
 	persTypes := l.diff.Get(persistenceTypes)
 	switch persTypes {
-	case COOKIE:
-		err := l.validateProfile(COOKIE, CookieProfile)
+	case cookie:
+		err := l.validateProfile(cookie, CookieProfile)
 		if err != nil {
 			return err
 		}
-	case SOURCE_IP:
-		err := l.validateProfile(SOURCE_IP, SourceProfile)
+	case sourceIP:
+		err := l.validateProfile(sourceIP, SourceProfile)
 		if err != nil {
 			return err
 		}
 	}
+
 	return nil
 }

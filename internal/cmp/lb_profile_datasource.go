@@ -12,15 +12,15 @@ import (
 	"github.com/tshihad/tftags"
 )
 
-type lb_virtualServerProfileds struct {
+type lbVirtualServerProfileds struct {
 	lbClient *client.LoadBalancerAPIService
 }
 
-func newLBVirtualServerProfileDS(VirtualServerProfileClient *client.LoadBalancerAPIService) *lb_virtualServerProfileds {
-	return &lb_virtualServerProfileds{lbClient: VirtualServerProfileClient}
+func newLBVirtualServerProfileDS(VirtualServerProfileClient *client.LoadBalancerAPIService) *lbVirtualServerProfileds {
+	return &lbVirtualServerProfileds{lbClient: VirtualServerProfileClient}
 }
 
-func (n *lb_virtualServerProfileds) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
+func (n *lbVirtualServerProfileds) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
 	setMeta(meta, n.lbClient.Client)
 	log.Printf("[DEBUG] Get Profiles")
 	name := d.GetString("name")
@@ -41,7 +41,6 @@ func (n *lb_virtualServerProfileds) Read(ctx context.Context, d *utils.Data, met
 			log.Print("[DEBUG]", lb.GetLBProfilesResp[i].ID)
 
 			return tftags.Set(d, lb.GetLBProfilesResp[i])
-
 		}
 	}
 

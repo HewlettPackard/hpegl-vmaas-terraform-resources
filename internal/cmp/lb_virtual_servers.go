@@ -35,11 +35,11 @@ func (lb *loadBalancerVirtualServer) Read(ctx context.Context, d *utils.Data, me
 	if err != nil {
 		return err
 	}
+
 	return tftags.Set(d, getlbVirtualServerResp.GetSpecificLBVirtualServersResp)
 }
 
 func (lb *loadBalancerVirtualServer) Update(ctx context.Context, d *utils.Data, meta interface{}) error {
-
 	id := d.GetID()
 	updateReq := models.CreateLBVirtualServers{}
 	if err := tftags.Get(d, &updateReq.CreateLBVirtualServersReq); err != nil {
@@ -47,7 +47,7 @@ func (lb *loadBalancerVirtualServer) Update(ctx context.Context, d *utils.Data, 
 	}
 
 	// align createReq and fill json related fields
-	if err := lb.virtualServerAlignRequest(ctx, meta, &updateReq.CreateLBVirtualServersReq); err != nil {
+	if err := lb.virtualServerAlignRequest(&updateReq.CreateLBVirtualServersReq); err != nil {
 		return err
 	}
 
@@ -73,8 +73,8 @@ func (lb *loadBalancerVirtualServer) Create(ctx context.Context, d *utils.Data, 
 		return err
 	}
 
-	//align createReq and fill json related fields
-	if err := lb.virtualServerAlignRequest(ctx, meta, &createReq.CreateLBVirtualServersReq); err != nil {
+	// align createReq and fill json related fields
+	if err := lb.virtualServerAlignRequest(&createReq.CreateLBVirtualServersReq); err != nil {
 		return err
 	}
 
@@ -123,18 +123,13 @@ func (lb *loadBalancerVirtualServer) Delete(ctx context.Context, d *utils.Data, 
 	return nil
 }
 
-func (lb *loadBalancerVirtualServer) virtualServerAlignRequest(ctx context.Context, meta interface{},
-	createReq *models.CreateLBVirtualServersReq) error {
-
+func (lb *loadBalancerVirtualServer) virtualServerAlignRequest(createReq *models.CreateLBVirtualServersReq) error {
 	if createReq.TcpApplicationProfileConfig != nil && createReq.VipProtocol == TCP {
 		createReq.VirtualServerConfig.ApplicationProfile = createReq.TcpApplicationProfileConfig.ApplicationProfile
-
 	} else if createReq.UdpApplicationProfileConfig != nil && createReq.VipProtocol == UDP {
 		createReq.VirtualServerConfig.ApplicationProfile = createReq.UdpApplicationProfileConfig.ApplicationProfile
-
 	} else if createReq.HttpApplicationProfileConfig != nil && createReq.VipProtocol == HTTP {
 		createReq.VirtualServerConfig.ApplicationProfile = createReq.HttpApplicationProfileConfig.ApplicationProfile
-
 	}
 
 	if createReq.CookiePersistenceProfileConfig != nil && createReq.Persistence == COOKIE {
@@ -143,7 +138,6 @@ func (lb *loadBalancerVirtualServer) virtualServerAlignRequest(ctx context.Conte
 	} else if createReq.SourceipPersistenceProfileConfig != nil && createReq.Persistence == SOURCEIP {
 		createReq.VirtualServerConfig.Persistence = createReq.Persistence
 		createReq.VirtualServerConfig.PersistenceProfile = createReq.SourceipPersistenceProfileConfig.PersistenceProfile
-
 	}
 
 	if createReq.SSLClientConfig != nil && createReq.SSLCert != 0 {

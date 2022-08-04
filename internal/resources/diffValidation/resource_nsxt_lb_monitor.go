@@ -69,13 +69,15 @@ func (l *LoadBalancerMonitor) DiffValidate() error {
 			return err
 		}
 	}
+
 	return nil
 }
 
-func (l *LoadBalancerMonitor) validateMonitor(monitor_type string, service_type string) error {
-	monitorType := l.diff.Get(monitor_type)
-	if len((monitorType).([]interface{})) == 0 {
-		return fmt.Errorf("please provide " + monitor_type + " " + "configurations for Type" + " " + service_type)
+func (l *LoadBalancerMonitor) validateMonitor(monitorType string, serviceType string) error {
+	monitorTypes := l.diff.Get(monitorType)
+	if len((monitorTypes).([]interface{})) == 0 {
+		return fmt.Errorf("please provide " + monitorType + " " + "configurations for Type" + " " + serviceType)
 	}
+
 	return nil
 }
