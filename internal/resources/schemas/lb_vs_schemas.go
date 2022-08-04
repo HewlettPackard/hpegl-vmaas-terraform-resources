@@ -16,7 +16,7 @@ func TCPAppProfileSchema() *schema.Schema {
 			Schema: map[string]*schema.Schema{
 				"application_profile": {
 					Type:        schema.TypeInt,
-					Optional:    true,
+					Required:    true,
 					Description: "Network Loadbalancer Supported values are `SOURCE_IP`,`COOKIE`",
 				},
 			},
@@ -36,7 +36,7 @@ func UDPAppProfileSchema() *schema.Schema {
 			Schema: map[string]*schema.Schema{
 				"application_profile": {
 					Type:        schema.TypeInt,
-					Optional:    true,
+					Required:    true,
 					Description: "Network Loadbalancer Supported values are `SOURCE_IP`,`COOKIE`",
 				},
 			},
@@ -56,7 +56,7 @@ func HTTPAppProfileSchema() *schema.Schema {
 			Schema: map[string]*schema.Schema{
 				"application_profile": {
 					Type:        schema.TypeInt,
-					Optional:    true,
+					Required:    true,
 					Description: "Network Loadbalancer Supported values are `SOURCE_IP`,`COOKIE`",
 				},
 			},
@@ -76,7 +76,7 @@ func CookiePersProfileSchema() *schema.Schema {
 			Schema: map[string]*schema.Schema{
 				"persistence_profile": {
 					Type:        schema.TypeInt,
-					Optional:    true,
+					Required:    true,
 					Description: "Network Loadbalancer Supported values are `SOURCE_IP`,`COOKIE`",
 				},
 			},
@@ -96,7 +96,7 @@ func SourceipPersProfileSchema() *schema.Schema {
 			Schema: map[string]*schema.Schema{
 				"persistence_profile": {
 					Type:        schema.TypeInt,
-					Optional:    true,
+					Required:    true,
 					Description: "Network Loadbalancer Supported values are `SOURCE_IP`,`COOKIE`",
 				},
 			},

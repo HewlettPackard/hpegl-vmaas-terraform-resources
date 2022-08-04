@@ -45,7 +45,7 @@ func LoadBalancerVirtualServers() *schema.Resource {
 			},
 			"pool": {
 				Type:        schema.TypeInt,
-				Optional:    true,
+				Required:    true,
 				Description: "pool of Network loadbalancer virtual server",
 			},
 			"vip_host_name": {
@@ -60,9 +60,9 @@ func LoadBalancerVirtualServers() *schema.Resource {
 					"tcp",
 					"udp",
 				}, false),
-				Optional:    true,
-				Default:     "http",
-				Description: "vip protocol of Network loadbalancer virtual server",
+				Required:     true,
+				InputDefault: "http",
+				Description:  "vip protocol of Network loadbalancer virtual server",
 			},
 			"tcp_application_profile":  schemas.TCPAppProfileSchema(),
 			"udp_application_profile":  schemas.UDPAppProfileSchema(),
@@ -73,14 +73,14 @@ func LoadBalancerVirtualServers() *schema.Resource {
 					"SOURCE_IP",
 					"COOKIE",
 				}, false),
-				Optional:    true,
-				Description: "vip_host_name of Network loadbalancer virtual server",
+				Required:    true,
+				Description: "persistence type for Network loadbalancer virtual server",
 			},
 			"cookie_persistence_profile":   schemas.CookiePersProfileSchema(),
 			"sourceip_persistence_profile": schemas.SourceipPersProfileSchema(),
 			"ssl_server_cert": {
 				Type:        schema.TypeInt,
-				Optional:    true,
+				Required:    true,
 				Description: "ssl_server_cert of the Network loadbalancer virtual server",
 			},
 			"ssl_server_config": {
@@ -91,7 +91,7 @@ func LoadBalancerVirtualServers() *schema.Resource {
 					Schema: map[string]*schema.Schema{
 						"ssl_server_profile": {
 							Type:        schema.TypeInt,
-							Optional:    true,
+							Required:    true,
 							Description: "Network Loadbalancer Supported values are `SOURCE_IP`,`COOKIE`",
 						},
 					},
@@ -99,7 +99,7 @@ func LoadBalancerVirtualServers() *schema.Resource {
 			},
 			"ssl_client_cert": {
 				Type:        schema.TypeInt,
-				Optional:    true,
+				Required:    true,
 				Description: "ssl_cert of Network loadbalancer virtual server",
 			},
 			"ssl_client_config": {
@@ -110,7 +110,7 @@ func LoadBalancerVirtualServers() *schema.Resource {
 					Schema: map[string]*schema.Schema{
 						"ssl_client_profile": {
 							Type:        schema.TypeInt,
-							Optional:    true,
+							Required:    true,
 							Description: "Network Loadbalancer Supported values are `SOURCE_IP`,`COOKIE`",
 						},
 					},
