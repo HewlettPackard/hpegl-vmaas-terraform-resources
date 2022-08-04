@@ -73,7 +73,7 @@ func LoadBalancerVirtualServers() *schema.Resource {
 					"SOURCE_IP",
 					"COOKIE",
 				}, false),
-				Required:    true,
+				Optional:    true,
 				Description: "persistence type for Network loadbalancer virtual server",
 			},
 			"cookie_persistence_profile":   schemas.CookiePersProfileSchema(),
