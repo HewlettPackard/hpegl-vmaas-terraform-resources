@@ -28,18 +28,20 @@ func LoadBalancerPools() *schema.Resource {
 			},
 			"description": {
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 				Description: "Creating the Network loadbalancer pool.",
 			},
 			"min_active_members": {
 				Type:        schema.TypeInt,
 				Optional:    true,
+				Default:     1,
 				Description: "minimum active members for the Network loadbalancer pool",
 			},
 			"algorithm": {
 				Type:             schema.TypeString,
 				ValidateDiagFunc: validations.StringInSlice([]string{"ROUND_ROBIN", "WEIGHTED_ROUND_ROBIN", " LEAST_CONNECTION", "WEIGHTED_LEAST_CONNECTION", "IP_HASH"}, false),
-				Optional:         true,
+				Required:         true,
+				InputDefault:     "ROUND_ROBIN",
 				Description:      "Network Loadbalancer Supported values are `ROUND_ROBIN`,`WEIGHTED_ROUND_ROBIN`, `LEAST_CONNECTION`, `WEIGHTED_LEAST_CONNECTION`,`IP_HASH`"},
 			"config": {
 				Type:        schema.TypeList,
@@ -51,6 +53,7 @@ func LoadBalancerPools() *schema.Resource {
 							Type:             schema.TypeString,
 							ValidateDiagFunc: validations.StringInSlice([]string{"LBSnatAutoMap", "LBSnatDisabled", "LBSnatIpPool"}, false),
 							Optional:         true,
+							Default:          "LBSnatDisabled",
 							Description:      "Network Loadbalancer Supported values are `LBSnatAutoMap`,`LBSnatDisabled`, `LBSnatIpPool`",
 						},
 						"passive_monitor_path": {
@@ -71,6 +74,7 @@ func LoadBalancerPools() *schema.Resource {
 						"tcp_multiplexing_number": {
 							Type:        schema.TypeInt,
 							Optional:    true,
+							Default:     6,
 							Description: "tcp_multiplexing_number for Network loadbalancer pool",
 						},
 						"snat_ip_address": {
