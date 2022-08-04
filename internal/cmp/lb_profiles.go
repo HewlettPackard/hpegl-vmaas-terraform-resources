@@ -124,28 +124,28 @@ func (lb *loadBalancerProfile) Update(ctx context.Context, d *utils.Data, meta i
 }
 
 func (lb *loadBalancerProfile) profileAlignprofileTypeRequest(ctx context.Context, meta interface{}, profileReq *models.CreateLBProfileReq) error {
-	if profileReq.TfHttpConfig != nil && profileReq.ServiceType == httpProfile {
-		profileReq.ProfileConfig.HTTPIdleTimeout = profileReq.TfHttpConfig.HTTPIdleTimeout
-		profileReq.ProfileConfig.HTTPsRedirect = profileReq.TfHttpConfig.HTTPsRedirect
-		profileReq.ProfileConfig.NtlmAuthentication = profileReq.TfHttpConfig.NtlmAuthentication
+	if profileReq.TfHTTPConfig != nil && profileReq.ServiceType == httpProfile {
+		profileReq.ProfileConfig.HTTPIdleTimeout = profileReq.TfHTTPConfig.HTTPIdleTimeout
+		profileReq.ProfileConfig.HTTPSRedirect = profileReq.TfHTTPConfig.HTTPSRedirect
+		profileReq.ProfileConfig.NtlmAuthentication = profileReq.TfHTTPConfig.NtlmAuthentication
 		profileReq.ProfileConfig.ProfileType = profileReq.ProfileType
-		profileReq.ServiceType = profileReq.TfHttpConfig.ServiceType
-		profileReq.ProfileConfig.RequestBodySize = profileReq.TfHttpConfig.RequestBodySize
-		profileReq.ProfileConfig.RequestHeaderSize = profileReq.TfHttpConfig.RequestHeaderSize
-		profileReq.ProfileConfig.ResponseHeaderSize = profileReq.TfHttpConfig.ResponseHeaderSize
-		profileReq.ProfileConfig.ResponseTimeout = profileReq.TfHttpConfig.ResponseTimeout
-		profileReq.ProfileConfig.XForwardedFor = profileReq.TfHttpConfig.XForwardedFor
-	} else if profileReq.TfTcpConfig != nil && profileReq.ServiceType == tcpProfile {
-		profileReq.ProfileConfig.ConnectionCloseTimeout = profileReq.TfTcpConfig.ConnectionCloseTimeout
-		profileReq.ProfileConfig.FastTCPIdleTimeout = profileReq.TfTcpConfig.FastTCPIdleTimeout
-		profileReq.ProfileConfig.HaFlowMirroring = profileReq.TfTcpConfig.HaFlowMirroring
+		profileReq.ServiceType = profileReq.TfHTTPConfig.ServiceType
+		profileReq.ProfileConfig.RequestBodySize = profileReq.TfHTTPConfig.RequestBodySize
+		profileReq.ProfileConfig.RequestHeaderSize = profileReq.TfHTTPConfig.RequestHeaderSize
+		profileReq.ProfileConfig.ResponseHeaderSize = profileReq.TfHTTPConfig.ResponseHeaderSize
+		profileReq.ProfileConfig.ResponseTimeout = profileReq.TfHTTPConfig.ResponseTimeout
+		profileReq.ProfileConfig.XForwardedFor = profileReq.TfHTTPConfig.XForwardedFor
+	} else if profileReq.TfTCPConfig != nil && profileReq.ServiceType == tcpProfile {
+		profileReq.ProfileConfig.ConnectionCloseTimeout = profileReq.TfTCPConfig.ConnectionCloseTimeout
+		profileReq.ProfileConfig.FastTCPIdleTimeout = profileReq.TfTCPConfig.FastTCPIdleTimeout
+		profileReq.ProfileConfig.HaFlowMirroring = profileReq.TfTCPConfig.HaFlowMirroring
 		profileReq.ProfileConfig.ProfileType = profileReq.ProfileType
-		profileReq.ServiceType = profileReq.TfTcpConfig.ServiceType
+		profileReq.ServiceType = profileReq.TfTCPConfig.ServiceType
 
-	} else if profileReq.TfUdpConfig != nil && profileReq.ServiceType == udpProfile {
-		profileReq.ProfileConfig.FastUDPIdleTimeout = profileReq.TfUdpConfig.FastUDPIdleTimeout
-		profileReq.ProfileConfig.HaFlowMirroring = profileReq.TfUdpConfig.HaFlowMirroring
-		profileReq.ServiceType = profileReq.TfUdpConfig.ServiceType
+	} else if profileReq.TfUDPConfig != nil && profileReq.ServiceType == udpProfile {
+		profileReq.ProfileConfig.FastUDPIdleTimeout = profileReq.TfUDPConfig.FastUDPIdleTimeout
+		profileReq.ProfileConfig.HaFlowMirroring = profileReq.TfUDPConfig.HaFlowMirroring
+		profileReq.ServiceType = profileReq.TfUDPConfig.ServiceType
 		profileReq.ProfileConfig.ProfileType = profileReq.ProfileType
 
 	} else if profileReq.TfCookieConfig != nil && profileReq.ServiceType == cookieProfile {
