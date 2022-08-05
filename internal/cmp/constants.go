@@ -23,5 +23,6 @@ const (
 	tier0GatewayType             = "NSX-T Tier-0 Gateway"
 	tier1GatewayType             = "NSX-T Tier-1 Gateway"
 	routerFirewallExternalPolicy = "GatewayPolicy"
-	syncedTypeValue              = "Synced"
+
+	syncedTypeValue = "Synced"
 )
