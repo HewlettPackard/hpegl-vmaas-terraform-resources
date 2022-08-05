@@ -106,12 +106,10 @@ func (l *LoadBalancerProfile) validateProfile() error {
 				return err
 			}
 		}
-		//else if len((clientType).([]interface{})) != 0 {
 		err := l.validateProfilesTypes(clientType, LBClientSslProfile)
 		if err != nil {
 			return err
 		}
-		//}
 	}
 
 	return nil
