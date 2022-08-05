@@ -36,10 +36,10 @@ func NewLoadBalancerVirtualServerValidate(diff *schema.ResourceDiff) *LoadBalanc
 	}
 }
 
-func (l *LoadBalancerVirtualServers) validateProfile(profile_type string, value string) error {
-	profileType := l.diff.Get(value)
-	if len((profileType).([]interface{})) == 0 {
-		return fmt.Errorf("please provide " + value + " " + "configurations for Type" + " " + profile_type)
+func (l *LoadBalancerVirtualServers) validateProfile(profileType string, value string) error {
+	profileTypes := l.diff.Get(value)
+	if len((profileTypes).([]interface{})) == 0 {
+		return fmt.Errorf("please provide " + value + " " + "configurations for Type" + " " + profileType)
 	}
 
 	return nil

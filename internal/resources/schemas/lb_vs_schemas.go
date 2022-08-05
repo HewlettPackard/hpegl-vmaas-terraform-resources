@@ -4,6 +4,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
+const (
+	DSLBProfile = "hpegl_vmaas_load_balancer_profile"
+)
+
 func TCPAppProfileSchema() *schema.Schema {
 	return &schema.Schema{
 		Type:          schema.TypeList,
@@ -17,7 +21,7 @@ func TCPAppProfileSchema() *schema.Schema {
 				"application_profile": {
 					Type:        schema.TypeInt,
 					Required:    true,
-					Description: "ID of the TCP application_profile. Use hpegl_vmaas_load_balancer_profile datasource to obtain the id here",
+					Description: "ID of the TCP application_profile. Use " + DSLBProfile + "datasource to obtain the id here",
 				},
 			},
 		},
@@ -37,7 +41,7 @@ func UDPAppProfileSchema() *schema.Schema {
 				"application_profile": {
 					Type:        schema.TypeInt,
 					Required:    true,
-					Description: "ID of the UDP application_profile. Use hpegl_vmaas_load_balancer_profile datasource to obtain the id here",
+					Description: "ID of the UDP application_profile. Use " + DSLBProfile + "datasource to obtain the id here",
 				},
 			},
 		},
@@ -57,7 +61,7 @@ func HTTPAppProfileSchema() *schema.Schema {
 				"application_profile": {
 					Type:        schema.TypeInt,
 					Required:    true,
-					Description: "ID of the HTTP application_profile. Use hpegl_vmaas_load_balancer_profile datasource to obtain the id here",
+					Description: "ID of the HTTP application_profile. Use " + DSLBProfile + "datasource to obtain the id here",
 				},
 			},
 		},
@@ -77,7 +81,7 @@ func CookiePersProfileSchema() *schema.Schema {
 				"persistence_profile": {
 					Type:        schema.TypeInt,
 					Required:    true,
-					Description: "ID of the COOKIE persistence_profile. Use hpegl_vmaas_load_balancer_profile datasource to obtain the id here",
+					Description: "ID of the COOKIE persistence_profile. Use " + DSLBProfile + "datasource to obtain the id here",
 				},
 			},
 		},
@@ -97,7 +101,7 @@ func SourceipPersProfileSchema() *schema.Schema {
 				"persistence_profile": {
 					Type:        schema.TypeInt,
 					Required:    true,
-					Description: "ID of the SOURCEIP persistence_profile. Use hpegl_vmaas_load_balancer_profile datasource to obtain the id here",
+					Description: "ID of the SOURCEIP persistence_profile. Use " + DSLBProfile + "datasource to obtain the id here",
 				},
 			},
 		},
