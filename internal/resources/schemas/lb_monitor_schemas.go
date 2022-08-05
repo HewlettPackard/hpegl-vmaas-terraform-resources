@@ -141,7 +141,7 @@ func HTTPSMonitorSchema() *schema.Schema {
 				},
 				"monitor_port": {
 					Type:        schema.TypeInt,
-					Description: "If the monitor port is specified, it would override pool member port setting for healthcheck",
+					Description: "If the monitor port is specified, it would override pool member port setting for healthcheck.",
 					Optional:    true,
 				},
 				"rise_count": {
@@ -244,6 +244,7 @@ func IcmpMonitorSchema() *schema.Schema {
 					Optional:    true,
 				},
 				"rise_count": {
+
 					Type:        schema.TypeInt,
 					Optional:    true,
 					Default:     3,

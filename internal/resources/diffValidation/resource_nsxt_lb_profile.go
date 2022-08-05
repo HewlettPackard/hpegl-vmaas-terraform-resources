@@ -10,9 +10,9 @@ import (
 
 const (
 	profiles        = "profile_type"
-	http            = "http_profile"
-	tcp             = "tcp_profile"
-	udp             = "udp_profile"
+	httpProfile     = "http_profile"
+	tcpProfile      = "tcp_profile"
+	udpProfile      = "udp_profile"
 	cookieProfile   = "cookie_profile"
 	sourceIPProfile = "sourceip_profile"
 	genericProfile  = "generic_profile"
@@ -56,9 +56,9 @@ func (l *LoadBalancerProfile) validateProfile() error {
 	types := l.diff.Get(profiles)
 	switch types {
 	case applicationProfile:
-		httpType := l.diff.Get(http)
-		tcpType := l.diff.Get(tcp)
-		udpType := l.diff.Get(udp)
+		httpType := l.diff.Get(httpProfile)
+		tcpType := l.diff.Get(tcpProfile)
+		udpType := l.diff.Get(udpProfile)
 		if len((httpType).([]interface{})) != 0 {
 			err := l.validateProfilesTypes(httpType, LBHttpProfile)
 			if err != nil {
