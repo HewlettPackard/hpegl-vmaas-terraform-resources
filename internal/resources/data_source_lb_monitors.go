@@ -42,7 +42,6 @@ func LBMonitorReadContext(ctx context.Context, d *schema.ResourceData, meta inte
 	if err != nil {
 		return diag.FromErr(err)
 	}
-
 	data := utils.NewData(d)
 	err = c.CmpClient.DSLBMonitor.Read(ctx, data, meta)
 	if err != nil {
