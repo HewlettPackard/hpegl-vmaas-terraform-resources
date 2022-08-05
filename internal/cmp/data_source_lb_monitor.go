@@ -41,8 +41,8 @@ func (n *lbMonitords) Read(ctx context.Context, d *utils.Data, meta interface{})
 			log.Print("[DEBUG]", lb.GetLBMonitorsResp[i].ID)
 
 			return tftags.Set(d, lb.GetLBMonitorsResp[i])
-
 		}
 	}
+
 	return fmt.Errorf(errExactMatch, "LB Monitors")
 }

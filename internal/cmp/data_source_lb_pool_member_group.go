@@ -17,7 +17,8 @@ type poolMemberGroupds struct {
 	rClient  *client.RouterAPIService
 }
 
-func newLBPoolMemberGroupDS(loadBalancerClient *client.LoadBalancerAPIService, routerClient *client.RouterAPIService) *poolMemberGroupds {
+func newLBPoolMemberGroupDS(loadBalancerClient *client.LoadBalancerAPIService,
+	routerClient *client.RouterAPIService) *poolMemberGroupds {
 	return &poolMemberGroupds{
 		lbClient: loadBalancerClient,
 		rClient:  routerClient,
@@ -52,18 +53,18 @@ func (n *poolMemberGroupds) Read(ctx context.Context, d *utils.Data, meta interf
 
 	if serverID == 0 {
 		return fmt.Errorf(errExactMatch, "network server")
-	} else {
-		lb, err := n.lbClient.GetLBPoolMemberGroup(ctx, serverID)
-		if err != nil {
-			return err
-		}
+	}
 
-		for i, n := range lb.MemeberGroup {
-			if n.Name == name {
-				log.Print("[DEBUG]", lb.MemeberGroup[i].ExternalID)
+	lb, err := n.lbClient.GetLBPoolMemberGroup(ctx, serverID)
+	if err != nil {
+		return err
+	}
 
-				return tftags.Set(d, lb.MemeberGroup[i])
-			}
+	for i, n := range lb.MemeberGroup {
+		if n.Name == name {
+			log.Print("[DEBUG]", lb.MemeberGroup[i].ExternalID)
+
+			return tftags.Set(d, lb.MemeberGroup[i])
 		}
 	}
 

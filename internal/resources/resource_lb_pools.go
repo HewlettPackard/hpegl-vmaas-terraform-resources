@@ -38,11 +38,18 @@ func LoadBalancerPools() *schema.Resource {
 				Description: "minimum active members for the Network loadbalancer pool",
 			},
 			"algorithm": {
-				Type:             schema.TypeString,
-				ValidateDiagFunc: validations.StringInSlice([]string{"ROUND_ROBIN", "WEIGHTED_ROUND_ROBIN", " LEAST_CONNECTION", "WEIGHTED_LEAST_CONNECTION", "IP_HASH"}, false),
-				Required:         true,
-				InputDefault:     "ROUND_ROBIN",
-				Description:      "Network Loadbalancer Supported values are `ROUND_ROBIN`,`WEIGHTED_ROUND_ROBIN`, `LEAST_CONNECTION`, `WEIGHTED_LEAST_CONNECTION`,`IP_HASH`"},
+				Type: schema.TypeString,
+				ValidateDiagFunc: validations.StringInSlice([]string{
+					"ROUND_ROBIN",
+					"WEIGHTED_ROUND_ROBIN",
+					"LEAST_CONNECTION",
+					"WEIGHTED_LEAST_CONNECTION",
+					"IP_HASH",
+				}, false),
+				Required:     true,
+				InputDefault: "ROUND_ROBIN",
+				Description:  "Provide the Supported values for pool algorithm",
+			},
 			"config": {
 				Type:        schema.TypeList,
 				Optional:    true,

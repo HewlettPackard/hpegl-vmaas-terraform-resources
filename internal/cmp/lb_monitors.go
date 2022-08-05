@@ -35,19 +35,18 @@ func (lb *loadBalancerMonitor) Read(ctx context.Context, d *utils.Data, meta int
 	if err != nil {
 		return err
 	}
-	return tftags.Set(d, getMonitorLoadBalancer.GetSpecificLBMonitorResp)
 
+	return tftags.Set(d, getMonitorLoadBalancer.GetSpecificLBMonitorResp)
 }
 
 func (lb *loadBalancerMonitor) Create(ctx context.Context, d *utils.Data, meta interface{}) error {
 	setMeta(meta, lb.lbClient.Client)
-
 	createReq := models.CreateLBMonitor{}
 	if err := tftags.Get(d, &createReq.CreateLBMonitorReq); err != nil {
 		return err
 	}
 	// align createReq and fill json related fields
-	if err := lb.monitorAlignMonitorTypeRequest(ctx, meta, &createReq); err != nil {
+	if err := lb.monitorAlignMonitorTypeRequest(&createReq); err != nil {
 		return err
 	}
 
@@ -106,7 +105,7 @@ func (lb *loadBalancerMonitor) Update(ctx context.Context, d *utils.Data, meta i
 	}
 
 	// align createReq and fill json related fields
-	if err := lb.monitorAlignMonitorTypeRequest(ctx, meta, &updateReq); err != nil {
+	if err := lb.monitorAlignMonitorTypeRequest(&updateReq); err != nil {
 		return err
 	}
 
@@ -125,7 +124,7 @@ func (lb *loadBalancerMonitor) Update(ctx context.Context, d *utils.Data, meta i
 	return tftags.Set(d, updateReq.CreateLBMonitorReq)
 }
 
-func (lb *loadBalancerMonitor) monitorAlignMonitorTypeRequest(ctx context.Context, meta interface{}, monitorReq *models.CreateLBMonitor) error {
+func (lb *loadBalancerMonitor) monitorAlignMonitorTypeRequest(monitorReq *models.CreateLBMonitor) error {
 	if monitorReq.CreateLBMonitorReq.TfHTTPConfig != nil {
 		monitorReq.CreateLBMonitorReq.RequestBody = monitorReq.CreateLBMonitorReq.TfHTTPConfig.RequestBody
 		monitorReq.CreateLBMonitorReq.AliasPort = monitorReq.CreateLBMonitorReq.TfHTTPConfig.AliasPort
@@ -177,5 +176,6 @@ func (lb *loadBalancerMonitor) monitorAlignMonitorTypeRequest(ctx context.Contex
 		monitorReq.CreateLBMonitorReq.RiseCount = monitorReq.CreateLBMonitorReq.TfUDPConfig.RiseCount
 		monitorReq.CreateLBMonitorReq.Timeout = monitorReq.CreateLBMonitorReq.TfUDPConfig.Timeout
 	}
+
 	return nil
 }
