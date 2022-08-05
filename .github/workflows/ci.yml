@@ -1,12 +1,14 @@
 name: ci
 
-on: pull_request
+on: [pull_request]
 jobs:
 
   ci:
-    runs-on: [self-hosted, Linux, ubuntu]
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        go: [ '1.17' ]
     steps:
-
       - name: Checkout workspace
         uses: actions/checkout@v2
 

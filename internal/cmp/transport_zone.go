@@ -52,5 +52,6 @@ func (r *transportZone) Read(ctx context.Context, d *utils.Data, meta interface{
 	if err != nil {
 		return err
 	}
+
 	return tftags.Set(d, resp)
 }
