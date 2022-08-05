@@ -33,7 +33,8 @@ func (lb *loadBalancerVirtualServer) Read(ctx context.Context, d *utils.Data, me
 		return err
 	}
 
-	getlbVirtualServerResp, err := lb.lbClient.GetSpecificLBVirtualServer(ctx, lbDetails.GetNetworkLoadBalancerResp[0].ID, lbVirtualServerResp.ID)
+	getlbVirtualServerResp, err := lb.lbClient.GetSpecificLBVirtualServer(ctx,
+		lbDetails.GetNetworkLoadBalancerResp[0].ID, lbVirtualServerResp.ID)
 	if err != nil {
 		return err
 	}
@@ -80,19 +81,19 @@ func (lb *loadBalancerVirtualServer) Create(ctx context.Context, d *utils.Data, 
 		return err
 	}
 
-	profileData, err := lb.lbClient.GetLBProfiles(ctx, lbDetails.GetNetworkLoadBalancerResp[0].ID)
-	if err != nil {
-		return err
-	}
+	// profileData, err := lb.lbClient.GetLBProfiles(ctx, lbDetails.GetNetworkLoadBalancerResp[0].ID)
+	// if err != nil {
+	// 	return err
+	// }
 
-	for i, profile := range profileData.GetLBProfilesResp {
-		if profile.LBProfileConfig.ProfileType == "application-profile" &&
-			profile.ServiceType == "LBHttpProfile" {
-			createReq.CreateLBVirtualServersReq.VirtualServerConfig.ApplicationProfile =
-				profileData.GetLBProfilesResp[i].ID
-			break
-		}
-	}
+	// for i, profile := range profileData.GetLBProfilesResp {
+	// 	if profile.LBProfileConfig.ProfileType == "application-profile" &&
+	// 		profile.ServiceType == "LBHttpProfile" {
+	// 		createReq.CreateLBVirtualServersReq.VirtualServerConfig.ApplicationProfile =
+	// 			profileData.GetLBProfilesResp[i].ID
+	// 		break
+	// 	}
+	// }
 	createReq.CreateLBVirtualServersReq.Pool = poolID.GetLBPoolsResp[0].ID
 
 	lbVirtualServersResp, err := lb.lbClient.CreateLBVirtualServers(ctx, createReq, lbDetails.GetNetworkLoadBalancerResp[0].ID)
@@ -110,7 +111,8 @@ func (lb *loadBalancerVirtualServer) Create(ctx context.Context, d *utils.Data, 
 		InitialDelay: 1,
 	}
 	_, err = retry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return lb.lbClient.GetSpecificLBVirtualServer(ctx, lbDetails.GetNetworkLoadBalancerResp[0].ID, lbVirtualServersResp.CreateLBVirtualServersResp.ID)
+		return lb.lbClient.GetSpecificLBVirtualServer(ctx,
+			lbDetails.GetNetworkLoadBalancerResp[0].ID, lbVirtualServersResp.CreateLBVirtualServersResp.ID)
 	})
 	if err != nil {
 		return err

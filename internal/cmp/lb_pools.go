@@ -34,6 +34,7 @@ func (lb *loadBalancerPool) Read(ctx context.Context, d *utils.Data, meta interf
 	if err != nil {
 		return err
 	}
+
 	return tftags.Set(d, getPoolLoadBalancer.GetSpecificLBPoolResp)
 }
 

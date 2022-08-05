@@ -59,10 +59,14 @@ func LoadBalancerVirtualServers() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"persistence": {
-							Type:             schema.TypeString,
-							ValidateDiagFunc: validations.StringInSlice([]string{"SOURCE_IP", "COOKIE", "DISBALED"}, false),
-							Required:         true,
-							Description:      "Network Loadbalancer Supported values are `SOURCE_IP`,`COOKIE`, `DISBALED`"},
+							Type: schema.TypeString,
+							ValidateDiagFunc: validations.StringInSlice([]string{
+								"SOURCE_IP",
+								"COOKIE",
+							}, false),
+							Required:    true,
+							Description: "Network Loadbalancer Supported values are `SOURCE_IP`,`COOKIE`",
+						},
 						"persistence_profile": {
 							Type:        schema.TypeInt,
 							Optional:    true,
