@@ -35,6 +35,7 @@ func (lb *loadBalancerProfile) Read(ctx context.Context, d *utils.Data, meta int
 	if err != nil {
 		return err
 	}
+
 	return tftags.Set(d, getProfileLoadBalancer.GetLBSpecificProfilesResp)
 }
 
@@ -46,7 +47,7 @@ func (lb *loadBalancerProfile) Create(ctx context.Context, d *utils.Data, meta i
 	}
 
 	// align createReq and fill json related fields
-	if err := lb.profileAlignprofileTypeRequest(ctx, meta, &createReq.CreateLBProfileReq); err != nil {
+	if err := lb.profileAlignprofileTypeRequest(&createReq.CreateLBProfileReq); err != nil {
 		return err
 	}
 
@@ -104,7 +105,7 @@ func (lb *loadBalancerProfile) Update(ctx context.Context, d *utils.Data, meta i
 	}
 
 	// align createReq and fill json related fields
-	if err := lb.profileAlignprofileTypeRequest(ctx, meta, &updateReq.CreateLBProfileReq); err != nil {
+	if err := lb.profileAlignprofileTypeRequest(&updateReq.CreateLBProfileReq); err != nil {
 		return err
 	}
 
@@ -123,7 +124,7 @@ func (lb *loadBalancerProfile) Update(ctx context.Context, d *utils.Data, meta i
 	return tftags.Set(d, updateReq.CreateLBProfileReq)
 }
 
-func (lb *loadBalancerProfile) profileAlignprofileTypeRequest(ctx context.Context, meta interface{}, profileReq *models.CreateLBProfileReq) error {
+func (lb *loadBalancerProfile) profileAlignprofileTypeRequest(profileReq *models.CreateLBProfileReq) error {
 	if profileReq.TfHTTPConfig != nil {
 		profileReq.ProfileConfig.HTTPIdleTimeout = profileReq.TfHTTPConfig.HTTPIdleTimeout
 		profileReq.ProfileConfig.HTTPSRedirect = profileReq.TfHTTPConfig.HTTPSRedirect
@@ -141,13 +142,11 @@ func (lb *loadBalancerProfile) profileAlignprofileTypeRequest(ctx context.Contex
 		profileReq.ProfileConfig.HaFlowMirroring = profileReq.TfTCPConfig.HaFlowMirroring
 		profileReq.ProfileConfig.ProfileType = profileReq.ProfileType
 		profileReq.ServiceType = profileReq.TfTCPConfig.ServiceType
-
 	} else if profileReq.TfUDPConfig != nil {
 		profileReq.ProfileConfig.FastUDPIdleTimeout = profileReq.TfUDPConfig.FastUDPIdleTimeout
 		profileReq.ProfileConfig.HaFlowMirroring = profileReq.TfUDPConfig.HaFlowMirroring
 		profileReq.ServiceType = profileReq.TfUDPConfig.ServiceType
 		profileReq.ProfileConfig.ProfileType = profileReq.ProfileType
-
 	} else if profileReq.TfCookieConfig != nil {
 		profileReq.ProfileConfig.CookieDomain = profileReq.TfCookieConfig.CookieDomain
 		profileReq.ProfileConfig.CookieFallback = profileReq.TfCookieConfig.CookieFallback
@@ -161,14 +160,12 @@ func (lb *loadBalancerProfile) profileAlignprofileTypeRequest(ctx context.Contex
 		profileReq.ServiceType = profileReq.TfCookieConfig.ServiceType
 		profileReq.ProfileConfig.ProfileType = profileReq.ProfileType
 		profileReq.ProfileConfig.SharePersistence = profileReq.TfCookieConfig.SharePersistence
-
 	} else if profileReq.TfGenericConfig != nil {
 		profileReq.ProfileConfig.HaPersistenceMirroring = profileReq.TfGenericConfig.HaPersistenceMirroring
 		profileReq.ProfileConfig.PersistenceEntryTimeout = profileReq.TfGenericConfig.PersistenceEntryTimeout
 		profileReq.ProfileConfig.ProfileType = profileReq.ProfileType
 		profileReq.ServiceType = profileReq.TfGenericConfig.ServiceType
 		profileReq.ProfileConfig.SharePersistence = profileReq.TfGenericConfig.SharePersistence
-
 	} else if profileReq.TfSourceConfig != nil {
 		profileReq.ProfileConfig.HaPersistenceMirroring = profileReq.TfSourceConfig.HaPersistenceMirroring
 		profileReq.ProfileConfig.PersistenceEntryTimeout = profileReq.TfSourceConfig.PersistenceEntryTimeout
@@ -176,13 +173,11 @@ func (lb *loadBalancerProfile) profileAlignprofileTypeRequest(ctx context.Contex
 		profileReq.ServiceType = profileReq.TfSourceConfig.ServiceType
 		profileReq.ProfileConfig.PurgeEntries = profileReq.TfSourceConfig.PurgeEntries
 		profileReq.ProfileConfig.SharePersistence = profileReq.TfSourceConfig.SharePersistence
-
 	} else if profileReq.TfServerConfig != nil {
 		profileReq.ProfileConfig.ProfileType = profileReq.ProfileType
 		profileReq.ProfileConfig.SSLSuite = profileReq.TfServerConfig.SSLSuite
 		profileReq.ServiceType = profileReq.TfServerConfig.ServiceType
 		profileReq.ProfileConfig.SessionCache = profileReq.TfServerConfig.SessionCache
-
 	} else if profileReq.TfClientConfig != nil {
 		profileReq.ProfileConfig.PreferServerCipher = profileReq.TfClientConfig.PreferServerCipher
 		profileReq.ProfileConfig.ProfileType = profileReq.ProfileType
@@ -191,5 +186,6 @@ func (lb *loadBalancerProfile) profileAlignprofileTypeRequest(ctx context.Contex
 		profileReq.ProfileConfig.SessionCache = profileReq.TfClientConfig.SessionCache
 		profileReq.ProfileConfig.SessionCacheEntryTimeout = profileReq.TfClientConfig.SessionCacheEntryTimeout
 	}
+
 	return nil
 }

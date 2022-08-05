@@ -14,16 +14,16 @@ const (
 	tcp             = "tcp_profile"
 	udp             = "udp_profile"
 	cookieProfile   = "cookie_profile"
-	sourceIpProfile = "sourceip_profile"
+	sourceIPProfile = "sourceip_profile"
 	genericProfile  = "generic_profile"
 	clientProfile   = "client_profile"
 	serverProfile   = "server_profile"
 
 	LBHttpProfile                = "LBHttpProfile"
-	LBFastTcpProfile             = "LBFastTcpProfile"
-	LBFastUdpProfile             = "LBFastUdpProfile"
+	LBFastTCPProfile             = "LBFastTcpProfile"
+	LBFastUDPProfile             = "LBFastUdpProfile"
 	LBCookiePersistenceProfile   = "LBCookiePersistenceProfile"
-	LBSourceIpPersistenceProfile = "LBSourceIpPersistenceProfile"
+	LBSourceIPPersistenceProfile = "LBSourceIpPersistenceProfile"
 	LBGenericPersistenceProfile  = "LBGenericPersistenceProfile"
 	LBClientSslProfile           = "LBClientSslProfile"
 	LBServerSslProfile           = "LBServerSslProfile"
@@ -48,6 +48,7 @@ func (l *LoadBalancerProfile) DiffValidate() error {
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -64,12 +65,12 @@ func (l *LoadBalancerProfile) validateProfile() error {
 				return err
 			}
 		} else if len((tcpType).([]interface{})) != 0 {
-			err := l.validateProfilesTypes(tcpType, LBFastTcpProfile)
+			err := l.validateProfilesTypes(tcpType, LBFastTCPProfile)
 			if err != nil {
 				return err
 			}
 		} else if len((udpType).([]interface{})) != 0 {
-			err := l.validateProfilesTypes(udpType, LBFastUdpProfile)
+			err := l.validateProfilesTypes(udpType, LBFastUDPProfile)
 			if err != nil {
 				return err
 			}
@@ -77,7 +78,7 @@ func (l *LoadBalancerProfile) validateProfile() error {
 
 	case persistenceProfile:
 		cookieType := l.diff.Get(cookieProfile)
-		sourceipType := l.diff.Get(sourceIpProfile)
+		sourceipType := l.diff.Get(sourceIPProfile)
 		genericType := l.diff.Get(genericProfile)
 		if len((cookieType).([]interface{})) != 0 {
 			err := l.validateProfilesTypes(cookieType, LBCookiePersistenceProfile)
@@ -85,7 +86,7 @@ func (l *LoadBalancerProfile) validateProfile() error {
 				return err
 			}
 		} else if len((sourceipType).([]interface{})) != 0 {
-			err := l.validateProfilesTypes(sourceipType, LBSourceIpPersistenceProfile)
+			err := l.validateProfilesTypes(sourceipType, LBSourceIPPersistenceProfile)
 			if err != nil {
 				return err
 			}
@@ -104,12 +105,13 @@ func (l *LoadBalancerProfile) validateProfile() error {
 			if err != nil {
 				return err
 			}
-		} else if len((clientType).([]interface{})) != 0 {
-			err := l.validateProfilesTypes(clientType, LBClientSslProfile)
-			if err != nil {
-				return err
-			}
 		}
+		//else if len((clientType).([]interface{})) != 0 {
+		err := l.validateProfilesTypes(clientType, LBClientSslProfile)
+		if err != nil {
+			return err
+		}
+		//}
 	}
 
 	return nil
@@ -117,9 +119,9 @@ func (l *LoadBalancerProfile) validateProfile() error {
 
 func (l *LoadBalancerProfile) validateProfilesTypes(profileType interface{}, serviceType string) error {
 	for _, profile := range profileType.([]interface{}) {
-		service_type := profile.(map[string]interface{})["service_type"].(string)
-		if service_type != serviceType {
-			return fmt.Errorf("please provide service_type as " + serviceType + " for the Configuration")
+		serviceTypes := profile.(map[string]interface{})["service_type"].(string)
+		if serviceTypes != serviceType {
+			return fmt.Errorf("please provide serviceType as " + serviceType + " for the Configuration")
 		}
 	}
 
