@@ -31,7 +31,8 @@ func LBPoolMemeberGroupData() *schema.Resource {
 			},
 		},
 		ReadContext: PoolMemeberGroupReadContext,
-		Description: `The ` + DSPoolMemeberGroup + ` data source can be used to discover the ID of a hpegl vmaas network load balancer.
+		Description: `The ` + DSPoolMemeberGroup + ` data source can be used to discover the
+		ID of a hpegl vmaas network load balancer.
 		This can then be used for the  data sources`,
 		SchemaVersion:  0,
 		StateUpgraders: nil,

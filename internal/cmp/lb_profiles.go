@@ -24,72 +24,34 @@ func newLoadBalancerProfile(loadBalancerClient *client.LoadBalancerAPIService) *
 }
 
 func (lb *loadBalancerProfile) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
-	var lbProfileResp models.GetLBSpecificProfilesResp
+	setMeta(meta, lb.lbClient.Client)
+	var lbProfileResp models.CreateLBProfileReq
+
 	if err := tftags.Get(d, &lbProfileResp); err != nil {
 		return err
 	}
 
-	lbDetails, err := lb.lbClient.GetLoadBalancers(ctx)
+	getProfileLoadBalancer, err := lb.lbClient.GetSpecificLBProfile(ctx, lbProfileResp.LbID, lbProfileResp.ID)
 	if err != nil {
 		return err
 	}
 
-	getlbProfileResp, err := lb.lbClient.GetSpecificLBProfile(ctx, lbDetails.GetNetworkLoadBalancerResp[0].ID, lbProfileResp.ID)
-	if err != nil {
-		return err
-	}
-
-	return tftags.Set(d, getlbProfileResp.GetLBSpecificProfilesResp)
-}
-
-func (lb *loadBalancerProfile) Update(ctx context.Context, d *utils.Data, meta interface{}) error {
-	return nil
+	return tftags.Set(d, getProfileLoadBalancer.GetLBSpecificProfilesResp)
 }
 
 func (lb *loadBalancerProfile) Create(ctx context.Context, d *utils.Data, meta interface{}) error {
 	setMeta(meta, lb.lbClient.Client)
-	createReq := models.CreateLBProfile{
-		CreateLBProfileReq: models.CreateLBProfileReq{
-			Name:        d.GetString("name"),
-			Description: d.GetString("description"),
-			ServiceType: d.GetString("service_type"),
-			ProfileConfig: models.LBProfile{
-				ProfileType:            d.GetString("profile_type"),
-				RequestHeaderSize:      d.GetInt("request_header_size"),
-				ResponseHeaderSize:     d.GetInt("response_header_size"),
-				ResponseTimeout:        d.GetInt("response_timeout"),
-				HTTPIdleTimeout:        d.GetInt("http_idle_timeout"),
-				FastTCPIdleTimeout:     d.GetInt("fast_tcp_idle_timeout"),
-				ConnectionCloseTimeout: d.GetInt("connection_close_timeout"),
-				HaFlowMirroring:        d.GetBool("ha_flow_mirroring"),
-				CookieMode:             d.GetString("cookie_mode"),
-				CookieName:             d.GetString("cookie_name"),
-				CookieType:             d.GetString("cookie_type"),
-				CookieFallback:         d.GetBool("cookie_fallback"),
-				CookieGarbling:         d.GetBool("cookie_garbling"),
-				SSLSuite:               d.GetString("ssl_suite"),
-			},
-		},
-	}
-
+	createReq := models.CreateLBProfile{}
 	if err := tftags.Get(d, &createReq.CreateLBProfileReq); err != nil {
 		return err
 	}
 
-	lbDetails, err := lb.lbClient.GetLoadBalancers(ctx)
-	if err != nil {
+	// align createReq and fill json related fields
+	if err := lb.profileAlignprofileTypeRequest(&createReq.CreateLBProfileReq); err != nil {
 		return err
 	}
 
-	createReq.CreateLBProfileReq.ProfileConfig.ProfileType = "application-profile"
-	createReq.CreateLBProfileReq.ProfileConfig.ConnectionCloseTimeout = 15
-	createReq.CreateLBProfileReq.ProfileConfig.FastTCPIdleTimeout = 15
-	createReq.CreateLBProfileReq.ProfileConfig.RequestHeaderSize = 30
-	createReq.CreateLBProfileReq.ProfileConfig.ResponseHeaderSize = 40
-	createReq.CreateLBProfileReq.ProfileConfig.ResponseTimeout = 40
-	createReq.CreateLBProfileReq.ProfileConfig.HTTPIdleTimeout = 50
-
-	lbProfileResp, err := lb.lbClient.CreateLBProfile(ctx, createReq, lbDetails.GetNetworkLoadBalancerResp[0].ID)
+	lbProfileResp, err := lb.lbClient.CreateLBProfile(ctx, createReq, createReq.CreateLBProfileReq.LbID)
 	if err != nil {
 		return err
 	}
@@ -97,15 +59,16 @@ func (lb *loadBalancerProfile) Create(ctx context.Context, d *utils.Data, meta i
 	if !lbProfileResp.Success {
 		return fmt.Errorf(successErr, "creating loadBalancerProfile Profile")
 	}
-
 	createReq.CreateLBProfileReq.ID = lbProfileResp.LBProfileResp.ID
+
 	// wait until created
 	retry := &utils.CustomRetry{
 		InitialDelay: time.Second * 15,
 		RetryDelay:   time.Second * 30,
 	}
 	_, err = retry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return lb.lbClient.GetSpecificLBProfile(ctx, lbDetails.GetNetworkLoadBalancerResp[0].ID, lbProfileResp.LBProfileResp.ID)
+		return lb.lbClient.GetSpecificLBProfile(ctx, createReq.CreateLBProfileReq.LbID,
+			lbProfileResp.LBProfileResp.ID)
 	})
 	if err != nil {
 		return err
@@ -115,14 +78,113 @@ func (lb *loadBalancerProfile) Create(ctx context.Context, d *utils.Data, meta i
 }
 
 func (lb *loadBalancerProfile) Delete(ctx context.Context, d *utils.Data, meta interface{}) error {
-	lbProfileID := d.GetID()
-	lbDetails, err := lb.lbClient.GetLoadBalancers(ctx)
+	setMeta(meta, lb.lbClient.Client)
+	var tfLBProfile models.CreateLBProfileReq
+	if err := tftags.Get(d, &tfLBProfile); err != nil {
+		return err
+	}
+
+	resp, err := lb.lbClient.DeleteLBProfile(ctx, tfLBProfile.LbID, tfLBProfile.ID)
 	if err != nil {
 		return err
 	}
-	_, err = lb.lbClient.DeleteLBProfile(ctx, lbDetails.GetNetworkLoadBalancerResp[0].ID, lbProfileID)
+
+	if !resp.Success {
+		return fmt.Errorf("got success = 'false' while deleting LB-PROFILE")
+	}
+
+	return nil
+}
+
+func (lb *loadBalancerProfile) Update(ctx context.Context, d *utils.Data, meta interface{}) error {
+	id := d.GetID()
+	setMeta(meta, lb.lbClient.Client)
+	updateReq := models.CreateLBProfile{}
+	if err := tftags.Get(d, &updateReq.CreateLBProfileReq); err != nil {
+		return err
+	}
+
+	// align createReq and fill json related fields
+	if err := lb.profileAlignprofileTypeRequest(&updateReq.CreateLBProfileReq); err != nil {
+		return err
+	}
+
+	retry := &utils.CustomRetry{
+		InitialDelay: time.Second * 15,
+		RetryDelay:   time.Second * 30,
+	}
+	_, err := retry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
+		return lb.lbClient.UpdateLBProfile(ctx, updateReq,
+			updateReq.CreateLBProfileReq.LbID, id)
+	})
 	if err != nil {
 		return err
+	}
+
+	return tftags.Set(d, updateReq.CreateLBProfileReq)
+}
+
+func (lb *loadBalancerProfile) profileAlignprofileTypeRequest(profileReq *models.CreateLBProfileReq) error {
+	if profileReq.TfHTTPConfig != nil {
+		profileReq.ProfileConfig.HTTPIdleTimeout = profileReq.TfHTTPConfig.HTTPIdleTimeout
+		profileReq.ProfileConfig.HTTPSRedirect = profileReq.TfHTTPConfig.HTTPSRedirect
+		profileReq.ProfileConfig.NtlmAuthentication = profileReq.TfHTTPConfig.NtlmAuthentication
+		profileReq.ProfileConfig.ProfileType = profileReq.ProfileType
+		profileReq.ServiceType = profileReq.TfHTTPConfig.ServiceType
+		profileReq.ProfileConfig.RequestBodySize = profileReq.TfHTTPConfig.RequestBodySize
+		profileReq.ProfileConfig.RequestHeaderSize = profileReq.TfHTTPConfig.RequestHeaderSize
+		profileReq.ProfileConfig.ResponseHeaderSize = profileReq.TfHTTPConfig.ResponseHeaderSize
+		profileReq.ProfileConfig.ResponseTimeout = profileReq.TfHTTPConfig.ResponseTimeout
+		profileReq.ProfileConfig.XForwardedFor = profileReq.TfHTTPConfig.XForwardedFor
+	} else if profileReq.TfTCPConfig != nil {
+		profileReq.ProfileConfig.ConnectionCloseTimeout = profileReq.TfTCPConfig.ConnectionCloseTimeout
+		profileReq.ProfileConfig.FastTCPIdleTimeout = profileReq.TfTCPConfig.FastTCPIdleTimeout
+		profileReq.ProfileConfig.HaFlowMirroring = profileReq.TfTCPConfig.HaFlowMirroring
+		profileReq.ProfileConfig.ProfileType = profileReq.ProfileType
+		profileReq.ServiceType = profileReq.TfTCPConfig.ServiceType
+	} else if profileReq.TfUDPConfig != nil {
+		profileReq.ProfileConfig.FastUDPIdleTimeout = profileReq.TfUDPConfig.FastUDPIdleTimeout
+		profileReq.ProfileConfig.HaFlowMirroring = profileReq.TfUDPConfig.HaFlowMirroring
+		profileReq.ServiceType = profileReq.TfUDPConfig.ServiceType
+		profileReq.ProfileConfig.ProfileType = profileReq.ProfileType
+	} else if profileReq.TfCookieConfig != nil {
+		profileReq.ProfileConfig.CookieDomain = profileReq.TfCookieConfig.CookieDomain
+		profileReq.ProfileConfig.CookieFallback = profileReq.TfCookieConfig.CookieFallback
+		profileReq.ProfileConfig.CookieGarbling = profileReq.TfCookieConfig.CookieGarbling
+		profileReq.ProfileConfig.CookieMode = profileReq.TfCookieConfig.CookieMode
+		profileReq.ProfileConfig.CookieName = profileReq.TfCookieConfig.CookieName
+		profileReq.ProfileConfig.CookiePath = profileReq.TfCookieConfig.CookiePath
+		profileReq.ProfileConfig.CookieType = profileReq.TfCookieConfig.CookieType
+		profileReq.ProfileConfig.MaxCookieAge = profileReq.TfCookieConfig.MaxCookieAge
+		profileReq.ProfileConfig.MaxIdleTime = profileReq.TfCookieConfig.MaxIdleTime
+		profileReq.ServiceType = profileReq.TfCookieConfig.ServiceType
+		profileReq.ProfileConfig.ProfileType = profileReq.ProfileType
+		profileReq.ProfileConfig.SharePersistence = profileReq.TfCookieConfig.SharePersistence
+	} else if profileReq.TfGenericConfig != nil {
+		profileReq.ProfileConfig.HaPersistenceMirroring = profileReq.TfGenericConfig.HaPersistenceMirroring
+		profileReq.ProfileConfig.PersistenceEntryTimeout = profileReq.TfGenericConfig.PersistenceEntryTimeout
+		profileReq.ProfileConfig.ProfileType = profileReq.ProfileType
+		profileReq.ServiceType = profileReq.TfGenericConfig.ServiceType
+		profileReq.ProfileConfig.SharePersistence = profileReq.TfGenericConfig.SharePersistence
+	} else if profileReq.TfSourceConfig != nil {
+		profileReq.ProfileConfig.HaPersistenceMirroring = profileReq.TfSourceConfig.HaPersistenceMirroring
+		profileReq.ProfileConfig.PersistenceEntryTimeout = profileReq.TfSourceConfig.PersistenceEntryTimeout
+		profileReq.ProfileConfig.ProfileType = profileReq.ProfileType
+		profileReq.ServiceType = profileReq.TfSourceConfig.ServiceType
+		profileReq.ProfileConfig.PurgeEntries = profileReq.TfSourceConfig.PurgeEntries
+		profileReq.ProfileConfig.SharePersistence = profileReq.TfSourceConfig.SharePersistence
+	} else if profileReq.TfServerConfig != nil {
+		profileReq.ProfileConfig.ProfileType = profileReq.ProfileType
+		profileReq.ProfileConfig.SSLSuite = profileReq.TfServerConfig.SSLSuite
+		profileReq.ServiceType = profileReq.TfServerConfig.ServiceType
+		profileReq.ProfileConfig.SessionCache = profileReq.TfServerConfig.SessionCache
+	} else if profileReq.TfClientConfig != nil {
+		profileReq.ProfileConfig.PreferServerCipher = profileReq.TfClientConfig.PreferServerCipher
+		profileReq.ProfileConfig.ProfileType = profileReq.ProfileType
+		profileReq.ProfileConfig.SSLSuite = profileReq.TfClientConfig.SSLSuite
+		profileReq.ServiceType = profileReq.TfClientConfig.ServiceType
+		profileReq.ProfileConfig.SessionCache = profileReq.TfClientConfig.SessionCache
+		profileReq.ProfileConfig.SessionCacheEntryTimeout = profileReq.TfClientConfig.SessionCacheEntryTimeout
 	}
 
 	return nil

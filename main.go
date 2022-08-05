@@ -21,7 +21,7 @@ func main() {
 		ProviderFunc: testutils.ProviderFunc(),
 	}
 	if debugMode {
-		err := plugin.Debug(context.Background(), "terraform.example.com/vmaas/hpegl", opts)
+		err := plugin.Debug(context.Background(), "terraform.example.com/vmaas/hpegl", opts) //nolint
 		if err != nil {
 			log.Fatal(err.Error())
 		}

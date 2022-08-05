@@ -14,9 +14,9 @@ const (
 	udp              = "udp"
 	tcp              = "tcp"
 
-	tcpProfile  = "tcp_application_profile"
-	udpProfile  = "udp_application_profile"
-	httpProfile = "http_application_profile"
+	tcpAppProfile = "tcp_application_profile"
+	udpAppProfile = "udp_application_profile"
+	httAppProfile = "http_application_profile"
 
 	persistenceTypes = "persistence"
 	sourceIP         = "SOURCE_IP"
@@ -49,18 +49,18 @@ func (l *LoadBalancerVirtualServers) DiffValidate() error {
 	types := l.diff.Get(applicationTypes)
 	switch types {
 	case tcp:
-		err := l.validateProfile(tcp, tcpProfile)
+		err := l.validateProfile(tcp, tcpAppProfile)
 		if err != nil {
 			return err
 		}
 	case udp:
-		err := l.validateProfile(udp, udpProfile)
+		err := l.validateProfile(udp, udpAppProfile)
 		if err != nil {
 			return err
 		}
 
 	case http:
-		err := l.validateProfile(http, httpProfile)
+		err := l.validateProfile(http, httAppProfile)
 		if err != nil {
 			return err
 		}
