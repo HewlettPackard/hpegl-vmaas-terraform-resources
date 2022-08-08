@@ -61,7 +61,6 @@ func (lb *loadBalancer) Update(ctx context.Context, d *utils.Data, meta interfac
 
 func (lb *loadBalancer) loadBalancerAlignRequest(ctx context.Context, meta interface{},
 	createReq *models.CreateLoadBalancerRequest) error {
-
 	allTypes, _ := lb.lbClient.GetLoadBalancerTypes(ctx, map[string]string{
 		nameKey: nsxt,
 	})
@@ -83,15 +82,18 @@ func (lb *loadBalancer) loadBalancerAlignRequest(ctx context.Context, meta inter
 	for i, n := range networkService.NetworkServices {
 		if n.TypeName == nsxt {
 			createReq.NetworkLoadBalancer.NetworkServerID = networkService.NetworkServices[i].ID
+
 			break
 		}
 	}
 	for i, n := range allTypes.LoadBalancerTypes {
 		if n.Name == nsxt {
 			createReq.NetworkLoadBalancer.Type = allTypes.LoadBalancerTypes[i].Name
+
 			break
 		}
 	}
+
 	return nil
 }
 

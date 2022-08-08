@@ -48,7 +48,7 @@ type InitialiseClient struct{}
 func (i InitialiseClient) NewClient(r *schema.ResourceData) (interface{}, error) {
 	vmaasProviderSettings, err := client.GetServiceSettingsMap(constants.ServiceName, r)
 	if err != nil {
-		return nil, nil
+		return nil, nil //nolint
 	}
 
 	// Create VMaas Client

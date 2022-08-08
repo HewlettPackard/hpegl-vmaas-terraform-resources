@@ -35,19 +35,18 @@ func (lb *loadBalancerMonitor) Read(ctx context.Context, d *utils.Data, meta int
 	if err != nil {
 		return err
 	}
-	return tftags.Set(d, getMonitorLoadBalancer.GetSpecificLBMonitorResp)
 
+	return tftags.Set(d, getMonitorLoadBalancer.GetSpecificLBMonitorResp)
 }
 
 func (lb *loadBalancerMonitor) Create(ctx context.Context, d *utils.Data, meta interface{}) error {
 	setMeta(meta, lb.lbClient.Client)
-
 	createReq := models.CreateLBMonitor{}
 	if err := tftags.Get(d, &createReq.CreateLBMonitorReq); err != nil {
 		return err
 	}
 	// align createReq and fill json related fields
-	if err := lb.monitorAlignMonitorTypeRequest(ctx, meta, &createReq); err != nil {
+	if err := lb.monitorAlignMonitorTypeRequest(&createReq); err != nil {
 		return err
 	}
 
@@ -106,7 +105,7 @@ func (lb *loadBalancerMonitor) Update(ctx context.Context, d *utils.Data, meta i
 	}
 
 	// align createReq and fill json related fields
-	if err := lb.monitorAlignMonitorTypeRequest(ctx, meta, &updateReq); err != nil {
+	if err := lb.monitorAlignMonitorTypeRequest(&updateReq); err != nil {
 		return err
 	}
 
@@ -125,31 +124,31 @@ func (lb *loadBalancerMonitor) Update(ctx context.Context, d *utils.Data, meta i
 	return tftags.Set(d, updateReq.CreateLBMonitorReq)
 }
 
-func (lb *loadBalancerMonitor) monitorAlignMonitorTypeRequest(ctx context.Context, meta interface{}, monitorReq *models.CreateLBMonitor) error {
-	if monitorReq.CreateLBMonitorReq.TfHttpConfig != nil {
-		monitorReq.CreateLBMonitorReq.RequestBody = monitorReq.CreateLBMonitorReq.TfHttpConfig.RequestBody
-		monitorReq.CreateLBMonitorReq.AliasPort = monitorReq.CreateLBMonitorReq.TfHttpConfig.AliasPort
-		monitorReq.CreateLBMonitorReq.FallCount = monitorReq.CreateLBMonitorReq.TfHttpConfig.FallCount
-		monitorReq.CreateLBMonitorReq.Interval = monitorReq.CreateLBMonitorReq.TfHttpConfig.Interval
-		monitorReq.CreateLBMonitorReq.RequestMethod = monitorReq.CreateLBMonitorReq.TfHttpConfig.RequestMethod
-		monitorReq.CreateLBMonitorReq.RequestURL = monitorReq.CreateLBMonitorReq.TfHttpConfig.RequestURL
-		monitorReq.CreateLBMonitorReq.RequestVersion = monitorReq.CreateLBMonitorReq.TfHttpConfig.RequestVersion
-		monitorReq.CreateLBMonitorReq.ResponseData = monitorReq.CreateLBMonitorReq.TfHttpConfig.ResponseData
-		monitorReq.CreateLBMonitorReq.ResponseStatusCodes = monitorReq.CreateLBMonitorReq.TfHttpConfig.ResponseStatusCodes
-		monitorReq.CreateLBMonitorReq.RiseCount = monitorReq.CreateLBMonitorReq.TfHttpConfig.RiseCount
-		monitorReq.CreateLBMonitorReq.Timeout = monitorReq.CreateLBMonitorReq.TfHttpConfig.Timeout
-	} else if monitorReq.CreateLBMonitorReq.TfHttpsConfig != nil {
-		monitorReq.CreateLBMonitorReq.RequestBody = monitorReq.CreateLBMonitorReq.TfHttpsConfig.RequestBody
-		monitorReq.CreateLBMonitorReq.AliasPort = monitorReq.CreateLBMonitorReq.TfHttpsConfig.AliasPort
-		monitorReq.CreateLBMonitorReq.FallCount = monitorReq.CreateLBMonitorReq.TfHttpsConfig.FallCount
-		monitorReq.CreateLBMonitorReq.Interval = monitorReq.CreateLBMonitorReq.TfHttpsConfig.Interval
-		monitorReq.CreateLBMonitorReq.RequestMethod = monitorReq.CreateLBMonitorReq.TfHttpsConfig.RequestMethod
-		monitorReq.CreateLBMonitorReq.RequestURL = monitorReq.CreateLBMonitorReq.TfHttpsConfig.RequestURL
-		monitorReq.CreateLBMonitorReq.RequestVersion = monitorReq.CreateLBMonitorReq.TfHttpsConfig.RequestVersion
-		monitorReq.CreateLBMonitorReq.ResponseData = monitorReq.CreateLBMonitorReq.TfHttpsConfig.ResponseData
-		monitorReq.CreateLBMonitorReq.ResponseStatusCodes = monitorReq.CreateLBMonitorReq.TfHttpsConfig.ResponseStatusCodes
-		monitorReq.CreateLBMonitorReq.RiseCount = monitorReq.CreateLBMonitorReq.TfHttpsConfig.RiseCount
-		monitorReq.CreateLBMonitorReq.Timeout = monitorReq.CreateLBMonitorReq.TfHttpsConfig.Timeout
+func (lb *loadBalancerMonitor) monitorAlignMonitorTypeRequest(monitorReq *models.CreateLBMonitor) error {
+	if monitorReq.CreateLBMonitorReq.TfHTTPConfig != nil {
+		monitorReq.CreateLBMonitorReq.RequestBody = monitorReq.CreateLBMonitorReq.TfHTTPConfig.RequestBody
+		monitorReq.CreateLBMonitorReq.AliasPort = monitorReq.CreateLBMonitorReq.TfHTTPConfig.AliasPort
+		monitorReq.CreateLBMonitorReq.FallCount = monitorReq.CreateLBMonitorReq.TfHTTPConfig.FallCount
+		monitorReq.CreateLBMonitorReq.Interval = monitorReq.CreateLBMonitorReq.TfHTTPConfig.Interval
+		monitorReq.CreateLBMonitorReq.RequestMethod = monitorReq.CreateLBMonitorReq.TfHTTPConfig.RequestMethod
+		monitorReq.CreateLBMonitorReq.RequestURL = monitorReq.CreateLBMonitorReq.TfHTTPConfig.RequestURL
+		monitorReq.CreateLBMonitorReq.RequestVersion = monitorReq.CreateLBMonitorReq.TfHTTPConfig.RequestVersion
+		monitorReq.CreateLBMonitorReq.ResponseData = monitorReq.CreateLBMonitorReq.TfHTTPConfig.ResponseData
+		monitorReq.CreateLBMonitorReq.ResponseStatusCodes = monitorReq.CreateLBMonitorReq.TfHTTPConfig.ResponseStatusCodes
+		monitorReq.CreateLBMonitorReq.RiseCount = monitorReq.CreateLBMonitorReq.TfHTTPConfig.RiseCount
+		monitorReq.CreateLBMonitorReq.Timeout = monitorReq.CreateLBMonitorReq.TfHTTPConfig.Timeout
+	} else if monitorReq.CreateLBMonitorReq.TfHTTPSConfig != nil {
+		monitorReq.CreateLBMonitorReq.RequestBody = monitorReq.CreateLBMonitorReq.TfHTTPSConfig.RequestBody
+		monitorReq.CreateLBMonitorReq.AliasPort = monitorReq.CreateLBMonitorReq.TfHTTPSConfig.AliasPort
+		monitorReq.CreateLBMonitorReq.FallCount = monitorReq.CreateLBMonitorReq.TfHTTPSConfig.FallCount
+		monitorReq.CreateLBMonitorReq.Interval = monitorReq.CreateLBMonitorReq.TfHTTPSConfig.Interval
+		monitorReq.CreateLBMonitorReq.RequestMethod = monitorReq.CreateLBMonitorReq.TfHTTPSConfig.RequestMethod
+		monitorReq.CreateLBMonitorReq.RequestURL = monitorReq.CreateLBMonitorReq.TfHTTPSConfig.RequestURL
+		monitorReq.CreateLBMonitorReq.RequestVersion = monitorReq.CreateLBMonitorReq.TfHTTPSConfig.RequestVersion
+		monitorReq.CreateLBMonitorReq.ResponseData = monitorReq.CreateLBMonitorReq.TfHTTPSConfig.ResponseData
+		monitorReq.CreateLBMonitorReq.ResponseStatusCodes = monitorReq.CreateLBMonitorReq.TfHTTPSConfig.ResponseStatusCodes
+		monitorReq.CreateLBMonitorReq.RiseCount = monitorReq.CreateLBMonitorReq.TfHTTPSConfig.RiseCount
+		monitorReq.CreateLBMonitorReq.Timeout = monitorReq.CreateLBMonitorReq.TfHTTPSConfig.Timeout
 	} else if monitorReq.CreateLBMonitorReq.TfIcmpConfig != nil {
 		monitorReq.CreateLBMonitorReq.AliasPort = monitorReq.CreateLBMonitorReq.TfIcmpConfig.AliasPort
 		monitorReq.CreateLBMonitorReq.DataLength = monitorReq.CreateLBMonitorReq.TfIcmpConfig.DataLength
@@ -160,22 +159,23 @@ func (lb *loadBalancerMonitor) monitorAlignMonitorTypeRequest(ctx context.Contex
 	} else if monitorReq.CreateLBMonitorReq.TfPassiveConfig != nil {
 		monitorReq.CreateLBMonitorReq.MaxFail = monitorReq.CreateLBMonitorReq.TfPassiveConfig.MaxFail
 		monitorReq.CreateLBMonitorReq.Timeout = monitorReq.CreateLBMonitorReq.TfPassiveConfig.Timeout
-	} else if monitorReq.CreateLBMonitorReq.TfTcpConfig != nil {
-		monitorReq.CreateLBMonitorReq.AliasPort = monitorReq.CreateLBMonitorReq.TfTcpConfig.AliasPort
-		monitorReq.CreateLBMonitorReq.FallCount = monitorReq.CreateLBMonitorReq.TfTcpConfig.FallCount
-		monitorReq.CreateLBMonitorReq.Interval = monitorReq.CreateLBMonitorReq.TfTcpConfig.Interval
-		monitorReq.CreateLBMonitorReq.RequestBody = monitorReq.CreateLBMonitorReq.TfTcpConfig.RequestBody
-		monitorReq.CreateLBMonitorReq.ResponseData = monitorReq.CreateLBMonitorReq.TfTcpConfig.ResponseData
-		monitorReq.CreateLBMonitorReq.RiseCount = monitorReq.CreateLBMonitorReq.TfTcpConfig.RiseCount
-		monitorReq.CreateLBMonitorReq.Timeout = monitorReq.CreateLBMonitorReq.TfTcpConfig.Timeout
-	} else if monitorReq.CreateLBMonitorReq.TfUdpConfig != nil {
-		monitorReq.CreateLBMonitorReq.AliasPort = monitorReq.CreateLBMonitorReq.TfUdpConfig.AliasPort
-		monitorReq.CreateLBMonitorReq.FallCount = monitorReq.CreateLBMonitorReq.TfUdpConfig.FallCount
-		monitorReq.CreateLBMonitorReq.Interval = monitorReq.CreateLBMonitorReq.TfUdpConfig.Interval
-		monitorReq.CreateLBMonitorReq.RequestBody = monitorReq.CreateLBMonitorReq.TfUdpConfig.RequestBody
-		monitorReq.CreateLBMonitorReq.ResponseData = monitorReq.CreateLBMonitorReq.TfUdpConfig.ResponseData
-		monitorReq.CreateLBMonitorReq.RiseCount = monitorReq.CreateLBMonitorReq.TfUdpConfig.RiseCount
-		monitorReq.CreateLBMonitorReq.Timeout = monitorReq.CreateLBMonitorReq.TfUdpConfig.Timeout
+	} else if monitorReq.CreateLBMonitorReq.TfTCPConfig != nil {
+		monitorReq.CreateLBMonitorReq.AliasPort = monitorReq.CreateLBMonitorReq.TfTCPConfig.AliasPort
+		monitorReq.CreateLBMonitorReq.FallCount = monitorReq.CreateLBMonitorReq.TfTCPConfig.FallCount
+		monitorReq.CreateLBMonitorReq.Interval = monitorReq.CreateLBMonitorReq.TfTCPConfig.Interval
+		monitorReq.CreateLBMonitorReq.RequestBody = monitorReq.CreateLBMonitorReq.TfTCPConfig.RequestBody
+		monitorReq.CreateLBMonitorReq.ResponseData = monitorReq.CreateLBMonitorReq.TfTCPConfig.ResponseData
+		monitorReq.CreateLBMonitorReq.RiseCount = monitorReq.CreateLBMonitorReq.TfTCPConfig.RiseCount
+		monitorReq.CreateLBMonitorReq.Timeout = monitorReq.CreateLBMonitorReq.TfTCPConfig.Timeout
+	} else if monitorReq.CreateLBMonitorReq.TfUDPConfig != nil {
+		monitorReq.CreateLBMonitorReq.AliasPort = monitorReq.CreateLBMonitorReq.TfUDPConfig.AliasPort
+		monitorReq.CreateLBMonitorReq.FallCount = monitorReq.CreateLBMonitorReq.TfUDPConfig.FallCount
+		monitorReq.CreateLBMonitorReq.Interval = monitorReq.CreateLBMonitorReq.TfUDPConfig.Interval
+		monitorReq.CreateLBMonitorReq.RequestBody = monitorReq.CreateLBMonitorReq.TfUDPConfig.RequestBody
+		monitorReq.CreateLBMonitorReq.ResponseData = monitorReq.CreateLBMonitorReq.TfUDPConfig.ResponseData
+		monitorReq.CreateLBMonitorReq.RiseCount = monitorReq.CreateLBMonitorReq.TfUDPConfig.RiseCount
+		monitorReq.CreateLBMonitorReq.Timeout = monitorReq.CreateLBMonitorReq.TfUDPConfig.Timeout
 	}
+
 	return nil
 }

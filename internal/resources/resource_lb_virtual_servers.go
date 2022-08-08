@@ -5,6 +5,8 @@ package resources
 import (
 	"context"
 
+	diffvalidation "github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/resources/diffValidation"
+	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/resources/schemas"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/resources/validations"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/utils"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/client"
@@ -15,22 +17,26 @@ import (
 func LoadBalancerVirtualServers() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
-			"vip_name": {
+			"lb_id": {
+				Type:        schema.TypeInt,
+				Required:    true,
+				Description: "Parent lb ID, lb_id can be obtained by using LB datasource/resource.",
+				ForceNew:    true,
+			},
+			"name": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "vip_name of Network loadbalancer virtual server name",
 			},
 			"description": {
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 				Description: "description of Network loadbalancer virtual server",
-				ForceNew:    true,
 			},
 			"vip_address": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "vip_address of Network loadbalancer virtual server",
-				ForceNew:    true,
 			},
 			"vip_port": {
 				Type:        schema.TypeString,
@@ -42,58 +48,97 @@ func LoadBalancerVirtualServers() *schema.Resource {
 				Required:    true,
 				Description: "pool of Network loadbalancer virtual server",
 			},
-			"ssl_cert": {
-				Type:        schema.TypeInt,
-				Required:    true,
-				Description: "ssl_cert of Network loadbalancer virtual server",
+			"vip_host_name": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "vip_host_name of Network loadbalancer virtual server",
 			},
+			"type": {
+				Type: schema.TypeString,
+				ValidateDiagFunc: validations.StringInSlice([]string{
+					"http",
+					"tcp",
+					"udp",
+				}, false),
+				Required:     true,
+				InputDefault: "http",
+				Description:  "vip protocol of Network loadbalancer virtual server",
+			},
+			"tcp_application_profile":  schemas.TCPAppProfileSchema(),
+			"udp_application_profile":  schemas.UDPAppProfileSchema(),
+			"http_application_profile": schemas.HTTPAppProfileSchema(),
+			"persistence": {
+				Type: schema.TypeString,
+				ValidateDiagFunc: validations.StringInSlice([]string{
+					"SOURCE_IP",
+					"COOKIE",
+				}, false),
+				Optional:    true,
+				Description: "persistence type for Network loadbalancer virtual server",
+			},
+			"cookie_persistence_profile":   schemas.CookiePersProfileSchema(),
+			"sourceip_persistence_profile": schemas.SourceipPersProfileSchema(),
 			"ssl_server_cert": {
 				Type:        schema.TypeInt,
 				Required:    true,
-				Description: "ssl_server_cert of the Network loadbalancer virtual server",
+				Description: "ID of the ssl_server_cert. Use " + DSLBVirtualServerSslCert + "datasource to obtain the id  here",
 			},
-			"config": {
+			"ssl_server_config": {
 				Type:        schema.TypeList,
-				Required:    true,
+				Optional:    true,
 				Description: "virtual server Configuration",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"persistence": {
-							Type:             schema.TypeString,
-							ValidateDiagFunc: validations.StringInSlice([]string{"SOURCE_IP", "COOKIE", "DISBALED"}, false),
-							Required:         true,
-							Description:      "Network Loadbalancer Supported values are `SOURCE_IP`,`COOKIE`, `DISBALED`"},
-						"persistence_profile": {
-							Type:        schema.TypeInt,
-							Optional:    true,
-							Description: "persistence_profile of virtual server Configuration",
-						},
-						"application_profile": {
+						"ssl_server_profile": {
 							Type:        schema.TypeInt,
 							Required:    true,
-							Description: "application_profile of virtual server Configuration",
+							Description: "ID of the ssl_server_profile. Use " + DSLBProfile + "datasource to obtain the id  here",
 						},
+					},
+				},
+			},
+			"ssl_client_cert": {
+				Type:        schema.TypeInt,
+				Required:    true,
+				Description: "ID of the ssl_client_cert. Use " + DSLBVirtualServerSslCert + "datasource to obtain the id  here",
+			},
+			"ssl_client_config": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "virtual server Configuration",
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
 						"ssl_client_profile": {
-							Type:        schema.TypeString,
-							Optional:    true,
-							Description: "ssl_client_profile of virtual server Configuration",
-						},
-						"ssl_server_profile": {
-							Type:        schema.TypeString,
-							Optional:    true,
-							Description: "ssl_server_profile of virtual server Configuration",
+							Type:        schema.TypeInt,
+							Required:    true,
+							Description: "ID of the ssl_client_profile. Use " + DSLBProfile + "datasource to obtain the id  here",
 						},
 					},
 				},
 			},
 		},
 		ReadContext:   loadbalancerVirtualServerReadContext,
-		UpdateContext: loadbalancerVirtualServerReadContext,
+		UpdateContext: loadbalancerVirtualServerUpdateContext,
 		CreateContext: loadbalancerVirtualServerCreateContext,
 		DeleteContext: loadbalancerVirtualServerDeleteContext,
+		CustomizeDiff: virtualServerCustomDiff,
 		Description: `loadbalancer Virtual Server resource facilitates creating,
 		and deleting NSX-T  Network Load Balancers.`,
 	}
+}
+
+func loadbalancerVirtualServerUpdateContext(ctx context.Context, rd *schema.ResourceData, meta interface{}) diag.Diagnostics {
+	c, err := client.GetClientFromMetaMap(meta)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	data := utils.NewData(rd)
+	if err := c.CmpClient.LoadBalancerVirtualServer.Update(ctx, data, meta); err != nil {
+		return diag.FromErr(err)
+	}
+
+	return nil
 }
 
 func loadbalancerVirtualServerReadContext(ctx context.Context, rd *schema.ResourceData, meta interface{}) diag.Diagnostics {
@@ -136,4 +181,8 @@ func loadbalancerVirtualServerDeleteContext(ctx context.Context, rd *schema.Reso
 	}
 
 	return nil
+}
+
+func virtualServerCustomDiff(ctx context.Context, diff *schema.ResourceDiff, meta interface{}) error {
+	return diffvalidation.NewLoadBalancerVirtualServerValidate(diff).DiffValidate()
 }

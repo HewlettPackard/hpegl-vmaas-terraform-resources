@@ -24,4 +24,11 @@ const (
 	tier1GatewayType             = "NSX-T Tier-1 Gateway"
 	routerFirewallExternalPolicy = "GatewayPolicy"
 	syncedTypeValue              = "Synced"
+
+	// load balancer consts
+	TCP      = "tcp"
+	UDP      = "udp"
+	HTTP     = "http"
+	COOKIE   = "COOKIE"
+	SOURCEIP = "SOURCE_IP"
 )
