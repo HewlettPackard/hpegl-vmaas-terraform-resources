@@ -1,6 +1,10 @@
 name: acc
 
 on:
+  # Runs every 2 days once at 11PM
+  schedule:
+    - cron:  '0 23 */2 * *'
+  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
       inputs:
         logLevel:
@@ -9,9 +13,8 @@ on:
           default: 'warning'
         tags:
           description: 'Test scenario tags'
-  push:
-    branches:
-      - master
+  release:
+    types: [published]
 env:
   HPEGL_IAM_SERVICE_URL: ${{ secrets.HPEGL_IAM_SERVICE_URL }}
   HPEGL_TENANT_ID: ${{ secrets.HPEGL_TENANT_ID }}
