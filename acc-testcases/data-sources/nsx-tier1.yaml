@@ -1,0 +1,3 @@
+acc:
+- config: |
+    name = "nsx_tier1_gateway"
