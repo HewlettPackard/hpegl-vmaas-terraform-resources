@@ -1,10 +1,6 @@
 name: acc
 
-on:
-  # Runs every 2 days once at 11PM
-  schedule:
-    - cron:  '0 23 */2 * *'
-  # Allows you to run this workflow manually from the Actions tab
+on: [pull_request]
   workflow_dispatch:
       inputs:
         logLevel:
