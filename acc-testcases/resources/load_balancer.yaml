@@ -14,4 +14,5 @@ acc:
       log_level = "INFO"
       tier1_gateways  = "/infra/tier-1s/26cdb82e-0057-4461-ad4d-cddd61d77b1f"
     }
-
+  validations:
+    json.loadBalancer.config.tier1: "/infra/tier-1s/26cdb82e-0057-4461-ad4d-cddd61d77b1f"
