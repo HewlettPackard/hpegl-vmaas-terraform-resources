@@ -39,3 +39,25 @@ func TestAccResourceLBMonitorCreate(t *testing.T) {
 
 	acc.RunResourceTests(t)
 }
+
+func TestAccResourceLBMonitorCreate_monitorErr(t *testing.T) {
+	acc := &atf.Acc{
+		ResourceName: "hpegl_vmaas_load_balancer_monitor",
+		PreCheck:     testAccPreCheck,
+		Providers:    testAccProviders,
+		Version:      "monitor_err",
+		GetAPI: func(attr map[string]string) (interface{}, error) {
+			cl, cfg := getAPIClient()
+			iClient := api_client.LoadBalancerAPIService{
+				Client: cl,
+				Cfg:    cfg,
+			}
+			id := toInt(attr["id"])
+			lbID := toInt(attr["lb_id"])
+
+			return iClient.GetSpecificLBMonitor(context.Background(), lbID, id)
+		},
+	}
+
+	acc.RunResourceTests(t)
+}
