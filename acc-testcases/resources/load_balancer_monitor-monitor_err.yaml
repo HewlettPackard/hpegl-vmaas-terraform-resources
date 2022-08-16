@@ -2,7 +2,7 @@ vars:
   rand_name_1: tf_HTTP_MONITOR_%rand_int
 acc:
 - config: |
-    lb_id = 259 
+    lb_id = 262 
     name  =  "$(http_name)"      
     description  = "HTTP_MONITOR creating using tf"
     type = "LBHttpMonitorProfile"
