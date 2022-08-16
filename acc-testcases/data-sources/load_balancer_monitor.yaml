@@ -1,3 +1,5 @@
 acc:
 - config: |
     name = "tf_lb_monitor"
+  validations:
+    json.loadBalancerMonitor.id: 6642
