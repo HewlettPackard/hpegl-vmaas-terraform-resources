@@ -40,7 +40,7 @@ func TestAccResourceLBPoolCreate(t *testing.T) {
 	acc.RunResourceTests(t)
 }
 
-func TestAccResourceLBPoolCreate_profileErr(t *testing.T) {
+func TestAccResourceLBPoolCreate_poolErr(t *testing.T) {
 	acc := &atf.Acc{
 		ResourceName: "hpegl_vmaas_load_balancer_pool",
 		PreCheck:     testAccPreCheck,
