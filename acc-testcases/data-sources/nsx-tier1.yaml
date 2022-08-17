@@ -1,0 +1,5 @@
+acc:
+- config: |
+    name = "nsx_tier1_gateway"
+  validations:
+    json.networkRouter.providerId: "/infra/tier-1s/26cdb82e-0057-4461-ad4d-cddd61d77b1f"
