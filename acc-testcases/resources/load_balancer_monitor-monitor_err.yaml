@@ -5,7 +5,7 @@ acc:
     lb_id = 262 
     name  =  "$(http_name)"      
     description  = "HTTP_MONITOR creating using tf"
-    type = "LBHttpMonitorProfile"
+    type = "LBHttpsMonitorProfile"
     http_monitor {
       fall_count = 8
       interval =  10  
