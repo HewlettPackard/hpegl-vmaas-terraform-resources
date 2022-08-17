@@ -1,0 +1,5 @@
+acc:
+- config: |
+    name = "tf_loadbalancer"
+  validations:
+    json.loadBalancer.id: 262
