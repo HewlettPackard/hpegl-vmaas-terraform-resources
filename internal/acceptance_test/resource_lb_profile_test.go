@@ -40,12 +40,12 @@ func TestAccResourceLBProfileCreate(t *testing.T) {
 	acc.RunResourceTests(t)
 }
 
-func TestAccResourceLBMonitorCreate_profileErr(t *testing.T) {
+func TestAccResourceLBProfileCreate_profileErr(t *testing.T) {
 	acc := &atf.Acc{
 		ResourceName: "hpegl_vmaas_load_balancer_profile",
 		PreCheck:     testAccPreCheck,
 		Providers:    testAccProviders,
-		Version:      "monitor_err",
+		Version:      "profile_err",
 		GetAPI: func(attr map[string]string) (interface{}, error) {
 			cl, cfg := getAPIClient()
 			iClient := api_client.LoadBalancerAPIService{

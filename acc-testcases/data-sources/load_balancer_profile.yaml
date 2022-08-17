@@ -1,0 +1,6 @@
+acc:
+- config: |
+    name = "tf_APPLICATION-HTTP"
+    lb_id = 262
+  validations:
+    json.loadBalancerProfile.id: 9945
