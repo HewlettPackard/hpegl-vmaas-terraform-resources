@@ -8,13 +8,13 @@ acc:
     min_active_members     = 1
     algorithm = "WEIGHTED_ROUND_ROBIN"
     config {
-      snat_translation_type = "NotLBSnatAutoMap"
+      snat_translation_type = "LBSnatAutoMap"
       active_monitor_paths = 6664
       passive_monitor_path = 6662
       tcp_multiplexing = false
       tcp_multiplexing_number = 6 
       member_group {
-        group = "/infra/domains/default/groups/Application-Group"
+        group = "/infra/domains/default/groups/Application-Group1"
         max_ip_list_size = 1
         ip_revision_filter = "IPV4"
         port = 80
