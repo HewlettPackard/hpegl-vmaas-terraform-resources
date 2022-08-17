@@ -1,6 +1,6 @@
 acc:
 - config: |
-    name = "tf_APPLICATION-HTTP"
+    name = "app-http"
     lb_id = 262
   validations:
-    json.loadBalancerProfile.id: 9945
+    json.loadBalancerProfile.id: 9927
