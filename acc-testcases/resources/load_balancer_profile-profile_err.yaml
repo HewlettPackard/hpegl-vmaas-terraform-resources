@@ -25,4 +25,4 @@ acc:
     }
   validations:
     json.loadBalancerProfile.serviceType: "LBHttpProfile"
-   expect_error: ".*profile.*"
+  expect_error: ".*profile.*"
