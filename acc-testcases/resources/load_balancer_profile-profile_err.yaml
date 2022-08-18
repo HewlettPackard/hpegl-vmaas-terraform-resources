@@ -1,0 +1,28 @@
+vars:
+  http_name: tf_HTTP_PROFILE_%rand_int
+acc:
+- config: |
+    lb_id = 262 
+    name  =  "$(http_name)"      
+    description  = "HTTP_PROFILE creating using tf"
+    profile_type = "application-profile"
+    http_profile {
+      service_type     = "LBFastTcpProfile"
+      http_idle_timeout = 30
+      request_header_size = 1024
+      response_header_size = 4096
+      redirection = "https"
+      x_forwarded_for = "INSERT"
+      request_body_size = 20
+      response_timeout = 60
+      ntlm_authentication = true
+    }
+    config {
+    tags {
+        tag = "tag1"
+        scope = "scope1"
+      }
+    }
+  validations:
+    json.loadBalancerProfile.serviceType: "LBHttpProfile"
+  expect_error: ".*profile.*"
