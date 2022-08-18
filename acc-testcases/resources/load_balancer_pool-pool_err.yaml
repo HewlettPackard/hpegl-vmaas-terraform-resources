@@ -1,3 +1,4 @@
+# here line no 18 pool member group is wrong and expecting the error
 vars:
   pool_name: tf_POOL_%rand_int
 acc:
