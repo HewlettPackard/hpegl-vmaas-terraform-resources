@@ -1,0 +1,6 @@
+acc:
+- config: |
+    name = "tf_POOL"
+    lb_id = 262
+  validations:
+    json.loadBalancerPool.id: 849 

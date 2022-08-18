@@ -1,0 +1,34 @@
+vars:
+  vs_name: tf_VS_%rand_int
+acc:
+- config: |
+    lb_id = 262 
+    name  =  "$(vs_name)"      
+    description  = "tf_virtual-server created by tf"
+    vip_address     = "10.11.12.13"
+    vip_port = "8080"
+    vip_host_name = "host VS"
+    pool = 849
+
+    type = "http"
+    http_application {
+      application_profile = 9927
+    }
+
+    persistence = "COOKIE"
+    cookie_persistence_profile {
+      persistence_profile = data.hpegl_vmaas_load_balancer_profile.tf_cookie_profile.id
+    }
+  
+    ssl_server_cert = 22
+    ssl_server_config {
+      ssl_server_profile = data.hpegl_vmaas_load_balancer_profile.tf_ssl_server_profile.id
+    }
+
+    ssl_client_cert = 22
+    ssl_client_config {
+      ssl_client_profile = data.hpegl_vmaas_load_balancer_profile.tf_ssl_client_profile.id
+    }
+  validations:
+    json.loadBalancerInstance.vipProtocol: "http" 
+    json.loadBalancerInstance.config.persistence: "COOKIE"
