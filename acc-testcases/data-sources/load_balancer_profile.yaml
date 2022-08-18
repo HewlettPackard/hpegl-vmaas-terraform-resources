@@ -4,3 +4,18 @@ acc:
     lb_id = 262
   validations:
     json.loadBalancerProfile.id: 9927
+- config: |
+    name = "default-cookie-lb-persistence-profile"
+    lb_id = 262
+  validations:
+    json.loadBalancerProfile.id: 9979
+- config: |
+    name = "default-balanced-server-ssl-profile"
+    lb_id = 262
+  validations:
+    json.loadBalancerProfile.id: 10001
+- config: |
+    name = "default-balanced-client-ssl-profile"
+    lb_id = 262
+  validations:
+    json.loadBalancerProfile.id: 9994

@@ -10,24 +10,24 @@ acc:
     vip_host_name = "host VS"
     pool = 849
 
-    type = "udp"
+    type = "http"
     http_application_profile {
       application_profile = 9927
     }
 
     persistence = "COOKIE"
     cookie_persistence_profile {
-      persistence_profile = data.hpegl_vmaas_load_balancer_profile.tf_cookie_profile.id
+      persistence_profile = 9979
     }
   
     ssl_server_cert = 22
     ssl_server_config {
-      ssl_server_profile = data.hpegl_vmaas_load_balancer_profile.tf_ssl_server_profile.id
+      ssl_server_profile = 10001
     }
 
     ssl_client_cert = 22
     ssl_client_config {
-      ssl_client_profile = data.hpegl_vmaas_load_balancer_profile.tf_ssl_client_profile.id
+      ssl_client_profile = 9994
     }
   validations: 
     json.loadBalancerInstance.config.persistence: "COOKIE"
