@@ -155,7 +155,6 @@ func (lb *loadBalancerProfile) profileAlignprofileTypeRequest(profileReq *models
 		profileReq.ProfileConfig.CookieName = profileReq.TfCookieConfig.CookieName
 		profileReq.ProfileConfig.CookiePath = profileReq.TfCookieConfig.CookiePath
 		profileReq.ProfileConfig.CookieType = profileReq.TfCookieConfig.CookieType
-		profileReq.ProfileConfig.MaxCookieAge = profileReq.TfCookieConfig.MaxCookieAge
 		profileReq.ProfileConfig.MaxIdleTime = profileReq.TfCookieConfig.MaxIdleTime
 		profileReq.ServiceType = profileReq.TfCookieConfig.ServiceType
 		profileReq.ProfileConfig.ProfileType = profileReq.ProfileType
