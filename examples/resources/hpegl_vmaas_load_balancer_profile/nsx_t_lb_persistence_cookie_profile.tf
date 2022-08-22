@@ -17,7 +17,6 @@ resource "hpegl_vmaas_load_balancer_profile" "tf_PERSISTENCE-COOKIE" {
     cookie_domain = "domain1"
     cookie_path = "http://cookie.com"
     max_idle_time = 60
-    max_cookie_age = 2
     share_persistence = true
   }
   config {

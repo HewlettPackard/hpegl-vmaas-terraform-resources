@@ -331,11 +331,6 @@ func CookieProfileSchema() *schema.Schema {
 					Optional:    true,
 					Description: "max_idle_time for Network Load balancer Profile",
 				},
-				"max_cookie_age": {
-					Type:        schema.TypeInt,
-					Optional:    true,
-					Description: "max_cookie_age for Network Load balancer Profile",
-				},
 				"share_persistence": {
 					Type:        schema.TypeBool,
 					Optional:    true,
