@@ -1,5 +1,5 @@
 acc:
 - config: |
-    name = "tf_loadbalancer"
+    name = "tf_loadbalancer_DO_NOT_DELETE"
   validations:
-    json.loadBalancer.id: 262
+    json.loadBalancer.id: 306

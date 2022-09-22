@@ -2,32 +2,32 @@ vars:
   vs_name: tf_VS_%rand_int
 acc:
 - config: |
-    lb_id = 262 
+    lb_id = 306 
     name  =  "$(vs_name)"      
     description  = "tf_virtual-server created by tf"
     vip_address     = "10.11.12.13"
     vip_port = "8080"
     vip_host_name = "host VS"
-    pool = 849
+    pool = 994
 
     type = "http"
     http_application_profile {
-      application_profile = 9927
+      application_profile = 10493
     }
 
     persistence = "COOKIE"
     cookie_persistence_profile {
-      persistence_profile = 9979
+      persistence_profile = 10499
     }
   
     ssl_server_cert = 22
     ssl_server_config {
-      ssl_server_profile = 10001
+      ssl_server_profile = 10507
     }
 
     ssl_client_cert = 22
     ssl_client_config {
-      ssl_client_profile = 9994
+      ssl_client_profile = 10503
     }
   validations:
     json.loadBalancerInstance.vipProtocol: "http" 

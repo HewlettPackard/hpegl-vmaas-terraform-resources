@@ -2,15 +2,15 @@ vars:
   pool_name: tf_POOL_%rand_int
 acc:
 - config: |
-    lb_id = 262 
+    lb_id = 306
     name  =  "$(pool_name)"      
     description  = "POOL creating using tf"
     min_active_members     = 1
     algorithm = "WEIGHTED_ROUND_ROBIN"
     config {
       snat_translation_type = "LBSnatAutoMap"
-      active_monitor_paths = 6664
-      passive_monitor_path = 6662
+      active_monitor_paths = 6954
+      passive_monitor_path = 6957
       tcp_multiplexing = false
       tcp_multiplexing_number = 6 
       member_group {
