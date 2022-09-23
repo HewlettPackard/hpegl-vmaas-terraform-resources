@@ -13,6 +13,9 @@ description: |-
 {{ .Description | trimspace }}
 `hpegl_vmaas_load_balancer` resource supports NSX-T Load Balancer creation.
 
+-> It is mandatory to choose the `Tier1 Gateway` while creating the load balancer
+(for this purpose `hpegl_vmaas_router` can be used).
+
 -> Tier1 Gateway Data Source `hpegl_vmaas_router` is supported for NSX-T Load Balancer.
 
 ## Example usage for creating NSX-T Load Balancer with all possible attributes
