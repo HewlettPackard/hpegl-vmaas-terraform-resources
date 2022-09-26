@@ -42,7 +42,7 @@ func HTTPMonitorSchema() *schema.Schema {
 				},
 				"monitor_port": {
 					Type:        schema.TypeInt,
-					Description: "Interval time for Network loadbalancer Monitor",
+					Description: "If the monitor port is specified, it would override pool member port setting for healthcheck",
 					Optional:    true,
 				},
 				"rise_count": {
@@ -55,7 +55,7 @@ func HTTPMonitorSchema() *schema.Schema {
 					Type:        schema.TypeInt,
 					Optional:    true,
 					Default:     15,
-					Description: "Timeout for Network loadbalancer Monitor",
+					Description: "The frequency at which the system issues the monitor check",
 				},
 				"request_body": {
 					Type:        schema.TypeString,
@@ -77,7 +77,7 @@ func HTTPMonitorSchema() *schema.Schema {
 				},
 				"request_url": {
 					Type:        schema.TypeString,
-					Description: "URL used for HTTP monitor",
+					Description: "Enter the request URI for the method",
 					Optional:    true,
 				},
 				"request_version": {
@@ -91,7 +91,7 @@ func HTTPMonitorSchema() *schema.Schema {
 				},
 				"response_data": {
 					Type:        schema.TypeString,
-					Description: "response data to get the monitor data",
+					Description: "Response data to get the monitor data",
 					Optional:    true,
 				},
 				"response_status_codes": {
@@ -154,7 +154,7 @@ func HTTPSMonitorSchema() *schema.Schema {
 					Type:        schema.TypeInt,
 					Optional:    true,
 					Default:     15,
-					Description: "Number of seconds the target has to respond to the monitor request",
+					Description: "The frequency at which the system issues the monitor check",
 				},
 				"request_body": {
 					Type:        schema.TypeString,
@@ -176,7 +176,7 @@ func HTTPSMonitorSchema() *schema.Schema {
 				},
 				"request_url": {
 					Type:        schema.TypeString,
-					Description: "URL used for HTTP monitor",
+					Description: "Enter the request URI for the method",
 					Optional:    true,
 				},
 				"request_version": {
@@ -254,12 +254,12 @@ func IcmpMonitorSchema() *schema.Schema {
 					Type:        schema.TypeInt,
 					Optional:    true,
 					Default:     15,
-					Description: "Number of seconds the target has to respond to the monitor request",
+					Description: "The frequency at which the system issues the monitor check",
 				},
 				"data_length": {
 					Type:        schema.TypeInt,
 					Default:     56,
-					Description: "data length is for the ICMP monitor type",
+					Description: "Data length is for the ICMP monitor type",
 					Optional:    true,
 				},
 			},
@@ -294,12 +294,12 @@ func PassiveMonitorSchema() *schema.Schema {
 					Type:        schema.TypeInt,
 					Optional:    true,
 					Default:     15,
-					Description: "Number of seconds the target has to respond to the monitor request",
+					Description: "The frequency at which the system issues the monitor check",
 				},
 				"max_fail": {
 					Type:        schema.TypeInt,
 					Default:     5,
-					Description: "maximum failure for the ICMP monitor type",
+					Description: "Maximum failure for the Passive monitor type",
 					Optional:    true,
 				},
 			},
@@ -357,7 +357,7 @@ func TCPMonitorSchema() *schema.Schema {
 					Type:        schema.TypeInt,
 					Optional:    true,
 					Default:     15,
-					Description: "Number of seconds the target has to respond to the monitor request",
+					Description: "The frequency at which the system issues the monitor check",
 				},
 				"request_body": {
 					Type:        schema.TypeString,
@@ -366,7 +366,7 @@ func TCPMonitorSchema() *schema.Schema {
 				},
 				"response_data": {
 					Type:        schema.TypeString,
-					Description: "response data to get the monitor data",
+					Description: "Response data to get the monitor data",
 					Optional:    true,
 				},
 			},
@@ -424,7 +424,7 @@ func UDPMonitorSchema() *schema.Schema {
 					Type:        schema.TypeInt,
 					Optional:    true,
 					Default:     15,
-					Description: "Number of seconds the target has to respond to the monitor request",
+					Description: "The frequency at which the system issues the monitor check",
 				},
 				"request_body": {
 					Type:        schema.TypeString,
@@ -433,7 +433,7 @@ func UDPMonitorSchema() *schema.Schema {
 				},
 				"response_data": {
 					Type:        schema.TypeString,
-					Description: "response data to get the monitor data",
+					Description: "Response data to get the monitor data",
 					Optional:    true,
 				},
 			},
