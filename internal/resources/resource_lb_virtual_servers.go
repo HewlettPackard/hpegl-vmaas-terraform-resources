@@ -44,14 +44,10 @@ func LoadBalancerVirtualServers() *schema.Resource {
 				Description: "vip_port of network loadbalancer virtual server",
 			},
 			"pool": {
-				Type:        schema.TypeInt,
-				Required:    true,
-				Description: "pool of Network loadbalancer virtual server",
-			},
-			"vip_host_name": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "vip_host_name of Network loadbalancer virtual server",
+				Type:     schema.TypeInt,
+				Required: true,
+				Description: "It is recommended that you attach a pool to the Virtual Server to have a correct LB functionality." +
+					"ID of the loadBalncer Pool. Use " + DSLBPool + "datasource to obtain the id here",
 			},
 			"type": {
 				Type: schema.TypeString,
@@ -79,9 +75,10 @@ func LoadBalancerVirtualServers() *schema.Resource {
 			"cookie_persistence_profile":   schemas.CookiePersProfileSchema(),
 			"sourceip_persistence_profile": schemas.SourceipPersProfileSchema(),
 			"ssl_server_cert": {
-				Type:        schema.TypeInt,
-				Required:    true,
-				Description: "ID of the ssl_server_cert. Use " + DSLBVirtualServerSslCert + "datasource to obtain the id  here",
+				Type:     schema.TypeInt,
+				Required: true,
+				Description: "sslServerCert is needed only for https based load balancer" +
+					"ID of the ssl_server_cert. Use " + DSLBVirtualServerSslCert + "datasource to obtain the id  here",
 			},
 			"ssl_server_config": {
 				Type:        schema.TypeList,
@@ -98,9 +95,10 @@ func LoadBalancerVirtualServers() *schema.Resource {
 				},
 			},
 			"ssl_client_cert": {
-				Type:        schema.TypeInt,
-				Required:    true,
-				Description: "ID of the ssl_client_cert. Use " + DSLBVirtualServerSslCert + "datasource to obtain the id  here",
+				Type:     schema.TypeInt,
+				Required: true,
+				Description: "ssl_client_cert is needed only for https based load balancer." +
+					"ID of the ssl_client_cert. Use " + DSLBVirtualServerSslCert + "datasource to obtain the id  here",
 			},
 			"ssl_client_config": {
 				Type:        schema.TypeList,
