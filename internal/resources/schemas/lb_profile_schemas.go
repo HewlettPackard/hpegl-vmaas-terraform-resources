@@ -70,9 +70,10 @@ func HTTPProfileSchema() *schema.Schema {
 					Description:      "Specify the maximum buffer size in bytes used to store HTTP response headers.",
 				},
 				"redirection": {
-					Type:        schema.TypeString,
-					Required:    true,
-					Description: "If a website is temporarily down or has moved, incoming requests for that virtual server can be temporarily redirected to a URL specified here.",
+					Type:     schema.TypeString,
+					Required: true,
+					Description: "If a website is temporarily down or has moved, incoming requests" +
+						"for that virtual server can be temporarily redirected to a URL specified here.",
 				},
 				"x_forwarded_for": {
 					Type: schema.TypeString,
@@ -334,9 +335,10 @@ func CookieProfileSchema() *schema.Schema {
 					Description: "Enter the time in seconds that the cookie type can be idle before a cookie expires",
 				},
 				"share_persistence": {
-					Type:        schema.TypeBool,
-					Optional:    true,
-					Description: "Toggle the button to share the persistence so that all virtual servers this profile is associated with can share the persistence table",
+					Type:     schema.TypeBool,
+					Optional: true,
+					Description: "Toggle the button to share the persistence so that" +
+						"all virtual servers this profile is associated with can share the persistence table",
 				},
 			},
 		},
@@ -397,7 +399,8 @@ func SourceIPProfileSchema() *schema.Schema {
 					Type:     schema.TypeBool,
 					Optional: true,
 					Default:  false,
-					Description: "Toggle the button to synchronize persistence entries to the HA peer. When HA persistence mirroring is enabled," +
+					Description: "Toggle the button to synchronize persistence entries to the HA peer." +
+						"When HA persistence mirroring is enabled," +
 						"the client IP persistence remains in the case of load balancer failover",
 				},
 				"persistence_entry_timeout": {
@@ -408,10 +411,11 @@ func SourceIPProfileSchema() *schema.Schema {
 					Description:      "Persistence expiration time in seconds, counted from the time all the connections are completed",
 				},
 				"purge_entries_when_full": {
-					Type:        schema.TypeBool,
-					Optional:    true,
-					Default:     true,
-					Description: "When this option is enabled, the oldest entry is deleted to accept the newest entry in the persistence table",
+					Type:     schema.TypeBool,
+					Optional: true,
+					Default:  true,
+					Description: "When this option is enabled, the oldest entry is" +
+						"deleted to accept the newest entry in the persistence table",
 				},
 			},
 		},
@@ -472,7 +476,8 @@ func GenericProfileSchema() *schema.Schema {
 					Type:     schema.TypeBool,
 					Optional: true,
 					Default:  false,
-					Description: "Toggle the button to synchronize persistence entries to the HA peer. When HA persistence mirroring is enabled," +
+					Description: "Toggle the button to synchronize persistence entries to the HA peer." +
+						"When HA persistence mirroring is enabled," +
 						"the client IP persistence remains in the case of load balancer failover.",
 				},
 				"persistence_entry_timeout": {
