@@ -26,22 +26,22 @@ func LoadBalancerVirtualServers() *schema.Resource {
 			"name": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "vip_name of Network loadbalancer virtual server name",
+				Description: "Name of Network loadbalancer virtual server name",
 			},
 			"description": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "description of Network loadbalancer virtual server",
+				Description: "Description of Network loadbalancer virtual server",
 			},
 			"vip_address": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "vip_address of Network loadbalancer virtual server",
+				Description: "Vip_address of Network loadbalancer virtual server",
 			},
 			"vip_port": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "vip_port of network loadbalancer virtual server",
+				Description: "Vip_port of network loadbalancer virtual server",
 			},
 			"pool": {
 				Type:     schema.TypeInt,
@@ -58,7 +58,7 @@ func LoadBalancerVirtualServers() *schema.Resource {
 				}, false),
 				Required:     true,
 				InputDefault: "http",
-				Description:  "vip protocol of Network loadbalancer virtual server",
+				Description:  "Vip protocol of Network loadbalancer virtual server",
 			},
 			"tcp_application_profile":  schemas.TCPAppProfileSchema(),
 			"udp_application_profile":  schemas.UDPAppProfileSchema(),
@@ -70,14 +70,14 @@ func LoadBalancerVirtualServers() *schema.Resource {
 					"COOKIE",
 				}, false),
 				Optional:    true,
-				Description: "persistence type for Network loadbalancer virtual server",
+				Description: "Persistence type for Network loadbalancer virtual server",
 			},
 			"cookie_persistence_profile":   schemas.CookiePersProfileSchema(),
 			"sourceip_persistence_profile": schemas.SourceipPersProfileSchema(),
 			"ssl_server_cert": {
 				Type:     schema.TypeInt,
 				Required: true,
-				Description: "sslServerCert is needed only for https based load balancer" +
+				Description: "SSLServerCert is needed only for https based load balancer" +
 					"ID of the ssl_server_cert. Use " + DSLBVirtualServerSslCert + "datasource to obtain the id  here",
 			},
 			"ssl_server_config": {
@@ -97,7 +97,7 @@ func LoadBalancerVirtualServers() *schema.Resource {
 			"ssl_client_cert": {
 				Type:     schema.TypeInt,
 				Required: true,
-				Description: "ssl_client_cert is needed only for https based load balancer." +
+				Description: "SSLClientCert is needed only for https based load balancer." +
 					"ID of the ssl_client_cert. Use " + DSLBVirtualServerSslCert + "datasource to obtain the id  here",
 			},
 			"ssl_client_config": {
