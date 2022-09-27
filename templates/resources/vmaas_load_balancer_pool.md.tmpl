@@ -1,0 +1,26 @@
+---
+layout: ""
+page_title: "hpegl_vmaas_load_balancer_pool Resource - vmaas-terraform-resources"
+subcategory: {{ $arr := split .Name "_" }}"{{ index $arr 1 }}"
+description: |-
+  {{ .Description | plainmarkdown | trimspace | prefixlines "  " }}
+---
+
+# Resource hpegl_vmaas_load_balancer_pool
+
+-> Compatible version >= 5.4.6
+
+{{ .Description | trimspace }}
+`hpegl_vmaas_load_balancer_pool` resource supports NSX-T Load Balancer Pool creation.
+
+->  Load Balancer ID Data Source `hpegl_vmaas_load_balancer` is supported for Creating Pool.
+
+->  Load Balancer Monitor ID Data Source `hpegl_vmaas_load_balancer_monitor` is supported for Pool.
+
+->  Pool Member Groups path Data Source `hpegl_vmaas_lb_pool_member_group` is supported for Member Pool.
+
+## Example usage for creating NSX-T Load Balancer Pool with all possible attributes
+
+{{tffile "examples/resources/hpegl_vmaas_load_balancer_pool/resource.tf"}}
+
+{{ .SchemaMarkdown | trimspace }}

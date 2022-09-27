@@ -35,7 +35,7 @@ func LoadBalancerPools() *schema.Resource {
 				Type:        schema.TypeInt,
 				Optional:    true,
 				Default:     1,
-				Description: "minimum active members for the Network loadbalancer pool",
+				Description: "The minimum number of members for the pool to be considered active",
 			},
 			"algorithm": {
 				Type: schema.TypeString,
@@ -48,7 +48,8 @@ func LoadBalancerPools() *schema.Resource {
 				}, false),
 				Required:     true,
 				InputDefault: "ROUND_ROBIN",
-				Description:  "Provide the Supported values for pool algorithm",
+				Description: "Load balancing pool algorithm controls how the incoming connections" +
+					"are distributed among the members",
 			},
 			"config": {
 				Type:        schema.TypeList,
@@ -64,25 +65,30 @@ func LoadBalancerPools() *schema.Resource {
 							Description:      "Network Loadbalancer Supported values are `LBSnatAutoMap`,`LBSnatDisabled`, `LBSnatIpPool`",
 						},
 						"passive_monitor_path": {
-							Type:        schema.TypeInt,
-							Optional:    true,
-							Description: "passive_monitor_path for Network loadbalancer pool",
+							Type:     schema.TypeInt,
+							Optional: true,
+							Description: "Passive Monitor ID, Get the `Id` from " + DSLBMonitor +
+								"datasource to obtain the passive monitor ID",
 						},
 						"active_monitor_paths": {
-							Type:        schema.TypeInt,
-							Optional:    true,
-							Description: "active_monitor_paths for Network loadbalancer pool",
+							Type:     schema.TypeInt,
+							Optional: true,
+							Description: "Active Monitor ID, Get the `Id` from " + DSLBMonitor +
+								"datasource to obtain the active monitor ID",
 						},
 						"tcp_multiplexing": {
-							Type:        schema.TypeBool,
-							Optional:    true,
-							Description: "tcp_multiplexing for Network loadbalancer pool",
+							Type:     schema.TypeBool,
+							Optional: true,
+							Description: "With TCP multiplexing, user can use the same TCP connection" +
+								"between a load balancer and the server for" +
+								"sending multiple client requests from different client TCP connections.",
 						},
 						"tcp_multiplexing_number": {
-							Type:        schema.TypeInt,
-							Optional:    true,
-							Default:     6,
-							Description: "tcp_multiplexing_number for Network loadbalancer pool",
+							Type:     schema.TypeInt,
+							Optional: true,
+							Default:  6,
+							Description: "The maximum number of TCP connections per pool" +
+								"that are idly kept alive for sending future client requests",
 						},
 						"snat_ip_address": {
 							Type:        schema.TypeString,
@@ -96,24 +102,28 @@ func LoadBalancerPools() *schema.Resource {
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"group": {
-										Type:        schema.TypeString,
-										Optional:    true,
-										Description: "name of member group",
+										Type:     schema.TypeString,
+										Optional: true,
+										Description: "Pool Member Groups path, get the `externalId` from " + DSPoolMemeberGroup +
+											"datasource to obtain the path",
 									},
 									"max_ip_list_size": {
-										Type:        schema.TypeInt,
-										Optional:    true,
-										Description: "max_ip_list_size of member group",
+										Type:     schema.TypeInt,
+										Optional: true,
+										Description: "It Should only be specified if `limit_ip_list_size` is set to true." +
+											"Limits the max number of pool members to the specified value",
 									},
 									"ip_revision_filter": {
 										Type:        schema.TypeString,
 										Optional:    true,
-										Description: "ipRevisionFilter of member group",
+										Description: "Ip version filter is used to filter `IPv4` addresses from the grouping object",
 									},
 									"port": {
-										Type:        schema.TypeInt,
-										Optional:    true,
-										Description: "port of member group",
+										Type:     schema.TypeInt,
+										Optional: true,
+										Description: "This is member port, The traffic which enter into VIP will get transfer" +
+											"to member groups based on the port specified." +
+											"Depends on the application running on the member VM",
 									},
 								},
 							},
