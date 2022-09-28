@@ -2,7 +2,7 @@ vars:
   http_name: tf_HTTP_MONITOR_%rand_int
 acc:
 - config: |
-    lb_id = 262 
+    lb_id = 306 
     name  =  "$(http_name)"      
     description  = "HTTP_MONITOR creating using tf"
     type = "LBIcmpMonitorProfile"
