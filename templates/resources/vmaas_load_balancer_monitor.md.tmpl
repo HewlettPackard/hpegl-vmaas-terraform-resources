@@ -15,59 +15,39 @@ description: |-
 
 For creating an NSX-T Load balancer Monitor, use the following examples.
 
--> NSX-T Monitor having HTTP,HTTPS,ICMP,Passive,TCP,UDP  considered as different monitor types. You can create either HTTP,HTTPS,ICMP,Passive,TCP,UDP, but not everything at the same time.
-
 -> Load Balancer ID Data Source `hpegl_vmaas_load_balancer` is supported for Creating Monitor.
-
 
 ## Example usage for creating NSX-T Load balancer Monitor for HTTP with all possible attributes
 
 -> For NSX-T Load balancer Monitor for HTTP creation, attribute monitorType value `LBHttpMonitorProfile` is applicable only HTTP creation.
 
--> Once NSX-T Load balancer Monitor for HTTP created with `LBHttpMonitorProfile`, we can not modify the attribute during the update operation and its disabled from UI.
-
 {{tffile "examples/resources/hpegl_vmaas_load_balancer_monitor/nsx_t_lb_http_monitor.tf"}}
 
-
 ## Example usage for creating NSX-T Load balancer Monitor for HTTPS with all possible attributes
-
--> For NSX-T Load balancer Monitor for HTTPS creation, attribute monitorType value `LBHttpsMonitorProfile` is applicable only HTTPS creation.
 
 -> Once NSX-T Load balancer Monitor for HTTPs created with `LBHttpsMonitorProfile`, we can not modify the attribute during the update operation and its disabled from UI.
 
 {{tffile "examples/resources/hpegl_vmaas_load_balancer_monitor/nsx_t_lb_https_monitor.tf"}}
 
-
 ## Example usage for creating NSX-T Load balancer Monitor for ICMP with all possible attributes
-
--> For NSX-T Load balancer Monitor for ICMP creation, attribute monitorType value `LBIcmpMonitorProfile` is applicable only ICMP creation.
 
 -> Once NSX-T Load balancer Monitor for ICMP created with `LBIcmpMonitorProfile`, we can not modify the attribute during the update operation and its disabled from UI.
 
 {{tffile "examples/resources/hpegl_vmaas_load_balancer_monitor/nsx_t_lb_icmp_monitor.tf"}}
 
-
 ## Example usage for creating NSX-T Load balancer Monitor for Passive with all possible attributes
-
--> For NSX-T Load balancer Monitor for Passive creation, attribute monitorType value `LBPassiveMonitorProfile` is applicable only Passive creation.
 
 -> Once NSX-T Load balancer Monitor for Passive created with `LBPassiveMonitorProfile`, we can not modify the attribute during the update operation and its disabled from UI.
 
 {{tffile "examples/resources/hpegl_vmaas_load_balancer_monitor/nsx_t_lb_passive_monitor.tf"}}
 
-
 ## Example usage for creating NSX-T Load balancer Monitor for TCP with all possible attributes
-
--> For NSX-T Load balancer Monitor for TCP creation, attribute monitorType value `LBTcpMonitorProfile` is applicable only TCP creation.
 
 -> Once NSX-T Load balancer Monitor for TCP created with `LBTcpMonitorProfile`, we can not modify the attribute during the update operation and its disabled from UI.
 
 {{tffile "examples/resources/hpegl_vmaas_load_balancer_monitor/nsx_t_lb_tcp_monitor.tf"}}
 
-
 ## Example usage for creating NSX-T Load balancer Monitor for UDP with all possible attributes
-
--> For NSX-T Load balancer Monitor for UDP creation, attribute monitorType value `LBUdpMonitorProfile` is applicable only UDP creation.
 
 -> Once NSX-T Load balancer Monitor for UDP created with `LBUdpMonitorProfile`, we can not modify the attribute during the update operation and its disabled from UI.
 
