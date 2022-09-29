@@ -104,7 +104,7 @@ func LoadBalancer() *schema.Resource {
 							Type:     schema.TypeString,
 							Required: true,
 							Description: "Tier1 Gateway. Get the `providerId`. Use " + DSRouter +
-								"datasource to obtain the provider_id and nsx-t-tier1-gateway which indicates that it is a NSX T Tier1 Gateway",
+								"datasource to obtain the provider_id and nsx-t-tier1-gateway which indicates that it is a NSX-T Tier1 Gateway",
 						},
 					},
 				},
