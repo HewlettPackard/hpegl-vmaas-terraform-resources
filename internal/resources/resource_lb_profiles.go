@@ -84,7 +84,7 @@ func LoadBalancerProfiles() *schema.Resource {
 		CreateContext: loadbalancerProfileCreateContext,
 		DeleteContext: loadbalancerProfileDeleteContext,
 		CustomizeDiff: profileCustomDiff,
-		Description: `loadbalancer Profile resource facilitates creating,
+		Description: `loadbalancer Profile resource facilitates creating
 		and deleting NSX-T  Network Load Balancers.`,
 	}
 }
