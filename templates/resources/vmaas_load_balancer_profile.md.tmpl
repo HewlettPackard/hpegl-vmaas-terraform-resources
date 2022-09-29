@@ -15,7 +15,7 @@ description: |-
 
 For creating an NSX-T Load balancer Profile, use the following examples.
 
--> NSX-T Profile having HTTP,UDP,TCP,COOKIE,SOURCEIP,GENERIC,SERVER,CLIENT  considered as different Profile types. You can create either HTTP,HTTPS,ICMP,Passive,TCP,UDP, but not everything at the same time.
+-> NSX-T Profile having HTTP,UDP,TCP,COOKIE,SOURCEIP,GENERIC,SERVER,CLIENT  considered as different Profile types. You can create either any of them HTTP,HTTPS,ICMP,Passive,TCP,UDP at a given time
 
 -> Load Balancer ID Data Source `hpegl_vmaas_load_balancer` is supported for Creating Profile.
 
@@ -23,15 +23,11 @@ For creating an NSX-T Load balancer Profile, use the following examples.
 
 -> ProfileType value is `application-profile` 
 
--> For NSX-T Load balancer Profile for HTTP creation, attribute ServiceType value `LBHttpProfile` is applicable only HTTP creation 
-
 {{tffile "examples/resources/hpegl_vmaas_load_balancer_profile/nsx_t_lb_application_http_profile.tf"}}
 
 ## Example usage for creating NSX-T Load balancer Profile for TCP with all possible attributes
 
 -> ProfileType value is `application-profile` 
-
--> For NSX-T Load balancer Profile for TCP creation, attribute ServiceType value `LBFastTcpProfile` is applicable only TCP creation 
 
 {{tffile "examples/resources/hpegl_vmaas_load_balancer_profile/nsx_t_lb_application_tcp_profile.tf"}}
 
@@ -39,15 +35,11 @@ For creating an NSX-T Load balancer Profile, use the following examples.
 
 -> ProfileType value is `application-profile` 
 
--> For NSX-T Load balancer Profile for UDP creation, attribute ServiceType value `LBFastUdpProfile` is applicable only UDP creation 
-
 {{tffile "examples/resources/hpegl_vmaas_load_balancer_profile/nsx_t_lb_application_udp_profile.tf"}}
 
 ## Example usage for creating NSX-T Load balancer Profile for COOKIE with all possible attributes
 
 -> ProfileType value is `persistence-profile` 
-
--> For NSX-T Load balancer Profile for COOKIE creation, attribute ServiceType value `LBCookiePersistenceProfile` is applicable only COOKIE creation 
 
 {{tffile "examples/resources/hpegl_vmaas_load_balancer_profile/nsx_t_lb_persistence_cookie_profile.tf"}}
 
@@ -55,15 +47,11 @@ For creating an NSX-T Load balancer Profile, use the following examples.
 
 -> ProfileType value is `persistence-profile` 
 
--> For NSX-T Load balancer Profile for GENERIC creation, attribute ServiceType value `LBGenericPersistenceProfile` is applicable only GENERIC creation 
-
 {{tffile "examples/resources/hpegl_vmaas_load_balancer_profile/nsx_t_lb_persistence_generic_profile.tf"}}
 
 ## Example usage for creating NSX-T Load balancer Profile for SOURCEIP with all possible attributes
 
 -> ProfileType value is `persistence-profile` 
-
--> For NSX-T Load balancer Profile for SOURCEIP creation, attribute ServiceType value `LBSourceIpPersistenceProfile` is applicable only SOURCEIP creation 
 
 {{tffile "examples/resources/hpegl_vmaas_load_balancer_profile/nsx_t_lb_persistence_sourceip_profile.tf"}}
 
@@ -71,15 +59,11 @@ For creating an NSX-T Load balancer Profile, use the following examples.
 
 -> ProfileType value is `ssl-profile` 
 
--> For NSX-T Load balancer Profile for SERVER creation, attribute ServiceType value `LBServerSslProfile` is applicable only SERVER creation 
-
 {{tffile "examples/resources/hpegl_vmaas_load_balancer_profile/nsx_t_lb_ssl_server_profile.tf"}}
 
 ## Example usage for creating NSX-T Load balancer Profile for CLIENT with all possible attributes
 
 -> ProfileType value is `ssl-profile` 
-
--> For NSX-T Load balancer Profile for CLIENT creation, attribute ServiceType value `LBClientSslProfile` is applicable only CLIENT creation 
 
 {{tffile "examples/resources/hpegl_vmaas_load_balancer_profile/nsx_t_lb_ssl_client_profile.tf"}}
 
