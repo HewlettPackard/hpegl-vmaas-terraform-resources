@@ -120,7 +120,7 @@ func LoadBalancerVirtualServers() *schema.Resource {
 		CreateContext: loadbalancerVirtualServerCreateContext,
 		DeleteContext: loadbalancerVirtualServerDeleteContext,
 		CustomizeDiff: virtualServerCustomDiff,
-		Description: `loadbalancer Virtual Server resource facilitates creating,
+		Description: `loadbalancer Virtual Server resource facilitates creating
 		and deleting NSX-T  Network Load Balancers.`,
 	}
 }
