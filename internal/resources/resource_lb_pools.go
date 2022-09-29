@@ -155,7 +155,7 @@ func LoadBalancerPools() *schema.Resource {
 		UpdateContext: loadbalancerPoolUpdateContext,
 		CreateContext: loadbalancerPoolCreateContext,
 		DeleteContext: loadbalancerPoolDeleteContext,
-		Description: `loadbalancer Pool resource facilitates creating,
+		Description: `loadbalancer Pool resource facilitates creating
 		and deleting NSX-T  Network Load Balancers.`,
 	}
 }
