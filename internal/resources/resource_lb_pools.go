@@ -67,13 +67,13 @@ func LoadBalancerPools() *schema.Resource {
 						"passive_monitor_path": {
 							Type:     schema.TypeInt,
 							Optional: true,
-							Description: "Passive Monitor ID, Get the `Id` from " + DSLBMonitor +
+							Description: "Passive Monitor ID, Get the `id` from " + DSLBMonitor +
 								"datasource to obtain the passive monitor ID",
 						},
 						"active_monitor_paths": {
 							Type:     schema.TypeInt,
 							Optional: true,
-							Description: "Active Monitor ID, Get the `Id` from " + DSLBMonitor +
+							Description: "Active Monitor ID, Get the `id` from " + DSLBMonitor +
 								"datasource to obtain the active monitor ID",
 						},
 						"tcp_multiplexing": {
@@ -155,8 +155,8 @@ func LoadBalancerPools() *schema.Resource {
 		UpdateContext: loadbalancerPoolUpdateContext,
 		CreateContext: loadbalancerPoolCreateContext,
 		DeleteContext: loadbalancerPoolDeleteContext,
-		Description: `loadbalancer Pool resource facilitates creating
-		and deleting NSX-T  Network Load Balancers.`,
+		Description: `loadbalancer Pool resource facilitates creating, updating
+		and deleting NSX-T Network Load Balancer Pools.`,
 	}
 }
 
