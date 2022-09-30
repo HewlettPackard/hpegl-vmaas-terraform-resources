@@ -87,9 +87,10 @@ func LoadBalancerVirtualServers() *schema.Resource {
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"ssl_server_profile": {
-							Type:        schema.TypeInt,
-							Required:    true,
-							Description: "ssl_server_profile Id, Get the `id` from " + DSLBProfile + " datasource to obtain the ssl_server_profile Id",
+							Type:     schema.TypeInt,
+							Required: true,
+							Description: "ssl_server_profile Id, Get the `id` from " + DSLBProfile +
+								" datasource to obtain the ssl_server_profile Id",
 						},
 					},
 				},
@@ -97,7 +98,8 @@ func LoadBalancerVirtualServers() *schema.Resource {
 			"ssl_client_cert": {
 				Type:     schema.TypeInt,
 				Required: true,
-				Description: "ssl_client_cert Id, Get the `id` " + DSLBVirtualServerSslCert + " datasource to obtain the ssl_client_cert Id, " +
+				Description: "ssl_client_cert Id, Get the `id` from " + DSLBVirtualServerSslCert +
+					" datasource to obtain the ssl_client_cert Id, " +
 					"SSLClientCert is needed only for https based load balancer",
 			},
 			"ssl_client_config": {
@@ -109,7 +111,7 @@ func LoadBalancerVirtualServers() *schema.Resource {
 						"ssl_client_profile": {
 							Type:        schema.TypeInt,
 							Required:    true,
-							Description: "ssl_client_profile Id, Get the `id` " + DSLBProfile + "datasource to obtain the ssl_client_profile Id",
+							Description: "ssl_client_profile Id, Get the `id` from " + DSLBProfile + "datasource to obtain the ssl_client_profile Id",
 						},
 					},
 				},

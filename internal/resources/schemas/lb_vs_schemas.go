@@ -21,7 +21,7 @@ func TCPAppProfileSchema() *schema.Schema {
 				"application_profile": {
 					Type:        schema.TypeInt,
 					Required:    true,
-					Description: "ID of the TCP application_profile. Use " + DSLBProfile + "datasource to obtain the id here",
+					Description: "TCP application_profile Id, Get the `id` from " + DSLBProfile + " datasource to obtain the TCP application_profile Id",
 				},
 			},
 		},
@@ -41,7 +41,7 @@ func UDPAppProfileSchema() *schema.Schema {
 				"application_profile": {
 					Type:        schema.TypeInt,
 					Required:    true,
-					Description: "ID of the UDP application_profile. Use " + DSLBProfile + "datasource to obtain the id here",
+					Description: "UDP application_profile Id, Get the `id` from " + DSLBProfile + " datasource to obtain the UDP application_profile Id",
 				},
 			},
 		},
@@ -61,7 +61,7 @@ func HTTPAppProfileSchema() *schema.Schema {
 				"application_profile": {
 					Type:        schema.TypeInt,
 					Required:    true,
-					Description: "ID of the HTTP application_profile. Use " + DSLBProfile + "datasource to obtain the id here",
+					Description: "HTTP application_profile Id, Get the `id` from " + DSLBProfile + " datasource to obtain the HTTP application_profile Id",
 				},
 			},
 		},
@@ -81,7 +81,7 @@ func CookiePersProfileSchema() *schema.Schema {
 				"persistence_profile": {
 					Type:        schema.TypeInt,
 					Required:    true,
-					Description: "ID of the COOKIE persistence_profile. Use " + DSLBProfile + "datasource to obtain the id here",
+					Description: "COOKIE persistence_profile Id, Get the `id` from " + DSLBProfile + " datasource to obtain the COOKIE persistence_profile Id",
 				},
 			},
 		},
@@ -101,7 +101,7 @@ func SourceipPersProfileSchema() *schema.Schema {
 				"persistence_profile": {
 					Type:        schema.TypeInt,
 					Required:    true,
-					Description: "ID of the SOURCEIP persistence_profile. Use " + DSLBProfile + "datasource to obtain the id here",
+					Description: "SOURCEIP persistence_profile Id, Get the `id` from " + DSLBProfile + " datasource to obtain the SOURCEIP persistence_profile Id",
 				},
 			},
 		},
