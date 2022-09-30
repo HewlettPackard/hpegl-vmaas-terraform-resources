@@ -68,13 +68,13 @@ func LoadBalancerPools() *schema.Resource {
 							Type:     schema.TypeInt,
 							Optional: true,
 							Description: "Passive Monitor ID, Get the `id` from " + DSLBMonitor +
-								"datasource to obtain the passive monitor ID",
+								" datasource to obtain the passive monitor ID",
 						},
 						"active_monitor_paths": {
 							Type:     schema.TypeInt,
 							Optional: true,
 							Description: "Active Monitor ID, Get the `id` from " + DSLBMonitor +
-								"datasource to obtain the active monitor ID",
+								" datasource to obtain the active monitor ID",
 						},
 						"tcp_multiplexing": {
 							Type:     schema.TypeBool,
@@ -140,12 +140,12 @@ func LoadBalancerPools() *schema.Resource {
 						"tag": {
 							Type:        schema.TypeString,
 							Optional:    true,
-							Description: "tag for Network Load balancer Profile",
+							Description: "tag for Network Load balancer Pool",
 						},
 						"scope": {
 							Type:        schema.TypeString,
 							Optional:    true,
-							Description: "scope for Network Load balancer Profile",
+							Description: "scope for Network Load balancer Pool",
 						},
 					},
 				},
