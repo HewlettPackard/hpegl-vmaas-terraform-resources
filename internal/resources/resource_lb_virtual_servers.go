@@ -46,8 +46,8 @@ func LoadBalancerVirtualServers() *schema.Resource {
 			"pool": {
 				Type:     schema.TypeInt,
 				Required: true,
-				Description: "It is recommended that you attach a pool to the Virtual Server to have a correct LB functionality." +
-					"ID of the loadBalncer Pool. Use " + DSLBPool + "datasource to obtain the id here",
+				Description: "Pool Id, Get the `id` from " + DSLBPool + " datasource to obtain the Pool Id, " +
+					"It is recommended that you attach a pool to the Virtual Server to have a correct LB functionality",
 			},
 			"type": {
 				Type: schema.TypeString,
@@ -77,8 +77,8 @@ func LoadBalancerVirtualServers() *schema.Resource {
 			"ssl_server_cert": {
 				Type:     schema.TypeInt,
 				Required: true,
-				Description: "SSLServerCert is needed only for https based load balancer" +
-					"ID of the ssl_server_cert. Use " + DSLBVirtualServerSslCert + "datasource to obtain the id  here",
+				Description: "ssl_server_cert Id, Get the `id` from " + DSLBVirtualServerSslCert + " datasource to obtain the ssl_server_cert Id, " +
+					"SSLServerCert is needed only for https based load balancer",
 			},
 			"ssl_server_config": {
 				Type:        schema.TypeList,
@@ -89,7 +89,7 @@ func LoadBalancerVirtualServers() *schema.Resource {
 						"ssl_server_profile": {
 							Type:        schema.TypeInt,
 							Required:    true,
-							Description: "ID of the ssl_server_profile. Use " + DSLBProfile + "datasource to obtain the id  here",
+							Description: "ssl_server_profile Id, Get the `id` from " + DSLBProfile + " datasource to obtain the ssl_server_profile Id",
 						},
 					},
 				},
@@ -97,8 +97,8 @@ func LoadBalancerVirtualServers() *schema.Resource {
 			"ssl_client_cert": {
 				Type:     schema.TypeInt,
 				Required: true,
-				Description: "SSLClientCert is needed only for https based load balancer." +
-					"ID of the ssl_client_cert. Use " + DSLBVirtualServerSslCert + "datasource to obtain the id  here",
+				Description: "ssl_client_cert Id, Get the `id` " + DSLBVirtualServerSslCert + " datasource to obtain the ssl_client_cert Id, " +
+					"SSLClientCert is needed only for https based load balancer",
 			},
 			"ssl_client_config": {
 				Type:        schema.TypeList,
@@ -109,7 +109,7 @@ func LoadBalancerVirtualServers() *schema.Resource {
 						"ssl_client_profile": {
 							Type:        schema.TypeInt,
 							Required:    true,
-							Description: "ID of the ssl_client_profile. Use " + DSLBProfile + "datasource to obtain the id  here",
+							Description: "ssl_client_profile Id, Get the `id` " + DSLBProfile + "datasource to obtain the ssl_client_profile Id",
 						},
 					},
 				},
@@ -120,8 +120,8 @@ func LoadBalancerVirtualServers() *schema.Resource {
 		CreateContext: loadbalancerVirtualServerCreateContext,
 		DeleteContext: loadbalancerVirtualServerDeleteContext,
 		CustomizeDiff: virtualServerCustomDiff,
-		Description: `loadbalancer Virtual Server resource facilitates creating
-		and deleting NSX-T  Network Load Balancers.`,
+		Description: `loadbalancer Virtual Server resource facilitates creating, updating
+		and deleting NSX-T Network Load Balancer Virtual Servers.`,
 	}
 }
 
