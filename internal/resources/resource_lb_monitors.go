@@ -59,7 +59,7 @@ func LoadBalancerMonitor() *schema.Resource {
 		DeleteContext: loadbalancerMonitorDeleteContext,
 		CustomizeDiff: monitorCustomDiff,
 		Description: `Loadbalancer Monitor resource facilitates creating,updating
-		and deleting NSX-T Network Load Balancers.`,
+		and deleting NSX-T Network Load Balancer Monitors.`,
 	}
 }
 
