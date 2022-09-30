@@ -101,10 +101,9 @@ func LoadBalancer() *schema.Resource {
 							Description: `In Filter. Supported Values are "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL", "ALERT", "EMERGENCY"`,
 						},
 						"tier1_gateways": {
-							Type:     schema.TypeString,
-							Required: true,
-							Description: "Tier1 Gateway. Get the `providerId`. Use " + DSRouter +
-								"datasource to obtain the provider_id and nsx-t-tier1-gateway which indicates that it is a NSX-T Tier1 Gateway",
+							Type:        schema.TypeString,
+							Required:    true,
+							Description: "Provider ID of the Tier1 Gateway. Use " + DSRouter + " datasource to obtain the provider_id here.",
 						},
 					},
 				},
