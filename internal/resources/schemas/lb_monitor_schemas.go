@@ -37,12 +37,12 @@ func HTTPMonitorSchema() *schema.Schema {
 				"interval": {
 					Type:        schema.TypeInt,
 					Default:     5,
-					Description: "The frequency at which the system issues the monitor check (in seconds).",
+					Description: "Set the number of times the server is tested before it is considered as DOWN",
 					Optional:    true,
 				},
 				"monitor_port": {
 					Type:        schema.TypeInt,
-					Description: "If the monitor port is specified, it would override pool member port setting for healthcheck",
+					Description: "Set the value of the monitoring port.",
 					Optional:    true,
 				},
 				"rise_count": {
@@ -55,11 +55,11 @@ func HTTPMonitorSchema() *schema.Schema {
 					Type:        schema.TypeInt,
 					Optional:    true,
 					Default:     15,
-					Description: "The frequency at which the system issues the monitor check",
+					Description: "Set the number of times the server is tested before it is considered as DOWN",
 				},
 				"request_body": {
 					Type:        schema.TypeString,
-					Description: "String to send as HTTP health check request body. Valid only for certain HTTP methods like POST",
+					Description: "Enter the request body. Valid for the POST and PUT methods",
 					Optional:    true,
 				},
 				"request_method": {
@@ -73,7 +73,7 @@ func HTTPMonitorSchema() *schema.Schema {
 						"PUT",
 					}, false),
 					Default:     "GET",
-					Description: "Health check method for HTTP monitor type. Valid values are GET, HEAD, PUT, POST and OPTIONS",
+					Description: "Select the method to detect the server status",
 				},
 				"request_url": {
 					Type:        schema.TypeString,
@@ -90,14 +90,16 @@ func HTTPMonitorSchema() *schema.Schema {
 					Optional:    true,
 				},
 				"response_data": {
-					Type:        schema.TypeString,
-					Description: "Response data to get the monitor data",
-					Optional:    true,
+					Type: schema.TypeString,
+					Description: "If the HTTP response body string and the HTTP health check response body match," +
+						"then the server is considered as healthy",
+					Optional: true,
 				},
 				"response_status_codes": {
-					Type:        schema.TypeString,
-					Description: "HTTP response status code should be a valid HTTP status code",
-					Optional:    true,
+					Type: schema.TypeString,
+					Description: "Enter the string that the monitor expects to match in the status line of HTTP response body." +
+						"The response code is a comma-separated list",
+					Optional: true,
 				},
 			},
 		},
@@ -136,12 +138,12 @@ func HTTPSMonitorSchema() *schema.Schema {
 				"interval": {
 					Type:        schema.TypeInt,
 					Default:     5,
-					Description: "The frequency at which the system issues the monitor check (in seconds).",
+					Description: "Set the number of times the server is tested before it is considered as DOWN",
 					Optional:    true,
 				},
 				"monitor_port": {
 					Type:        schema.TypeInt,
-					Description: "If the monitor port is specified, it would override pool member port setting for healthcheck.",
+					Description: "Set the value of the monitoring port",
 					Optional:    true,
 				},
 				"rise_count": {
@@ -154,11 +156,11 @@ func HTTPSMonitorSchema() *schema.Schema {
 					Type:        schema.TypeInt,
 					Optional:    true,
 					Default:     15,
-					Description: "The frequency at which the system issues the monitor check",
+					Description: "Set the number of times the server is tested before it is considered as DOWN",
 				},
 				"request_body": {
 					Type:        schema.TypeString,
-					Description: "String to send as HTTPs health check request body. Valid only for certain HTTPs methods like POST",
+					Description: "Enter the request body. Valid for the POST and PUT methods",
 					Optional:    true,
 				},
 				"request_method": {
@@ -172,7 +174,7 @@ func HTTPSMonitorSchema() *schema.Schema {
 						"PUT",
 					}, false),
 					Default:     "GET",
-					Description: "Health check method for HTTPs monitor type. Valid values are GET, HEAD, PUT, POST and OPTIONS",
+					Description: "Select the method to detect the server status",
 				},
 				"request_url": {
 					Type:        schema.TypeString,
@@ -189,14 +191,16 @@ func HTTPSMonitorSchema() *schema.Schema {
 					Optional:    true,
 				},
 				"response_data": {
-					Type:        schema.TypeString,
-					Description: "response data to get the monitor data",
-					Optional:    true,
+					Type: schema.TypeString,
+					Description: "If the HTTP response body string and the HTTP health check response body match," +
+						"then the server is considered as healthy",
+					Optional: true,
 				},
 				"response_status_codes": {
-					Type:        schema.TypeString,
-					Description: "HTTPs response status code should be a valid HTTPs status code",
-					Optional:    true,
+					Type: schema.TypeString,
+					Description: "Enter the string that the monitor expects to match in the status line of HTTP response body." +
+						"The response code is a comma-separated list",
+					Optional: true,
 				},
 			},
 		},
@@ -230,17 +234,17 @@ func IcmpMonitorSchema() *schema.Schema {
 					Type:        schema.TypeInt,
 					Optional:    true,
 					Default:     3,
-					Description: "Number of consecutive checks that must fail before marking it down.",
+					Description: "Number of consecutive checks that must fail before marking it down",
 				},
 				"interval": {
 					Type:        schema.TypeInt,
 					Default:     5,
-					Description: "The frequency at which the system issues the monitor check (in seconds).",
+					Description: "Set the number of times the server is tested before it is considered as DOWN",
 					Optional:    true,
 				},
 				"monitor_port": {
 					Type:        schema.TypeInt,
-					Description: "If the monitor port is specified, it would override pool member port setting for healthcheck",
+					Description: "Set the value of the monitoring port.",
 					Optional:    true,
 				},
 				"rise_count": {
@@ -254,12 +258,12 @@ func IcmpMonitorSchema() *schema.Schema {
 					Type:        schema.TypeInt,
 					Optional:    true,
 					Default:     15,
-					Description: "The frequency at which the system issues the monitor check",
+					Description: "Set the number of times the server is tested before it is considered as DOWN",
 				},
 				"data_length": {
 					Type:        schema.TypeInt,
 					Default:     56,
-					Description: "Data length is for the ICMP monitor type",
+					Description: "Maximum size of the ICMP data packet",
 					Optional:    true,
 				},
 			},
@@ -294,13 +298,14 @@ func PassiveMonitorSchema() *schema.Schema {
 					Type:        schema.TypeInt,
 					Optional:    true,
 					Default:     15,
-					Description: "The frequency at which the system issues the monitor check",
+					Description: "Set the number of times the server is tested before it is considered as DOWN",
 				},
 				"max_fail": {
-					Type:        schema.TypeInt,
-					Default:     5,
-					Description: "Maximum failure for the Passive monitor type",
-					Optional:    true,
+					Type:    schema.TypeInt,
+					Default: 5,
+					Description: "Set a value when the consecutive failures reach this value," +
+						"the server is considered temporarily unavailable",
+					Optional: true,
 				},
 			},
 		},
@@ -339,12 +344,12 @@ func TCPMonitorSchema() *schema.Schema {
 				"interval": {
 					Type:        schema.TypeInt,
 					Default:     5,
-					Description: "The frequency at which the system issues the monitor check (in seconds).",
+					Description: "Set the number of times the server is tested before it is considered as DOWN",
 					Optional:    true,
 				},
 				"monitor_port": {
 					Type:        schema.TypeInt,
-					Description: "If the monitor port is specified, it would override pool member port setting for healthcheck",
+					Description: "Set the value of the monitoring port.",
 					Optional:    true,
 				},
 				"rise_count": {
@@ -357,17 +362,18 @@ func TCPMonitorSchema() *schema.Schema {
 					Type:        schema.TypeInt,
 					Optional:    true,
 					Default:     15,
-					Description: "The frequency at which the system issues the monitor check",
+					Description: "Set the number of times the server is tested before it is considered as DOWN",
 				},
 				"request_body": {
 					Type:        schema.TypeString,
-					Description: "String to send as TCP health check request body. Valid only for certain TCP methods like POST",
+					Description: "Enter the request body. Valid for the POST and PUT methods",
 					Optional:    true,
 				},
 				"response_data": {
-					Type:        schema.TypeString,
-					Description: "Response data to get the monitor data",
-					Optional:    true,
+					Type: schema.TypeString,
+					Description: "If the HTTP response body string and the HTTP health check response body match" +
+						"then the server is considered as healthy",
+					Optional: true,
 				},
 			},
 		},
@@ -406,12 +412,12 @@ func UDPMonitorSchema() *schema.Schema {
 				"interval": {
 					Type:        schema.TypeInt,
 					Default:     5,
-					Description: "The frequency at which the system issues the monitor check (in seconds).",
+					Description: "Set the number of times the server is tested before it is considered as DOWN",
 					Optional:    true,
 				},
 				"monitor_port": {
 					Type:        schema.TypeInt,
-					Description: "If the monitor port is specified, it would override pool member port setting for healthcheck",
+					Description: "Set the value of the monitoring port.",
 					Optional:    true,
 				},
 				"rise_count": {
@@ -424,17 +430,18 @@ func UDPMonitorSchema() *schema.Schema {
 					Type:        schema.TypeInt,
 					Optional:    true,
 					Default:     15,
-					Description: "The frequency at which the system issues the monitor check",
+					Description: "Set the number of times the server is tested before it is considered as DOWN",
 				},
 				"request_body": {
 					Type:        schema.TypeString,
-					Description: "String to send as UDP health check request body. Valid only for certain UDP methods like POST",
+					Description: "Enter the request body. Valid for the POST and PUT methods",
 					Optional:    true,
 				},
 				"response_data": {
-					Type:        schema.TypeString,
-					Description: "Response data to get the monitor data",
-					Optional:    true,
+					Type: schema.TypeString,
+					Description: "If the HTTP response body string and the HTTP health check response body match," +
+						"then the server is considered as healthy",
+					Optional: true,
 				},
 			},
 		},
