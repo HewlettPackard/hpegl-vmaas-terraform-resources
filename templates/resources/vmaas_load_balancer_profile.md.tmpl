@@ -15,53 +15,37 @@ description: |-
 
 For creating an NSX-T Load balancer Profile, use the following examples.
 
--> NSX-T Profile having HTTP,UDP,TCP,COOKIE,SOURCEIP,GENERIC,SERVER,CLIENT  considered as different Profile types. You can create either any of them HTTP,HTTPS,ICMP,Passive,TCP,UDP at a given time
+-> NSX-T Profile having HTTP, UDP, TCP, COOKIE, SOURCEIP, GENERIC, SERVER, CLIENT considered as different Profile types. You can create either any of them HTTP,HTTPS,ICMP,Passive,TCP,UDP at a given time
 
 ## Example usage for creating NSX-T Load balancer Profile for HTTP with all possible attributes
-
--> ProfileType value is `application-profile` 
 
 {{tffile "examples/resources/hpegl_vmaas_load_balancer_profile/nsx_t_lb_application_http_profile.tf"}}
 
 ## Example usage for creating NSX-T Load balancer Profile for TCP with all possible attributes
 
--> ProfileType value is `application-profile` 
-
 {{tffile "examples/resources/hpegl_vmaas_load_balancer_profile/nsx_t_lb_application_tcp_profile.tf"}}
 
 ## Example usage for creating NSX-T Load balancer Profile for UDP with all possible attributes
-
--> ProfileType value is `application-profile` 
 
 {{tffile "examples/resources/hpegl_vmaas_load_balancer_profile/nsx_t_lb_application_udp_profile.tf"}}
 
 ## Example usage for creating NSX-T Load balancer Profile for COOKIE with all possible attributes
 
--> ProfileType value is `persistence-profile` 
-
 {{tffile "examples/resources/hpegl_vmaas_load_balancer_profile/nsx_t_lb_persistence_cookie_profile.tf"}}
 
 ## Example usage for creating NSX-T Load balancer Profile for GENERIC with all possible attributes
-
--> ProfileType value is `persistence-profile` 
 
 {{tffile "examples/resources/hpegl_vmaas_load_balancer_profile/nsx_t_lb_persistence_generic_profile.tf"}}
 
 ## Example usage for creating NSX-T Load balancer Profile for SOURCEIP with all possible attributes
 
--> ProfileType value is `persistence-profile` 
-
 {{tffile "examples/resources/hpegl_vmaas_load_balancer_profile/nsx_t_lb_persistence_sourceip_profile.tf"}}
 
 ## Example usage for creating NSX-T Load balancer Profile for SERVER with all possible attributes
 
--> ProfileType value is `ssl-profile` 
-
 {{tffile "examples/resources/hpegl_vmaas_load_balancer_profile/nsx_t_lb_ssl_server_profile.tf"}}
 
 ## Example usage for creating NSX-T Load balancer Profile for CLIENT with all possible attributes
-
--> ProfileType value is `ssl-profile` 
 
 {{tffile "examples/resources/hpegl_vmaas_load_balancer_profile/nsx_t_lb_ssl_client_profile.tf"}}
 
