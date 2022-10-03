@@ -43,7 +43,7 @@ func DhcpServer() *schema.Resource {
 						"edge_cluster": {
 							Type:        schema.TypeString,
 							Optional:    true,
-							Description: "Edge cluster for the DHCP server",
+							Description: "Provider ID of the Edge Cluster. Use " + DSEdgeCluster + " datasource to obtain the provider_id  here.",
 						},
 					},
 				},

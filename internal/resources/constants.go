@@ -24,7 +24,6 @@ const (
 	DSEdgeCluster            = "hpegl_vmaas_edge_cluster"
 	DSTransportZone          = "hpegl_vmaas_transport_zone"
 	DSLoadBalancer           = "hpegl_vmaas_load_balancer"
-	DSDhcpServer             = "hpegl_vmaas_dhcp_server"
 	DSPoolMemeberGroup       = "hpegl_vmaas_lb_pool_member_group"
 	DSLBMonitor              = "hpegl_vmaas_load_balancer_monitor"
 	DSLBProfile              = "hpegl_vmaas_load_balancer_profile"
