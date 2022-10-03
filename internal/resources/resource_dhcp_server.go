@@ -17,7 +17,7 @@ func DhcpServer() *schema.Resource {
 			"name": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "Name of the DHCP server",
+				Description: "Provide the DHCP server name",
 			},
 			"server_id": {
 				Type:        schema.TypeInt,
@@ -31,7 +31,7 @@ func DhcpServer() *schema.Resource {
 			},
 			"server_address": {
 				Type:        schema.TypeString,
-				Description: "server address for the DHCP server",
+				Description: "Server address for the DHCP server",
 				Optional:    true,
 			},
 			"config": {
@@ -57,8 +57,8 @@ func DhcpServer() *schema.Resource {
 		UpdateContext: DhcpServerUpdateContext,
 		CreateContext: DhcpServerCreateContext,
 		DeleteContext: DhcpServerDeleteContext,
-		Description: `DhcpServer resource facilitates creating, updating
-		and deleting DhcpServer.`,
+		Description: `Server resource facilitates creating, updating
+		and deleting Dhcp Server.`,
 	}
 }
 
