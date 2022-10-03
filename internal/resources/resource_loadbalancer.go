@@ -103,7 +103,7 @@ func LoadBalancer() *schema.Resource {
 						"tier1_gateways": {
 							Type:        schema.TypeString,
 							Required:    true,
-							Description: "Provider ID of the Tier1 Gateway. Use " + DSRouter + " datasource to obtain the provider_id  here.",
+							Description: "Provider ID of the Tier1 Gateway. Use " + DSRouter + " datasource to obtain the provider_id here.",
 						},
 					},
 				},
