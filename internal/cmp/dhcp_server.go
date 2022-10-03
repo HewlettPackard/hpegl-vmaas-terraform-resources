@@ -15,11 +15,13 @@ import (
 
 type dhcpServer struct {
 	dhcpClient *client.DhcpServerAPIService
+	rClient    *client.RouterAPIService
 }
 
-func newDhcpServer(dhcpServerClient *client.DhcpServerAPIService) *dhcpServer {
+func newDhcpServer(dhcpServerClient *client.DhcpServerAPIService, routerClient *client.RouterAPIService) *dhcpServer {
 	return &dhcpServer{
 		dhcpClient: dhcpServerClient,
+		rClient:    routerClient,
 	}
 }
 
@@ -29,7 +31,7 @@ func (dhcp *dhcpServer) Read(ctx context.Context, d *utils.Data, meta interface{
 	if err := tftags.Get(d, &dhcpServerResp); err != nil {
 		return err
 	}
-	getdhcpServerResp, err := dhcp.dhcpClient.GetSpecificDhcpServer(ctx, dhcpServerResp.ServerID,
+	getdhcpServerResp, err := dhcp.dhcpClient.GetSpecificDhcpServer(ctx, dhcpServerResp.NetworkServerID,
 		dhcpServerResp.ID)
 	if err != nil {
 		return err
@@ -50,7 +52,8 @@ func (dhcp *dhcpServer) Update(ctx context.Context, d *utils.Data, meta interfac
 		RetryDelay:   time.Second * 30,
 	}
 	_, err := retry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return dhcp.dhcpClient.UpdateDhcpServer(ctx, updateReq.NetworkDhcpServer.ServerID, id, updateReq)
+		return dhcp.dhcpClient.UpdateDhcpServer(ctx,
+			updateReq.NetworkDhcpServer.NetworkServerID, id, updateReq)
 	})
 	if err != nil {
 		return err
@@ -66,7 +69,12 @@ func (dhcp *dhcpServer) Create(ctx context.Context, d *utils.Data, meta interfac
 		return err
 	}
 
-	dhcpResp, err := dhcp.dhcpClient.CreateDhcpServer(ctx, createReq.NetworkDhcpServer.ServerID,
+	// align createReq and fill json related fields
+	if err := dhcp.dhcpServerAlignRequest(ctx, meta, &createReq); err != nil {
+		return err
+	}
+
+	dhcpResp, err := dhcp.dhcpClient.CreateDhcpServer(ctx, createReq.NetworkDhcpServer.NetworkServerID,
 		createReq)
 	if err != nil {
 		return err
@@ -83,7 +91,7 @@ func (dhcp *dhcpServer) Create(ctx context.Context, d *utils.Data, meta interfac
 	}
 	_, err = retry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
 		return dhcp.dhcpClient.GetSpecificDhcpServer(ctx,
-			createReq.NetworkDhcpServer.ServerID, createReq.NetworkDhcpServer.ID)
+			createReq.NetworkDhcpServer.NetworkServerID, createReq.NetworkDhcpServer.ID)
 
 	})
 	if err != nil {
@@ -100,13 +108,41 @@ func (dhcp *dhcpServer) Delete(ctx context.Context, d *utils.Data, meta interfac
 		return err
 	}
 
-	resp, err := dhcp.dhcpClient.DeleteDhcpServer(ctx, dhcpServerResp.ServerID, dhcpServerResp.ID)
+	resp, err := dhcp.dhcpClient.DeleteDhcpServer(ctx, dhcpServerResp.NetworkServerID, dhcpServerResp.ID)
 	if err != nil {
 		return err
 	}
 
 	if !resp.Success {
 		return fmt.Errorf("got success = 'false' while deleting DHCP-SERVER")
+	}
+
+	return nil
+}
+
+func (dhcp *dhcpServer) dhcpServerAlignRequest(ctx context.Context, meta interface{},
+	createReq *models.CreateNetworkDhcpServerRequest) error {
+
+	// Get network service ID
+	setMeta(meta, dhcp.rClient.Client)
+	nsRetry := utils.CustomRetry{}
+	nsRetry.RetryParallel(ctx, meta, func(ctx context.Context) (interface{}, error) {
+		return dhcp.rClient.GetNetworkServices(ctx, nil)
+	})
+
+	// Align Network Server
+	nsResp, err := nsRetry.Wait()
+	if err != nil {
+		return err
+	}
+	networkService := nsResp.(models.GetNetworkServicesResp)
+
+	for i, n := range networkService.NetworkServices {
+		if n.TypeName == nsxt {
+			createReq.NetworkDhcpServer.ID = networkService.NetworkServices[i].ID
+
+			break
+		}
 	}
 
 	return nil

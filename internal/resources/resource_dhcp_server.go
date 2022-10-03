@@ -19,10 +19,10 @@ func DhcpServer() *schema.Resource {
 				Required:    true,
 				Description: "Provide the DHCP server name",
 			},
-			"server_id": {
+			"network_server_id": {
 				Type:        schema.TypeInt,
-				Required:    true,
-				Description: "Server ID of Network DhcpServer",
+				Description: "NSX-T Integration ID",
+				Computed:    true,
 			},
 			"lease_time": {
 				Type:        schema.TypeInt,
