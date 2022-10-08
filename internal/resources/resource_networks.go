@@ -30,40 +30,10 @@ func Network() *schema.Resource {
 				Optional:    true,
 				Description: "Display name of the NSX-T network.",
 			},
-			"group_id": {
-				Type:        schema.TypeString,
-				Required:    true,
-				Description: "Group ID of the Network. Please use " + DSGroup + " data source to retrieve ID or pass `shared`.",
-			},
-			"code": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: "Network Type code",
-			},
 			"type_id": {
 				Type:        schema.TypeInt,
 				Computed:    true,
 				Description: "Type ID for the NSX-T Network.",
-			},
-			"pool_id": {
-				Type:        schema.TypeInt,
-				Optional:    true,
-				Description: "Pool ID can be obtained with " + DSNetworkPool + " data source.",
-			},
-			"external_id": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: "External ID of the network",
-			},
-			"internal_id": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: "Internal ID of the network",
-			},
-			"unique_id": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: "Unique ID of the network",
 			},
 			"gateway": {
 				Type:             schema.TypeString,
@@ -101,12 +71,12 @@ func Network() *schema.Resource {
 				Default:     false,
 				Description: "Scan Network",
 			},
-			// "dhcp_server": {
-			// 	Type:        schema.TypeBool,
-			// 	Optional:    true,
-			// 	Default:     false,
-			// 	Description: "Enable DHCP Server.",
-			// },
+			"dhcp_server": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     true,
+				Description: "Enable DHCP Server.",
+			},
 			"appliance_url_proxy_bypass": {
 				Type:        schema.TypeBool,
 				Optional:    true,
@@ -118,16 +88,6 @@ func Network() *schema.Resource {
 				Optional:    true,
 				Description: "List of IP addresses or name servers for which to exclude proxy traversal.",
 			},
-			"domain_id": {
-				Type:        schema.TypeInt,
-				Optional:    true,
-				Description: "ID of the Network domain. Use " + DSNetworkDomain + " datasource to obtain the ID.",
-			},
-			"proxy_id": {
-				Type:        schema.TypeInt,
-				Optional:    true,
-				Description: "Network Proxy ID. Use " + DSNetworkProxy + " data source to obtain the ID.",
-			},
 			"search_domains": {
 				Type:        schema.TypeString,
 				Optional:    true,
@@ -136,18 +96,98 @@ func Network() *schema.Resource {
 			"allow_static_override": {
 				Type:        schema.TypeBool,
 				Optional:    true,
+				Default:     false,
 				Description: "If set to true, network will allow static override",
+			},
+			"site": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "Site ID",
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"id": {
+							Type:     schema.TypeString,
+							Required: true,
+							Description: "Group ID. Get the Group ID Use " + DSGroup +
+								"Pass `shared` to use this object across all the Groups.",
+						},
+					},
+				},
+			},
+			"type": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "Type ID",
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"id": {
+							Type:     schema.TypeInt,
+							Required: true,
+							Description: "Network Type ID. Get the Network Type ID Use " + DSNetwork +
+								"to Gets All Network Types API.",
+						},
+					},
+				},
+			},
+			"network_server": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "Network Server ID",
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"id": {
+							Type:        schema.TypeInt,
+							Required:    true,
+							Description: "Get the ID Use " + DSNetwork + "where `serviceType` is set to `networkServer`",
+						},
+					},
+				},
+			},
+			"network_domain": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "Network Domain ID",
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"id": {
+							Type:     schema.TypeInt,
+							Required: true,
+							Description: "Domain ID. Get the Network Domain ID Use " + DSNetworkDomain +
+								"to get Network Domain ID",
+						},
+					},
+				},
+			},
+			"network_proxy": {
+				Type:        schema.TypeList,
+				Optional:    true,
+				Description: "Network Proxy ID",
+				MaxItems:    1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"id": {
+							Type:     schema.TypeInt,
+							Required: true,
+							Description: "Network Proxy ID. Get the Network proxy ID Use " + DSNetworkProxy +
+								"to get Network Proxy ID",
+						},
+					},
+				},
 			},
 			"config": {
 				Type:        schema.TypeList,
-				Optional:    true,
+				Required:    true,
 				Description: "Network configuration",
 				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"connected_gateway": {
 							Type:     schema.TypeString,
-							Required: true,
+							Optional: true,
 							Description: "Connected Gateway. Pass Provider ID of the Tier1 gateway. Use " + DSRouter +
 								".provider_id  here.",
 						},
@@ -155,6 +195,33 @@ func Network() *schema.Resource {
 							Type:        schema.TypeString,
 							Optional:    true,
 							Description: "VLAN IDs eg. `0,3-5`. Use this field for VLAN based segments.",
+						},
+						"subnet_ip_management_type": {
+							Type:        schema.TypeString,
+							Required:    true,
+							Description: "DHCP Server type.",
+						},
+						"subnet_ip_server_id": {
+							Type:        schema.TypeString,
+							Required:    true,
+							Description: "DHCP Server Config ID",
+						},
+						"subnet_dhcp_server_address": {
+							Type:     schema.TypeString,
+							Optional: true,
+							Description: "DHCP Server address and its CIDR. This address must not overlap the" +
+								"ip-ranges of the subnet, or the gateway address of the subnet," +
+								"or the DHCP static-binding addresses of this segment",
+						},
+						"dhcp_range": {
+							Type:        schema.TypeString,
+							Required:    true,
+							Description: "DHCP server IP Address range",
+						},
+						"subnet_dhcp_lease_time": {
+							Type:        schema.TypeString,
+							Required:    true,
+							Description: "DHCP Server default lease time",
 						},
 					},
 				},
@@ -193,11 +260,6 @@ func Network() *schema.Resource {
 						},
 					},
 				},
-			},
-			"status": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: "Status of the network",
 			},
 			"scope_id": {
 				Type:        schema.TypeString,
