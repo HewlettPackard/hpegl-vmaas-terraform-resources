@@ -53,7 +53,7 @@ func Network() *schema.Resource {
 				Description:      "Secondary DNS IP Address",
 				ValidateDiagFunc: validations.ValidateIPAddress,
 			},
-			"cidr": {
+			"gateway_cidr": {
 				Type:             schema.TypeString,
 				Required:         true,
 				Description:      "Gateway Classless Inter-Domain Routing (CIDR) of the network",
@@ -71,13 +71,13 @@ func Network() *schema.Resource {
 				Default:     false,
 				Description: "Scan Network",
 			},
-			"dhcp_server": {
+			"dhcp_enabled": {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Default:     true,
 				Description: "Enable DHCP Server.",
 			},
-			"appliance_url_proxy_bypass": {
+			"bypass_proxy_for_appliance_url": {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Default:     true,
@@ -93,16 +93,16 @@ func Network() *schema.Resource {
 				Optional:    true,
 				Description: "Search Domains",
 			},
-			"allow_static_override": {
+			"allow_ip_override": {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Default:     false,
 				Description: "If set to true, network will allow static override",
 			},
-			"site": {
+			"group": {
 				Type:        schema.TypeList,
 				Optional:    true,
-				Description: "Site ID",
+				Description: "Group ID",
 				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -146,10 +146,10 @@ func Network() *schema.Resource {
 					},
 				},
 			},
-			"network_domain": {
+			"domain": {
 				Type:        schema.TypeList,
 				Optional:    true,
-				Description: "Network Domain ID",
+				Description: "Domain ID",
 				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -191,22 +191,22 @@ func Network() *schema.Resource {
 							Description: "Connected Gateway. Pass Provider ID of the Tier1 gateway. Use " + DSRouter +
 								".provider_id  here.",
 						},
-						"vlan_id": {
+						"vlan": {
 							Type:        schema.TypeString,
 							Optional:    true,
 							Description: "VLAN IDs eg. `0,3-5`. Use this field for VLAN based segments.",
 						},
-						"subnet_ip_management_type": {
+						"dhcp_type": {
 							Type:        schema.TypeString,
 							Required:    true,
 							Description: "DHCP Server type.",
 						},
-						"subnet_ip_server_id": {
+						"dhcp_server": {
 							Type:        schema.TypeString,
 							Required:    true,
 							Description: "DHCP Server Config ID",
 						},
-						"subnet_dhcp_server_address": {
+						"dhcp_server_address": {
 							Type:     schema.TypeString,
 							Optional: true,
 							Description: "DHCP Server address and its CIDR. This address must not overlap the" +
@@ -218,7 +218,7 @@ func Network() *schema.Resource {
 							Required:    true,
 							Description: "DHCP server IP Address range",
 						},
-						"subnet_dhcp_lease_time": {
+						"dhcp_lease_time": {
 							Type:        schema.TypeString,
 							Required:    true,
 							Description: "DHCP Server default lease time",
@@ -261,7 +261,7 @@ func Network() *schema.Resource {
 					},
 				},
 			},
-			"scope_id": {
+			"transport_zone": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Transport Zone ID. Use " + DSTransportZone + " Data source's `provider_id` here.",
