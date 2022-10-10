@@ -1,18 +1,33 @@
 # (C) Copyright 2021 Hewlett Packard Enterprise Development LP
 
 resource "hpegl_vmaas_network" "test_net" {
-  name         = "tf_net_custom"
+  name         = "tf_nsx_t_segment"
   description  = "Network created using tf"
-  group_id     = data.hpegl_vmaas_group.tf_group.id
-  scope_id     = data.hpegl_vmaas_transport_zone.tf_zone.provider_id
-  cidr         = "168.72.10.1/18"
-  gateway      = "168.72.10.1"
-  primary_dns  = "8.8.8.8"
+  display_name = "tf_nsx_t_segment"
+  transport_zone     = data.hpegl_vmaas_transport_zone.tf_zone.provider_id
+  gateway_cidr         = "193.3.0.1/24" 
+  primary_dns = "8.8.8.8"
+  secondary_dns = "8.8.8.8"
   scan_network = false
-  pool_id = 7
   active       = true
+  dhcp_enabled = true
+  allow_ip_override = false
+  bypass_proxy_for_appliance_url = true
   config {
-    connected_gateway = data.hpegl_vmaas_router.tf_router.provider_id
+    connected_gateway = data.hpegl_vmaas_router.tier1_router.provider_id
+    dhcp_type = "dhcpLocal"
+    dhcp_server = "/infra/dhcp-server-configs/3b2124e4-fad5-4df9-8644-5acb69b1efac"
+    dhcp_lease_time = "86400"
+    dhcp_range = "192.168.1.0/24"
+  }
+  group {
+    id = "shared"
+  }
+  type {
+    id = 1
+  }
+  network_server{
+    id = 1
   }
   resource_permissions {
     all = true

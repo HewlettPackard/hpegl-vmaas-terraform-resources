@@ -30,11 +30,11 @@ func Network() *schema.Resource {
 				Optional:    true,
 				Description: "Display name of the NSX-T network.",
 			},
-			"type_id": {
-				Type:        schema.TypeInt,
-				Computed:    true,
-				Description: "Type ID for the NSX-T Network.",
-			},
+			// "type_id": {
+			// 	Type:        schema.TypeInt,
+			// 	Computed:    true,
+			// 	Description: "Type ID for the NSX-T Network.",
+			// },
 			"gateway": {
 				Type:             schema.TypeString,
 				Optional:         true,
@@ -155,7 +155,7 @@ func Network() *schema.Resource {
 					Schema: map[string]*schema.Schema{
 						"id": {
 							Type:     schema.TypeInt,
-							Required: true,
+							Optional: true,
 							Description: "Domain ID. Get the Network Domain ID Use " + DSNetworkDomain +
 								"to get Network Domain ID",
 						},
@@ -171,7 +171,7 @@ func Network() *schema.Resource {
 					Schema: map[string]*schema.Schema{
 						"id": {
 							Type:     schema.TypeInt,
-							Required: true,
+							Optional: true,
 							Description: "Network Proxy ID. Get the Network proxy ID Use " + DSNetworkProxy +
 								"to get Network Proxy ID",
 						},
@@ -199,7 +199,7 @@ func Network() *schema.Resource {
 						"dhcp_type": {
 							Type:        schema.TypeString,
 							Required:    true,
-							Description: "DHCP Server type.",
+							Description: `DHCP Server type. Supported Values are "dhcpLocal", "dhcpRelay", "gatewayDhcp"`,
 						},
 						"dhcp_server": {
 							Type:        schema.TypeString,

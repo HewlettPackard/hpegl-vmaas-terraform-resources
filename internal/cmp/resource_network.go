@@ -139,11 +139,10 @@ func (r *resNetwork) Delete(ctx context.Context, d *utils.Data, meta interface{}
 }
 
 func alignNetworkReq(request *models.CreateNetwork) {
-	request.Site.ID = request.GroupID
-	if request.NetworkDomainID != 0 {
-		request.NetworkDomain = &models.IDModel{ID: request.NetworkDomainID}
+	if request.NetworkDomain != nil {
+		request.NetworkDomain = &models.IDModel{ID: request.NetworkDomain.ID}
 	}
-	if request.ProxyID != 0 {
-		request.NetworkProxy = &models.IDModel{ID: request.ProxyID}
+	if request.NetworkProxy != nil {
+		request.NetworkProxy = &models.IDModel{ID: request.NetworkProxy.ID}
 	}
 }

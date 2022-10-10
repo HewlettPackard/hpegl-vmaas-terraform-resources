@@ -16,6 +16,7 @@ type Client struct {
 	RouterRoute               Resource
 	RouterBgpNeighbor         Resource
 	LoadBalancer              Resource
+	DhcpServer                Resource
 	LoadBalancerMonitor       Resource
 	LoadBalancerProfile       Resource
 	LoadBalancerPool          Resource
