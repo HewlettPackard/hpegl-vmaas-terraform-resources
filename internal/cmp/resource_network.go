@@ -89,12 +89,11 @@ func (r *resNetwork) Create(ctx context.Context, d *utils.Data, meta interface{}
 		}
 	}
 
-	alignNetworkReq(&createReq)
+	//alignNetworkReq(&createReq)
 
 	// Create network
 	createResp, err := r.nClient.CreateNetwork(ctx, models.CreateNetworkRequest{
-		Network:             createReq,
-		ResourcePermissions: createReq.ResourcePermissions,
+		Network: createReq,
 	})
 	if err != nil {
 		return err
@@ -110,10 +109,9 @@ func (r *resNetwork) Update(ctx context.Context, d *utils.Data, meta interface{}
 		return err
 	}
 
-	alignNetworkReq(&networkReq)
+	//alignNetworkReq(&networkReq)
 	updateResp, err := r.nClient.UpdateNetwork(ctx, networkReq.ID, models.CreateNetworkRequest{
-		Network:             networkReq,
-		ResourcePermissions: networkReq.ResourcePermissions,
+		Network: networkReq,
 	})
 	if err != nil {
 		return err
@@ -138,11 +136,11 @@ func (r *resNetwork) Delete(ctx context.Context, d *utils.Data, meta interface{}
 	return err
 }
 
-func alignNetworkReq(request *models.CreateNetwork) {
-	if request.NetworkDomain != nil {
-		request.NetworkDomain = &models.IDModel{ID: request.NetworkDomain.ID}
-	}
-	if request.NetworkProxy != nil {
-		request.NetworkProxy = &models.IDModel{ID: request.NetworkProxy.ID}
-	}
-}
+// func alignNetworkReq(request *models.CreateNetwork) {
+// 	if request.NetworkDomain != nil {
+// 		request.NetworkDomain = &models.IDModel{ID: request.NetworkDomain.ID}
+// 	}
+// 	if request.NetworkProxy != nil {
+// 		request.NetworkProxy = &models.IDModel{ID: request.NetworkProxy.ID}
+// 	}
+// }
