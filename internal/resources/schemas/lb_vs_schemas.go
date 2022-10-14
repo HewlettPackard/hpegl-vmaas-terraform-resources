@@ -19,9 +19,10 @@ func TCPAppProfileSchema() *schema.Schema {
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
 				"application_profile": {
-					Type:        schema.TypeInt,
-					Required:    true,
-					Description: "ID of the TCP application_profile. Use " + DSLBProfile + "datasource to obtain the id here",
+					Type:     schema.TypeInt,
+					Required: true,
+					Description: "TCP application_profile Id, Get the `id` from " + DSLBProfile +
+						" datasource to obtain the TCP application_profile Id",
 				},
 			},
 		},
@@ -39,9 +40,10 @@ func UDPAppProfileSchema() *schema.Schema {
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
 				"application_profile": {
-					Type:        schema.TypeInt,
-					Required:    true,
-					Description: "ID of the UDP application_profile. Use " + DSLBProfile + "datasource to obtain the id here",
+					Type:     schema.TypeInt,
+					Required: true,
+					Description: "UDP application_profile Id, Get the `id` from " + DSLBProfile +
+						" datasource to obtain the UDP application_profile Id",
 				},
 			},
 		},
@@ -59,9 +61,10 @@ func HTTPAppProfileSchema() *schema.Schema {
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
 				"application_profile": {
-					Type:        schema.TypeInt,
-					Required:    true,
-					Description: "ID of the HTTP application_profile. Use " + DSLBProfile + "datasource to obtain the id here",
+					Type:     schema.TypeInt,
+					Required: true,
+					Description: "HTTP application_profile Id, Get the `id` from " + DSLBProfile +
+						" datasource to obtain the HTTP application_profile Id",
 				},
 			},
 		},
@@ -79,9 +82,10 @@ func CookiePersProfileSchema() *schema.Schema {
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
 				"persistence_profile": {
-					Type:        schema.TypeInt,
-					Required:    true,
-					Description: "ID of the COOKIE persistence_profile. Use " + DSLBProfile + "datasource to obtain the id here",
+					Type:     schema.TypeInt,
+					Required: true,
+					Description: "COOKIE persistence_profile Id, Get the `id` from " + DSLBProfile +
+						" datasource to obtain the COOKIE persistence_profile Id",
 				},
 			},
 		},
@@ -99,9 +103,10 @@ func SourceipPersProfileSchema() *schema.Schema {
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
 				"persistence_profile": {
-					Type:        schema.TypeInt,
-					Required:    true,
-					Description: "ID of the SOURCEIP persistence_profile. Use " + DSLBProfile + "datasource to obtain the id here",
+					Type:     schema.TypeInt,
+					Required: true,
+					Description: "SOURCEIP persistence_profile Id, Get the `id` from " + DSLBProfile +
+						" datasource to obtain the SOURCEIP persistence_profile Id",
 				},
 			},
 		},

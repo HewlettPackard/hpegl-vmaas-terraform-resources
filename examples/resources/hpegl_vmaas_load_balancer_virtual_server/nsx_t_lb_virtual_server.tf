@@ -6,11 +6,10 @@ resource "hpegl_vmaas_load_balancer_virtual_server" "tf_lb_virtual_server" {
   description  = "tf_virtual-server created by tf"
   vip_address     = "10.11.12.13"
   vip_port = "8080"
-  vip_host_name = "host VS"
   pool = data.hpegl_vmaas_load_balancer_pool.tf_pool.id
 
   type = "http"
-  http_application {
+  http_application_profile {
     application_profile = data.hpegl_vmaas_load_balancer_profile.tf_http_profile.id
   }
 
