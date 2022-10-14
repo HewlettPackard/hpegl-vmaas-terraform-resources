@@ -27,7 +27,7 @@ func DhcpServer() *schema.Resource {
 			"lease_time": {
 				Type:        schema.TypeInt,
 				Optional:    true,
-				Default: 86400,
+				Default:     86400,
 				Description: "Lease time for the DHCP server",
 			},
 			"server_address": {
