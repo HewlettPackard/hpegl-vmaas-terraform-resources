@@ -166,12 +166,12 @@ func (r *resNetwork) networkRequest(createReq *models.CreateNetwork) error {
 			createReq.Site = &models.IDStringModel{createReq.TfDhcpNetwork.Site.ID}
 		}
 		if createReq.TfDhcpConfig != nil {
-			createReq.DhcpConfig.ConnectedGateway = createReq.TfDhcpConfig.ConnectedGateway
-			createReq.DhcpConfig.VlanIDs = createReq.TfDhcpConfig.VlanIDs
-			createReq.DhcpConfig.SubnetDhcpLeaseTime = createReq.TfDhcpConfig.SubnetDhcpLeaseTime
-			createReq.DhcpConfig.SubnetDhcpServerAddress = createReq.TfDhcpConfig.SubnetDhcpServerAddress
-			createReq.DhcpConfig.SubnetIPManagementType = createReq.TfDhcpConfig.SubnetIPManagementType
-			createReq.DhcpConfig.SubnetIPServerID = createReq.TfDhcpConfig.SubnetIPServerID
+			createReq.Config.ConnectedGateway = createReq.TfDhcpConfig.ConnectedGateway
+			createReq.Config.VlanIDs = createReq.TfDhcpConfig.VlanIDs
+			createReq.Config.SubnetDhcpLeaseTime = createReq.TfDhcpConfig.SubnetDhcpLeaseTime
+			createReq.Config.SubnetDhcpServerAddress = createReq.TfDhcpConfig.SubnetDhcpServerAddress
+			createReq.Config.SubnetIPManagementType = createReq.TfDhcpConfig.SubnetIPManagementType
+			createReq.Config.SubnetIPServerID = createReq.TfDhcpConfig.SubnetIPServerID
 		}
 	}
 
@@ -195,8 +195,8 @@ func (r *resNetwork) networkRequest(createReq *models.CreateNetwork) error {
 			createReq.ResourcePermissions.All = createReq.TfStaticNetwork.ResourcePermissions.All
 		}
 		if createReq.TfStaticConfig != nil {
-			createReq.StaticConfig.ConnectedGateway = createReq.TfStaticConfig.ConnectedGateway
-			createReq.StaticConfig.VlanIDs = createReq.TfStaticConfig.VlanIDs
+			createReq.Config.VlanIDs = createReq.TfStaticConfig.VlanIDs
+			createReq.Config.ConnectedGateway = createReq.TfStaticConfig.ConnectedGateway
 		}
 	}
 	return nil
