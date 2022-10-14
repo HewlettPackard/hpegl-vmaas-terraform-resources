@@ -92,7 +92,6 @@ func (dhcp *dhcpServer) Create(ctx context.Context, d *utils.Data, meta interfac
 	_, err = retry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
 		return dhcp.dhcpClient.GetSpecificDhcpServer(ctx,
 			createReq.NetworkDhcpServer.NetworkServerID, createReq.NetworkDhcpServer.ID)
-
 	})
 	if err != nil {
 		return err
@@ -122,7 +121,6 @@ func (dhcp *dhcpServer) Delete(ctx context.Context, d *utils.Data, meta interfac
 
 func (dhcp *dhcpServer) dhcpServerAlignRequest(ctx context.Context, meta interface{},
 	createReq *models.CreateNetworkDhcpServerRequest) error {
-
 	// Get network service ID
 	setMeta(meta, dhcp.rClient.Client)
 	nsRetry := utils.CustomRetry{}
