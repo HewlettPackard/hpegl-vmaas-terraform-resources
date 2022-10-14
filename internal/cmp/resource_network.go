@@ -47,6 +47,10 @@ func (r *resNetwork) Create(ctx context.Context, d *utils.Data, meta interface{}
 	if err := tftags.Get(d, &createReq); err != nil {
 		return err
 	}
+	// align createReq and fill json related fields
+	if err := r.networkRequest(&createReq); err != nil {
+		return err
+	}
 
 	// Get network type id for NSX-T
 	typeRetry := utils.CustomRetry{}
@@ -89,8 +93,6 @@ func (r *resNetwork) Create(ctx context.Context, d *utils.Data, meta interface{}
 		}
 	}
 
-	//alignNetworkReq(&createReq)
-
 	// Create network
 	createResp, err := r.nClient.CreateNetwork(ctx, models.CreateNetworkRequest{
 		Network: createReq,
@@ -109,7 +111,11 @@ func (r *resNetwork) Update(ctx context.Context, d *utils.Data, meta interface{}
 		return err
 	}
 
-	//alignNetworkReq(&networkReq)
+	// align createReq and fill json related fields
+	if err := r.networkRequest(&networkReq); err != nil {
+		return err
+	}
+
 	updateResp, err := r.nClient.UpdateNetwork(ctx, networkReq.ID, models.CreateNetworkRequest{
 		Network: networkReq,
 	})
@@ -136,11 +142,62 @@ func (r *resNetwork) Delete(ctx context.Context, d *utils.Data, meta interface{}
 	return err
 }
 
-// func alignNetworkReq(request *models.CreateNetwork) {
-// 	if request.NetworkDomain != nil {
-// 		request.NetworkDomain = &models.IDModel{ID: request.NetworkDomain.ID}
-// 	}
-// 	if request.NetworkProxy != nil {
-// 		request.NetworkProxy = &models.IDModel{ID: request.NetworkProxy.ID}
-// 	}
-// }
+func (r *resNetwork) networkRequest(createReq *models.CreateNetwork) error {
+	if createReq.TfDhcpNetwork != nil {
+		createReq.Name = createReq.TfDhcpNetwork.Name
+		createReq.Description = createReq.TfDhcpNetwork.Description
+		createReq.DisplayName = createReq.TfDhcpNetwork.DisplayName
+		createReq.Cidr = createReq.TfDhcpNetwork.Cidr
+		createReq.DNSPrimary = createReq.TfDhcpNetwork.DNSPrimary
+		createReq.DNSSecondary = createReq.TfDhcpNetwork.DNSSecondary
+		createReq.Gateway = createReq.TfDhcpNetwork.Gateway
+		createReq.NoProxy = createReq.TfDhcpNetwork.NoProxy
+		createReq.ScopeID = createReq.TfDhcpNetwork.ScopeID
+		createReq.SearchDomains = createReq.TfDhcpNetwork.SearchDomains
+		createReq.Active = createReq.TfDhcpNetwork.Active
+		createReq.AllowStaticOverride = createReq.TfDhcpNetwork.AllowStaticOverride
+		createReq.DhcpServer = createReq.TfDhcpNetwork.DhcpServer
+		createReq.AppURLProxyBypass = createReq.TfDhcpNetwork.AppURLProxyBypass
+		createReq.ScanNetwork = createReq.TfDhcpNetwork.ScanNetwork
+		if createReq.TfDhcpNetwork.ResourcePermissions != nil {
+			createReq.ResourcePermissions.All = createReq.TfDhcpNetwork.ResourcePermissions.All
+		}
+		if createReq.TfDhcpNetwork.Site != nil {
+			createReq.Site = &models.IDStringModel{createReq.TfDhcpNetwork.Site.ID}
+		}
+		if createReq.TfDhcpConfig != nil {
+			createReq.DhcpConfig.ConnectedGateway = createReq.TfDhcpConfig.ConnectedGateway
+			createReq.DhcpConfig.VlanIDs = createReq.TfDhcpConfig.VlanIDs
+			createReq.DhcpConfig.SubnetDhcpLeaseTime = createReq.TfDhcpConfig.SubnetDhcpLeaseTime
+			createReq.DhcpConfig.SubnetDhcpServerAddress = createReq.TfDhcpConfig.SubnetDhcpServerAddress
+			createReq.DhcpConfig.SubnetIPManagementType = createReq.TfDhcpConfig.SubnetIPManagementType
+			createReq.DhcpConfig.SubnetIPServerID = createReq.TfDhcpConfig.SubnetIPServerID
+		}
+	}
+
+	if createReq.TfStaticNetwork != nil {
+		createReq.Name = createReq.TfStaticNetwork.Name
+		createReq.Description = createReq.TfStaticNetwork.Description
+		createReq.DisplayName = createReq.TfStaticNetwork.DisplayName
+		createReq.Cidr = createReq.TfStaticNetwork.Cidr
+		createReq.DNSPrimary = createReq.TfStaticNetwork.DNSPrimary
+		createReq.DNSSecondary = createReq.TfStaticNetwork.DNSSecondary
+		createReq.Gateway = createReq.TfStaticNetwork.Gateway
+		createReq.NoProxy = createReq.TfStaticNetwork.NoProxy
+		createReq.ScopeID = createReq.TfStaticNetwork.ScopeID
+		createReq.SearchDomains = createReq.TfStaticNetwork.SearchDomains
+		createReq.Active = createReq.TfStaticNetwork.Active
+		createReq.AllowStaticOverride = createReq.TfStaticNetwork.AllowStaticOverride
+		createReq.AppURLProxyBypass = createReq.TfStaticNetwork.AppURLProxyBypass
+		createReq.ScanNetwork = createReq.TfStaticNetwork.ScanNetwork
+		createReq.PoolID = createReq.TfStaticNetwork.PoolID
+		if createReq.TfStaticNetwork.ResourcePermissions != nil {
+			createReq.ResourcePermissions.All = createReq.TfStaticNetwork.ResourcePermissions.All
+		}
+		if createReq.TfStaticConfig != nil {
+			createReq.StaticConfig.ConnectedGateway = createReq.TfStaticConfig.ConnectedGateway
+			createReq.StaticConfig.VlanIDs = createReq.TfStaticConfig.VlanIDs
+		}
+	}
+	return nil
+}

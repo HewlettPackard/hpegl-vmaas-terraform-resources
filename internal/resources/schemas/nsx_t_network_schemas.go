@@ -152,6 +152,41 @@ func StaticNetworkSchema() *schema.Schema {
 					Optional:    true,
 					Description: "If set to true, network will allow static override",
 				},
+				"resource_permissions": {
+					Type:     schema.TypeList,
+					Optional: true,
+					MaxItems: 1,
+					Elem: &schema.Resource{
+						Schema: map[string]*schema.Schema{
+							"all": {
+								Type:        schema.TypeBool,
+								Optional:    true,
+								Default:     true,
+								Description: "Pass `true` to allow access to all groups.",
+							},
+							"sites": {
+								Type:        schema.TypeList,
+								Optional:    true,
+								Description: "List of sites/groups",
+								Elem: &schema.Resource{
+									Schema: map[string]*schema.Schema{
+										"id": {
+											Type:        schema.TypeInt,
+											Required:    true,
+											Description: "ID of the site/group",
+										},
+										"default": {
+											Type:        schema.TypeBool,
+											Optional:    true,
+											Default:     false,
+											Description: "Group Default Selection",
+										},
+									},
+								},
+							},
+						},
+					},
+				},
 				"config": {
 					Type:        schema.TypeList,
 					Optional:    true,
@@ -326,6 +361,41 @@ func DhcpNetworkSchema() *schema.Schema {
 								Optional: true,
 								Description: "Network Proxy ID. Get the Network proxy ID Use " + DSNetworkProxy +
 									"to get Network Proxy ID",
+							},
+						},
+					},
+				},
+				"resource_permissions": {
+					Type:     schema.TypeList,
+					Optional: true,
+					MaxItems: 1,
+					Elem: &schema.Resource{
+						Schema: map[string]*schema.Schema{
+							"all": {
+								Type:        schema.TypeBool,
+								Optional:    true,
+								Default:     true,
+								Description: "Pass `true` to allow access to all groups.",
+							},
+							"sites": {
+								Type:        schema.TypeList,
+								Optional:    true,
+								Description: "List of sites/groups",
+								Elem: &schema.Resource{
+									Schema: map[string]*schema.Schema{
+										"id": {
+											Type:        schema.TypeInt,
+											Required:    true,
+											Description: "ID of the site/group",
+										},
+										"default": {
+											Type:        schema.TypeBool,
+											Optional:    true,
+											Default:     false,
+											Description: "Group Default Selection",
+										},
+									},
+								},
 							},
 						},
 					},
