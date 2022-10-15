@@ -4,7 +4,7 @@ resource "hpegl_vmaas_network" "test_net" {
   name         = "tf_nsx_t_static_network"
   description  = "Static Network create using tf"
   scope_id     = data.hpegl_vmaas_transport_zone.tf_zone.provider_id
-  cidr         = "168.72.10.1/18"
+  cidr         = "193.2.3.1/20"
   gateway      = "168.72.10.1"
   primary_dns  = "8.8.8.8"
   scan_network = false

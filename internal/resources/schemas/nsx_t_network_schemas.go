@@ -61,7 +61,7 @@ func StaticNetworkSchema() *schema.Schema {
 								Description: "Connected Gateway. Pass Provider ID of the Tier1 gateway. Use " + DSRouter +
 									".provider_id  here.",
 							},
-							"vlan_id": {
+							"vlan_ids": {
 								Type:        schema.TypeString,
 								Optional:    true,
 								Description: "VLAN IDs eg. `0,3-5`. Use this field for VLAN based segments.",
