@@ -45,6 +45,7 @@ const (
 	ResRouterFirewallRuleGroup    = "hpegl_vmaas_router_firewall_rule_group"
 	ResRouterRoute                = "hpegl_vmaas_router_route"
 	ResRouterBgpNeighbor          = "hpegl_vmaas_router_bgp_neighbor"
+	ResDhcpServer                 = "hpegl_vmaas_dhcp_server"
 
 	// documentation related constants
 	generalNamedesc = "Name of the %s as it appears on HPE GreenLake for private cloud dashboard. " +

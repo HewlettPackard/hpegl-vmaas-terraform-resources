@@ -16,6 +16,7 @@ type Client struct {
 	RouterRoute               Resource
 	RouterBgpNeighbor         Resource
 	LoadBalancer              Resource
+	DhcpServer                Resource
 	LoadBalancerMonitor       Resource
 	LoadBalancerProfile       Resource
 	LoadBalancerPool          Resource
@@ -65,6 +66,9 @@ func NewClient(client *apiClient.APIClient, cfg apiClient.Configuration) *Client
 		),
 		LoadBalancer: newLoadBalancer(
 			&apiClient.LoadBalancerAPIService{Client: client, Cfg: cfg},
+			&apiClient.RouterAPIService{Client: client, Cfg: cfg}),
+		DhcpServer: newDhcpServer(
+			&apiClient.DhcpServerAPIService{Client: client, Cfg: cfg},
 			&apiClient.RouterAPIService{Client: client, Cfg: cfg}),
 		LoadBalancerMonitor:       newLoadBalancerMonitor(&apiClient.LoadBalancerAPIService{Client: client, Cfg: cfg}),
 		LoadBalancerProfile:       newLoadBalancerProfile(&apiClient.LoadBalancerAPIService{Client: client, Cfg: cfg}),
