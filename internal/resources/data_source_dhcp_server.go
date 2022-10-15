@@ -19,11 +19,16 @@ func DhcpServerData() *schema.Resource {
 				Required:    true,
 				Description: f(generalNamedesc, "DHCP Server", "DHCP Server"),
 			},
-			// "id": {
-			// 	Type:        schema.TypeInt,
-			// 	Required:    true,
-			// 	Description: "Parent lb ID, lb_id can be obtained by using LB datasource/resource.",
-			// },
+			"id": {
+				Type:        schema.TypeInt,
+				Computed:    true,
+				Description: "id can be obtained by using DHCP Server datasource/resource.",
+			},
+			"provider_id": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "ProviderId of the DHCP Server. Use the provider_id  while creating DHCP NSX-T Segment Network",
+			},
 		},
 		ReadContext: DHCPServerReadContext,
 		Description: `The ` + DSDhcpServer + ` data source can be used to discover the ID of a hpegl vmaas dhcpserver.

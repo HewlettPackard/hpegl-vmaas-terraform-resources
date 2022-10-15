@@ -22,7 +22,7 @@ resource "hpegl_vmaas_network" "dhcp_net" {
     dhcp_enabled = true
     config {
       dhcp_type = "dhcpLocal"
-      dhcp_server = "/infra/dhcp-server-configs/3b2124e4-fad5-4df9-8644-5acb69b1efac"
+      dhcp_server = data.hpegl_vmaas_dhcp_server.tf_dhcp_server.provider_id
       dhcp_lease_time = "86400"
       dhcp_range = "192.168.1.0/24"
       dhcp_server_address = "193.3.0.0/24"
