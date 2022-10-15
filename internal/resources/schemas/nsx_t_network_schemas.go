@@ -5,12 +5,7 @@ import (
 )
 
 const (
-	DSGroup         = "hpegl_vmaas_group"
-	DSNetworkPool   = "hpegl_vmaas_network_pool"
-	DSNetworkDomain = "hpegl_vmaas_network_domain"
-	DSNetworkProxy  = "hpegl_vmaas_network_proxy"
-	DSTransportZone = "hpegl_vmaas_transport_zone"
-	DSRouter        = "hpegl_vmaas_router"
+	DSRouter = "hpegl_vmaas_router"
 )
 
 func StaticNetworkSchema() *schema.Schema {
@@ -113,7 +108,7 @@ func DhcpNetworkSchema() *schema.Schema {
 								Description: "Connected Gateway. Pass Provider ID of the Tier1 gateway. Use " + DSRouter +
 									".provider_id  here.",
 							},
-							"vlan": {
+							"vlan_ids": {
 								Type:        schema.TypeString,
 								Optional:    true,
 								Description: "VLAN IDs eg. `0,3-5`. Use this field for VLAN based segments.",
