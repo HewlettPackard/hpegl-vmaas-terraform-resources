@@ -25,7 +25,7 @@ func DhcpServerData() *schema.Resource {
 			// 	Description: "Parent lb ID, lb_id can be obtained by using LB datasource/resource.",
 			// },
 		},
-		ReadContext: DhcpServerReadContext,
+		ReadContext: DHCPServerReadContext,
 		Description: `The ` + DSDhcpServer + ` data source can be used to discover the ID of a hpegl vmaas dhcpserver.
 		This can then be used with resources or data sources that require a ` + DSDhcpServer + `,
 		such as the ` + ResDhcpServer + ` resource.`,
@@ -37,7 +37,7 @@ func DhcpServerData() *schema.Resource {
 	}
 }
 
-func DhcpServerReadContext(ctx context.Context, rd *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func DHCPServerReadContext(ctx context.Context, rd *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, err := client.GetClientFromMetaMap(meta)
 	if err != nil {
 		return diag.FromErr(err)

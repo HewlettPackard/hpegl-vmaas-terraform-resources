@@ -144,59 +144,24 @@ func (r *resNetwork) Delete(ctx context.Context, d *utils.Data, meta interface{}
 
 func (r *resNetwork) networkRequest(createReq *models.CreateNetwork) error {
 	if createReq.TfDhcpNetwork != nil {
-		createReq.Name = createReq.TfDhcpNetwork.Name
-		createReq.Description = createReq.TfDhcpNetwork.Description
-		createReq.DisplayName = createReq.TfDhcpNetwork.DisplayName
-		createReq.Cidr = createReq.TfDhcpNetwork.Cidr
-		createReq.DNSPrimary = createReq.TfDhcpNetwork.DNSPrimary
-		createReq.DNSSecondary = createReq.TfDhcpNetwork.DNSSecondary
-		createReq.Gateway = createReq.TfDhcpNetwork.Gateway
-		createReq.NoProxy = createReq.TfDhcpNetwork.NoProxy
-		createReq.ScopeID = createReq.TfDhcpNetwork.ScopeID
-		createReq.SearchDomains = createReq.TfDhcpNetwork.SearchDomains
-		createReq.Active = createReq.TfDhcpNetwork.Active
-		createReq.AllowStaticOverride = createReq.TfDhcpNetwork.AllowStaticOverride
 		createReq.DhcpServer = createReq.TfDhcpNetwork.DhcpServer
-		createReq.AppURLProxyBypass = createReq.TfDhcpNetwork.AppURLProxyBypass
-		createReq.ScanNetwork = createReq.TfDhcpNetwork.ScanNetwork
-		if createReq.TfDhcpNetwork.ResourcePermissions != nil {
-			createReq.ResourcePermissions.All = createReq.TfDhcpNetwork.ResourcePermissions.All
-		}
-		if createReq.TfDhcpNetwork.Site != nil {
-			createReq.Site = &models.IDStringModel{createReq.TfDhcpNetwork.Site.ID}
-		}
-		if createReq.TfDhcpConfig != nil {
-			createReq.Config.ConnectedGateway = createReq.TfDhcpConfig.ConnectedGateway
-			createReq.Config.VlanIDs = createReq.TfDhcpConfig.VlanIDs
-			createReq.Config.SubnetDhcpLeaseTime = createReq.TfDhcpConfig.SubnetDhcpLeaseTime
-			createReq.Config.SubnetDhcpServerAddress = createReq.TfDhcpConfig.SubnetDhcpServerAddress
-			createReq.Config.SubnetIPManagementType = createReq.TfDhcpConfig.SubnetIPManagementType
-			createReq.Config.SubnetIPServerID = createReq.TfDhcpConfig.SubnetIPServerID
+		if createReq.TfDhcpNetwork.Config != nil {
+			createReq.Config.ConnectedGateway = createReq.TfDhcpNetwork.Config.ConnectedGateway
+			createReq.Config.VlanIDs = createReq.TfDhcpNetwork.Config.VlanIDs
+			createReq.Config.SubnetDhcpLeaseTime = createReq.TfDhcpNetwork.Config.SubnetDhcpLeaseTime
+			createReq.Config.SubnetDhcpServerAddress = createReq.TfDhcpNetwork.Config.SubnetDhcpServerAddress
+			createReq.Config.SubnetIPManagementType = createReq.TfDhcpNetwork.Config.SubnetIPManagementType
+			createReq.Config.SubnetIPServerID = createReq.TfDhcpNetwork.Config.SubnetIPServerID
 		}
 	}
-
 	if createReq.TfStaticNetwork != nil {
-		createReq.Name = createReq.TfStaticNetwork.Name
-		createReq.Description = createReq.TfStaticNetwork.Description
-		createReq.DisplayName = createReq.TfStaticNetwork.DisplayName
-		createReq.Cidr = createReq.TfStaticNetwork.Cidr
-		createReq.DNSPrimary = createReq.TfStaticNetwork.DNSPrimary
-		createReq.DNSSecondary = createReq.TfStaticNetwork.DNSSecondary
-		createReq.Gateway = createReq.TfStaticNetwork.Gateway
-		createReq.NoProxy = createReq.TfStaticNetwork.NoProxy
-		createReq.ScopeID = createReq.TfStaticNetwork.ScopeID
-		createReq.SearchDomains = createReq.TfStaticNetwork.SearchDomains
-		createReq.Active = createReq.TfStaticNetwork.Active
-		createReq.AllowStaticOverride = createReq.TfStaticNetwork.AllowStaticOverride
-		createReq.AppURLProxyBypass = createReq.TfStaticNetwork.AppURLProxyBypass
-		createReq.ScanNetwork = createReq.TfStaticNetwork.ScanNetwork
-		createReq.PoolID = createReq.TfStaticNetwork.PoolID
-		if createReq.TfStaticNetwork.ResourcePermissions != nil {
-			createReq.ResourcePermissions.All = createReq.TfStaticNetwork.ResourcePermissions.All
-		}
-		if createReq.TfStaticConfig != nil {
-			createReq.Config.VlanIDs = createReq.TfStaticConfig.VlanIDs
-			createReq.Config.ConnectedGateway = createReq.TfStaticConfig.ConnectedGateway
+		if createReq.TfStaticNetwork.Config != nil {
+			createReq.Config.VlanIDs = createReq.TfStaticNetwork.Config.VlanIDs
+			createReq.Config.ConnectedGateway = createReq.TfStaticNetwork.Config.ConnectedGateway
+			createReq.Config.SubnetDhcpLeaseTime = ""
+			createReq.Config.SubnetDhcpServerAddress = ""
+			createReq.Config.SubnetIPManagementType = ""
+			createReq.Config.SubnetIPServerID = ""
 		}
 	}
 	return nil
