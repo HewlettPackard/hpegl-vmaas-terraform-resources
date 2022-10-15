@@ -65,6 +65,7 @@ func (r Registration) SupportedResources() map[string]*schema.Resource {
 		resources.ResLoadBalancerProfiles:       resources.LoadBalancerProfiles(),
 		resources.ResLoadBalancerPools:          resources.LoadBalancerPools(),
 		resources.ResLoadBalancerVirtualServers: resources.LoadBalancerVirtualServers(),
+		resources.ResDhcpServer:                 resources.DhcpServer(),
 	}
 }
 
