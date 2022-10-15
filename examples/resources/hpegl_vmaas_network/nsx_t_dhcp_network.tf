@@ -4,14 +4,14 @@ resource "hpegl_vmaas_network" "dhcp_net" {
   name         = "tf_nsx_t_dhcp_network"
   description  = "DHCP Network create using tf"
   display_name = "tf_nsx_t_dhcp_network"
-  transport_zone     = data.hpegl_vmaas_transport_zone.tf_zone.provider_id
-  gateway_cidr         = "193.3.0.1/24" 
+  scope_id     = data.hpegl_vmaas_transport_zone.tf_zone.provider_id
+  cidr         = "193.3.0.1/24" 
   primary_dns = "8.8.8.8"
   secondary_dns = "8.8.8.8"
   scan_network = false
   active       = true
   allow_ip_override = false
-  bypass_proxy_for_appliance_url = true
+  appliance_url_proxy_bypass = true
   group {
     id = "shared"
   }
