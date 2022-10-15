@@ -5,6 +5,7 @@ package resources
 import (
 	"context"
 
+	diffvalidation "github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/resources/diffValidation"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/resources/schemas"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/resources/validations"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/utils"
@@ -191,6 +192,7 @@ func Network() *schema.Resource {
 		CreateContext: resNetworkCreateContext,
 		UpdateContext: resNetworkUpdateContext,
 		DeleteContext: resNetworkDeleteContext,
+		CustomizeDiff: virtualServerCustomDiff,
 		Description: `Network resource facilitates creating,
 		updating and deleting NSX-T Networks.`,
 	}
@@ -254,4 +256,8 @@ func resNetworkUpdateContext(ctx context.Context, rd *schema.ResourceData, meta 
 	}
 
 	return nil
+}
+
+func networkCustomDiff(ctx context.Context, diff *schema.ResourceDiff, meta interface{}) error {
+	return diffvalidation.NewNetworkValidate(diff).DiffValidate()
 }
