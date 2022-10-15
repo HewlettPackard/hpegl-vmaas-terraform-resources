@@ -20,7 +20,7 @@ resource "hpegl_vmaas_network" "dhcp_net" {
   }
   dhcp_network{
     dhcp_enabled = true
-    config {
+    dhcp_config {
       dhcp_type = "dhcpLocal"
       dhcp_server = data.hpegl_vmaas_dhcp_server.tf_dhcp_server.provider_id
       dhcp_lease_time = "86400"

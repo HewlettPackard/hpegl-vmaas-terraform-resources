@@ -48,7 +48,7 @@ func StaticNetworkSchema() *schema.Schema {
 					Computed:    true,
 					Description: "Status of the network",
 				},
-				"config": {
+				"static_config": {
 					Type:        schema.TypeList,
 					Optional:    true,
 					Description: "Network configuration",
@@ -95,7 +95,7 @@ func DhcpNetworkSchema() *schema.Schema {
 					Default:     true,
 					Description: "Enable DHCP Server.",
 				},
-				"config": {
+				"dhcp_config": {
 					Type:        schema.TypeList,
 					Required:    true,
 					Description: "Network configuration",

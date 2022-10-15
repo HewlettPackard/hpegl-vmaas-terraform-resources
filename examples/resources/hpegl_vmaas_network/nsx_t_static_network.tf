@@ -17,7 +17,7 @@ resource "hpegl_vmaas_network" "test_net" {
     id = "shared"
   }
   static_network {
-    config {
+    static_config {
       vlan_ids = "0,3-5"
       connected_gateway = data.hpegl_vmaas_router.tier1_router.provider_id
     }
