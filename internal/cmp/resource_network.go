@@ -158,10 +158,6 @@ func (r *resNetwork) networkRequest(createReq *models.CreateNetwork) error {
 		if createReq.TfStaticNetwork.Config != nil {
 			createReq.Config.VlanIDs = createReq.TfStaticNetwork.Config.VlanIDs
 			createReq.Config.ConnectedGateway = createReq.TfStaticNetwork.Config.ConnectedGateway
-			createReq.Config.SubnetDhcpLeaseTime = ""
-			createReq.Config.SubnetDhcpServerAddress = ""
-			createReq.Config.SubnetIPManagementType = ""
-			createReq.Config.SubnetIPServerID = ""
 		}
 	}
 	return nil

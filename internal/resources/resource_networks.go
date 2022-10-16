@@ -192,7 +192,7 @@ func Network() *schema.Resource {
 		CreateContext: resNetworkCreateContext,
 		UpdateContext: resNetworkUpdateContext,
 		DeleteContext: resNetworkDeleteContext,
-		CustomizeDiff: virtualServerCustomDiff,
+		CustomizeDiff: networkCustomDiff,
 		Description: `Network resource facilitates creating,
 		updating and deleting NSX-T Networks.`,
 	}
