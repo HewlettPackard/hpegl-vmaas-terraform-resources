@@ -65,8 +65,8 @@ func (n *dhcpServerds) Read(ctx context.Context, d *utils.Data, meta interface{}
 			log.Print("[DEBUG]", dh.GetNetworkDhcpServerResp[i].ProviderID)
 
 			return tftags.Set(d, dh.GetNetworkDhcpServerResp[i])
-
 		}
 	}
+
 	return fmt.Errorf(errExactMatch, "DHCP Server")
 }
