@@ -19,8 +19,10 @@ type dhcpServerds struct {
 
 func newDHCPServerDS(dhcpServerClient *client.DhcpServerAPIService,
 	routerClient *client.RouterAPIService) *dhcpServerds {
-	return &dhcpServerds{dhcpClient: dhcpServerClient,
-		rClient: routerClient}
+	return &dhcpServerds{
+		dhcpClient: dhcpServerClient,
+		rClient:    routerClient,
+	}
 }
 
 func (n *dhcpServerds) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
@@ -63,6 +65,7 @@ func (n *dhcpServerds) Read(ctx context.Context, d *utils.Data, meta interface{}
 			log.Print("[DEBUG]", dh.GetNetworkDhcpServerResp[i].ProviderID)
 
 			return tftags.Set(d, dh.GetNetworkDhcpServerResp[i])
+
 		}
 	}
 	return fmt.Errorf(errExactMatch, "DHCP Server")

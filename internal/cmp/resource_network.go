@@ -160,5 +160,6 @@ func (r *resNetwork) networkRequest(createReq *models.CreateNetwork) error {
 			createReq.Config.ConnectedGateway = createReq.TfStaticNetwork.Config.ConnectedGateway
 		}
 	}
+
 	return nil
 }

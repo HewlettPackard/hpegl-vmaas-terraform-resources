@@ -30,6 +30,7 @@ func (l *Network) DiffValidate() error {
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -38,6 +39,7 @@ func (l *Network) validateNetworks() error {
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -56,5 +58,6 @@ func (l *Network) validateNetworkConfigs(dhcpTypes interface{}, staticTypes inte
 			}
 		}
 	}
+
 	return nil
 }
