@@ -53,15 +53,16 @@ func (n *dhcpServerds) Read(ctx context.Context, d *utils.Data, meta interface{}
 		return fmt.Errorf(errExactMatch, "network server")
 	}
 
-	dhcpServer, err := n.dhcpClient.GetDhcpServers(ctx, 1)
+	dh, err := n.dhcpClient.GetDhcpServers(ctx, serverID)
 	if err != nil {
 		return err
 	}
 
-	for i, n := range dhcpServer.GetNetworkDhcpServerRes {
+	for i, n := range dh.GetNetworkDhcpServerResp {
 		if n.Name == name {
-			log.Print("[DEBUG]", dhcpServer.GetNetworkDhcpServerRes[i].ProviderID)
-			return tftags.Set(d, dhcpServer.GetNetworkDhcpServerRes[i])
+			log.Print("[DEBUG]", dh.GetNetworkDhcpServerResp[i].ProviderID)
+
+			return tftags.Set(d, dh.GetNetworkDhcpServerResp[i])
 		}
 	}
 	return fmt.Errorf(errExactMatch, "DHCP Server")
