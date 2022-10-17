@@ -11,21 +11,17 @@ resource "hpegl_vmaas_network" "dhcp_net" {
   active       = true
   allow_static_override = true
   appliance_url_proxy_bypass = true
-  group {
-    id = "shared"
-  }
+  group_id     = "shared"
+  dhcp_enabled = true
+  vlan_ids = "0,3-5"
+  connected_gateway = data.hpegl_vmaas_router.tier1_router.provider_id
   resource_permissions {
     all = true
   }
-  dhcp_network{
-    dhcp_enabled = true
-    dhcp_config {
-      dhcp_type = "dhcpLocal"
-      dhcp_server = "/infra/dhcp-server-configs/89e6b52f-2489-41b5-96f2-3393eaaad4b9"
-      dhcp_lease_time = "86400"
-      dhcp_range = "192.168.1.0/24"
-      vlan_ids = "0,3-5"
-      connected_gateway = data.hpegl_vmaas_router.tier1_router.provider_id
-    }
+  dhcp_network {
+    dhcp_type = "dhcpLocal"
+    dhcp_server = "/infra/dhcp-server-configs/89e6b52f-2489-41b5-96f2-3393eaaad4b9"
+    dhcp_lease_time = "86400"
+    dhcp_range = "192.168.1.0/24"
   }
 }
