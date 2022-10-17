@@ -11,8 +11,7 @@ import (
 const (
 	dhcpNetwork   = "dhcp_network"
 	staticNetwork = "static_network"
-	dhcpConfig    = "dhcp_config"
-	staticConfig  = "static_config"
+	isDhcpEnabled = "dhcp_enabled"
 )
 
 type Network struct {
@@ -35,29 +34,25 @@ func (l *Network) DiffValidate() error {
 }
 
 func (l *Network) validateNetworks() error {
-	err := l.validateNetworkConfigs(dhcpNetwork, staticNetwork)
-	if err != nil {
-		return err
+	isEnabled := l.diff.Get(isDhcpEnabled)
+	if isEnabled == true {
+		err := l.validateNetworkConfigs(dhcpNetwork)
+		if err != nil {
+			return err
+		}
+	} else if isEnabled == false {
+		err := l.validateNetworkConfigs(staticNetwork)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
 }
 
-func (l *Network) validateNetworkConfigs(dhcpTypes interface{}, staticTypes interface{}) error {
-	if len((dhcpTypes).([]interface{})) != 0 {
-		for _, networks := range dhcpTypes.([]interface{}) {
-			if len(networks.([]interface{})) == 0 {
-				return fmt.Errorf("please provide " + dhcpConfig + " for the Configuration")
-			}
-		}
+func (l *Network) validateNetworkConfigs(networkTypes interface{}) error {
+	if len((networkTypes).([]interface{})) != 0 {
+		return fmt.Errorf("please provide " + networkTypes.(string) + " for the Configuration")
 	}
-	if len((staticTypes).([]interface{})) != 0 {
-		for _, networks := range staticTypes.([]interface{}) {
-			if len(networks.([]interface{})) == 0 {
-				return fmt.Errorf("please provide " + staticConfig + " for the Configuration")
-			}
-		}
-	}
-
 	return nil
 }
