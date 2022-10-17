@@ -6,6 +6,7 @@ import (
 
 const (
 	DSNetworkPool = "hpegl_vmaas_network_pool"
+	DSDhcpServer  = "hpegl_vmaas_dhcp_server"
 )
 
 func StaticNetworkSchema() *schema.Schema {
@@ -51,12 +52,12 @@ func DhcpNetworkSchema() *schema.Schema {
 				"dhcp_type": {
 					Type:        schema.TypeString,
 					Required:    true,
-					Description: `DHCP Server type. Supported Values are "dhcpLocal", "dhcpRelay", "gatewayDhcp"`,
+					Description: `DHCP Server type. Supported Values is "dhcpLocal"`,
 				},
 				"dhcp_server": {
 					Type:        schema.TypeString,
 					Required:    true,
-					Description: "DHCP Server Config ID",
+					Description: "DHCP server ID. Use " + DSDhcpServer + " Data source's `provider_id` here.",
 				},
 				"dhcp_server_address": {
 					Type:     schema.TypeString,

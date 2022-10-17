@@ -31,7 +31,7 @@ func DhcpServerData() *schema.Resource {
 			},
 		},
 		ReadContext: DHCPServerReadContext,
-		Description: `The ` + DSDhcpServer + ` data source can be used to discover the ID of a hpegl vmaas dhcpserver.
+		Description: `The ` + DSDhcpServer + ` data source can be used to discover the ID of a hpegl vmaas DHCP server.
 		This can then be used with resources or data sources that require a ` + DSDhcpServer + `,
 		such as the ` + ResDhcpServer + ` resource.`,
 		SchemaVersion:  0,
