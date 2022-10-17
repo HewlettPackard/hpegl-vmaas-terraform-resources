@@ -11,11 +11,12 @@ acc:
     pool_id      = 7
     scan_network = false
     active       = true
-    config {
-       connected_gateway = "/infra/tier-1s/26cdb82e-0057-4461-ad4d-cddd61d77b1f"
-    }
+    connected_gateway = "/infra/tier-1s/26cdb82e-0057-4461-ad4d-cddd61d77b1f"
     resource_permissions {
       all = true
+    }
+    static_network {
+      pool_id      = 7
     }
   validations:
     tf.cidr = "172.16.10.1/24"
