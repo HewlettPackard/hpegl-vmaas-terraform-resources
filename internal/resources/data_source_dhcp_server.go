@@ -49,7 +49,7 @@ func DHCPServerReadContext(ctx context.Context, rd *schema.ResourceData, meta in
 	}
 
 	data := utils.NewData(rd)
-	if err := c.CmpClient.DhcpServer.Read(ctx, data, meta); err != nil {
+	if err := c.CmpClient.DSDhcpServer.Read(ctx, data, meta); err != nil {
 		return diag.FromErr(err)
 	}
 
