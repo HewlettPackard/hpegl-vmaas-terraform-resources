@@ -8,7 +8,6 @@ acc:
     scope_id     = "88cd4dc8-0445-4b8e-b260-0f4cd361f4e1"
     cidr         = "172.16.10.1/24"
     gateway      = "172.16.10.1"
-    pool_id      = 7
     scan_network = false
     active       = true
     connected_gateway = "/infra/tier-1s/26cdb82e-0057-4461-ad4d-cddd61d77b1f"
