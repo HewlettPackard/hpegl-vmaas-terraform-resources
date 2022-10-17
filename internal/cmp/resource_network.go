@@ -47,6 +47,10 @@ func (r *resNetwork) Create(ctx context.Context, d *utils.Data, meta interface{}
 	if err := tftags.Get(d, &createReq); err != nil {
 		return err
 	}
+	// align createReq and fill json related fields
+	if err := r.networkRequest(&createReq); err != nil {
+		return err
+	}
 
 	// Get network type id for NSX-T
 	typeRetry := utils.CustomRetry{}
@@ -89,12 +93,9 @@ func (r *resNetwork) Create(ctx context.Context, d *utils.Data, meta interface{}
 		}
 	}
 
-	alignNetworkReq(&createReq)
-
 	// Create network
 	createResp, err := r.nClient.CreateNetwork(ctx, models.CreateNetworkRequest{
-		Network:             createReq,
-		ResourcePermissions: createReq.ResourcePermissions,
+		Network: createReq,
 	})
 	if err != nil {
 		return err
@@ -110,10 +111,13 @@ func (r *resNetwork) Update(ctx context.Context, d *utils.Data, meta interface{}
 		return err
 	}
 
-	alignNetworkReq(&networkReq)
+	// align createReq and fill json related fields
+	if err := r.networkRequest(&networkReq); err != nil {
+		return err
+	}
+
 	updateResp, err := r.nClient.UpdateNetwork(ctx, networkReq.ID, models.CreateNetworkRequest{
-		Network:             networkReq,
-		ResourcePermissions: networkReq.ResourcePermissions,
+		Network: networkReq,
 	})
 	if err != nil {
 		return err
@@ -138,12 +142,28 @@ func (r *resNetwork) Delete(ctx context.Context, d *utils.Data, meta interface{}
 	return err
 }
 
-func alignNetworkReq(request *models.CreateNetwork) {
-	request.Site.ID = request.GroupID
-	if request.NetworkDomainID != 0 {
-		request.NetworkDomain = &models.IDModel{ID: request.NetworkDomainID}
+func (r *resNetwork) networkRequest(createReq *models.CreateNetwork) error {
+	createReq.Site.ID = createReq.GroupID
+	if createReq.NetworkDomainID != 0 {
+		createReq.NetworkDomain = &models.IDModel{ID: createReq.NetworkDomainID}
 	}
-	if request.ProxyID != 0 {
-		request.NetworkProxy = &models.IDModel{ID: request.ProxyID}
+	if createReq.ProxyID != 0 {
+		createReq.NetworkProxy = &models.IDModel{ID: createReq.ProxyID}
 	}
+
+	if createReq.TfDhcpNetwork != nil {
+		createReq.Config.ConnectedGateway = createReq.ConnectedGateway
+		createReq.Config.VlanIDs = createReq.VlanIDs
+		createReq.Config.SubnetDhcpLeaseTime = createReq.TfDhcpNetwork.SubnetDhcpLeaseTime
+		createReq.Config.SubnetDhcpServerAddress = createReq.TfDhcpNetwork.SubnetDhcpServerAddress
+		createReq.Config.SubnetIPManagementType = createReq.TfDhcpNetwork.SubnetIPManagementType
+		createReq.Config.SubnetIPServerID = createReq.TfDhcpNetwork.SubnetIPServerID
+	}
+	if createReq.TfStaticNetwork != nil {
+		createReq.Config.ConnectedGateway = createReq.ConnectedGateway
+		createReq.Config.VlanIDs = createReq.VlanIDs
+		createReq.PoolID = createReq.TfStaticNetwork.PoolID
+	}
+
+	return nil
 }

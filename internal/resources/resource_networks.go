@@ -5,6 +5,8 @@ package resources
 import (
 	"context"
 
+	diffvalidation "github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/resources/diffValidation"
+	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/resources/schemas"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/resources/validations"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/utils"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/client"
@@ -18,7 +20,7 @@ func Network() *schema.Resource {
 			"name": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "Name of the NSX-T Segment to be created.",
+				Description: "Name of the NSX-T Static Segment to be created.",
 			},
 			"description": {
 				Type:        schema.TypeString,
@@ -44,11 +46,6 @@ func Network() *schema.Resource {
 				Type:        schema.TypeInt,
 				Computed:    true,
 				Description: "Type ID for the NSX-T Network.",
-			},
-			"pool_id": {
-				Type:        schema.TypeInt,
-				Optional:    true,
-				Description: "Pool ID can be obtained with " + DSNetworkPool + " data source.",
 			},
 			"external_id": {
 				Type:        schema.TypeString,
@@ -101,12 +98,12 @@ func Network() *schema.Resource {
 				Default:     false,
 				Description: "Scan Network",
 			},
-			// "dhcp_server": {
-			// 	Type:        schema.TypeBool,
-			// 	Optional:    true,
-			// 	Default:     false,
-			// 	Description: "Enable DHCP Server.",
-			// },
+			"dhcp_enabled": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+				Description: "Enable DHCP Server.",
+			},
 			"appliance_url_proxy_bypass": {
 				Type:        schema.TypeBool,
 				Optional:    true,
@@ -138,26 +135,26 @@ func Network() *schema.Resource {
 				Optional:    true,
 				Description: "If set to true, network will allow static override",
 			},
-			"config": {
-				Type:        schema.TypeList,
+			"scope_id": {
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "Transport Zone ID. Use " + DSTransportZone + " Data source's `provider_id` here.",
+			},
+			"status": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Status of the network",
+			},
+			"connected_gateway": {
+				Type:     schema.TypeString,
+				Required: true,
+				Description: "Connected Gateway. Pass Provider ID of the Tier1 gateway. Use " + DSRouter +
+					".provider_id  here.",
+			},
+			"vlan_ids": {
+				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "Network configuration",
-				MaxItems:    1,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"connected_gateway": {
-							Type:     schema.TypeString,
-							Required: true,
-							Description: "Connected Gateway. Pass Provider ID of the Tier1 gateway. Use " + DSRouter +
-								".provider_id  here.",
-						},
-						"vlan_id": {
-							Type:        schema.TypeString,
-							Optional:    true,
-							Description: "VLAN IDs eg. `0,3-5`. Use this field for VLAN based segments.",
-						},
-					},
-				},
+				Description: "VLAN IDs eg. `0,3-5`. Use this field for VLAN based segments.",
 			},
 			"resource_permissions": {
 				Type:     schema.TypeList,
@@ -194,16 +191,8 @@ func Network() *schema.Resource {
 					},
 				},
 			},
-			"status": {
-				Type:        schema.TypeString,
-				Computed:    true,
-				Description: "Status of the network",
-			},
-			"scope_id": {
-				Type:        schema.TypeString,
-				Required:    true,
-				Description: "Transport Zone ID. Use " + DSTransportZone + " Data source's `provider_id` here.",
-			},
+			"static_network": schemas.StaticNetworkSchema(),
+			"dhcp_network":   schemas.DhcpNetworkSchema(),
 		},
 		SchemaVersion: 0,
 		Importer: &schema.ResourceImporter{
@@ -213,6 +202,7 @@ func Network() *schema.Resource {
 		CreateContext: resNetworkCreateContext,
 		UpdateContext: resNetworkUpdateContext,
 		DeleteContext: resNetworkDeleteContext,
+		CustomizeDiff: networkCustomDiff,
 		Description: `Network resource facilitates creating,
 		updating and deleting NSX-T Networks.`,
 	}
@@ -276,4 +266,8 @@ func resNetworkUpdateContext(ctx context.Context, rd *schema.ResourceData, meta 
 	}
 
 	return nil
+}
+
+func networkCustomDiff(ctx context.Context, diff *schema.ResourceDiff, meta interface{}) error {
+	return diffvalidation.NewNetworkValidate(diff).DiffValidate()
 }

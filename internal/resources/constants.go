@@ -30,6 +30,7 @@ const (
 	DSLBPool                 = "hpegl_vmaas_load_balancer_pool"
 	DSLBVirtualServer        = "hpegl_vmaas_load_balancer_virtual_server"
 	DSLBVirtualServerSslCert = "hpegl_vmaas_load_balancer_virtual_server_ssl_cert"
+	DSDhcpServer             = "hpegl_vmaas_dhcp_server"
 
 	// resource key
 	ResInstance                   = "hpegl_vmaas_instance"
