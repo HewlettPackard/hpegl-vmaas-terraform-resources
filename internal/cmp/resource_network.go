@@ -164,5 +164,6 @@ func (r *resNetwork) networkRequest(createReq *models.CreateNetwork) error {
 		createReq.Config.VlanIDs = createReq.VlanIDs
 		createReq.PoolID = createReq.TfStaticNetwork.PoolID
 	}
+
 	return nil
 }
