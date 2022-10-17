@@ -158,14 +158,11 @@ func (r *resNetwork) networkRequest(createReq *models.CreateNetwork) error {
 		createReq.Config.SubnetDhcpServerAddress = createReq.TfDhcpNetwork.SubnetDhcpServerAddress
 		createReq.Config.SubnetIPManagementType = createReq.TfDhcpNetwork.SubnetIPManagementType
 		createReq.Config.SubnetIPServerID = createReq.TfDhcpNetwork.SubnetIPServerID
-
 	}
 	if createReq.TfStaticNetwork != nil {
 		createReq.Config.ConnectedGateway = createReq.ConnectedGateway
 		createReq.Config.VlanIDs = createReq.VlanIDs
 		createReq.PoolID = createReq.TfStaticNetwork.PoolID
-
 	}
-
 	return nil
 }

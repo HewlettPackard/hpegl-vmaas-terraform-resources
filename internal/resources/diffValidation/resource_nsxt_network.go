@@ -55,5 +55,6 @@ func (l *Network) validateNetworkConfigs(networkTypes string) error {
 	if len((value).([]interface{})) == 0 {
 		return fmt.Errorf("please provide " + networkTypes + " for the Configuration")
 	}
+
 	return nil
 }
