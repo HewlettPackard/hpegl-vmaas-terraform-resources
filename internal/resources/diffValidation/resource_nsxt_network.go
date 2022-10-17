@@ -50,9 +50,10 @@ func (l *Network) validateNetworks() error {
 	return nil
 }
 
-func (l *Network) validateNetworkConfigs(networkTypes interface{}) error {
-	if len((networkTypes).([]interface{})) != 0 {
-		return fmt.Errorf("please provide " + networkTypes.(string) + " for the Configuration")
+func (l *Network) validateNetworkConfigs(networkTypes string) error {
+	value := l.diff.Get(networkTypes)
+	if len((value).([]interface{})) == 0 {
+		return fmt.Errorf("please provide " + networkTypes + " for the Configuration")
 	}
 	return nil
 }

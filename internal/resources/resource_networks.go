@@ -98,7 +98,7 @@ func Network() *schema.Resource {
 				Default:     false,
 				Description: "Scan Network",
 			},
-			"dhcp_server": {
+			"dhcp_enabled": {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Default:     false,
