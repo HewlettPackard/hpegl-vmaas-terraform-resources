@@ -143,22 +143,28 @@ func (r *resNetwork) Delete(ctx context.Context, d *utils.Data, meta interface{}
 }
 
 func (r *resNetwork) networkRequest(createReq *models.CreateNetwork) error {
+	createReq.Site.ID = createReq.GroupID
+	if createReq.NetworkDomainID != 0 {
+		createReq.NetworkDomain = &models.IDModel{ID: createReq.NetworkDomainID}
+	}
+	if createReq.ProxyID != 0 {
+		createReq.NetworkProxy = &models.IDModel{ID: createReq.ProxyID}
+	}
+
 	if createReq.TfDhcpNetwork != nil {
-		createReq.DhcpServer = createReq.TfDhcpNetwork.DhcpServer
-		if createReq.TfDhcpNetwork.Config != nil {
-			createReq.Config.ConnectedGateway = createReq.TfDhcpNetwork.Config.ConnectedGateway
-			createReq.Config.VlanIDs = createReq.TfDhcpNetwork.Config.VlanIDs
-			createReq.Config.SubnetDhcpLeaseTime = createReq.TfDhcpNetwork.Config.SubnetDhcpLeaseTime
-			createReq.Config.SubnetDhcpServerAddress = createReq.TfDhcpNetwork.Config.SubnetDhcpServerAddress
-			createReq.Config.SubnetIPManagementType = createReq.TfDhcpNetwork.Config.SubnetIPManagementType
-			createReq.Config.SubnetIPServerID = createReq.TfDhcpNetwork.Config.SubnetIPServerID
-		}
+		createReq.Config.ConnectedGateway = createReq.ConnectedGateway
+		createReq.Config.VlanIDs = createReq.VlanIDs
+		createReq.Config.SubnetDhcpLeaseTime = createReq.TfDhcpNetwork.SubnetDhcpLeaseTime
+		createReq.Config.SubnetDhcpServerAddress = createReq.TfDhcpNetwork.SubnetDhcpServerAddress
+		createReq.Config.SubnetIPManagementType = createReq.TfDhcpNetwork.SubnetIPManagementType
+		createReq.Config.SubnetIPServerID = createReq.TfDhcpNetwork.SubnetIPServerID
+
 	}
 	if createReq.TfStaticNetwork != nil {
-		if createReq.TfStaticNetwork.Config != nil {
-			createReq.Config.VlanIDs = createReq.TfStaticNetwork.Config.VlanIDs
-			createReq.Config.ConnectedGateway = createReq.TfStaticNetwork.Config.ConnectedGateway
-		}
+		createReq.Config.ConnectedGateway = createReq.ConnectedGateway
+		createReq.Config.VlanIDs = createReq.VlanIDs
+		createReq.PoolID = createReq.TfStaticNetwork.PoolID
+
 	}
 
 	return nil

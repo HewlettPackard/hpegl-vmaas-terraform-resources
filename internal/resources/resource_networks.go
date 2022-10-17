@@ -32,15 +32,35 @@ func Network() *schema.Resource {
 				Optional:    true,
 				Description: "Display name of the NSX-T network.",
 			},
+			"group_id": {
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "Group ID of the Network. Please use " + DSGroup + " data source to retrieve ID or pass `shared`.",
+			},
+			"code": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Network Type code",
+			},
 			"type_id": {
 				Type:        schema.TypeInt,
 				Computed:    true,
 				Description: "Type ID for the NSX-T Network.",
 			},
-			"pool_id": {
-				Type:        schema.TypeInt,
-				Optional:    true,
-				Description: "Pool ID can be obtained with " + DSNetworkPool + " data source.",
+			"external_id": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "External ID of the network",
+			},
+			"internal_id": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Internal ID of the network",
+			},
+			"unique_id": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Unique ID of the network",
 			},
 			"gateway": {
 				Type:             schema.TypeString,
@@ -78,6 +98,12 @@ func Network() *schema.Resource {
 				Default:     false,
 				Description: "Scan Network",
 			},
+			"dhcp_server": {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Default:     false,
+				Description: "Enable DHCP Server.",
+			},
 			"appliance_url_proxy_bypass": {
 				Type:        schema.TypeBool,
 				Optional:    true,
@@ -114,37 +140,21 @@ func Network() *schema.Resource {
 				Required:    true,
 				Description: "Transport Zone ID. Use " + DSTransportZone + " Data source's `provider_id` here.",
 			},
-			"group": {
-				Type:        schema.TypeList,
-				Optional:    true,
-				Description: "Group ID",
-				MaxItems:    1,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"id": {
-							Type:     schema.TypeString,
-							Required: true,
-							Description: "Group ID. Get the Group ID Use " + DSGroup +
-								"Pass `shared` to use this object across all the Groups.",
-						},
-					},
-				},
+			"status": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "Status of the network",
 			},
-			"network_proxy": {
-				Type:        schema.TypeList,
+			"connected_gateway": {
+				Type:     schema.TypeString,
+				Required: true,
+				Description: "Connected Gateway. Pass Provider ID of the Tier1 gateway. Use " + DSRouter +
+					".provider_id  here.",
+			},
+			"vlan_ids": {
+				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "Network Proxy ID",
-				MaxItems:    1,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"id": {
-							Type:     schema.TypeInt,
-							Optional: true,
-							Description: "Network Proxy ID. Get the Network proxy ID Use " + DSNetworkProxy +
-								"to get Network Proxy ID",
-						},
-					},
-				},
+				Description: "VLAN IDs eg. `0,3-5`. Use this field for VLAN based segments.",
 			},
 			"resource_permissions": {
 				Type:     schema.TypeList,
