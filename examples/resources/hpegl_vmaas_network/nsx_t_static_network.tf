@@ -17,6 +17,6 @@ resource "hpegl_vmaas_network" "test_net" {
     all = true
   }
   static_network {
-    pool_id = 7
+    pool_id = data.hpegl_vmaas_network_pool.tf_pool.id
   }
 }

@@ -35,13 +35,8 @@ func (l *Network) DiffValidate() error {
 
 func (l *Network) validateNetworks() error {
 	isEnabled := l.diff.Get(isDhcpEnabled)
-	if isEnabled == true {
+	if isEnabled == false {
 		err := l.validateNetworkConfigs(dhcpNetwork)
-		if err != nil {
-			return err
-		}
-	} else if isEnabled == false {
-		err := l.validateNetworkConfigs(staticNetwork)
 		if err != nil {
 			return err
 		}
@@ -52,8 +47,8 @@ func (l *Network) validateNetworks() error {
 
 func (l *Network) validateNetworkConfigs(networkTypes string) error {
 	value := l.diff.Get(networkTypes)
-	if len((value).([]interface{})) == 0 {
-		return fmt.Errorf("please provide " + networkTypes + " for the Configuration")
+	if len((value).([]interface{})) != 0 {
+		return fmt.Errorf("please provide " + staticNetwork + " for the Configuration")
 	}
 
 	return nil
