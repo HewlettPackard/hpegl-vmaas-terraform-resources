@@ -10,7 +10,6 @@ import (
 
 const (
 	dhcpNetwork   = "dhcp_network"
-	staticNetwork = "static_network"
 	isDhcpEnabled = "dhcp_enabled"
 )
 
