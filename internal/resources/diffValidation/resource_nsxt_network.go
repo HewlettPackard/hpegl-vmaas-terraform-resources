@@ -48,7 +48,7 @@ func (l *Network) validateNetworks() error {
 func (l *Network) validateNetworkConfigs(networkTypes string) error {
 	value := l.diff.Get(networkTypes)
 	if len((value).([]interface{})) != 0 {
-		return fmt.Errorf("please provide " + staticNetwork + " for the Configuration")
+		return fmt.Errorf("Do not provide the DHCP configurations when the" + isDhcpEnabled + "is disabled")
 	}
 
 	return nil
