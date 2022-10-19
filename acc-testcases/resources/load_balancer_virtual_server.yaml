@@ -7,8 +7,7 @@ acc:
     description  = "tf_virtual-server created by tf"
     vip_address     = "10.11.12.13"
     vip_port = "8080"
-    vip_host_name = "host VS"
-    pool = 994
+    pool = 1037
 
     type = "http"
     http_application_profile {
