@@ -83,7 +83,8 @@ acceptance:
 	@if [ "${case}" != "" ]; then \
 		TF_ACC=true go test -run $(case) -v -timeout=2000s -cover $(ACC_TEST_FILE_LOCATION); \
 	else \
-		TF_ACC=true go test -v -timeout=50000s -cover $(ACC_TEST_FILE_LOCATION) -parallel 1;\
+		go get -u github.com/Thatooine/go-test-html-report; \
+		TF_ACC=true go test -v -timeout=50000s -cover -json $(ACC_TEST_FILE_LOCATION) -parallel 1 | go-test-html-report;\
 	fi
 
 build: vendor $(NAME)
