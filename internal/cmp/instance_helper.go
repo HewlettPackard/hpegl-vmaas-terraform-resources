@@ -117,7 +117,7 @@ func updateInstance(ctx context.Context, sharedClient instanceSharedClient, d *u
 				AddTags:           addTags,
 				RemoveTags:        removeTags,
 				Labels:            d.GetStringList("labels"),
-				PowerScheduleType: utils.JSONNumber(d.GetInt("power_schedule_id")),
+				PowerScheduleType: d.GetJSONNumber("power_schedule_id"),
 				InstanceContext:   d.GetString("environment_code"),
 			},
 		}
