@@ -51,7 +51,7 @@ func (i *instanceClone) Create(ctx context.Context, d *utils.Data, meta interfac
 			EnvironmentPrefix: d.GetString("env_prefix"),
 			Tags:              d.GetStringList("labels"),
 			InstanceContext:   d.GetString("environment_code"),
-			PowerScheduleType: d.GetInt("power_schedule_id"),
+			PowerScheduleType: d.GetJSONNumber("power_schedule_id"),
 		},
 		Plan:              models.IDModel{ID: d.GetInt("plan_id")},
 		LayoutSize:        d.GetInt("scale"),
