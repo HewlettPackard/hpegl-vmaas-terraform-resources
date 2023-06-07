@@ -261,7 +261,7 @@ func instanceGetNetwork(networksMap []map[string]interface{}) []models.CreateIns
 
 func instanceGetConfig(c map[string]interface{}, isVmware bool) *models.CreateInstanceBodyConfig {
 	config := &models.CreateInstanceBodyConfig{
-		ResourcePoolID: utils.JSONNumber(c["resource_pool_id"]),
+		ResourcePoolID: c["resource_pool_id"],
 		NoAgent:        strconv.FormatBool(c["no_agent"].(bool)),
 		SmbiosAssetTag: c["asset_tag"].(string),
 		VMwareFolderID: c["folder_code"].(string),
