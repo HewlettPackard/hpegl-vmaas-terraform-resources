@@ -1,6 +1,6 @@
 module github.com/HewlettPackard/hpegl-vmaas-terraform-resources
 
-go 1.17
+go 1.20
 
 require (
 	github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk v0.1.3
