@@ -6,6 +6,7 @@ run:
   skip-dirs:
     - vendor
   build-tags: acceptance
+  modules-download-mode: readonly
 
 linters-settings:
   dupl:
