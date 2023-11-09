@@ -29,42 +29,14 @@ linters-settings:
     ignore-tests: true
 
 linters:
-  enable-all: true
-  disable:
-    - gosec
-    - dupl
-    - wsl
-    - gci
-    - goerr113
-    - godot
-    - gomnd
-    - gochecknoinits
-    - gochecknoglobals
+  disable-all: true
+  enable:
     - errcheck
-    # - forbidigo
-    - testpackage
-    - nolintlint
-    - scopelint
-    - wrapcheck
-    - nilerr
-    - thelper
-    # Temporarily disabling these
-    - errorlint
-    - predeclared
-    - paralleltest
-    - gocritic
-    - forcetypeassert
-    - ifshort
-    - exhaustivestruct
-    - cyclop
-    - varnamelen
-    - ireturn
-    #Temporarily disabling wrapcheck
-    # - wrapcheck
-    # Disable the 'cyclop' cyclometric complexity linter. 'gocyclo' already
-    # covers cyclometric complexity, and 'cyclop' has no documentation to
-    # help with resolving the flagged lints
-    # - cyclop
+    - gosimple
+    - govet
+    - ineffassign
+    - staticcheck
+    - unused
 
 issues:
 
