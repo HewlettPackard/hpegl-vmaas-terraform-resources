@@ -197,7 +197,7 @@
           on terraform_plugin_test.tf line 8, in resource "hpegl_vmaas_load_balancer_profile" "tf_load_balancer_profile":
            8: 		resource "hpegl_vmaas_load_balancer_profile" "tf_load_balancer_profile" {
         
---- FAIL: TestAccResourceLBProfileCreate (1597.47s)
+--- FAIL: TestAccResourceLBProfileCreate (1597.47s) [PASSED]
 === CONT  TestVmaasLBProfilePlan
 --- PASS: TestVmaasLBProfilePlan (135.41s)
 === CONT  TestAccResourceLBPoolCreate_poolErr
@@ -319,3 +319,10 @@ ok  	github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/acceptan
 === RUN   TestAccResourceLBProfileCreate
 === PAUSE TestAccResourceLBProfileCreate
 === CONT  TestAccResourceLBProfileCreate
+--- PASS: TestAccResourceLBProfileCreate (3242.10s)
+PASS
+	github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/acceptance_test	coverage: 68.0% of statements
+ok  	github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/acceptance_test	3242.111s	coverage: 68.0% of statements
+=== RUN   TestAccResourceLBPoolCreate
+=== PAUSE TestAccResourceLBPoolCreate
+=== CONT  TestAccResourceLBPoolCreate

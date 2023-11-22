@@ -14,11 +14,11 @@ acc:
       tcp_multiplexing = false
       tcp_multiplexing_number = 6 
       member_group {
-        group = "/infra/domains/default/groups/Application-Group"
+        group = "/infra/lb-pools/d3995b17-e10f-46bb-8d2b-82b42d153452"
         max_ip_list_size = 1
         ip_revision_filter = "IPV4"
         port = 80
       }
     }
   validations:
-    json.loadBalancerPool.config.memberGroup.path: "/infra/domains/default/groups/Application-Group"
+    json.loadBalancerPool.config.memberGroup.path: "/infra/lb-pools/d3995b17-e10f-46bb-8d2b-82b42d153452"
