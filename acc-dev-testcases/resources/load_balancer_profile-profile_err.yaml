@@ -2,7 +2,7 @@ vars:
   http_name: tf_HTTP_PROFILE_%rand_int
 acc:
 - config: |
-    lb_id = 306 
+    lb_id = 18 
     name  =  "$(http_name)"      
     description  = "HTTP_PROFILE creating using tf"
     profile_type = "application-profile"

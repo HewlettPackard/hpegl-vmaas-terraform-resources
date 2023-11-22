@@ -31,7 +31,7 @@ func TestAccDataSourceNetworkEdgeCluster(t *testing.T) {
 				return nil, err
 			}
 			for i, n := range ServerResp.NetworkServices {
-				if n.TypeName == "NSX-T" {
+				if n.TypeName == "NSX" {
 					serverID = ServerResp.NetworkServices[i].ID
 
 					break

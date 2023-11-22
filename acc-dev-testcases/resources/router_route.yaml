@@ -3,7 +3,7 @@ vars:
 acc:
 - config: |
     name          = "$(route_name)"
-    router_id     = 31
+    router_id     = 4
     description   = "router route created using terraform"
     enabled       = true
     default_route = false

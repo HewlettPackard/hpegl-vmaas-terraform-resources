@@ -5,18 +5,18 @@ acc:
     name = "$(network_name)"
     description  = "Network created using tf"
     group_id     = "shared"
-    scope_id     = "b58527dd-f5fd-4658-b426-ba4b74d00418"
-    cidr         = "10.200.40.1/24"
-    gateway      = "10.200.40.1"
+    scope_id     = "fdb6e5ba-2f28-4186-bb76-3515aafc1902"
+    cidr         = "11.10.31.1/24"
+    gateway      = "11.10.31.1"
     scan_network = false
     active       = true
-    connected_gateway = "/infra/tier-1s/d3561ba7-01c9-4fa7-a7c5-bac401fd8f75"
+    connected_gateway = "/infra/tier-1s/9c995f68-f873-42f0-bb1b-8c5021c8f64a"
     resource_permissions {
       all = true
     }
     static_network {
-      pool_id      = 25
+      pool_id      = 17
     }
   validations:
-    tf.cidr = "10.200.40.1/24"
-    tf.gateway = "10.200.40.1"
+    tf.cidr = "11.10.31.1/24"
+    tf.gateway = "11.10.31.1"

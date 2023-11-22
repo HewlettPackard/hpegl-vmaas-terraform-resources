@@ -6,8 +6,8 @@ import "time"
 
 const (
 	vmware        = "vmware"
-	nsxtSegment   = "NSX-T Segment"
-	nsxt          = "NSX-T"
+	nsxtSegment   = "NSX Segment"
+	nsxt          = "NSX"
 	errExactMatch = "error, could not find the %s with the specified name. Please verify the name and try again"
 	successErr    = "got success = 'false while %s"
 	// query params keys
@@ -20,8 +20,8 @@ const (
 	// retry related constants
 	maxTimeout = time.Hour * 2
 	// router consts
-	tier0GatewayType             = "NSX-T Tier-0 Gateway"
-	tier1GatewayType             = "NSX-T Tier-1 Gateway"
+	tier0GatewayType             = "NSX Tier-0 Gateway"
+	tier1GatewayType             = "NSX Tier-1 Gateway"
 	routerFirewallExternalPolicy = "GatewayPolicy"
 	syncedTypeValue              = "Synced"
 

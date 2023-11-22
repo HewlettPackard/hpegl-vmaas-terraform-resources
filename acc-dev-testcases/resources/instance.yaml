@@ -5,24 +5,24 @@ acc:
 - config: |
     name = "$(instance_name)"
     cloud_id = 1
-    group_id = 4
-    layout_id = 376
-    plan_id = 856
+    group_id = 2
+    layout_id = 118
+    plan_id = 216
     instance_type_code = "vmware"
     network {
-        id = 97
-        interface_id = 4
-    }
+        id = 84
+      }
     volume {
         name = "root_vol"
         datastore_id = "auto"
         size = $(rand_storage_1)
       }
     config {
-      resource_pool_id = 4
+      resource_pool_id = 5
       no_agent = true
-      template_id = 1696
-      folder_code = "group-v1036"
-    }
+      template_id = 752
+      folder_code = "group-v1042"
+      }
+    scale = 1
   validations:
     tf.status: "running"

@@ -1,0 +1,6 @@
+acc:
+- config: |
+    name = "PCE-testLB-Pool"
+    lb_id = 18
+  validations:
+    json.loadBalancerPool.id: 86

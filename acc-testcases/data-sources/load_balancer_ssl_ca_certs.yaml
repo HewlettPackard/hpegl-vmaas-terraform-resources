@@ -1,5 +1,0 @@
-acc:
-- config: |
-    name = "SSL_CA_certs"
-  validations:
-    json.certificates.id: 22

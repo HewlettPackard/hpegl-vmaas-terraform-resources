@@ -12,7 +12,7 @@ acc:
       admin_state = true
       size = "SMALL"
       log_level = "INFO"
-      tier1_gateways  = "/infra/tier-1s/26cdb82e-0057-4461-ad4d-cddd61d77b1f"
+      tier1_gateways  = "/infra/tier-1s/9c995f68-f873-42f0-bb1b-8c5021c8f64a"
     }
   validations:
-    json.loadBalancer.config.tier1: "/infra/tier-1s/26cdb82e-0057-4461-ad4d-cddd61d77b1f"
+    json.loadBalancer.config.tier1: "/infra/tier-1s/9c995f68-f873-42f0-bb1b-8c5021c8f64a"

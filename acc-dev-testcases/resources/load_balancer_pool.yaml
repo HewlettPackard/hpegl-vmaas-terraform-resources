@@ -1,9 +1,8 @@
-# here line no 18 pool member group is wrong and expecting the error
 vars:
   pool_name: tf_POOL_%rand_int
 acc:
 - config: |
-    lb_id = 306
+    lb_id = 18
     name  =  "$(pool_name)"      
     description  = "POOL creating using tf"
     min_active_members     = 1
@@ -15,7 +14,7 @@ acc:
       tcp_multiplexing = false
       tcp_multiplexing_number = 6 
       member_group {
-        group = "/infra/domains/default/groups/Application-Group1"
+        group = "/infra/domains/default/groups/Application-Group"
         max_ip_list_size = 1
         ip_revision_filter = "IPV4"
         port = 80
@@ -23,4 +22,3 @@ acc:
     }
   validations:
     json.loadBalancerPool.config.memberGroup.path: "/infra/domains/default/groups/Application-Group"
-  expect_error: ".*pool.*" 
