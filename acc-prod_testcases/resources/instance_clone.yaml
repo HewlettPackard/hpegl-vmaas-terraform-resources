@@ -3,8 +3,8 @@ vars:
 acc:
 - config: |
     name = "$(instance_name)"
-    source_instance_id = 59300
+    source_instance_id = 1
     network {
-      id           = 267
-      interface_id = 0
+      id           = 84
+      interface_id = 4
     }

@@ -1,0 +1,5 @@
+acc:
+- config: |
+    name = "sample-cert"
+  validations:
+    json.certificates.id: 7

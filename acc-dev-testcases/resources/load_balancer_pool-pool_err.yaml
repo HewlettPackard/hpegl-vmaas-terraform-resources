@@ -3,7 +3,7 @@ vars:
   pool_name: tf_POOL_%rand_int
 acc:
 - config: |
-    lb_id = 306
+    lb_id = 18
     name  =  "$(pool_name)"      
     description  = "POOL creating using tf"
     min_active_members     = 1

@@ -1,5 +1,5 @@
 acc:
 - config: |
-    name = "nsx_tier1_gateway"
+    name = "Router_DONT_DELETE_USED_FOR_IAC"
   validations:
-    json.networkRouter.providerId: "/infra/tier-1s/26cdb82e-0057-4461-ad4d-cddd61d77b1f"
+    json.networkRouter.providerId: "/infra/tier-1s/d3561ba7-01c9-4fa7-a7c5-bac401fd8f75"
