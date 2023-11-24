@@ -40,12 +40,12 @@ func ParseVersion(version string) (int, error) {
 	return sum, nil
 }
 
-func GetCmpVersion(apiClient client.APIClientHandler) (int, error) {
+func GetCmpVersion(ctx context.Context, apiClient client.APIClientHandler) (int, error) {
 	c := client.CmpStatus{
 		Client: apiClient,
 	}
 
-	cmpVersion, err := c.GetCmpVersion(context.Background())
+	cmpVersion, err := c.GetCmpVersion(ctx)
 	if err != nil {
 		return 0, err
 	}
@@ -53,8 +53,8 @@ func GetCmpVersion(apiClient client.APIClientHandler) (int, error) {
 	return ParseVersion(cmpVersion.Appliance.BuildVersion)
 }
 
-func GetNsxTypeFromCMP(apiClient client.APIClientHandler) (string, error) {
-	cmpVersion, err := GetCmpVersion(apiClient)
+func GetNsxTypeFromCMP(ctx context.Context, apiClient client.APIClientHandler) (string, error) {
+	cmpVersion, err := GetCmpVersion(ctx, apiClient)
 	if err != nil {
 		return "", err
 	}

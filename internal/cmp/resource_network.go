@@ -42,7 +42,7 @@ func (r *resNetwork) Read(ctx context.Context, d *utils.Data, meta interface{}) 
 }
 
 func (r *resNetwork) Create(ctx context.Context, d *utils.Data, meta interface{}) error {
-	nsxType, err := GetNsxTypeFromCMP(r.rClient.Client)
+	nsxType, err := GetNsxTypeFromCMP(ctx, r.rClient.Client)
 	if err != nil {
 		return err
 	}

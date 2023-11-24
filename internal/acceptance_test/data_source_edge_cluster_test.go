@@ -3,6 +3,7 @@
 package acceptancetest
 
 import (
+	"context"
 	"testing"
 
 	api_client "github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
@@ -31,7 +32,7 @@ func TestAccDataSourceNetworkEdgeCluster(t *testing.T) {
 			if len(ServerResp.NetworkServices) == 0 {
 				return nil, err
 			}
-			nsxType, err := cmp.GetNsxTypeFromCMP(iClient.Client)
+			nsxType, err := cmp.GetNsxTypeFromCMP(context.Background(), iClient.Client)
 			if err != nil {
 				return nil, err
 			}

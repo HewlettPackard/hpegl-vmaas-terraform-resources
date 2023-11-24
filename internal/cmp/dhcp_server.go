@@ -122,7 +122,7 @@ func (dhcp *dhcpServer) Delete(ctx context.Context, d *utils.Data, meta interfac
 func (dhcp *dhcpServer) dhcpServerAlignRequest(ctx context.Context, meta interface{},
 	createReq *models.CreateNetworkDhcpServerRequest) error {
 	// Get network service ID
-	nsxType, err := GetNsxTypeFromCMP(dhcp.rClient.Client)
+	nsxType, err := GetNsxTypeFromCMP(ctx, dhcp.rClient.Client)
 	if err != nil {
 		return err
 	}

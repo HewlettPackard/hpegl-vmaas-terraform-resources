@@ -111,7 +111,7 @@ func (r *router) Delete(ctx context.Context, d *utils.Data, meta interface{}) er
 }
 
 func (r *router) routerAlignRouterRequest(ctx context.Context, meta interface{}, routerReq *models.CreateRouterRequest) error {
-	nsxType, err := GetNsxTypeFromCMP(r.rClient.Client)
+	nsxType, err := GetNsxTypeFromCMP(ctx, r.rClient.Client)
 	if err != nil {
 		return err
 	}

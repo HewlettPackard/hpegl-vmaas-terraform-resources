@@ -24,7 +24,7 @@ func newEdgeCluster(tClient *client.RouterAPIService) *edgeCluster {
 }
 
 func (r *edgeCluster) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
-	nsxType, err := GetNsxTypeFromCMP(r.tClient.Client)
+	nsxType, err := GetNsxTypeFromCMP(ctx, r.tClient.Client)
 	if err != nil {
 		return err
 	}

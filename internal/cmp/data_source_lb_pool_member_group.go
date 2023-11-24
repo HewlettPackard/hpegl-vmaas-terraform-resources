@@ -34,7 +34,7 @@ func (n *poolMemberGroupds) Read(ctx context.Context, d *utils.Data, meta interf
 	if err := d.Error(); err != nil {
 		return err
 	}
-	nsxType, err := GetNsxTypeFromCMP(n.rClient.Client)
+	nsxType, err := GetNsxTypeFromCMP(ctx, n.rClient.Client)
 	if err != nil {
 		return err
 	}

@@ -61,7 +61,7 @@ func (lb *loadBalancer) Update(ctx context.Context, d *utils.Data, meta interfac
 
 func (lb *loadBalancer) loadBalancerAlignRequest(ctx context.Context, meta interface{},
 	createReq *models.CreateLoadBalancerRequest) error {
-	nsxType, err := GetNsxTypeFromCMP(lb.rClient.Client)
+	nsxType, err := GetNsxTypeFromCMP(ctx, lb.rClient.Client)
 	if err != nil {
 		return err
 	}
