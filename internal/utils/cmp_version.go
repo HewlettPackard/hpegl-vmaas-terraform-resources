@@ -40,5 +40,6 @@ func GetCmpVersion(apiClient client.APIClientHandler) (int, error) {
 	if err != nil {
 		return 0, err
 	}
+
 	return ParseVersion(cmpVersion.Appliance.BuildVersion)
 }
