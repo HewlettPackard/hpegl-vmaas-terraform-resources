@@ -69,7 +69,6 @@ func (lb *loadBalancer) loadBalancerAlignRequest(ctx context.Context, meta inter
 	if v, _ := utils.ParseVersion("6.2.4"); v <= cmpVersion {
 		// from 6.2.4 onwards the display name of NSX-T has been change to NSX
 		nsxVar = nsx
-
 	}
 	allTypes, _ := lb.lbClient.GetLoadBalancerTypes(ctx, map[string]string{
 		nameKey: nsxVar,
