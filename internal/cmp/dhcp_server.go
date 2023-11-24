@@ -122,14 +122,9 @@ func (dhcp *dhcpServer) Delete(ctx context.Context, d *utils.Data, meta interfac
 func (dhcp *dhcpServer) dhcpServerAlignRequest(ctx context.Context, meta interface{},
 	createReq *models.CreateNetworkDhcpServerRequest) error {
 	// Get network service ID
-	cmpVersion, err := utils.GetCmpVersion(dhcp.rClient.Client)
+	nsxType, err := GetNsxTypeFromCMP(dhcp.rClient.Client)
 	if err != nil {
 		return err
-	}
-	nsxVar := nsxt
-	if v, _ := utils.ParseVersion("6.2.4"); v <= cmpVersion {
-		// from 6.2.4 onwards the display name of NSX-T has been change to NSX
-		nsxVar = nsx
 	}
 	setMeta(meta, dhcp.rClient.Client)
 	nsRetry := utils.CustomRetry{}
@@ -145,7 +140,7 @@ func (dhcp *dhcpServer) dhcpServerAlignRequest(ctx context.Context, meta interfa
 	networkService := nsResp.(models.GetNetworkServicesResp)
 
 	for i, n := range networkService.NetworkServices {
-		if n.TypeName == nsxVar {
+		if n.TypeName == nsxType {
 			createReq.NetworkDhcpServer.ID = networkService.NetworkServices[i].ID
 
 			break

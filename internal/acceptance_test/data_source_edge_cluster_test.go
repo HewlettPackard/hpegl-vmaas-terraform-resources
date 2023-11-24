@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	api_client "github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
-	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/utils"
+	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/cmp"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/atf"
 )
 
@@ -31,17 +31,12 @@ func TestAccDataSourceNetworkEdgeCluster(t *testing.T) {
 			if len(ServerResp.NetworkServices) == 0 {
 				return nil, err
 			}
-			cmpVersion, err := utils.GetCmpVersion(iClient.Client)
+			nsxType, err := cmp.GetNsxTypeFromCMP(iClient.Client)
 			if err != nil {
 				return nil, err
 			}
-			nsxVar := "NSX-T"
-			if v, _ := utils.ParseVersion("6.2.4"); v <= cmpVersion {
-				// from 6.2.4 onwards the display name of NSX-T has been change to NSX
-				nsxVar = "NSX"
-			}
 			for i, n := range ServerResp.NetworkServices {
-				if n.TypeName == nsxVar {
+				if n.TypeName == nsxType {
 					serverID = ServerResp.NetworkServices[i].ID
 
 					break

@@ -23,14 +23,9 @@ func newTransportZone(tClient *client.RouterAPIService) *transportZone {
 }
 
 func (r *transportZone) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
-	cmpVersion, err := utils.GetCmpVersion(r.tClient.Client)
+	nsxType, err := GetNsxTypeFromCMP(r.tClient.Client)
 	if err != nil {
 		return err
-	}
-	nsxVar := nsxt
-	if v, _ := utils.ParseVersion("6.2.4"); v <= cmpVersion {
-		// from 6.2.4 onwards the display name of NSX-T has been change to NSX
-		nsxVar = nsx
 	}
 	setMeta(meta, r.tClient.Client)
 	var tfScope models.NetworkScope
@@ -46,7 +41,7 @@ func (r *transportZone) Read(ctx context.Context, d *utils.Data, meta interface{
 
 	var serverID int
 	for i, n := range serverResp.NetworkServices {
-		if n.TypeName == nsxVar {
+		if n.TypeName == nsxType {
 			serverID = serverResp.NetworkServices[i].ID
 
 			break

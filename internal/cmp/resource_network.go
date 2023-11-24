@@ -42,16 +42,9 @@ func (r *resNetwork) Read(ctx context.Context, d *utils.Data, meta interface{}) 
 }
 
 func (r *resNetwork) Create(ctx context.Context, d *utils.Data, meta interface{}) error {
-	cmpVersion, err := utils.GetCmpVersion(r.rClient.Client)
+	nsxType, err := GetNsxTypeFromCMP(r.rClient.Client)
 	if err != nil {
 		return err
-	}
-	nsxVar := nsxt
-	nsxSegmentVar := nsxtSegment
-	if v, _ := utils.ParseVersion("6.2.4"); v <= cmpVersion {
-		// from 6.2.4 onwards the display name of NSX-T has been change to NSX
-		nsxVar = nsx
-		nsxSegmentVar = nsxSegment
 	}
 	setMeta(meta, r.rClient.Client)
 	var createReq models.CreateNetwork
@@ -67,7 +60,7 @@ func (r *resNetwork) Create(ctx context.Context, d *utils.Data, meta interface{}
 	typeRetry := utils.CustomRetry{}
 	typeRetry.RetryParallel(ctx, meta, func(ctx context.Context) (interface{}, error) {
 		return r.nClient.GetNetworkType(ctx, map[string]string{
-			nameKey: nsxSegmentVar,
+			nameKey: fmt.Sprintf("%s %s", nsxType, nsxSegment),
 		})
 	})
 	// Get network server ID for nsx-t
@@ -97,7 +90,7 @@ func (r *resNetwork) Create(ctx context.Context, d *utils.Data, meta interface{}
 		return fmt.Errorf(errExactMatch, "network server")
 	}
 	for i, n := range networkService.NetworkServices {
-		if n.TypeName == nsxVar {
+		if n.TypeName == nsxType {
 			createReq.NetworkServer.ID = networkService.NetworkServices[i].ID
 
 			break
