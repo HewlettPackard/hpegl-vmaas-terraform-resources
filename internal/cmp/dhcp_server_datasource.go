@@ -34,7 +34,15 @@ func (n *dhcpServerds) Read(ctx context.Context, d *utils.Data, meta interface{}
 	if err := d.Error(); err != nil {
 		return err
 	}
-
+	cmpVersion, err := utils.GetCmpVersion(n.rClient.Client)
+	if err != nil {
+		return err
+	}
+	nsxVar := nsxt
+	if v, _ := utils.ParseVersion("6.2.4"); v <= cmpVersion {
+		// from 6.2.4 onwards the display name of NSX-T has been change to NSX
+		nsxVar = nsx
+	}
 	setMeta(meta, n.rClient.Client)
 	// Get network server ID for nsx-t
 	serverResp, err := n.rClient.GetNetworkServices(ctx, nil)
@@ -44,7 +52,7 @@ func (n *dhcpServerds) Read(ctx context.Context, d *utils.Data, meta interface{}
 
 	var serverID int
 	for i, n := range serverResp.NetworkServices {
-		if n.TypeName == nsxt {
+		if n.TypeName == nsxVar {
 			serverID = serverResp.NetworkServices[i].ID
 
 			break
