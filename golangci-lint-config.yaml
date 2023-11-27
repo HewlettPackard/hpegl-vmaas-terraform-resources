@@ -83,7 +83,6 @@ linters:
     - usestdlibvars
     - wastedassign
     - whitespace
-    - wrapcheck
   
 issues:
 
