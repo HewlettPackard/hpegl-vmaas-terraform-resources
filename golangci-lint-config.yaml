@@ -75,13 +75,15 @@ linters:
     - mirror
     - nestif
     - nilnil
-    - nilerr
     - nlreturn
     - noctx
-    - nonamedreturns
     - perfsprint
     - prealloc
-    - predeclared
+    - unconvert
+    - usestdlibvars
+    - varnamelen
+    - wastedassign
+    - whitespace
   
 issues:
 
