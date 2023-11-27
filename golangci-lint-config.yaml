@@ -47,6 +47,25 @@ linters:
     - asciicheck
     - bidichk
     - containedctx
+    - errchkjson
+    - dupl
+    - cyclop
+    - decorder
+    - depguard
+    - dogsled
+    - durationcheck
+    - errorlint
+    - execinquery
+    - exhaustive
+    - exhaustruct
+    - exportloopref
+    - forbidigo
+    - forcetypeassert
+    - gci
+    - gocheckcompilerdirectives
+    - gochecknoglobals
+    - gochecksumtype
+    - gocognit
 
 issues:
 
