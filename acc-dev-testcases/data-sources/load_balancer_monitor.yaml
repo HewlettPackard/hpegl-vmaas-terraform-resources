@@ -1,6 +1,6 @@
 acc:
 - config: |
     name = "default-http-lb-monitor"
-    lb_id = 18
+    lb_id = 26
   validations:
-    json.loadBalancerMonitor.id: 98
+    json.loadBalancerMonitor.id: 156

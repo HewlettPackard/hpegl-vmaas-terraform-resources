@@ -2,7 +2,7 @@ vars:
   pool_name: tf_POOL_%rand_int
 acc:
 - config: |
-    lb_id = 18
+    lb_id = 26
     name  =  "$(pool_name)"      
     description  = "POOL creating using tf"
     min_active_members     = 1
@@ -14,11 +14,11 @@ acc:
       tcp_multiplexing = false
       tcp_multiplexing_number = 6 
       member_group {
-        group = "/infra/lb-pools/d3995b17-e10f-46bb-8d2b-82b42d153452"
+        group = "/infra/domains/default/groups/test-nework-group"
         max_ip_list_size = 1
         ip_revision_filter = "IPV4"
         port = 80
       }
     }
   validations:
-    json.loadBalancerPool.config.memberGroup.path: "/infra/lb-pools/d3995b17-e10f-46bb-8d2b-82b42d153452"
+    json.loadBalancerPool.config.memberGroup.path: "/infra/domains/default/groups/test-nework-group"

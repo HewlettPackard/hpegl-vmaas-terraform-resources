@@ -1,9 +1,9 @@
-name: Acceptance Tests
+name: Dev Acceptance Tests
 
 on:
   # Runs every 2 days once at 3AM
-  schedule:
-    - cron:  '0 21 */2 * *'
+  # schedule:
+  #   - cron:  '0 21 */2 * *'
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
       inputs:
@@ -13,16 +13,16 @@ on:
           default: 'warning'
         tags:
           description: 'Test scenario tags'
-  release:
-    types: [published]
+  # release:
+  #   types: [published]
 env:
-  HPEGL_IAM_SERVICE_URL: ${{ secrets.HPEGL_IAM_SERVICE_URL }}
-  HPEGL_TENANT_ID: ${{ secrets.HPEGL_TENANT_ID }}
-  HPEGL_USER_SECRET: ${{ secrets.HPEGL_USER_SECRET }}
-  HPEGL_USER_ID: ${{ secrets.HPEGL_USER_ID }}
-  HPEGL_VMAAS_API_URL: ${{ secrets.HPEGL_VMAAS_API_URL }}
-  HPEGL_VMAAS_LOCATION: ${{ secrets.HPEGL_VMAAS_LOCATION }}
-  HPEGL_VMAAS_SPACE_NAME: ${{ secrets.HPEGL_VMAAS_SPACE_NAME}}
+  HPEGL_IAM_SERVICE_URL: ${{ secrets.DEV_HPEGL_IAM_SERVICE_URL }}
+  HPEGL_TENANT_ID: ${{ secrets.DEV_HPEGL_TENANT_ID }}
+  HPEGL_USER_SECRET: ${{ secrets.DEV_HPEGL_USER_SECRET }}
+  HPEGL_USER_ID: ${{ secrets.DEV_HPEGL_USER_ID }}
+  HPEGL_VMAAS_API_URL: ${{ secrets.DEV_HPEGL_VMAAS_API_URL }}
+  HPEGL_VMAAS_LOCATION: ${{ secrets.DEV_HPEGL_VMAAS_LOCATION }}
+  HPEGL_VMAAS_SPACE_NAME: ${{ secrets.DEV_HPEGL_VMAAS_SPACE_NAME}}
   TF_ACC: ${{ secrets.TF_ACC }}
 jobs:
   acc:
@@ -30,7 +30,7 @@ jobs:
     strategy:
       matrix:
         go: [ '1.17' ]
-    name: Acceptance Tests
+    name: Dev Acceptance Tests
     steps:
       - name: Checkout workspace
         uses: actions/checkout@v3
@@ -49,4 +49,4 @@ jobs:
 
       - name: Run Acceptance test
         run: |
-          make acceptance
+          TF_ACC_TEST_PATH="$(pwd)/acc-dev-testcases" && make acceptance

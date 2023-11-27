@@ -1,5 +1,5 @@
 acc:
 - config: |
-    name = "tl_lb_dnd"
+    name = "tf_lb_DND"
   validations:
-    json.loadBalancer.id: 18
+    json.loadBalancer.id: 26
