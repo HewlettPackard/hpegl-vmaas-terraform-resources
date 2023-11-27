@@ -71,8 +71,8 @@ linters:
     - gosmopolitan
     - grouper
     - importas
+    - lll
 
-linters-settings:
   
 issues:
 
