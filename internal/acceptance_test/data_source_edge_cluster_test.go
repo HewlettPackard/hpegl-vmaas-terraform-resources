@@ -3,9 +3,11 @@
 package acceptancetest
 
 import (
+	"context"
 	"testing"
 
 	api_client "github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
+	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/cmp"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/atf"
 )
 
@@ -30,8 +32,12 @@ func TestAccDataSourceNetworkEdgeCluster(t *testing.T) {
 			if len(ServerResp.NetworkServices) == 0 {
 				return nil, err
 			}
+			nsxType, err := cmp.GetNsxTypeFromCMP(context.Background(), iClient.Client)
+			if err != nil {
+				return nil, err
+			}
 			for i, n := range ServerResp.NetworkServices {
-				if n.TypeName == "NSX-T" {
+				if n.TypeName == nsxType {
 					serverID = ServerResp.NetworkServices[i].ID
 
 					break

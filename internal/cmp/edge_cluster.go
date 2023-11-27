@@ -24,6 +24,10 @@ func newEdgeCluster(tClient *client.RouterAPIService) *edgeCluster {
 }
 
 func (r *edgeCluster) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
+	nsxType, err := GetNsxTypeFromCMP(ctx, r.tClient.Client)
+	if err != nil {
+		return err
+	}
 	setMeta(meta, r.tClient.Client)
 	log.Printf("[INFO] Get Edge Cluster")
 	var tfEdgeCluster models.NetworkEdgeClusters
@@ -39,7 +43,7 @@ func (r *edgeCluster) Read(ctx context.Context, d *utils.Data, meta interface{})
 
 	var serverID int
 	for i, n := range serverResp.NetworkServices {
-		if n.TypeName == nsxt {
+		if n.TypeName == nsxType {
 			serverID = serverResp.NetworkServices[i].ID
 
 			break

@@ -111,6 +111,10 @@ func (r *router) Delete(ctx context.Context, d *utils.Data, meta interface{}) er
 }
 
 func (r *router) routerAlignRouterRequest(ctx context.Context, meta interface{}, routerReq *models.CreateRouterRequest) error {
+	nsxType, err := GetNsxTypeFromCMP(ctx, r.rClient.Client)
+	if err != nil {
+		return err
+	}
 	queryParam := make(map[string]string)
 	// Check whether teir0 or tier1 and assign properties to proper child, so json can marshal properly
 	tier0Config := routerReq.NetworkRouter.Config.CreateRouterTier0Config
@@ -134,14 +138,14 @@ func (r *router) routerAlignRouterRequest(ctx context.Context, meta interface{},
 		routerReq.NetworkRouter.Config.FailOver = routerReq.NetworkRouter.TfTier0Config.TfFailOver
 		routerReq.NetworkRouter.Config.EdgeCluster = routerReq.NetworkRouter.TfTier0Config.TfEdgeCluster
 		routerReq.NetworkRouter.EnableBGP = routerReq.NetworkRouter.TfTier0Config.TfBGP.TfEnableBgp
-		queryParam[nameKey] = tier0GatewayType
+		queryParam[nameKey] = fmt.Sprintf("%s %s", nsxType, tier0GatewayType)
 	} else {
 		routerReq.NetworkRouter.Config.CreateRouterTier0Config.RouteRedistributionTier1.RouteAdvertisement =
 			routerReq.NetworkRouter.TfTier1Config.TfRouteAdvertisement
 		routerReq.NetworkRouter.Config.EdgeCluster = routerReq.NetworkRouter.TfTier1Config.TfEdgeCluster
 		routerReq.NetworkRouter.Config.FailOver = routerReq.NetworkRouter.TfTier1Config.TfFailOver
 		routerReq.NetworkRouter.Config.Tier0Gateways = routerReq.NetworkRouter.TfTier1Config.TfTier0Gateways
-		queryParam[nameKey] = tier1GatewayType
+		queryParam[nameKey] = fmt.Sprintf("%s %s", nsxType, tier1GatewayType)
 	}
 	// Get Router type
 	rtRetry := utils.CustomRetry{}
@@ -174,7 +178,7 @@ func (r *router) routerAlignRouterRequest(ctx context.Context, meta interface{},
 		return fmt.Errorf(errExactMatch, "network-service")
 	}
 	for i, n := range networkService.NetworkServices {
-		if n.TypeName == nsxt {
+		if n.TypeName == nsxType {
 			routerReq.NetworkRouter.NetworkServer.ID = networkService.NetworkServices[i].ID
 			routerReq.NetworkRouter.NetworkServerID = networkService.NetworkServices[i].ID
 

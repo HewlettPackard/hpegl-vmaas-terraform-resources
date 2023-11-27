@@ -34,7 +34,10 @@ func (n *dhcpServerds) Read(ctx context.Context, d *utils.Data, meta interface{}
 	if err := d.Error(); err != nil {
 		return err
 	}
-
+	nsxType, err := GetNsxTypeFromCMP(ctx, n.rClient.Client)
+	if err != nil {
+		return err
+	}
 	setMeta(meta, n.rClient.Client)
 	// Get network server ID for nsx-t
 	serverResp, err := n.rClient.GetNetworkServices(ctx, nil)
@@ -44,7 +47,7 @@ func (n *dhcpServerds) Read(ctx context.Context, d *utils.Data, meta interface{}
 
 	var serverID int
 	for i, n := range serverResp.NetworkServices {
-		if n.TypeName == nsxt {
+		if n.TypeName == nsxType {
 			serverID = serverResp.NetworkServices[i].ID
 
 			break

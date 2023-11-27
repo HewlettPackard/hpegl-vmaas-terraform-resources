@@ -42,6 +42,10 @@ func (r *resNetwork) Read(ctx context.Context, d *utils.Data, meta interface{}) 
 }
 
 func (r *resNetwork) Create(ctx context.Context, d *utils.Data, meta interface{}) error {
+	nsxType, err := GetNsxTypeFromCMP(ctx, r.rClient.Client)
+	if err != nil {
+		return err
+	}
 	setMeta(meta, r.rClient.Client)
 	var createReq models.CreateNetwork
 	if err := tftags.Get(d, &createReq); err != nil {
@@ -56,7 +60,7 @@ func (r *resNetwork) Create(ctx context.Context, d *utils.Data, meta interface{}
 	typeRetry := utils.CustomRetry{}
 	typeRetry.RetryParallel(ctx, meta, func(ctx context.Context) (interface{}, error) {
 		return r.nClient.GetNetworkType(ctx, map[string]string{
-			nameKey: nsxtSegment,
+			nameKey: fmt.Sprintf("%s %s", nsxType, nsxSegment),
 		})
 	})
 	// Get network server ID for nsx-t
@@ -86,7 +90,7 @@ func (r *resNetwork) Create(ctx context.Context, d *utils.Data, meta interface{}
 		return fmt.Errorf(errExactMatch, "network server")
 	}
 	for i, n := range networkService.NetworkServices {
-		if n.TypeName == nsxt {
+		if n.TypeName == nsxType {
 			createReq.NetworkServer.ID = networkService.NetworkServices[i].ID
 
 			break

@@ -23,6 +23,10 @@ func newTransportZone(tClient *client.RouterAPIService) *transportZone {
 }
 
 func (r *transportZone) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
+	nsxType, err := GetNsxTypeFromCMP(ctx, r.tClient.Client)
+	if err != nil {
+		return err
+	}
 	setMeta(meta, r.tClient.Client)
 	var tfScope models.NetworkScope
 	if err := tftags.Get(d, &tfScope); err != nil {
@@ -37,7 +41,7 @@ func (r *transportZone) Read(ctx context.Context, d *utils.Data, meta interface{
 
 	var serverID int
 	for i, n := range serverResp.NetworkServices {
-		if n.TypeName == nsxt {
+		if n.TypeName == nsxType {
 			serverID = serverResp.NetworkServices[i].ID
 
 			break
