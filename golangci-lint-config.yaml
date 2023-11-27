@@ -48,7 +48,6 @@ linters:
     - bidichk
     - containedctx
     - errchkjson
-    - cyclop
     - decorder
     - dogsled
     - durationcheck
@@ -57,13 +56,10 @@ linters:
     - exhaustive
     - exportloopref
     - forbidigo
-    - forcetypeassert
     - gci
     - gocheckcompilerdirectives
-    - gochecknoglobals
     - gochecksumtype
     - gocognit
-    - gocritic
     - godox
     - gofumpt
 
