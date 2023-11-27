@@ -56,12 +56,13 @@ linters:
     - exhaustive
     - exportloopref
     - forbidigo
-    - gci
     - gocheckcompilerdirectives
     - gochecksumtype
     - gocognit
     - godox
-    - gofumpt
+    - goimports
+    - gomnd
+
 
 issues:
 
