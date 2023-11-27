@@ -44,8 +44,11 @@ linters:
     - stylecheck
     - gofmt
     - misspell
-    - paralleltest
+    - prealloc
     - reassign
+    - asciicheck
+    - bidichk
+    - containedctx
 
 issues:
 
