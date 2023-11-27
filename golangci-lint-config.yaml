@@ -81,9 +81,9 @@ linters:
     - prealloc
     - unconvert
     - usestdlibvars
-    - varnamelen
     - wastedassign
     - whitespace
+    - wrapcheck
   
 issues:
 
