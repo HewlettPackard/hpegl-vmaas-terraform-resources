@@ -72,7 +72,16 @@ linters:
     - grouper
     - importas
     - lll
-
+    - mirror
+    - nestif
+    - nilnil
+    - nilerr
+    - nlreturn
+    - noctx
+    - nonamedreturns
+    - perfsprint
+    - prealloc
+    - predeclared
   
 issues:
 
