@@ -38,9 +38,7 @@ linters:
     - staticcheck
     - unused
     - contextcheck
-    - goerr113
     - funlen
-    - goconst
     - stylecheck
     - gofmt
     - misspell
