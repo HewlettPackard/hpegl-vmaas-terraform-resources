@@ -8,6 +8,11 @@ run:
   build-tags: acceptance
 
 linters-settings:
+  gosec:
+    excludes:
+      - G501 # Blocklisted import crypto/md5: weak cryptographic primitive
+      - G401 # Use of weak cryptographic primitive
+      - G404 # Use of weak random number generator
   dupl:
     threshold: 110
   lll:
@@ -68,11 +73,7 @@ linters:
     - importas
 
 linters-settings:
-  gosec:
-    excludes:
-      - G501 # Blocklisted import crypto/md5: weak cryptographic primitive
-      - G401 # Use of weak cryptographic primitive
-      - G404 # Use of weak random number generator
+  
 issues:
 
   exclude-rules:
