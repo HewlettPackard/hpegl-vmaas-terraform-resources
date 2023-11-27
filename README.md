@@ -3,10 +3,10 @@
 # vmaas-terraform-resources
 
 - [vmaas-terraform-resources](#vmaas-terraform-resources)
-    * [Introduction](#Terraform resources for HPEGL VMaaS)
+    * [Introduction](#terraform-resources-for-hpegl-vmaas)
     * [Requirements](#Requirements)
     * [Usage](#Usage)
-    * [Building the resources as provider](#Building the resources as provider)
+    * [Building the resources as provider](#building-the-resources-as-provider)
 
 # Terraform resources for HPEGL VMaaS
 

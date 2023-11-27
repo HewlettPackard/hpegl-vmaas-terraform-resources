@@ -9,7 +9,7 @@ vars:
   server_name: tf_SERVER-PROFILE_%rand_int
 acc:
 - config: |
-    lb_id = 18 
+    lb_id = 26 
     name  =  "$(http_name)"      
     description  = "HTTP_PROFILE creating using tf"
     profile_type = "application-profile"
@@ -33,7 +33,7 @@ acc:
   validations:
     json.loadBalancerProfile.serviceType: "LBHttpProfile"
 - config: |
-    lb_id = 18 
+    lb_id = 26 
     name  =  "$(tcp_name)"      
     description  = "TCP_PROFILE creating using tf"
     profile_type = "application-profile"
@@ -52,7 +52,7 @@ acc:
   validations:
     json.loadBalancerProfile.serviceType: "LBFastTcpProfile"
 - config: |
-    lb_id = 18 
+    lb_id = 26 
     name  =  "$(udp_name)"      
     description  = "UDP_PROFILE creating using tf"
     profile_type = "application-profile"
@@ -70,7 +70,7 @@ acc:
   validations:
     json.loadBalancerProfile.serviceType: "LBFastUdpProfile"
 - config: |
-    lb_id = 18 
+    lb_id = 26 
     name  =  "$(cookie_name)"      
     description  = "COOKIE_PROFILE creating using tf"
     profile_type = "persistence-profile"
@@ -94,7 +94,7 @@ acc:
   validations:
     json.loadBalancerProfile.serviceType: "LBCookiePersistenceProfile"
 - config: |
-    lb_id = 18 
+    lb_id = 26 
     name  =  "$(generic_name)"      
     description  = "GENERIC_PROFILE creating using tf"
     profile_type = "persistence-profile"
@@ -113,7 +113,7 @@ acc:
   validations:
     json.loadBalancerProfile.serviceType: "LBGenericPersistenceProfile"
 - config: |
-    lb_id = 18 
+    lb_id = 26 
     name  =  "$(source_name)"      
     description  = "SOURCE_PROFILE creating using tf"
     profile_type = "persistence-profile"
@@ -133,7 +133,7 @@ acc:
   validations:
     json.loadBalancerProfile.serviceType: "LBSourceIpPersistenceProfile"
 - config: |
-    lb_id = 18 
+    lb_id = 26 
     name  =  "$(client_name)"      
     description  = "CLIENT_PROFILE creating using tf"
     profile_type = "ssl-profile"
@@ -153,7 +153,7 @@ acc:
   validations:
     json.loadBalancerProfile.serviceType: "LBClientSslProfile"
 - config: |
-    lb_id = 18 
+    lb_id = 26 
     name  =  "$(server_name)"      
     description  = "SERVER_PROFILE creating using tf"
     profile_type = "ssl-profile"
