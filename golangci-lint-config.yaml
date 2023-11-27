@@ -61,7 +61,8 @@ linters:
     - gocognit
     - godox
     - goimports
-    - gomnd
+    - gomoddirectives
+    - gosec
 
 
 issues:
