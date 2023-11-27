@@ -49,5 +49,4 @@ jobs:
 
       - name: Run Acceptance test
         run: |
-          export TestAccDataSourceNetworkType="$(pwd)/acc-dev-testcases"
-          make acceptance
+          TF_ACC_TEST_PATH="$(pwd)/acc-dev-testcases" && make acceptance
