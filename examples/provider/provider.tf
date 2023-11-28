@@ -1,14 +1,14 @@
 # (C) Copyright 2021 Hewlett Packard Enterprise Development LP
 
 # Set-up for terraform >= v0.13
-terraform {
-  required_providers {
-    hpegl = {
-      source  = "terraform.example.com/vmaas/hpegl"
-      version = ">= 0.0.1"
-    }
-  }
-}
+#terraform {
+#  required_providers {
+#    hpegl = {
+#      source  = "terraform.example.com/vmaas/hpegl"
+#      version = ">= 0.0.1"
+#    }
+#  }
+#}
 
 provider "hpegl" {
   vmaas {
