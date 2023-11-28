@@ -105,7 +105,7 @@ func retry(
 							"maximum retry limit reached, with Error: %s, Response: %#v",
 							continueChan.respErr.Error(),
 							continueChan.resp,
-						),
+						), //nolint
 					}
 
 					return
