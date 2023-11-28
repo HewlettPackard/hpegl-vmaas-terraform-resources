@@ -39,7 +39,7 @@ func (a *Acc) RunDataSourceTests(t *testing.T) {
 	checkSkip(t)
 	testSteps := r.getTestCases(a.Version, a.GetAPI)
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		IsUnitTest: false,
 		PreCheck:   func() { a.PreCheck(t) },
 		Providers:  a.Providers,
@@ -54,7 +54,7 @@ func (a *Acc) RunResourceTests(t *testing.T) {
 	r := newReader(t, true, a.ResourceName)
 	testSteps := r.getTestCases(a.Version, a.GetAPI)
 
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:  func() { a.PreCheck(t) },
 		Providers: a.Providers,
 		CheckDestroy: resource.ComposeTestCheckFunc(
@@ -85,7 +85,7 @@ func (a *Acc) checkResourceDestroy(s *terraform.State) error {
 func (a *Acc) runPlanTest(t *testing.T, isResource bool) {
 	r := newReader(t, isResource, a.ResourceName)
 	testSteps := r.getTestCases(a.Version, a.GetAPI)
-	resource.ParallelTest(t, resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:  func() { a.PreCheck(t) },
 		Providers: a.Providers,
 		Steps: []resource.TestStep{
