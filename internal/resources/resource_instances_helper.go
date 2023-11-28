@@ -11,7 +11,7 @@ import (
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/utils"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/client"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/retry"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
@@ -404,7 +404,7 @@ func instanceHelperUpdateContext(
 		return diag.FromErr(err)
 	}
 	// Wait for the status to be running
-	updateStateConf := retry.StateChangeConf{
+	updateStateConf := resource.StateChangeConf{ //nolint
 		Delay:      instanceUpdateRetryDelay,
 		Pending:    []string{utils.StateResizing, utils.StateStopping, utils.StateSuspending, utils.StateRestarting},
 		Target:     []string{utils.StateRunning, utils.StateStopped, utils.StateSuspended},
