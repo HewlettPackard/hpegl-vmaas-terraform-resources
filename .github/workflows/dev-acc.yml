@@ -45,4 +45,4 @@ jobs:
 
       - name: Run Acceptance test
         run: |
-          TF_ACC_TEST_PATH="$(pwd)/acc-dev-testcases" && make acceptance
+          export TF_ACC_TEST_PATH="$(pwd)/acc-dev-testcases" && make acceptance
