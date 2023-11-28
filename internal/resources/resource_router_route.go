@@ -115,7 +115,7 @@ func routerRouteReadContext(ctx context.Context, rd *schema.ResourceData, meta i
 	isDeprecated := data.GetBool("is_deprecated")
 	if isDeprecated {
 		return diag.Diagnostics{
-			{
+			diag.Diagnostic{
 				Severity: diag.Warning,
 				Summary:  "Parent router is deleted. This resource is deprecated!!!",
 			},
