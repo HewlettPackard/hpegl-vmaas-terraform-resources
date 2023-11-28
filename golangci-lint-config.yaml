@@ -8,6 +8,11 @@ run:
   build-tags: acceptance
 
 linters-settings:
+  errorlint:
+    # Check whether fmt.Errorf uses the %w verb for formatting errors.
+    # See the https://github.com/polyfloyd/go-errorlint for caveats.
+    # Default: true
+    errorf: false
   gosec:
     excludes:
       - G501 # Blocklisted import crypto/md5: weak cryptographic primitive
@@ -56,7 +61,7 @@ linters:
     - decorder
     - dogsled
     - durationcheck
-    # - errorlint
+    - errorlint
     - execinquery
     - exhaustive
     - exportloopref
