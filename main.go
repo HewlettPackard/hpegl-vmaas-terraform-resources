@@ -3,9 +3,7 @@
 package main
 
 import (
-	"context"
 	"flag"
-	"log"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/plugin"
 
@@ -21,10 +19,13 @@ func main() {
 		ProviderFunc: testutils.ProviderFunc(),
 	}
 	if debugMode {
-		err := plugin.Debug(context.Background(), "terraform.example.com/vmaas/hpegl", opts) //nolint
-		if err != nil {
-			log.Fatal(err.Error())
-		}
+		// err := plugin.Debug(context.Background(), "terraform.example.com/vmaas/hpegl", opts) //nolint
+		opts.Debug = debugMode
+		opts.ProviderAddr = "terraform.example.com/vmaas/hpegl"
+		plugin.Serve(opts)
+		// if err != nil {
+		// 	log.Fatal(err.Error())
+		// }
 
 		return
 	}
