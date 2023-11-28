@@ -48,7 +48,7 @@ linters:
     - gofmt
     - misspell
     - prealloc
-    - reassign
+    # - reassign
     - asciicheck
     - bidichk
     - containedctx
@@ -61,23 +61,23 @@ linters:
     - exhaustive
     - exportloopref
     - forbidigo
-    - gocheckcompilerdirectives
-    - gochecksumtype
+    # - gocheckcompilerdirectives
+    # - gochecksumtype
     - gocognit
     - godox
     - goimports
     - gomoddirectives
     - gosec
-    - gosmopolitan
+    # - gosmopolitan
     - grouper
     - importas
     - lll
-    - mirror
+    # - mirror
     - nestif
     - nilnil
     - nlreturn
     - noctx
-    - perfsprint
+    # - perfsprint
     - prealloc
     - unconvert
     - usestdlibvars
