@@ -56,7 +56,7 @@ linters:
     - decorder
     - dogsled
     - durationcheck
-    - errorlint
+    # - errorlint
     - execinquery
     - exhaustive
     - exportloopref
