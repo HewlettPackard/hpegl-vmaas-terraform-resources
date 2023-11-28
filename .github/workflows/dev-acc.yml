@@ -21,17 +21,28 @@ on:
           type: string
 
 jobs:
-  acc-test:
-    uses: ./.github/workflows/reusable-dev-acc.yml
-    with:
-      test_case: ${{ inputs.test_case }}
-      test_description: ${{ inputs.test_description }}
-    secrets:
-      DEV_HPEGL_IAM_SERVICE_URL: ${{ secrets.DEV_HPEGL_IAM_SERVICE_URL }}
-      DEV_HPEGL_TENANT_ID: ${{ secrets.DEV_HPEGL_TENANT_ID }}
-      DEV_HPEGL_USER_SECRET: ${{ secrets.DEV_HPEGL_USER_SECRET }}
-      DEV_HPEGL_USER_ID: ${{ secrets.DEV_HPEGL_USER_ID }}
-      DEV_HPEGL_VMAAS_API_URL: ${{ secrets.DEV_HPEGL_VMAAS_API_URL }}
-      DEV_HPEGL_VMAAS_LOCATION: ${{ secrets.DEV_HPEGL_VMAAS_LOCATION }}
-      DEV_HPEGL_VMAAS_SPACE_NAME: ${{ secrets.DEV_HPEGL_VMAAS_SPACE_NAME}}
-      TF_ACC: ${{ secrets.TF_ACC }}
+  acc:
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        go: [ '1.19' ]
+    name: Dev Acceptance Tests
+    steps:
+      - name: Checkout workspace
+        uses: actions/checkout@v4
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.19'
+      - name: Install dependencies
+        run: |
+          sudo apt-get install -y wget jq
+          wget https://releases.hashicorp.com/terraform/1.0.0/terraform_1.0.0_linux_amd64.zip
+          sudo unzip -fo terraform_1.0.0_linux_amd64.zip -d /usr/local/bin
+
+      - name: Install necessary tools
+        run: make tools
+
+      - name: Run Acceptance test
+        run: |
+          TF_ACC_TEST_PATH="$(pwd)/acc-dev-testcases" && make acceptance
