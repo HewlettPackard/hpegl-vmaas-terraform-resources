@@ -44,5 +44,6 @@ jobs:
         run: make tools
 
       - name: Run Acceptance test
+        timeout-minutes: 590
         run: |
           export TF_ACC_TEST_PATH="$(pwd)/acc-dev-testcases" && make acceptance
