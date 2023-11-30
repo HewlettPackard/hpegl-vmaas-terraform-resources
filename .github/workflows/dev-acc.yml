@@ -22,6 +22,7 @@ on:
 
 jobs:
   acc:
+    timeout-minutes: 600
     runs-on: ubuntu-20.04
     strategy:
       matrix:
@@ -44,6 +45,5 @@ jobs:
         run: make tools
 
       - name: Run Acceptance test
-        timeout-minutes: 590
         run: |
           export TF_ACC_TEST_PATH="$(pwd)/acc-dev-testcases" && make acceptance
