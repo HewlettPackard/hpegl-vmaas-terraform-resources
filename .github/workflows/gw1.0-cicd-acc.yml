@@ -1,4 +1,4 @@
-name: Dev Acceptance Tests
+name: Dev Acceptance Tests for CI CD
 
 on:
   # Runs every 2 days once at 3AM
@@ -7,12 +7,12 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
       inputs:
-        test_case:
-          description: 'Enter testcase (regex is acceptable)'     
-          required: false
-          default: ''
-          type: string
-
+        logLevel:
+          description: 'Log level'     
+          required: true
+          default: 'warning'
+        tags:
+          description: 'Test scenario tags'
   # release:
   #   types: [published]
 env:
@@ -24,7 +24,6 @@ env:
   HPEGL_VMAAS_LOCATION: ${{ secrets.DEV_HPEGL_VMAAS_LOCATION }}
   HPEGL_VMAAS_SPACE_NAME: ${{ secrets.DEV_HPEGL_VMAAS_SPACE_NAME}}
   TF_ACC: ${{ secrets.TF_ACC }}
-  LOG_FILE: "Logs.txt"
 jobs:
   acc:
     runs-on: ubuntu-20.04
@@ -50,13 +49,4 @@ jobs:
 
       - name: Run Acceptance test
         run: |
-          export TF_ACC_TEST_PATH="$(pwd)/acc-dev-testcases" && make acceptance case=${{ github.event.inputs.test_case }} >> $LOG_FILE
-      
-      - name: Push the report to github artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: "Terraform Test report ${{ github.event.inputs.test_case }}"
-          path: $LOG_FILE
-          
-      - name: Clean up test report
-        run: rm $LOG_FILE
+          export TF_ACC_TEST_PATH="$(pwd)/acc-dev-testcases" && make acceptance
