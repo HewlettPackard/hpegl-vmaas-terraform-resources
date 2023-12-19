@@ -24,7 +24,7 @@ env:
   HPEGL_VMAAS_LOCATION: ${{ secrets.DEV_HPEGL_VMAAS_LOCATION }}
   HPEGL_VMAAS_SPACE_NAME: ${{ secrets.DEV_HPEGL_VMAAS_SPACE_NAME}}
   TF_ACC: ${{ secrets.TF_ACC }}
-  LOG_FILE: "${{ github.event.inputs.test_case }}Logs-$(date +'%Y-%m-%dT%H:%M:%S').txt"
+  LOG_FILE: "${{ github.event.inputs.test_case }}Logs.txt"
 jobs:
   acc:
     runs-on: ubuntu-20.04
@@ -50,6 +50,7 @@ jobs:
 
       - name: Run Acceptance test
         run: |
+          echo "Run date and time: $(date +'%Y-%m-%dT%H:%M:%S')" >> $LOG_FILE
           export TF_ACC_TEST_PATH="$(pwd)/acc-dev-testcases" && make acceptance case='${{ github.event.inputs.test_case }}' >> $LOG_FILE
       
       - name: Print testcases output
