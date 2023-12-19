@@ -50,7 +50,7 @@ jobs:
 
       - name: Run Acceptance test
         run: |
-          export TF_ACC_TEST_PATH="$(pwd)/acc-dev-testcases" && make acceptance case='${{ github.event.inputs.test_case }}'' >> $LOG_FILE
+          export TF_ACC_TEST_PATH="$(pwd)/acc-dev-testcases" && make acceptance case='${{ github.event.inputs.test_case }}' >> $LOG_FILE
       
       - name: Print testcases output
         run: cat $LOG_FILE
