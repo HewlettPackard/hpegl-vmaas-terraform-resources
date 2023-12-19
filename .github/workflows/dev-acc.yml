@@ -56,7 +56,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: "Terraform Test report ${{ github.event.inputs.test_case }}"
-          path: $LOG_FILE
-          
-      - name: Clean up test report
-        run: rm $LOG_FILE
+          path: ${{ env.LOG_FILE }}
