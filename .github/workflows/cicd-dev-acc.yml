@@ -5,7 +5,7 @@ on:
 
 jobs:
   test-provider:
-    uses: ./.github/workflows/dev-acc.yml
+    uses: ./.github/workflows/reusable-dev-acc.yml
     with:
       test_case: TestProvider
     secrets: inherit
@@ -14,13 +14,13 @@ jobs:
     needs: 
       - test-provider
     if: "${{ needs.test-provider.result != 'success' }}"
-    uses: ./.github/workflows/dev-acc.yml
+    uses: ./.github/workflows/reusable-dev-acc.yml
     with:
       test_case: TestAccDataSource
     secrets: inherit
 
   test-vmaas-instance:
-    uses: ./.github/workflows/dev-acc.yml
+    uses: ./.github/workflows/reusable-dev-acc.yml
     with:
       test_case: TestVmaasInstance
     secrets: inherit
