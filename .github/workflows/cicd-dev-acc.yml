@@ -13,7 +13,7 @@ jobs:
   test-datasouces:
     needs: 
       - test-provider
-    if: "${{ needs.test-provider.result == 'success' }}"
+    if: "always() && ${{ needs.test-provider.result == 'success' }}"
     uses: ./.github/workflows/reusable-dev-acc.yml
     with:
       test_case: TestAccDataSource
