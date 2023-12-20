@@ -51,7 +51,7 @@ jobs:
       - name: Run Acceptance test
         run: |
           echo "Run Date: $(date +'%Y-%m-%d Time: %H:%M:%S %z' )" >> $LOG_FILE
-          export TF_ACC_TEST_PATH="$(pwd)/acc-dev-testcases" && make acceptance case='${{ github.event.inputs.test_case }}' >> $LOG_FILE
+          for t in ${{ github.event.inputs.test_case }}; do export TF_ACC_TEST_PATH="$(pwd)/acc-dev-testcases" && make acceptance case="$t" >> $LOG_FILE; done
       
       - name: Print testcases output
         run: cat $LOG_FILE
@@ -59,5 +59,5 @@ jobs:
       - name: Push the report to github artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: "Terraform Test report: ${{ github.event.inputs.test_case }}"
+          name: "Terraform Test report- ${{ github.event.inputs.test_case }}"
           path: ${{ env.LOG_FILE }}
