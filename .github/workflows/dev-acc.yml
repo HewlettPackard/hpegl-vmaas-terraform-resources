@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
       inputs:
         test_case:
-          description: 'Enter testcases sperated by space'     
+          description: 'Enter testcases sperated by space. Leave empty for all'     
           required: false
           default: ''
           type: string
