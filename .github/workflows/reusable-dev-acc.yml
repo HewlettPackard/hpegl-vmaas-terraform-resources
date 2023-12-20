@@ -73,9 +73,11 @@ jobs:
           
       
       - name: Print testcases output
+        if: always()
         run: cat $LOG_FILE
   
       - name: Push the report to github artifacts
+        if: always()
         uses: actions/upload-artifact@v3
         with:
           name: "Terraform Test report- ${{ inputs.test_case }}"

@@ -54,9 +54,11 @@ jobs:
           for t in ${{ github.event.inputs.test_case }}; do export TF_ACC_TEST_PATH="$(pwd)/acc-dev-testcases" && make acceptance case="$t" >> "$LOG_FILE"; done
       
       - name: Print testcases output
+        if: always()
         run: cat $LOG_FILE
   
       - name: Push the report to github artifacts
+        if: always()
         uses: actions/upload-artifact@v3
         with:
           name: "Terraform Test report- ${{ github.event.inputs.test_case }}"
