@@ -1,0 +1,26 @@
+name: Dev Acceptance Tests for CI CD
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-provider:
+    uses: ./.github/workflows/dev-acc.yml
+    with:
+      test_case: TestProvider
+    secrets: inherit
+
+  test-datasouces:
+    needs: 
+      - test-provider
+    if: "${{ always() && needs.test-provider.result != 'failed' }}"
+    uses: ./.github/workflows/dev-acc.yml
+    with:
+      test_case: TestAccDataSource
+    secrets: inherit
+
+  test-vmaas-instance:
+    uses: ./.github/workflows/dev-acc.yml
+    with:
+      test_case: TestVmaasInstance
+    secrets: inherit
