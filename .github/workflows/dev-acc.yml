@@ -50,8 +50,8 @@ jobs:
 
       - name: Run Acceptance test
         run: |
-          echo "Run Date: $(date +'%Y-%m-%d Time: %H:%M:%S %z' )" >> $LOG_FILE
-          for t in ${{ github.event.inputs.test_case }}; do export TF_ACC_TEST_PATH="$(pwd)/acc-dev-testcases" && make acceptance case="$t" >> $LOG_FILE; done
+          echo "Run Date: $(date +'%Y-%m-%d Time: %H:%M:%S %z' )" >> "$LOG_FILE"
+          for t in ${{ github.event.inputs.test_case }}; do export TF_ACC_TEST_PATH="$(pwd)/acc-dev-testcases" && make acceptance case="$t" >> "$LOG_FILE"; done
       
       - name: Print testcases output
         run: cat $LOG_FILE
