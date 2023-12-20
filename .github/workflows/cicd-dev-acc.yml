@@ -25,41 +25,23 @@ jobs:
       - test-datasouces
     if: always()
     with:
-      test_case: TestVmaasInstance
+      test_case: TestVmaasInstance TestAccResourceInstance
     secrets: inherit
 
-  test-vmaas-resource-instance:
+  test-vmaas-lb:
     uses: ./.github/workflows/reusable-dev-acc.yml
     needs: 
       - test-vmaas-instance
     if: always()
     with:
-      test_case: TestAccResourceInstance
-    secrets: inherit 
-
-  test-vmaas-lb:
-    uses: ./.github/workflows/reusable-dev-acc.yml
-    needs: 
-      - test-vmaas-resource-instance
-    if: always()
-    with:
-      test_case: TestVmaasLB
+      test_case: TestVmaasLB TestAccResourceLB TestVmaasLoadBalancerPlan TestAccResourceLoadBalancerCreate
     secrets: inherit
 
-  test-vmaas-resource-lb:
+  test-vmaas-network:
     uses: ./.github/workflows/reusable-dev-acc.yml
     needs: 
       - test-vmaas-lb
     if: always()
     with:
-      test_case: TestAccResourceLB
-    secrets: inherit
-
-  test-vmaas-lb-plan:
-    uses: ./.github/workflows/reusable-dev-acc.yml
-    needs: 
-      - test-vmaas-resource-lb
-    if: always()
-    with:
-      test_case: "TestVmaasLoadBalancerPlan TestAccResourceLoadBalancerCreate"
+      test_case: TestVmaasNetworkPlan TestAccResourceNetworkCreate TestAccResourceRouter TestVmaasRouter TestAccResourceTier
     secrets: inherit

@@ -8,7 +8,7 @@ on:
   workflow_call:
     inputs:
       test_case:
-        description: 'Enter testcase'     
+        description: 'Enter testcases sperated by space'     
         required: false
         default: ''
         type: string
