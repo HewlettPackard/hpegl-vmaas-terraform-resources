@@ -13,7 +13,7 @@ jobs:
   test-datasouces:
     needs: 
       - test-provider
-    if: "${{ always() && needs.test-provider.result != 'failed' }}"
+    if: "${{ needs.test-provider.result != 'success' }}"
     uses: ./.github/workflows/dev-acc.yml
     with:
       test_case: TestAccDataSource
