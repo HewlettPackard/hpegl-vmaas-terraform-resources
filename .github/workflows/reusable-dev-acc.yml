@@ -91,5 +91,10 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
+<<<<<<< HEAD
           name: "IaC Test Report - ${{ inputs.test_description }}"
           path: "${{ env.LOG_FILE }}"
+=======
+          name: "Terraform Test report ${{ github.run_id }} - ${{ inputs.test_case }}"
+          path: ${{ env.LOG_FILE }}
+>>>>>>> b0396e9 (improvement)
