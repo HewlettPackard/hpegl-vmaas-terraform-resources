@@ -71,7 +71,7 @@ jobs:
           echo "Run Date: $(date +'%Y-%m-%d Time: %H:%M:%S %z' )" >> "$LOG_FILE"
           JOB_FAILED=false
           for t in ${{ inputs.test_case }}; do 
-            if ! export TF_ACC_TEST_PATH="$(pwd)/acc-dev-testcases" && make acceptance case="$t" >> "$LOG_FILE"
+            if ! (export TF_ACC_TEST_PATH="$(pwd)/acc-dev-testcases" && make acceptance case="$t" >> "$LOG_FILE")
             then
               JOB_FAILED=true
               continue
