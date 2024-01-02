@@ -69,7 +69,15 @@ jobs:
       - name: Run Acceptance test
         run: |
           echo "Run Date: $(date +'%Y-%m-%d Time: %H:%M:%S %z' )" >> "$LOG_FILE"
-          for t in ${{ inputs.test_case }}; do export TF_ACC_TEST_PATH="$(pwd)/acc-dev-testcases" && make acceptance case="$t" >> "$LOG_FILE"; done
+          JOB_FAILED=false
+          for t in ${{ inputs.test_case }}; do 
+            if ! export TF_ACC_TEST_PATH="$(pwd)/acc-dev-testcases" && make acceptance case="$t" >> "$LOG_FILE"
+            then
+              JOB_FAILED=true
+              continue
+            fi
+          done
+          if $JOB_FAILED; then  exit 1; fi 
           
       
       - name: Print testcases output
@@ -80,5 +88,5 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v3
         with:
-          name: "Terraform Test report- ${{ inputs.test_case }}"
+          name: "Terraform Test report ${{ github.run_id }} - ${{ inputs.test_case }}"
           path: ${{ env.LOG_FILE }}
