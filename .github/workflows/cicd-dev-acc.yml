@@ -8,6 +8,7 @@ jobs:
     uses: ./.github/workflows/reusable-dev-acc.yml
     with:
       test_case: TestProvider
+      test_description: Check for valid terraform provider
     secrets: inherit
 
   test-datasouces:
@@ -17,6 +18,7 @@ jobs:
     uses: ./.github/workflows/reusable-dev-acc.yml
     with:
       test_case: TestAccDataSource
+      test_description: All data source test
     secrets: inherit
 
   test-vmaas-instance:
@@ -26,6 +28,7 @@ jobs:
     if: always()
     with:
       test_case: TestVmaasInstance TestAccResourceInstance
+      test_description: Instance test
     secrets: inherit
 
   test-vmaas-lb:
@@ -35,6 +38,7 @@ jobs:
     if: always()
     with:
       test_case: TestVmaasLB TestAccResourceLB TestVmaasLoadBalancerPlan TestAccResourceLoadBalancerCreate
+      test_description: Loadbalancer test
     secrets: inherit
 
   test-vmaas-network:
@@ -44,4 +48,5 @@ jobs:
     if: always()
     with:
       test_case: TestVmaasNetworkPlan TestAccResourceNetworkCreate TestAccResourceRouter TestVmaasRouter TestAccResourceTier TestVmaasRouteBGPNeighborPlan
+      test_description: Network test
     secrets: inherit
