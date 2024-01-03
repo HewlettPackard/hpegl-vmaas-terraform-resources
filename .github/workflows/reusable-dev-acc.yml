@@ -83,11 +83,11 @@ jobs:
       
       - name: Print testcases output
         if: always()
-        run: cat $LOG_FILE
+        run: cat "$LOG_FILE"
   
       - name: Push the report to github artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: "IaC Test Report - ${{ inputs.test_description }}"
-          path: ${{ env.LOG_FILE }}
+          path: "${{ env.LOG_FILE }}"
