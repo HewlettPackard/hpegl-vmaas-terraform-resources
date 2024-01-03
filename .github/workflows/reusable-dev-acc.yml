@@ -73,7 +73,7 @@ jobs:
         run: |
           echo "Run Date: $(date +'%Y-%m-%d Time: %H:%M:%S %z' )" >> "$LOG_FILE"
           JOB_FAILED=false
-          if [ ${{ inputs.test_case }} != "" ]; then
+          if [[ -z "${{ inputs.test_case }}" ]]; then
             for t in ${{ inputs.test_case }}; do 
               if ! (export TF_ACC_TEST_PATH="$(pwd)/${{ inputs.test_case_folder }}" && make acceptance case="$t" >> "$LOG_FILE")
               then
