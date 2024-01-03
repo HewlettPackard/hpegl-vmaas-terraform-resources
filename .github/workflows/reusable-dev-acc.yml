@@ -9,7 +9,7 @@ on:
         default: ''
         type: string
       test_description:
-        description: 'Enter description for the testcases'     
+        description: 'Enter description for the test'     
         required: true
         default: ''
         type: string
@@ -53,9 +53,9 @@ jobs:
     name: Dev Acceptance Tests
     steps:
       - name: Checkout workspace
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Set up Go
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v5
         with:
           go-version: 1.17
       - name: Install dependencies
@@ -69,7 +69,6 @@ jobs:
 
       - name: Run Acceptance test
         run: |
-          echo $LOG_FILE
           echo "Run Date: $(date +'%Y-%m-%d Time: %H:%M:%S %z' )" >> "$LOG_FILE"
           JOB_FAILED=false
           for t in ${{ inputs.test_case }}; do 
@@ -88,7 +87,7 @@ jobs:
   
       - name: Push the report to github artifacts
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: "IaC Test Report - ${{ inputs.test_description }}"
           path: ${{ env.LOG_FILE }}
