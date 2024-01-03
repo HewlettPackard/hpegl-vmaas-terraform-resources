@@ -52,7 +52,7 @@ jobs:
     strategy:
       matrix:
         go: [ '1.17' ]
-    name: Dev Acceptance Tests
+    name: Acceptance Test Job
     steps:
       - name: Checkout workspace
         uses: actions/checkout@v4
