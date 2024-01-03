@@ -1,10 +1,6 @@
 name: Reusable Dev Acceptance Tests
 
 on:
-  # Runs every 2 days once at 3AM
-  # schedule:
-  #   - cron:  '0 21 */2 * *'
-  # Allows you to run this workflow manually from the Actions tab
   workflow_call:
     inputs:
       test_case:
@@ -47,7 +43,7 @@ env:
   HPEGL_VMAAS_LOCATION: ${{ secrets.DEV_HPEGL_VMAAS_LOCATION }}
   HPEGL_VMAAS_SPACE_NAME: ${{ secrets.DEV_HPEGL_VMAAS_SPACE_NAME}}
   TF_ACC: ${{ secrets.TF_ACC }}
-  LOG_FILE: "Terraform Log.txt"
+  LOG_FILE: "${{ github.event.inputs.test_case }}Terraform Log.txt"
 jobs:
   acc:
     runs-on: ubuntu-20.04
@@ -73,6 +69,7 @@ jobs:
 
       - name: Run Acceptance test
         run: |
+          echo $LOG_FILE
           echo "Run Date: $(date +'%Y-%m-%d Time: %H:%M:%S %z' )" >> "$LOG_FILE"
           JOB_FAILED=false
           for t in ${{ inputs.test_case }}; do 
