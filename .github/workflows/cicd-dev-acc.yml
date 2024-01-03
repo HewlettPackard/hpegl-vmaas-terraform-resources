@@ -11,50 +11,50 @@ jobs:
       test_description: Check for valid terraform provider
     secrets: inherit
 
-  # test-datasouces:
-  #   needs: 
-  #     - test-provider
-  #   if: "${{ needs.test-provider.result == 'success' }}"
-  #   uses: ./.github/workflows/reusable-dev-acc.yml
-  #   with:
-  #     test_case: TestAccDataSource
-  #     test_description: All data source test
-  #   secrets: inherit
+  test-datasouces:
+    needs: 
+      - test-provider
+    if: "always() && ${{ needs.test-provider.result == 'success' }}"
+    uses: ./.github/workflows/reusable-dev-acc.yml
+    with:
+      test_case: TestAccDataSource
+      test_description: All data source test
+    secrets: inherit
 
-  # test-vmaas-instance:
-  #   uses: ./.github/workflows/reusable-dev-acc.yml
-  #   needs: 
-  #     - test-datasouces
-  #   if: "${{ needs.test-provider.result == 'success' }}"
-  #   with:
-  #     test_case: TestVmaasInstance TestAccResourceInstance
-  #     test_description: Instance test
-  #   secrets: inherit
+  test-vmaas-instance:
+    uses: ./.github/workflows/reusable-dev-acc.yml
+    needs: 
+      - test-datasouces
+    if: "always() && ${{ needs.test-provider.result == 'success' }}"
+    with:
+      test_case: TestVmaasInstance TestAccResourceInstance
+      test_description: Instance test
+    secrets: inherit
 
-  # test-vmaas-lb:
-  #   uses: ./.github/workflows/reusable-dev-acc.yml
-  #   needs: 
-  #     - test-vmaas-instance
-  #   if: "${{ needs.test-provider.result == 'success' }}"
-  #   with:
-  #     test_case: TestVmaasLB TestAccResourceLB TestVmaasLoadBalancerPlan TestAccResourceLoadBalancerCreate
-  #     test_description: Loadbalancer test
-  #   secrets: inherit
+  test-vmaas-lb:
+    uses: ./.github/workflows/reusable-dev-acc.yml
+    needs: 
+      - test-vmaas-instance
+    if: "always() && ${{ needs.test-provider.result == 'success' }}"
+    with:
+      test_case: TestVmaasLB TestAccResourceLB TestVmaasLoadBalancerPlan TestAccResourceLoadBalancerCreate
+      test_description: Loadbalancer test
+    secrets: inherit
 
-  # test-vmaas-network:
-  #   uses: ./.github/workflows/reusable-dev-acc.yml
-  #   needs: 
-  #     - test-vmaas-lb
-  #   if: "${{ needs.test-provider.result == 'success' }}"
-  #   with:
-  #     test_case: TestVmaasNetworkPlan TestAccResourceNetworkCreate TestAccResourceRouter TestVmaasRouter TestAccResourceTier TestVmaasRouteBGPNeighborPlan
-  #     test_description: Network test
-  #   secrets: inherit
+  test-vmaas-network:
+    uses: ./.github/workflows/reusable-dev-acc.yml
+    needs: 
+      - test-vmaas-lb
+    if: "always() && ${{ needs.test-provider.result == 'success' }}"
+    with:
+      test_case: TestVmaasNetworkPlan TestAccResourceNetworkCreate TestAccResourceRouter TestVmaasRouter TestAccResourceTier TestVmaasRouteBGPNeighborPlan
+      test_description: Network test
+    secrets: inherit
 
   process-logs:
     runs-on: ubuntu-20.04
     needs:
-      - test-provider
+      - test-vmaas-network
     if: "always()"
     steps:
       - name: Checkout workspace

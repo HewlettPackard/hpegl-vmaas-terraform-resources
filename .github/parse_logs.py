@@ -7,7 +7,6 @@ import sys
 
 def main(args):
     n = len(args)
-    print(args)
     if n != 2:
         print("Pass the log directory")
         return 1
@@ -21,9 +20,9 @@ def main(args):
     pass_count = file_content.count('PASS:')
     fail_count = file_content.count('FAIL:')
     print(
-        f"\nTestcases Ran: {test_count}\n"
-        f"Testcases Passed: {pass_count}\n"
-        f"Testcases Failed: {fail_count}\n")
+        f"\nTestcases Ran: {test_count}; "
+        f"Testcases Passed: {pass_count}; "
+        f"Testcases Failed: {fail_count}; ")
     return 0
 
 if __name__ == "__main__":
