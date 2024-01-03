@@ -1,4 +1,5 @@
 name: IaC Acceptance Tests for CI CD Dev Environment
+# This workflow runs all the acc-dev-testcases
 
 on:
   workflow_dispatch:

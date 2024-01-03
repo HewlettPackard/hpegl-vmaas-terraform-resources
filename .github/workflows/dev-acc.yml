@@ -1,4 +1,6 @@
-name: Dev Acceptance Testing for running an individual or all tests
+name: Dev Acceptance Testing
+# This workflow is intended to run a particular set of testcases
+# If want to execute all test, consider running cicd-dev-acc.yml
 
 on:
   # Runs every 2 days once at 3AM
@@ -8,14 +10,14 @@ on:
   workflow_dispatch:
       inputs:
         test_case:
-          description: 'Enter testcases sperated by space. Leave empty for all'     
-          required: false
-          default: ''
+          description: 'Enter testcases sperated by space'     
+          required: true
+          default: 'TestProvider'
           type: string
         test_description:
           description: 'Enter description for the test'     
           required: true
-          default: 'Check all Terraform Dev Testcases'
+          default: 'Check Terraform Dev Testcase'
           type: string
 
 jobs:
