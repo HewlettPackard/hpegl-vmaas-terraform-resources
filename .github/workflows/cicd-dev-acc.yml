@@ -50,3 +50,26 @@ jobs:
       test_case: TestVmaasNetworkPlan TestAccResourceNetworkCreate TestAccResourceRouter TestVmaasRouter TestAccResourceTier TestVmaasRouteBGPNeighborPlan
       test_description: Network test
     secrets: inherit
+
+  process-logs:
+    runs-on: ubuntu-20.04
+    needs:
+      - test-vmaas-network
+    if: "always()"
+    steps:
+      - name: Checkout workspace
+        uses: actions/checkout@v4
+      - name: Download logs
+        id: logs
+        uses: actions/download-artifact@v4
+        with:
+          path: tmp/artifacts
+          merge-multiple: true
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - name: Print Result and Publish
+        run: | 
+          LOG_RESULT=$(python .github/parse_logs.py '${{ steps.logs.outputs.download-path }}')
+          echo $LOG_RESULT
