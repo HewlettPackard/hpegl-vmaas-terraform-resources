@@ -43,7 +43,7 @@ env:
   HPEGL_VMAAS_LOCATION: ${{ secrets.DEV_HPEGL_VMAAS_LOCATION }}
   HPEGL_VMAAS_SPACE_NAME: ${{ secrets.DEV_HPEGL_VMAAS_SPACE_NAME}}
   TF_ACC: ${{ secrets.TF_ACC }}
-  LOG_FILE: "${{ github.event.inputs.test_case }}Terraform Log.txt"
+  LOG_FILE: "${{ inputs.test_case }}Terraform Log.txt"
 jobs:
   acc:
     runs-on: ubuntu-20.04
