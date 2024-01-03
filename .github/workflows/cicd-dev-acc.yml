@@ -1,4 +1,4 @@
-name: Dev Acceptance Tests for CI CD
+name: IaC Acceptance Tests for CI CD Dev Environment
 
 on:
   workflow_dispatch:
@@ -12,8 +12,7 @@ jobs:
     secrets: inherit
 
   test-datasouces:
-    needs: 
-      - test-provider
+    needs: [test-provider]
     if: "always() && ${{ needs.test-provider.result == 'success' }}"
     uses: ./.github/workflows/reusable-dev-acc.yml
     with:
@@ -23,8 +22,7 @@ jobs:
 
   test-vmaas-instance:
     uses: ./.github/workflows/reusable-dev-acc.yml
-    needs: 
-      - test-datasouces
+    needs: [test-provider, test-datasouces]
     if: "always() && ${{ needs.test-provider.result == 'success' }}"
     with:
       test_case: TestVmaasInstance TestAccResourceInstance
@@ -33,8 +31,7 @@ jobs:
 
   test-vmaas-lb:
     uses: ./.github/workflows/reusable-dev-acc.yml
-    needs: 
-      - test-vmaas-instance
+    needs: [test-provider, test-vmaas-instance]
     if: "always() && ${{ needs.test-provider.result == 'success' }}"
     with:
       test_case: TestVmaasLB TestAccResourceLB TestVmaasLoadBalancerPlan TestAccResourceLoadBalancerCreate
@@ -43,8 +40,7 @@ jobs:
 
   test-vmaas-network:
     uses: ./.github/workflows/reusable-dev-acc.yml
-    needs: 
-      - test-vmaas-lb
+    needs: [test-provider, test-vmaas-lb]
     if: "always() && ${{ needs.test-provider.result == 'success' }}"
     with:
       test_case: TestVmaasNetworkPlan TestAccResourceNetworkCreate TestAccResourceRouter TestVmaasRouter TestAccResourceTier TestVmaasRouteBGPNeighborPlan
