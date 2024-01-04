@@ -24,7 +24,7 @@ jobs:
   test-vmaas-instance:
     uses: ./.github/workflows/reusable-dev-acc.yml
     needs: [test-provider, test-datasouces]
-    if: "always() && ${{ needs.test-provider.result == 'success' }}"
+    if: "failure() || ${{ needs.test-provider.result == 'success' }}"
     with:
       test_case: TestVmaasInstance TestAccResourceInstance
       test_description: Instance test
@@ -33,7 +33,7 @@ jobs:
   test-vmaas-lb:
     uses: ./.github/workflows/reusable-dev-acc.yml
     needs: [test-provider, test-vmaas-instance]
-    if: "always() && ${{ needs.test-provider.result == 'success' }}"
+    if: "failure() || ${{ needs.test-provider.result == 'success' }}"
     with:
       test_case: TestVmaasLB TestAccResourceLB TestVmaasLoadBalancerPlan TestAccResourceLoadBalancerCreate
       test_description: Loadbalancer test
@@ -42,7 +42,7 @@ jobs:
   test-vmaas-network:
     uses: ./.github/workflows/reusable-dev-acc.yml
     needs: [test-provider, test-vmaas-lb]
-    if: "always() && ${{ needs.test-provider.result == 'success' }}"
+    if: "failure() || ${{ needs.test-provider.result == 'success' }}"
     with:
       test_case: TestVmaasNetworkPlan TestAccResourceNetworkCreate TestAccResourceRouter TestVmaasRouter TestAccResourceTier TestVmaasRouteBGPNeighborPlan
       test_description: Network test
