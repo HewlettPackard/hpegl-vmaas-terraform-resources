@@ -1,0 +1,44 @@
+name: IaC Tests for CI CD Solution Job
+
+on:
+  workflow_dispatch:
+
+jobs:
+  acc-test:
+    uses: ./.github/workflows/reusable-dev-acc.yml
+    with:
+      test_description: IaC Terraform Testcase
+      test_case_folder: 'acc-testcases'
+    secrets:
+      DEV_HPEGL_IAM_SERVICE_URL: ${{ secrets.HPEGL_IAM_SERVICE_URL }}
+      DEV_HPEGL_TENANT_ID: ${{ secrets.HPEGL_TENANT_ID }}
+      DEV_HPEGL_USER_SECRET: ${{ secrets.HPEGL_USER_SECRET }}
+      DEV_HPEGL_USER_ID: ${{ secrets.HPEGL_USER_ID }}
+      DEV_HPEGL_VMAAS_API_URL: ${{ secrets.HPEGL_VMAAS_API_URL }}
+      DEV_HPEGL_VMAAS_LOCATION: ${{ secrets.HPEGL_VMAAS_LOCATION }}
+      DEV_HPEGL_VMAAS_SPACE_NAME: ${{ secrets.HPEGL_VMAAS_SPACE_NAME}}
+      TF_ACC: ${{ secrets.TF_ACC }}
+  
+  process-logs:
+    runs-on: ubuntu-20.04
+    needs:
+      - acc-test
+    if: "always()"
+    steps:
+      - name: Checkout workspace
+        uses: actions/checkout@v4
+      - name: Download logs
+        id: logs
+        uses: actions/download-artifact@v4
+        with:
+          path: tmp/artifacts
+          merge-multiple: true
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - name: Print Result and Publish
+        run: | 
+          LOG_RESULT=$(python .github/parse_logs.py '${{ steps.logs.outputs.download-path }}')
+          echo $LOG_RESULT
+          curl -X POST -H 'Content-type: application/json' --data "{'text':'CICD Terraform IaC Test results $LOG_RESULT and report link - https://github.com/HewlettPackard/hpegl-vmaas-terraform-resources/actions/runs/${{ github.run_id }}'}" '${{ secrets.SLACK_URL_CICD }}'

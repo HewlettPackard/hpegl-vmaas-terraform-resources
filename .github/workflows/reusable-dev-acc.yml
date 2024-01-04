@@ -1,0 +1,109 @@
+name: Reusable Worflow for running Acceptance Tests. By default handles dev testing.
+
+on:
+  workflow_call:
+    inputs:
+      test_case:
+        description: 'Enter testcases sperated by space'     
+        required: false
+        default: ''
+        type: string
+      test_description:
+        description: 'Enter description for the test'     
+        required: true
+        default: ''
+        type: string
+      test_case_folder:
+        description: 'Enter folder for test suite'     
+        required: false
+        default: 'acc-dev-testcases'
+        type: string
+    secrets:
+      DEV_HPEGL_IAM_SERVICE_URL:
+        required: true
+      DEV_HPEGL_TENANT_ID:
+        required: true
+      DEV_HPEGL_USER_SECRET:
+        required: true
+      DEV_HPEGL_USER_ID:
+        required: true
+      DEV_HPEGL_VMAAS_API_URL:
+        required: true
+      DEV_HPEGL_VMAAS_LOCATION:
+        required: true
+      DEV_HPEGL_VMAAS_SPACE_NAME:
+        required: true
+      TF_ACC:
+        required: true
+
+env:
+  HPEGL_IAM_SERVICE_URL: ${{ secrets.DEV_HPEGL_IAM_SERVICE_URL }}
+  HPEGL_TENANT_ID: ${{ secrets.DEV_HPEGL_TENANT_ID }}
+  HPEGL_USER_SECRET: ${{ secrets.DEV_HPEGL_USER_SECRET }}
+  HPEGL_USER_ID: ${{ secrets.DEV_HPEGL_USER_ID }}
+  HPEGL_VMAAS_API_URL: ${{ secrets.DEV_HPEGL_VMAAS_API_URL }}
+  HPEGL_VMAAS_LOCATION: ${{ secrets.DEV_HPEGL_VMAAS_LOCATION }}
+  HPEGL_VMAAS_SPACE_NAME: ${{ secrets.DEV_HPEGL_VMAAS_SPACE_NAME}}
+  TF_ACC: ${{ secrets.TF_ACC }}
+  LOG_FILE: "Terraform Log - ${{ inputs.test_description }}.txt"
+jobs:
+  acc:
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        go: [ '1.17' ]
+    name: Acceptance Test Job
+    steps:
+      - name: Checkout workspace
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: 1.17
+      - name: Install dependencies
+        run: |
+          sudo apt-get install -y wget jq
+          wget https://releases.hashicorp.com/terraform/1.0.0/terraform_1.0.0_linux_amd64.zip
+          sudo unzip -fo terraform_1.0.0_linux_amd64.zip -d /usr/local/bin
+
+      - name: Install necessary tools
+        run: make tools
+
+      - name: Run Acceptance test
+        run: |
+          echo "Run Date: $(date +'%Y-%m-%d Time: %H:%M:%S %z' )" >> "$LOG_FILE"
+          JOB_FAILED=false
+          
+          if [[ -z "${{ inputs.test_case }}" ]]; then
+            export TF_ACC_TEST_PATH="$(pwd)/${{ inputs.test_case_folder }}" && make acceptance >> "$LOG_FILE"
+        
+          else
+            for t in ${{ inputs.test_case }}; do 
+              if ! (export TF_ACC_TEST_PATH="$(pwd)/${{ inputs.test_case_folder }}" && make acceptance case="$t" >> "$LOG_FILE")
+              then
+                JOB_FAILED=true
+                continue
+              fi
+            done
+            if $JOB_FAILED; then  exit 1; fi 
+          fi
+          
+      
+      - name: Print testcases output
+        if: always()
+        run: cat "$LOG_FILE"
+
+      - name: Print testcases count
+        if: always()
+        run: python .github/parse_logs.py "$LOG_FILE"
+  
+      - name: Push the report to github artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: "IaC Test Report - ${{ inputs.test_description }}"
+          path: "${{ env.LOG_FILE }}"

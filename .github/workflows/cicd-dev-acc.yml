@@ -1,26 +1,73 @@
-name: Dev Acceptance Tests for CI CD
+name: IaC Tests for CI CD Gating Job
+# This workflow runs all the acc-dev-testcases
 
 on:
   workflow_dispatch:
 
 jobs:
   test-provider:
-    uses: ./.github/workflows/dev-acc.yml
+    uses: ./.github/workflows/reusable-dev-acc.yml
     with:
       test_case: TestProvider
+      test_description: Check for valid terraform provider
     secrets: inherit
 
   test-datasouces:
-    needs: 
-      - test-provider
-    if: "${{ always() && needs.test-provider.result != 'failed' }}"
-    uses: ./.github/workflows/dev-acc.yml
+    needs: [test-provider]
+    if: "always() && ${{ needs.test-provider.result == 'success' }}"
+    uses: ./.github/workflows/reusable-dev-acc.yml
     with:
       test_case: TestAccDataSource
+      test_description: GET call usecase validations
     secrets: inherit
 
   test-vmaas-instance:
-    uses: ./.github/workflows/dev-acc.yml
+    uses: ./.github/workflows/reusable-dev-acc.yml
+    needs: [test-datasouces]
+    if: "always()"
     with:
-      test_case: TestVmaasInstance
+      test_case: TestVmaasInstance TestAccResourceInstance
+      test_description: Instance usecase validations
     secrets: inherit
+
+  test-vmaas-lb:
+    uses: ./.github/workflows/reusable-dev-acc.yml
+    needs: [test-vmaas-instance]
+    if: "always()"
+    with:
+      test_case: TestVmaasLB TestAccResourceLB TestVmaasLoadBalancerPlan TestAccResourceLoadBalancerCreate
+      test_description: Loadbalancer usecase validations
+    secrets: inherit
+
+  test-vmaas-network:
+    uses: ./.github/workflows/reusable-dev-acc.yml
+    needs: [test-vmaas-lb]
+    if: "always()"
+    with:
+      test_case: TestVmaasNetworkPlan TestAccResourceNetworkCreate TestAccResourceRouter TestVmaasRouter TestAccResourceTier TestVmaasRouteBGPNeighborPlan
+      test_description: NSX Network usecase validations
+    secrets: inherit
+
+  process-logs:
+    runs-on: ubuntu-20.04
+    needs:
+      - test-vmaas-network
+    if: "always()"
+    steps:
+      - name: Checkout workspace
+        uses: actions/checkout@v4
+      - name: Download logs
+        id: logs
+        uses: actions/download-artifact@v4
+        with:
+          path: tmp/artifacts
+          merge-multiple: true
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - name: Print Result and Publish
+        run: | 
+          LOG_RESULT=$(python .github/parse_logs.py '${{ steps.logs.outputs.download-path }}')
+          echo $LOG_RESULT
+          curl -X POST -H 'Content-type: application/json' --data "{'text':'CICD Terraform IaC Test results $LOG_RESULT and report link - https://github.com/HewlettPackard/hpegl-vmaas-terraform-resources/actions/runs/${{ github.run_id }}'}" '${{ secrets.TEAMS_URL_CICD }}' 
