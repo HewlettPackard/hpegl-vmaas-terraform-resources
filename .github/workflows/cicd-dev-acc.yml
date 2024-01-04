@@ -1,4 +1,4 @@
-name: IaC Acceptance Tests for CI CD Dev Environment
+name: IaC Tests for CI CD Gating Job
 # This workflow runs all the acc-dev-testcases
 
 on:
@@ -18,7 +18,7 @@ jobs:
     uses: ./.github/workflows/reusable-dev-acc.yml
     with:
       test_case: TestAccDataSource
-      test_description: All data source test
+      test_description: GET call usecase validations
     secrets: inherit
 
   test-vmaas-instance:
@@ -27,7 +27,7 @@ jobs:
     if: "always()"
     with:
       test_case: TestVmaasInstance TestAccResourceInstance
-      test_description: Instance test
+      test_description: Instance usecase validations
     secrets: inherit
 
   test-vmaas-lb:
@@ -36,7 +36,7 @@ jobs:
     if: "always()"
     with:
       test_case: TestVmaasLB TestAccResourceLB TestVmaasLoadBalancerPlan TestAccResourceLoadBalancerCreate
-      test_description: Loadbalancer test
+      test_description: Loadbalancer usecase validations
     secrets: inherit
 
   test-vmaas-network:
@@ -45,7 +45,7 @@ jobs:
     if: "always()"
     with:
       test_case: TestVmaasNetworkPlan TestAccResourceNetworkCreate TestAccResourceRouter TestVmaasRouter TestAccResourceTier TestVmaasRouteBGPNeighborPlan
-      test_description: Network test
+      test_description: NSX Network usecase validations
     secrets: inherit
 
   process-logs:
@@ -70,3 +70,4 @@ jobs:
         run: | 
           LOG_RESULT=$(python .github/parse_logs.py '${{ steps.logs.outputs.download-path }}')
           echo $LOG_RESULT
+          curl -X POST -H 'Content-type: application/json' --data "{'text':'CICD Terraform IaC Test results $LOG_RESULT and report link - https://github.com/HewlettPackard/hpegl-vmaas-terraform-resources/actions/runs/${{ github.run_id }}'}" '${{ secrets.TEAMS_URL_CICD }}' 
