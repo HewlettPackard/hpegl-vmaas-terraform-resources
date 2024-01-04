@@ -1,4 +1,4 @@
-// (C) Copyright 2021 Hewlett Packard Enterprise Development LP
+// (C) Copyright 2021-2024 Hewlett Packard Enterprise Development LP
 
 package resources
 
@@ -17,7 +17,7 @@ func NetworkTypeData() *schema.Resource {
 			"name": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "Name of the network type. Example 'NSX-T Segment' or 'Custom Network'",
+				Description: "Name of the network type. Example 'NSX Segment' or 'Custom Network'",
 			},
 		},
 		ReadContext:    networkTypeReadContext,
