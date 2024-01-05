@@ -51,7 +51,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        go: [ '1.17' ]
+        go: [ '1.19' ]
     name: Acceptance Test Job
     steps:
       - name: Checkout workspace
@@ -63,12 +63,16 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: 1.17
+          go-version: '1.19'
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.6"
       - name: Install dependencies
         run: |
           sudo apt-get install -y wget jq
-          wget https://releases.hashicorp.com/terraform/1.0.0/terraform_1.0.0_linux_amd64.zip
-          sudo unzip -fo terraform_1.0.0_linux_amd64.zip -d /usr/local/bin
+          # wget https://releases.hashicorp.com/terraform/1.0.0/terraform_1.0.0_linux_amd64.zip
+          # sudo unzip -fo terraform_1.0.0_linux_amd64.zip -d /usr/local/bin
 
       - name: Install necessary tools
         run: make tools
