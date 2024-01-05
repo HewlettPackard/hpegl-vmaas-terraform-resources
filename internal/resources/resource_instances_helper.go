@@ -404,7 +404,7 @@ func instanceHelperUpdateContext(
 		return diag.FromErr(err)
 	}
 	// Wait for the status to be running
-	updateStateConf := resource.StateChangeConf{
+	updateStateConf := resource.StateChangeConf{ //nolint
 		Delay:      instanceUpdateRetryDelay,
 		Pending:    []string{utils.StateResizing, utils.StateStopping, utils.StateSuspending, utils.StateRestarting},
 		Target:     []string{utils.StateRunning, utils.StateStopped, utils.StateSuspended},
