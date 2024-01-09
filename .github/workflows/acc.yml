@@ -2,8 +2,8 @@ name: Acceptance Tests
 
 on:
   # Runs every 2 days once at 3AM
-  schedule:
-    - cron:  '0 21 */2 * *'
+  # schedule:
+  #   - cron:  '0 21 */2 * *'
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
       inputs:
