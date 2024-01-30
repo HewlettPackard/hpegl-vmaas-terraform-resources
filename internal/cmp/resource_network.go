@@ -1,4 +1,4 @@
-// (C) Copyright 2021 Hewlett Packard Enterprise Development LP
+// (C) Copyright 2021-2024 Hewlett Packard Enterprise Development LP
 
 package cmp
 
@@ -99,7 +99,8 @@ func (r *resNetwork) Create(ctx context.Context, d *utils.Data, meta interface{}
 
 	// Create network
 	createResp, err := r.nClient.CreateNetwork(ctx, models.CreateNetworkRequest{
-		Network: createReq,
+		Network:             createReq,
+		ResourcePermissions: createReq.ResourcePermissions,
 	})
 	if err != nil {
 		return err
@@ -121,7 +122,8 @@ func (r *resNetwork) Update(ctx context.Context, d *utils.Data, meta interface{}
 	}
 
 	updateResp, err := r.nClient.UpdateNetwork(ctx, networkReq.ID, models.CreateNetworkRequest{
-		Network: networkReq,
+		Network:             networkReq,
+		ResourcePermissions: networkReq.ResourcePermissions,
 	})
 	if err != nil {
 		return err
