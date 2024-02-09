@@ -19,45 +19,53 @@ func RouterRoute() *schema.Resource {
 				Type:        schema.TypeInt,
 				Required:    true,
 				Description: "Parent router ID, router_id can be obtained by using router datasource/resource.",
+				ForceNew:    true,
 			},
 			"name": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Name of the route.",
+				ForceNew:    true,
 			},
 			"description": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "Description for the route.",
+				ForceNew:    true,
 			},
 			"enabled": {
 				Type:        schema.TypeBool,
 				Default:     true,
 				Optional:    true,
 				Description: "If `true` then route will be active/enabled.",
+				ForceNew:    true,
 			},
 			"default_route": {
 				Type:        schema.TypeBool,
 				Default:     false,
 				Optional:    true,
 				Description: "If `true` then the route will considered as the default route.",
+				ForceNew:    true,
 			},
 			"network": {
 				Type:             schema.TypeString,
 				Required:         true,
 				ValidateDiagFunc: validations.ValidateCidr,
 				Description:      "Source Network CIDR Address",
+				ForceNew:         true,
 			},
 			"next_hop": {
 				Type:             schema.TypeString,
 				Required:         true,
 				ValidateDiagFunc: validations.ValidateIPAddress,
 				Description:      "Next Hop/Destination IPv4 Address",
+				ForceNew:         true,
 			},
 			"mtu": {
 				Type:        schema.TypeInt,
 				Optional:    true,
 				Description: "Network MTU",
+				ForceNew:    true,
 			},
 			"priority": {
 				Type:             schema.TypeInt,
@@ -65,6 +73,7 @@ func RouterRoute() *schema.Resource {
 				Default:          100,
 				Description:      "Priority for the route",
 				ValidateDiagFunc: validations.IntAtLeast(1),
+				ForceNew:         true,
 			},
 			"is_deprecated": {
 				Type:        schema.TypeBool,
@@ -96,7 +105,7 @@ func RouterRoute() *schema.Resource {
 		CreateContext: routerRouteCreateContext,
 		DeleteContext: routerRouteDeleteContext,
 		Description: `Router route resource facilitates creating,
-		updating and deleting NSX-T Network Router routes.`,
+		and deleting NSX-T Network Router routes.`,
 	}
 }
 
