@@ -1,4 +1,4 @@
-// (C) Copyright 2021 Hewlett Packard Enterprise Development LP
+// (C) Copyright 2021-2024 Hewlett Packard Enterprise Development LP
 
 package resources
 
@@ -19,7 +19,6 @@ func RouterRoute() *schema.Resource {
 				Type:        schema.TypeInt,
 				Required:    true,
 				Description: "Parent router ID, router_id can be obtained by using router datasource/resource.",
-				ForceNew:    true,
 			},
 			"name": {
 				Type:        schema.TypeString,
@@ -95,7 +94,6 @@ func RouterRoute() *schema.Resource {
 		},
 		ReadContext:   routerRouteReadContext,
 		CreateContext: routerRouteCreateContext,
-		UpdateContext: routerRouteUpdateContext,
 		DeleteContext: routerRouteDeleteContext,
 		Description: `Router route resource facilitates creating,
 		updating and deleting NSX-T Network Router routes.`,
@@ -139,19 +137,19 @@ func routerRouteCreateContext(ctx context.Context, rd *schema.ResourceData, meta
 	return routerRouteReadContext(ctx, rd, meta)
 }
 
-func routerRouteUpdateContext(ctx context.Context, rd *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c, err := client.GetClientFromMetaMap(meta)
-	if err != nil {
-		return diag.FromErr(err)
-	}
+// func routerRouteUpdateContext(ctx context.Context, rd *schema.ResourceData, meta interface{}) diag.Diagnostics {
+// 	c, err := client.GetClientFromMetaMap(meta)
+// 	if err != nil {
+// 		return diag.FromErr(err)
+// 	}
 
-	data := utils.NewData(rd)
-	if err := c.CmpClient.RouterRoute.Update(ctx, data, meta); err != nil {
-		return diag.FromErr(err)
-	}
+// 	data := utils.NewData(rd)
+// 	if err := c.CmpClient.RouterRoute.Update(ctx, data, meta); err != nil {
+// 		return diag.FromErr(err)
+// 	}
 
-	return routerRouteReadContext(ctx, rd, meta)
-}
+// 	return routerRouteReadContext(ctx, rd, meta)
+// }
 
 func routerRouteDeleteContext(ctx context.Context, rd *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, err := client.GetClientFromMetaMap(meta)
