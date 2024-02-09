@@ -1,4 +1,4 @@
-// (C) Copyright 2022 Hewlett Packard Enterprise Development LP
+// (C) Copyright 2022-2024 Hewlett Packard Enterprise Development LP
 
 package resources
 
@@ -18,6 +18,11 @@ func DhcpServer() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Provide the DHCP server name",
+			},
+			"provider_id": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				Description: "ProviderId of the DHCP Server. Use the provider_id  while creating DHCP NSX-T Segment Network",
 			},
 			"network_server_id": {
 				Type:        schema.TypeInt,
