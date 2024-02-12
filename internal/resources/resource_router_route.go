@@ -1,4 +1,4 @@
-// (C) Copyright 2021 Hewlett Packard Enterprise Development LP
+// (C) Copyright 2021-2024 Hewlett Packard Enterprise Development LP
 
 package resources
 
@@ -25,40 +25,47 @@ func RouterRoute() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "Name of the route.",
+				ForceNew:    true,
 			},
 			"description": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "Description for the route.",
+				ForceNew:    true,
 			},
 			"enabled": {
 				Type:        schema.TypeBool,
 				Default:     true,
 				Optional:    true,
 				Description: "If `true` then route will be active/enabled.",
+				ForceNew:    true,
 			},
 			"default_route": {
 				Type:        schema.TypeBool,
 				Default:     false,
 				Optional:    true,
 				Description: "If `true` then the route will considered as the default route.",
+				ForceNew:    true,
 			},
 			"network": {
 				Type:             schema.TypeString,
 				Required:         true,
 				ValidateDiagFunc: validations.ValidateCidr,
 				Description:      "Source Network CIDR Address",
+				ForceNew:         true,
 			},
 			"next_hop": {
 				Type:             schema.TypeString,
 				Required:         true,
 				ValidateDiagFunc: validations.ValidateIPAddress,
 				Description:      "Next Hop/Destination IPv4 Address",
+				ForceNew:         true,
 			},
 			"mtu": {
 				Type:        schema.TypeInt,
 				Optional:    true,
 				Description: "Network MTU",
+				ForceNew:    true,
 			},
 			"priority": {
 				Type:             schema.TypeInt,
@@ -66,6 +73,7 @@ func RouterRoute() *schema.Resource {
 				Default:          100,
 				Description:      "Priority for the route",
 				ValidateDiagFunc: validations.IntAtLeast(1),
+				ForceNew:         true,
 			},
 			"is_deprecated": {
 				Type:        schema.TypeBool,
@@ -95,7 +103,6 @@ func RouterRoute() *schema.Resource {
 		},
 		ReadContext:   routerRouteReadContext,
 		CreateContext: routerRouteCreateContext,
-		UpdateContext: routerRouteUpdateContext,
 		DeleteContext: routerRouteDeleteContext,
 		Description: `Router route resource facilitates creating,
 		updating and deleting NSX-T Network Router routes.`,
@@ -139,19 +146,19 @@ func routerRouteCreateContext(ctx context.Context, rd *schema.ResourceData, meta
 	return routerRouteReadContext(ctx, rd, meta)
 }
 
-func routerRouteUpdateContext(ctx context.Context, rd *schema.ResourceData, meta interface{}) diag.Diagnostics {
-	c, err := client.GetClientFromMetaMap(meta)
-	if err != nil {
-		return diag.FromErr(err)
-	}
+// func routerRouteUpdateContext(ctx context.Context, rd *schema.ResourceData, meta interface{}) diag.Diagnostics {
+// 	c, err := client.GetClientFromMetaMap(meta)
+// 	if err != nil {
+// 		return diag.FromErr(err)
+// 	}
 
-	data := utils.NewData(rd)
-	if err := c.CmpClient.RouterRoute.Update(ctx, data, meta); err != nil {
-		return diag.FromErr(err)
-	}
+// 	data := utils.NewData(rd)
+// 	if err := c.CmpClient.RouterRoute.Update(ctx, data, meta); err != nil {
+// 		return diag.FromErr(err)
+// 	}
 
-	return routerRouteReadContext(ctx, rd, meta)
-}
+// 	return routerRouteReadContext(ctx, rd, meta)
+// }
 
 func routerRouteDeleteContext(ctx context.Context, rd *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, err := client.GetClientFromMetaMap(meta)
