@@ -105,7 +105,7 @@ func RouterRoute() *schema.Resource {
 		CreateContext: routerRouteCreateContext,
 		DeleteContext: routerRouteDeleteContext,
 		Description: `Router route resource facilitates creating,
-		and deleting NSX-T Network Router routes.`,
+		updating and deleting NSX-T Network Router routes.`,
 	}
 }
 
