@@ -5,7 +5,7 @@ acc:
     name = "$(network_name)"
     description  = "Network created using tf"
     group_id     = "shared"
-    scope_id     = "b58527dd-f5fd-4658-b426-ba4b74d00418"
+    scope_id     = "/infra/sites/default/enforcement-points/default/transport-zones/2cc8e542-8c53-456d-b058-9fb00a5fae70"
     cidr         = "10.200.40.1/24"
     gateway      = "10.200.40.1"
     scan_network = false

@@ -1,4 +1,4 @@
-name: ci
+name: CI Lint Check
 
 on: [pull_request]
 jobs:
