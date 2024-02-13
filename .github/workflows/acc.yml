@@ -1,4 +1,4 @@
-name: Acceptance Tests
+name: Acceptance Tests Running on HPE PCE Solution Deployment Tenant
 
 on:
   # Runs every 2 days once at 3AM
