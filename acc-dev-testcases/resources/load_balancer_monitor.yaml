@@ -7,7 +7,7 @@ vars:
   udp_name: tf_UDP-MONITOR_%rand_int
 acc:
 - config: |
-    lb_id = 26 
+    lb_id = 19 
     name  =  "$(http_name)"      
     description  = "HTTP_MONITOR creating using tf"
     type = "LBHttpMonitorProfile"
@@ -27,7 +27,7 @@ acc:
   validations:
     json.loadBalancerMonitor.monitorType: "LBHttpMonitorProfile"
 - config: |
-    lb_id = 26 
+    lb_id = 19 
     name  =  "$(https_name)"        
     description  = "HTTPS_MONITOR creating using tf"
     type = "LBHttpsMonitorProfile"
@@ -47,7 +47,7 @@ acc:
   validations:
     json.loadBalancerMonitor.monitorType: "LBHttpsMonitorProfile"
 - config: |
-    lb_id = 26 
+    lb_id = 19 
     name  =  "$(icmp_name)"        
     description  = "ICMP_MONITOR update using tf"
     type = "LBIcmpMonitorProfile"
@@ -62,7 +62,7 @@ acc:
   validations:
     json.loadBalancerMonitor.monitorType: "LBIcmpMonitorProfile"
 - config: |
-    lb_id = 26 
+    lb_id = 19 
     name  =  "$(passive_name)"        
     description  = "PASSIVE_MONITOR create using tf"
     type = "LBPassiveMonitorProfile"
@@ -73,7 +73,7 @@ acc:
   validations:
     json.loadBalancerMonitor.monitorType: "LBPassiveMonitorProfile"
 - config: |
-    lb_id = 26 
+    lb_id = 19 
     name  =  "$(tcp_name)"        
     description  = "TCP_MONITOR create using tf"
     type = "LBTcpMonitorProfile"
@@ -89,7 +89,7 @@ acc:
   validations:
     json.loadBalancerMonitor.monitorType: "LBTcpMonitorProfile"
 - config: |
-    lb_id = 26
+    lb_id = 19
     name  =  "$(udp_name)"       
     description  = "UDP_MONITOR create using tf"
     type = "LBUdpMonitorProfile"

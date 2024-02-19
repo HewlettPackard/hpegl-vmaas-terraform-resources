@@ -1,5 +1,5 @@
 acc:
 - config: |
-    name = "test-cert"
+    name = "Test SSL Cert"
   validations:
-    json.certificates.id: 9
+    json.certificates.id: 8

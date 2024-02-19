@@ -1,6 +1,6 @@
 acc:
 - config: |
-    name = "PCE-testLB-Pool"
-    lb_id = 26
+    name = "tf_pool_DO_NOT_DELETE"
+    lb_id = 19
   validations:
-    json.loadBalancerPool.id: 86
+    json.loadBalancerPool.id: 108
