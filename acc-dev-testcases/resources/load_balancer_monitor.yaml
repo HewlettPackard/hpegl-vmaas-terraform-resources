@@ -54,7 +54,7 @@ acc:
     icmp_monitor {
       fall_count = 30
       interval =  50 
-      monitor_port = 8
+      monitor_port = 80
       rise_count = 3
       timeout = 15
       data_length = 32
