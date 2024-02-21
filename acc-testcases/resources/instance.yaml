@@ -20,7 +20,6 @@ acc:
       }
     config {
       resource_pool_id = 4
-      no_agent = true
       template_id = 1696
       folder_code = "group-v1036"
     }
