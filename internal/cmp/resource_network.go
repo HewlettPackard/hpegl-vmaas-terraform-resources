@@ -161,6 +161,7 @@ func (r *resNetwork) networkRequest(createReq *models.CreateNetwork) error {
 		createReq.Config.ConnectedGateway = createReq.ConnectedGateway
 		createReq.Config.VlanIDs = createReq.VlanIDs
 		createReq.Config.SubnetDhcpLeaseTime = createReq.TfDhcpNetwork.SubnetDhcpLeaseTime
+		createReq.Config.DhcpRange = createReq.TfDhcpNetwork.DhcpRange
 		createReq.Config.SubnetDhcpServerAddress = createReq.TfDhcpNetwork.SubnetDhcpServerAddress
 		createReq.Config.SubnetIPManagementType = createReq.TfDhcpNetwork.SubnetIPManagementType
 		createReq.Config.SubnetIPServerID = createReq.TfDhcpNetwork.SubnetIPServerID
