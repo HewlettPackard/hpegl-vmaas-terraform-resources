@@ -1,4 +1,4 @@
-#(C) Copyright 2021 Hewlett Packard Enterprise Development LP
+#(C) Copyright 2021-2024 Hewlett Packard Enterprise Development LP
 
 run:
   deadline: 240s
@@ -12,6 +12,8 @@ linters-settings:
     threshold: 110
   lll:
     line-length: 128
+  gofumpt:
+    module-path: "github.com/HewlettPackard/hpegl-vmaas-terraform-resources"
   goimports:
     local-prefixes: "github.com"
   godox:
