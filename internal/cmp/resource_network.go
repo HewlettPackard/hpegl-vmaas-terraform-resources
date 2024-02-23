@@ -195,7 +195,7 @@ func (r *resNetwork) Delete(ctx context.Context, d *utils.Data, meta interface{}
 	retry := &utils.CustomRetry{
 		InitialDelay: time.Second * 10,
 		RetryDelay:   time.Second * 10,
-		Timeout:      time.Minute * 2,
+		Timeout:      time.Minute * 5,
 	}
 	resp, err := retry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
 		return r.nClient.DeleteNetwork(ctx, networkID)
