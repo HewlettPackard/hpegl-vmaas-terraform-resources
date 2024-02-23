@@ -2,8 +2,8 @@ vars:
   instance_name: tf_acc_clone_%rand_int
 acc:
 - config: |
-    source_instance_id = 2
+    source_instance_id = 11
     name = "$(instance_name)"
     network {
-      id = 84
+      id = 137
     }
