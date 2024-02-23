@@ -27,11 +27,12 @@ const (
 	defaultTimeout    = time.Hour * 24
 	noRetryCount      = -1
 	// power constants
-	PowerOn  = "poweron"
-	PowerOff = "poweroff"
-	Restart  = "restart"
-	Suspend  = "suspend"
-	Deleting = "deleting"
-	Deleted  = "deleted"
-	Failed   = "failed"
+	PowerOn         = "poweron"
+	PowerOff        = "poweroff"
+	Restart         = "restart"
+	Suspend         = "suspend"
+	Deleting        = "deleting"
+	Deleted         = "deleted"
+	Failed          = "failed"
+	PortGroupPrefix = "dvportgroup-"
 )
