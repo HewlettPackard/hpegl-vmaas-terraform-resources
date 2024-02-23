@@ -209,7 +209,6 @@ func (r *resNetwork) Delete(ctx context.Context, d *utils.Data, meta interface{}
 	}
 
 	return err
-
 }
 
 func (r *resNetwork) networkRequest(createReq *models.CreateNetwork) error {
