@@ -117,7 +117,7 @@ func (r *resNetwork) Create(ctx context.Context, d *utils.Data, meta interface{}
 	}
 	errCount := 0
 	cRetry := utils.CustomRetry{
-		Timeout:      time.Minute * 5,
+		Timeout:      time.Minute * 10,
 		RetryDelay:   time.Second * 10,
 		InitialDelay: time.Second * 10,
 		Cond: func(response interface{}, err error) (bool, error) {
@@ -195,7 +195,7 @@ func (r *resNetwork) Delete(ctx context.Context, d *utils.Data, meta interface{}
 	retry := &utils.CustomRetry{
 		InitialDelay: time.Second * 10,
 		RetryDelay:   time.Second * 10,
-		Timeout:      time.Minute * 5,
+		Timeout:      time.Minute * 10,
 	}
 	resp, err := retry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
 		return r.nClient.DeleteNetwork(ctx, networkID)
