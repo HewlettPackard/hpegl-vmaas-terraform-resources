@@ -1,4 +1,4 @@
-// (C) Copyright 2021 Hewlett Packard Enterprise Development LP
+// (C) Copyright 2021-2024 Hewlett Packard Enterprise Development LP
 
 package cmp
 
@@ -32,7 +32,7 @@ func (n *resourcePool) Read(ctx context.Context, d *utils.Data, meta interface{}
 
 	flag := false
 	resourcePools, err := n.rClient.GetAllCloudResourcePools(ctx, cloudID, map[string]string{
-		maxKey: "100",
+		maxKey: "-1",
 	})
 	if err != nil {
 		return err

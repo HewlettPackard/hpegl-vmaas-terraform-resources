@@ -1,4 +1,4 @@
-// (C) Copyright 2021 Hewlett Packard Enterprise Development LP
+// (C) Copyright 2021-2024 Hewlett Packard Enterprise Development LP
 
 package cmp
 
@@ -30,7 +30,8 @@ func (g *group) Read(ctx context.Context, d *utils.Data, meta interface{}) error
 	if err := d.Error(); err != nil {
 		return err
 	}
-	groups, err := g.gClient.GetAllGroups(ctx, nil)
+	param := map[string]string{maxKey: "-1"}
+	groups, err := g.gClient.GetAllGroups(ctx, param)
 	if err != nil {
 		return err
 	}
