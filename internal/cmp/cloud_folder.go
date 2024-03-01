@@ -1,4 +1,4 @@
-// (C) Copyright 2021 Hewlett Packard Enterprise Development LP
+// (C) Copyright 2021-2024 Hewlett Packard Enterprise Development LP
 
 package cmp
 
@@ -31,7 +31,8 @@ func (f *cloudFolder) Read(ctx context.Context, d *utils.Data, meta interface{})
 	if err := d.Error(); err != nil {
 		return err
 	}
-	folders, err := f.fClient.GetAllCloudFolders(ctx, cloudID, nil)
+	param := map[string]string{maxKey: "2000"} // There could be many folders, and max=-1 doesn't return any data
+	folders, err := f.fClient.GetAllCloudFolders(ctx, cloudID, param)
 	if err != nil {
 		return err
 	}

@@ -1,4 +1,4 @@
-// (C) Copyright 2021 Hewlett Packard Enterprise Development LP
+// (C) Copyright 2021-2024 Hewlett Packard Enterprise Development LP
 
 package cmp
 
@@ -29,7 +29,8 @@ func (n *routerds) Read(ctx context.Context, d *utils.Data, meta interface{}) er
 	if err := d.Error(); err != nil {
 		return err
 	}
-	routers, err := n.nClient.GetAllRouter(ctx, nil)
+	param := map[string]string{maxKey: "-1"}
+	routers, err := n.nClient.GetAllRouter(ctx, param)
 	if err != nil {
 		return err
 	}
