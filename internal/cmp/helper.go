@@ -1,4 +1,4 @@
-// (C) Copyright 2021 Hewlett Packard Enterprise Development LP
+// (C) Copyright 2021-2024 Hewlett Packard Enterprise Development LP
 
 package cmp
 
@@ -23,7 +23,7 @@ func ParseVersion(version string) (int, error) {
 	if version == "" {
 		return 0, nil
 	}
-
+	version = strings.Split(version, "-")[0]
 	versionSplit := strings.Split(version, ".")
 
 	mul := 10000
