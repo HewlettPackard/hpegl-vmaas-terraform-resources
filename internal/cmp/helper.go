@@ -23,7 +23,7 @@ func ParseVersion(version string) (int, error) {
 	if version == "" {
 		return 0, nil
 	}
-
+	version = strings.Split(version, "-")[0]
 	versionSplit := strings.Split(version, ".")
 
 	mul := 10000
