@@ -10,7 +10,7 @@ acc:
     plan_id = 216
     instance_type_code = "vmware"
     network {
-        id = 137
+        id = 156
       }
     volume {
         name = "root_vol"
