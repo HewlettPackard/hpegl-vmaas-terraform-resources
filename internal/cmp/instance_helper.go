@@ -326,10 +326,13 @@ func instanceCompareTags(org, new map[string]interface{}) ([]models.CreateInstan
 	}
 
 	for k, v := range org {
-		removeTags = append(removeTags, models.CreateInstanceBodyTag{
-			Name:  k,
-			Value: v.(string),
-		})
+		val, ok := new[k]
+		if !ok || (ok && val != org[k]) {
+			removeTags = append(removeTags, models.CreateInstanceBodyTag{
+				Name:  k,
+				Value: v.(string),
+			})
+		}
 	}
 
 	return addTags, removeTags
