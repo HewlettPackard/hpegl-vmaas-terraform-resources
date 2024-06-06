@@ -168,6 +168,7 @@ func getInstanceDefaultSchema(isClone bool) *schema.Resource {
 			},
 			"tags": {
 				Type:        schema.TypeMap,
+				ForceNew:    true,
 				Optional:    true,
 				Description: "A list of key and value pairs used to tag instances of similar type.",
 				Elem: &schema.Schema{
