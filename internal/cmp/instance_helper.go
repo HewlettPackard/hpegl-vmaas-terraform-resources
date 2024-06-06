@@ -1,4 +1,4 @@
-// (C) Copyright 2021-2023 Hewlett Packard Enterprise Development LP
+// (C) Copyright 2021-2024 Hewlett Packard Enterprise Development LP
 
 package cmp
 
@@ -326,12 +326,10 @@ func instanceCompareTags(org, new map[string]interface{}) ([]models.CreateInstan
 	}
 
 	for k, v := range org {
-		if _, ok := new[k]; !ok {
-			removeTags = append(removeTags, models.CreateInstanceBodyTag{
-				Name:  k,
-				Value: v.(string),
-			})
-		}
+		removeTags = append(removeTags, models.CreateInstanceBodyTag{
+			Name:  k,
+			Value: v.(string),
+		})
 	}
 
 	return addTags, removeTags
