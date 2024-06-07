@@ -1,4 +1,4 @@
-// (C) Copyright 2021-2023 Hewlett Packard Enterprise Development LP
+// (C) Copyright 2021-2024 Hewlett Packard Enterprise Development LP
 
 package cmp
 
@@ -85,7 +85,10 @@ func readInstance(ctx context.Context, sharedClient instanceSharedClient, d *uti
 	tfInstance.Snapshot = instanceGetSnaphotModel(tfInstance.Snapshot, snapshotRetry)
 	tfInstance.History = instanceGetHistoryModel(historyRetry)
 	tfInstance.Containers = instance.Instance.ContainerDetails
-
+	err = d.Set("tags", instanceUpdateTags(instance.Instance.Tags))
+	if err != nil {
+		return err
+	}
 	err = tftags.Set(d, tfInstance)
 	if err != nil {
 		return err
@@ -326,7 +329,8 @@ func instanceCompareTags(org, new map[string]interface{}) ([]models.CreateInstan
 	}
 
 	for k, v := range org {
-		if _, ok := new[k]; !ok {
+		val, ok := new[k]
+		if !ok || (ok && val != org[k]) {
 			removeTags = append(removeTags, models.CreateInstanceBodyTag{
 				Name:  k,
 				Value: v.(string),
@@ -620,4 +624,16 @@ func instanceUpdateNetworkVolumePlan(
 	}
 
 	return nil
+}
+
+func instanceUpdateTags(tags []models.CreateInstanceBodyTag) interface{} {
+	if len(tags) == 0 {
+		return nil
+	}
+	tfInstanceTags := make(map[string]interface{})
+	for _, v := range tags {
+		tfInstanceTags[v.Name] = v.Value
+	}
+
+	return tfInstanceTags
 }
