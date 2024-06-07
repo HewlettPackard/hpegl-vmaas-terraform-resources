@@ -634,5 +634,6 @@ func instanceUpdateTags(tags []models.CreateInstanceBodyTag) interface{} {
 	for _, v := range tags {
 		tfInstanceTags[v.Name] = v.Value
 	}
+
 	return tfInstanceTags
 }
