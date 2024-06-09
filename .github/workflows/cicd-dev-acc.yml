@@ -23,7 +23,8 @@ jobs:
 
   test-vmaas-instance:
     uses: ./.github/workflows/reusable-dev-acc.yml
-    needs: [test-datasouces]
+    # needs: [test-datasouces]
+    needs: [test-provider]
     if: "always()"
     with:
       test_case: TestVmaasInstance TestAccResourceInstance
@@ -32,7 +33,8 @@ jobs:
 
   test-vmaas-lb:
     uses: ./.github/workflows/reusable-dev-acc.yml
-    needs: [test-vmaas-instance]
+    # needs: [test-vmaas-instance]
+    needs: [test-provider]
     if: "always()"
     with:
       test_case: TestVmaasLB TestAccResourceLB TestVmaasLoadBalancerPlan TestAccResourceLoadBalancerCreate
@@ -41,7 +43,8 @@ jobs:
 
   test-vmaas-network:
     uses: ./.github/workflows/reusable-dev-acc.yml
-    needs: [test-vmaas-lb]
+    # needs: [test-vmaas-lb]
+    needs: [test-provider]
     if: "always()"
     with:
       test_case: TestVmaasNetworkPlan TestAccResourceNetworkCreate TestAccResourceRouter TestVmaasRouter TestAccResourceTier TestVmaasRouteBGPNeighborPlan
