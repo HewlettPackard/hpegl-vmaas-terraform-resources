@@ -1,4 +1,4 @@
-// (C) Copyright 2021 Hewlett Packard Enterprise Development LP
+// (C) Copyright 2021-2024 Hewlett Packard Enterprise Development LP
 
 package resources
 
@@ -112,7 +112,6 @@ func getInstanceDefaultSchema(isClone bool) *schema.Resource {
 						"name": {
 							Type:        schema.TypeString,
 							Computed:    true,
-							Optional:    true,
 							Description: "name of the interface",
 						},
 					},
