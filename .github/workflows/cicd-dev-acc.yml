@@ -23,8 +23,9 @@ jobs:
 
   test-vmaas-instance:
     uses: ./.github/workflows/reusable-dev-acc.yml
-    needs: [test-datasouces]
-    if: "always()"
+    # needs: [test-datasouces]
+    needs: [test-provider]
+    # if: "always()"
     with:
       test_case: TestVmaasInstance TestAccResourceInstance
       test_description: Instance usecase validations
@@ -32,8 +33,9 @@ jobs:
 
   test-vmaas-lb:
     uses: ./.github/workflows/reusable-dev-acc.yml
-    needs: [test-vmaas-instance]
-    if: "always()"
+    # needs: [test-vmaas-instance]
+    needs: [test-provider]
+    # if: "always()"
     with:
       test_case: TestVmaasLB TestAccResourceLB TestVmaasLoadBalancerPlan TestAccResourceLoadBalancerCreate
       test_description: Loadbalancer usecase validations
@@ -41,8 +43,9 @@ jobs:
 
   test-vmaas-network:
     uses: ./.github/workflows/reusable-dev-acc.yml
-    needs: [test-vmaas-lb]
-    if: "always()"
+    # needs: [test-vmaas-lb]
+    needs: [test-provider]
+    # if: "always()"
     with:
       test_case: TestVmaasNetworkPlan TestAccResourceNetworkCreate TestAccResourceRouter TestVmaasRouter TestAccResourceTier TestVmaasRouteBGPNeighborPlan
       test_description: NSX Network usecase validations
@@ -50,8 +53,7 @@ jobs:
 
   process-logs:
     runs-on: ubuntu-20.04
-    needs:
-      - test-vmaas-network
+    needs: [test-vmaas-network, test-vmaas-lb, test-vmaas-instance, test-datasouces]
     if: "always()"
     steps:
       - name: Checkout workspace
