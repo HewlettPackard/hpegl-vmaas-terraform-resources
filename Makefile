@@ -81,7 +81,7 @@ coverage: vendor
 ACC_TEST_FILE_LOCATION=github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/acceptance_test
 acceptance:
 	@if [ "${case}" != "" ]; then \
-		TF_ACC=true go test -parallel 1 -run $(case) -v -timeout=20000s -cover $(ACC_TEST_FILE_LOCATION); \
+		TF_ACC=true go test -parallel 2 -run $(case) -v -timeout=20000s -cover $(ACC_TEST_FILE_LOCATION); \
 	else \
 		TF_ACC=true go test -parallel 4 -v -timeout=50000s -cover $(ACC_TEST_FILE_LOCATION);\
 	fi
