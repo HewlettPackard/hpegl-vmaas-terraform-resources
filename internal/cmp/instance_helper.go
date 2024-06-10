@@ -573,7 +573,6 @@ func instanceGetNetworkModel(
 	for i, s := range serverInterface {
 		networks[i].InternalID = s.ID
 		networks[i].IsPrimary = s.PrimaryInterface
-		networks[i].Name = s.Name
 	}
 
 	return networks, nil
