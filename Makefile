@@ -111,5 +111,5 @@ all: lint test
 tools:
 	go env -w GO111MODULE=on
 	go env -w GOPRIVATE="github.com/hpe-hcss/*"
-	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.43.0
+	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.59.0
 .PHONY: tools

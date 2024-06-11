@@ -3,8 +3,6 @@
 run:
   deadline: 240s
   tests: true
-  skip-dirs:
-    - vendor
   build-tags: acceptance
 
 linters-settings:
@@ -31,13 +29,13 @@ linters-settings:
     ignore-tests: true
 
 linters:
-  enable-all: true
+  #enable-all: true
   disable:
     - gosec
     - dupl
     - wsl
     - gci
-    - goerr113
+    - err113
     - godot
     - gomnd
     - gochecknoinits
@@ -69,7 +67,8 @@ linters:
     # - cyclop
 
 issues:
-
+  exclude-dirs:
+    - vendor
   exclude-rules:
     # Exclude lll issues for long lines with go:generate
     - linters:
@@ -79,7 +78,7 @@ issues:
     # ignore function length for tests as look up tables typically exceed.
     - linters:
         - funlen
-        - goerr113
+        - err113
       path: _test\.go
 
     # - linters:
