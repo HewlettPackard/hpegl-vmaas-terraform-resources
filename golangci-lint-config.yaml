@@ -92,6 +92,9 @@ issues:
     - linters:
         - staticcheck
       text: "SA9003:"
+    - linters:
+        - staticcheck
+      text: "SA1019:"
 
     - linters:
         - stylecheck
