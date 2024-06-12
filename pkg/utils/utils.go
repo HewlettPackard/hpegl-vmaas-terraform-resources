@@ -1,4 +1,4 @@
-// (C) Copyright 2021 Hewlett Packard Enterprise Development LP
+// (C) Copyright 2021-2024 Hewlett Packard Enterprise Development LP
 
 package utils
 
@@ -74,5 +74,13 @@ func GetEnvBool(key string) bool {
 		return false
 	}
 
+	return value
+}
+
+func GetEnv(key, defaultVal string) string {
+	value, exists := os.LookupEnv(key)
+	if !exists {
+		value = defaultVal
+	}
 	return value
 }

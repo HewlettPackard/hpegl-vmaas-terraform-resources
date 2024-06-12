@@ -167,10 +167,11 @@ func (r *reader) parseConfig(v *viper.Viper) []accConfig {
 		configs[i].config = fmt.Sprintf(`
 		%s
 		%s "%s" "tf_%s" {
+		    provider = hpegl.%s
 			%s
 		}
 		`,
-			providerStanza, getType(r.isResource), r.name, tfKey, tfConfig,
+			GetProviderStanza(tfKey), getType(r.isResource), r.name, tfKey, tfKey, tfConfig,
 		)
 		r.parseRegex(v, i)
 		configs[i].validations = r.parseValidations(v, i)
