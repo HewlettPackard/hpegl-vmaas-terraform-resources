@@ -81,7 +81,7 @@ coverage: vendor
 ACC_TEST_FILE_LOCATION=github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/acceptance_test
 acceptance:
 	@if [ "${case}" != "" ]; then \
-		TF_ACC=true go test -parallel 1 -run $(case) -v -timeout=20000s -cover $(ACC_TEST_FILE_LOCATION); \
+		TF_ACC=true go test -parallel 1 -count 1 -run $(case) -v -timeout=20000s -cover $(ACC_TEST_FILE_LOCATION); \
 	else \
 		TF_ACC=true go test -parallel 4 -v -timeout=50000s -cover $(ACC_TEST_FILE_LOCATION);\
 	fi
@@ -111,5 +111,5 @@ all: lint test
 tools:
 	go env -w GO111MODULE=on
 	go env -w GOPRIVATE="github.com/hpe-hcss/*"
-	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.43.0
+	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.59.0
 .PHONY: tools

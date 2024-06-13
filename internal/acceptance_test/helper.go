@@ -1,4 +1,4 @@
-// (C) Copyright 2021 Hewlett Packard Enterprise Development LP
+// (C) Copyright 2021-2024 Hewlett Packard Enterprise Development LP
 
 package acceptancetest
 
@@ -31,7 +31,6 @@ func getAPIClient() (*api_client.APIClient, api_client.Configuration) {
 			constants.SpaceKey:    os.Getenv("HPEGL_VMAAS_SPACE_NAME"),
 		},
 	}
-
 	apiClient := api_client.NewAPIClient(&cfg)
 	err := apiClient.SetMeta(nil, func(ctx *context.Context, meta interface{}) {
 		d := &utils.ResourceData{
@@ -42,6 +41,7 @@ func getAPIClient() (*api_client.APIClient, api_client.Configuration) {
 				"user_secret":               os.Getenv("HPEGL_USER_SECRET"),
 				"api_vended_service_client": true,
 				"iam_token":                 os.Getenv("HPEGL_IAM_TOKEN"),
+				"iam_version":               utils.GetEnv("HPEGL_IAM_VERSION", "glcs"),
 			},
 		}
 		if utils.GetEnvBool(constants.MockIAMKey) {
