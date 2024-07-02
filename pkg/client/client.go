@@ -1,4 +1,4 @@
-// (C) Copyright 2021 Hewlett Packard Enterprise Development LP
+// (C) Copyright 2021-2024 Hewlett Packard Enterprise Development LP
 
 package client
 
@@ -53,14 +53,20 @@ func (i InitialiseClient) NewClient(r *schema.ResourceData) (interface{}, error)
 
 	// Create VMaas Client
 	client := new(Client)
-
+	queryParam := map[string]string{
+		constants.LocationKey: vmaasProviderSettings[constants.LOCATION].(string),
+	}
+	space := vmaasProviderSettings[constants.SPACENAME].(string)
+	// check if glp then pass the space value as workspaceKey
+	if r.Get("iam_version").(string) == "glp" {
+		queryParam[constants.WorkspaceKey] = space
+	} else {
+		queryParam[constants.SpaceKey] = space
+	}
 	cfg := api_client.Configuration{
-		Host:          vmaasProviderSettings[constants.APIURL].(string),
-		DefaultHeader: getHeaders(),
-		DefaultQueryParams: map[string]string{
-			constants.SpaceKey:    vmaasProviderSettings[constants.SPACENAME].(string),
-			constants.LocationKey: vmaasProviderSettings[constants.LOCATION].(string),
-		},
+		Host:               vmaasProviderSettings[constants.APIURL].(string),
+		DefaultHeader:      getHeaders(),
+		DefaultQueryParams: queryParam,
 	}
 	apiClient := api_client.NewAPIClient(&cfg)
 	utils.SetMeta(apiClient, r)
