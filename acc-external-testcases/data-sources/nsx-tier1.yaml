@@ -1,0 +1,5 @@
+acc:
+- config: |
+    name = "tf-dont-delete"
+  validations:
+    json.networkRouter.providerId: "/infra/tier-1s/9c995f68-f873-42f0-bb1b-8c5021c8f64a"

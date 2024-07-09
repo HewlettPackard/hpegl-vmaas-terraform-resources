@@ -1,0 +1,17 @@
+acc:
+- config: |
+    router_id   = 3
+    ip_address = "10.201.227.88"
+    remote_as = 65000
+    keepalive = 60
+    holddown = 180
+    router_filtering_type = "IPV4"
+    bfd_enabled = false
+    bfd_interval = 1000
+    bfd_multiple = 3
+    allow_as_in = false
+    hop_limit = 1
+    restart_mode = "HELPER_ONLY"
+  validations:
+    json.networkRouterBgpNeighbor.ipAddress="10.201.227.88"
+    json.networkRouterBgpNeighbor.remoteAs=65000

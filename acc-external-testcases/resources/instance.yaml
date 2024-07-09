@@ -1,0 +1,27 @@
+vars:
+  instance_name: tf_external_acc_%rand_int
+  rand_storage_1: "%rand_int{5,8}"
+acc:
+- config: |
+    name = "$(instance_name)"
+    cloud_id = 2
+    group_id = 29
+    layout_id = 415
+    plan_id = 877
+    instance_type_code = "vmware"
+    network {
+        id = 119
+      }
+    volume {
+        name = "root_vol"
+        datastore_id = "auto"
+        size = $(rand_storage_1)
+      }
+    config {
+      resource_pool_id = 14
+      template_id = 5069
+      folder_code = "group-v7199"
+      }
+    scale = 1
+  validations:
+    tf.status: "running"

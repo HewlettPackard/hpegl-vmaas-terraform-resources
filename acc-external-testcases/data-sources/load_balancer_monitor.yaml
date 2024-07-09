@@ -1,0 +1,6 @@
+acc:
+- config: |
+    name = "default-http-lb-monitor"
+    lb_id = 19
+  validations:
+    json.loadBalancerMonitor.id: 152

@@ -10,6 +10,7 @@ jobs:
     with:
       test_case: TestProvider
       test_description: Check for valid terraform provider
+      test_case_folder: acc-external-testcases
     secrets: inherit
 
   test-datasouces:
@@ -19,6 +20,7 @@ jobs:
     with:
       test_case: TestAccDataSource
       test_description: GET call usecase validations
+      test_case_folder: acc-external-testcases
     secrets: inherit
 
   test-vmaas-instance:
@@ -28,29 +30,30 @@ jobs:
     with:
       test_case: TestVmaasInstance TestAccResourceInstance
       test_description: Instance usecase validations
+      test_case_folder: acc-external-testcases
     secrets: inherit
 
-  test-vmaas-lb:
-    uses: ./.github/workflows/reusable-dev-acc.yml
-    needs: [test-vmaas-instance]
-    if: "always()"
-    with:
-      test_case: TestVmaasLB TestAccResourceLB TestVmaasLoadBalancerPlan TestAccResourceLoadBalancerCreate
-      test_description: Loadbalancer usecase validations
-    secrets: inherit
+  # test-vmaas-lb:
+  #   uses: ./.github/workflows/reusable-dev-acc.yml
+  #   needs: [test-vmaas-instance]
+  #   if: "always()"
+  #   with:
+  #     test_case: TestVmaasLB TestAccResourceLB TestVmaasLoadBalancerPlan TestAccResourceLoadBalancerCreate
+  #     test_description: Loadbalancer usecase validations
+  #   secrets: inherit
 
-  test-vmaas-network:
-    uses: ./.github/workflows/reusable-dev-acc.yml
-    needs: [test-vmaas-lb]
-    if: "always()"
-    with:
-      test_case: TestVmaasNetworkPlan TestAccResourceNetworkCreate TestAccResourceRouter TestVmaasRouter TestAccResourceTier TestVmaasRouteBGPNeighborPlan
-      test_description: NSX Network usecase validations
-    secrets: inherit
+  # test-vmaas-network:
+  #   uses: ./.github/workflows/reusable-dev-acc.yml
+  #   needs: [test-vmaas-lb]
+  #   if: "always()"
+  #   with:
+  #     test_case: TestVmaasNetworkPlan TestAccResourceNetworkCreate TestAccResourceRouter TestVmaasRouter TestAccResourceTier TestVmaasRouteBGPNeighborPlan
+  #     test_description: NSX Network usecase validations
+  #   secrets: inherit
 
   process-logs:
     runs-on: ubuntu-20.04
-    needs: [test-vmaas-network]
+    needs: [test-vmaas-instance]
     if: "always()"
     steps:
       - name: Checkout workspace

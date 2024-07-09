@@ -1,0 +1,21 @@
+acc:
+- config: |
+    name = "default-http-lb-app-profile"
+    lb_id = 19
+  validations:
+    json.loadBalancerProfile.id: 504
+- config: |
+    name = "default-cookie-lb-persistence-profile"
+    lb_id = 19
+  validations:
+    json.loadBalancerProfile.id: 527
+- config: |
+    name = "default-balanced-server-ssl-profile"
+    lb_id = 19
+  validations:
+    json.loadBalancerProfile.id: 571
+- config: |
+    name = "default-balanced-client-ssl-profile"
+    lb_id = 19
+  validations:
+    json.loadBalancerProfile.id: 552

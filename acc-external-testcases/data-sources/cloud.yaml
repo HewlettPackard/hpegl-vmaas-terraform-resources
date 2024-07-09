@@ -1,0 +1,6 @@
+acc:
+- config: |
+    name = "External-Cloud"
+  validations:
+    json.zone.id: 2
+    tf.id: 2
