@@ -1,5 +1,0 @@
-acc:
-- config: |
-    name = "tf_lb_DO_NOT_DELETE"
-  validations:
-    json.loadBalancer.id: 19

@@ -1,5 +1,0 @@
-acc:
-- config: |
-    name = "Application-Group"
-  validations:
-    json.groups.externalId: "/infra/domains/default/groups/Application-Group" 
