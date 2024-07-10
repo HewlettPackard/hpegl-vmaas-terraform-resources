@@ -42,7 +42,7 @@ env:
   HPEGL_USER_SECRET: ${{ secrets.DEV_HPEGL_USER_SECRET }}
   HPEGL_USER_ID: ${{ secrets.DEV_HPEGL_USER_ID }}
   HPEGL_VMAAS_API_URL: ${{ secrets.DEV_HPEGL_VMAAS_API_URL }}
-  HPEGL_VMAAS_LOCATION: FTC-External-Cloud
+  HPEGL_VMAAS_LOCATION: ${{ secrets.DEV_HPEGL_VMAAS_LOCATION }}
   HPEGL_VMAAS_SPACE_NAME: ${{ secrets.DEV_HPEGL_VMAAS_SPACE_NAME}}
   TF_ACC: ${{ secrets.TF_ACC }}
   LOG_FILE: "Terraform Log - ${{ inputs.test_description }}.txt"
