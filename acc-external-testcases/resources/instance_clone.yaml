@@ -1,0 +1,9 @@
+vars:
+  instance_name: tf_external_acc_clone_%rand_int
+acc:
+- config: |
+    source_instance_id = 476
+    name = "$(instance_name)"
+    network {
+      id = 119
+    }

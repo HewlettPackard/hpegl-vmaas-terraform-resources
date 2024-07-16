@@ -1,0 +1,4 @@
+acc:
+- config: |
+    name = "ExternalResourcePool"
+    cloud_id = 2

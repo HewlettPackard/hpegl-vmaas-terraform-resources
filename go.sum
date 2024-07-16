@@ -1,7 +1,7 @@
 dario.cat/mergo v1.0.0 h1:AGCNq9Evsj31mOgNPcLyXc+4PNABt905YmuqPYYpBWk=
 dario.cat/mergo v1.0.0/go.mod h1:uNxQE+84aUszobStD9th8a29P2fMDhsBdgRYvZOxGmk=
-github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk v0.1.9 h1:SjJgSnyD1XXAHy6kExOYTFiwAaAmBwvj/0BA+e+AyeA=
-github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk v0.1.9/go.mod h1:UzXizYR6sUVsvDRMcLC2E4eabJsPH/3nM8rlKL2BLSc=
+github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk v0.1.10 h1:RLRtdCjl12eunpAxSNrlUJTGFALbDR0lmZuW/ICbiOQ=
+github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk v0.1.10/go.mod h1:UzXizYR6sUVsvDRMcLC2E4eabJsPH/3nM8rlKL2BLSc=
 github.com/Masterminds/goutils v1.1.0/go.mod h1:8cTjp+g8YejhMuvIA5y2vz3BpJxksy863GQaJW2MFNU=
 github.com/Masterminds/goutils v1.1.1 h1:5nUrii3FMTL5diU80unEVvNevw1nH4+ZV4DSLVJLSYI=
 github.com/Masterminds/goutils v1.1.1/go.mod h1:8cTjp+g8YejhMuvIA5y2vz3BpJxksy863GQaJW2MFNU=

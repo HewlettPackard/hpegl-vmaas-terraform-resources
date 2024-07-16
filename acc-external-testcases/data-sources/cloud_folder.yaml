@@ -1,0 +1,6 @@
+acc:
+- config: |
+    name     = "ExternalVMFolder"
+    cloud_id = 2
+  validations:
+    json.folder.id: 11

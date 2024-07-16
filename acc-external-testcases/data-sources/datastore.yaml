@@ -1,0 +1,4 @@
+acc:
+- config: |
+    name = "glcicd-G2i-1-Bs-1"
+    cloud_id = 2
