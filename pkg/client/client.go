@@ -53,7 +53,7 @@ func (i InitialiseClient) NewClient(r *schema.ResourceData) (interface{}, error)
 
 	// Create VMaas Client
 	client := new(Client)
-	iamVersion := utils.GetEnv("HPEGL_IAM_VERSION", constants.IamGlcs)
+	iamVersion := r.Get("iam_version").(string)
 	queryParam := map[string]string{
 		constants.LocationKey: vmaasProviderSettings[constants.LOCATION].(string),
 	}
