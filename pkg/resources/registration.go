@@ -1,4 +1,4 @@
-// (C) Copyright 2021-2022 Hewlett Packard Enterprise Development LP
+// (C) Copyright 2021-2024 Hewlett Packard Enterprise Development LP
 
 package resources
 
@@ -82,7 +82,7 @@ func (r Registration) ProviderSchemaEntry() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 				DefaultFunc: schema.EnvDefaultFunc("HPEGL_VMAAS_SPACE_NAME", ""),
-				Description: "IAM Space name of the GL VMaaS Service, can also be set with the HPEGL_VMAAS_SPACE_NAME env var.",
+				Description: "It can also be set with the HPEGL_VMAAS_SPACE_NAME env var. When `HPEGL_IAM_VERSION` is `glcs` it refers to IAM Space name of the GL VMaaS Service i.e., Default. When `HPEGL_IAM_VERSION` is `glp` it refers to GLP workspace UUID.",
 			},
 			constants.APIURL: {
 				Type:        schema.TypeString,
