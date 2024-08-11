@@ -22,14 +22,19 @@ func getAPIClient() (*api_client.APIClient, api_client.Configuration) {
 		headers["Authorization"] = os.Getenv("HPEGL_IAM_TOKEN")
 		headers["subject"] = os.Getenv(constants.CmpSubjectKey)
 	}
-
+	iamVersion := utils.GetEnv("HPEGL_IAM_VERSION", constants.IamGlcs)
+	queryParam := map[string]string{
+		constants.LocationKey: os.Getenv("HPEGL_VMAAS_LOCATION"),
+	}
+	if iamVersion == constants.IamGlp {
+		queryParam[constants.WorkspaceKey] = os.Getenv("HPEGL_VMAAS_SPACE_NAME")
+	} else {
+		queryParam[constants.SpaceKey] = os.Getenv("HPEGL_VMAAS_SPACE_NAME")
+	}
 	cfg := api_client.Configuration{
-		Host:          os.Getenv("HPEGL_VMAAS_API_URL"),
-		DefaultHeader: headers,
-		DefaultQueryParams: map[string]string{
-			constants.LocationKey: os.Getenv("HPEGL_VMAAS_LOCATION"),
-			constants.SpaceKey:    os.Getenv("HPEGL_VMAAS_SPACE_NAME"),
-		},
+		Host:               os.Getenv("HPEGL_VMAAS_API_URL"),
+		DefaultHeader:      headers,
+		DefaultQueryParams: queryParam,
 	}
 	apiClient := api_client.NewAPIClient(&cfg)
 	err := apiClient.SetMeta(nil, func(ctx *context.Context, meta interface{}) {
@@ -41,7 +46,7 @@ func getAPIClient() (*api_client.APIClient, api_client.Configuration) {
 				"user_secret":               os.Getenv("HPEGL_USER_SECRET"),
 				"api_vended_service_client": true,
 				"iam_token":                 os.Getenv("HPEGL_IAM_TOKEN"),
-				"iam_version":               utils.GetEnv("HPEGL_IAM_VERSION", "glcs"),
+				"iam_version":               iamVersion,
 			},
 		}
 		if utils.GetEnvBool(constants.MockIAMKey) {
