@@ -64,7 +64,7 @@ func getInstanceDefaultSchema(isClone bool) *schema.Resource {
 				Type:        schema.TypeInt,
 				Optional:    isClone,
 				Required:    !isClone,
-				ForceNew:    true,
+				ForceNew:    false,
 				Description: f(generalDDesc, "group"),
 			},
 			"layout_id": layoutID,

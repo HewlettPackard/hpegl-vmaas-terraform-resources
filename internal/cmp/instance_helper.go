@@ -41,17 +41,9 @@ func readInstance(ctx context.Context, sharedClient instanceSharedClient, d *uti
 		return err
 	}
 
-	// Assign proper ID for the volume, since response may contains more
-	// volumes than schema, check the name and assign id
-	for i := range tfInstance.Volume {
-		for _, vModel := range instance.Instance.Volumes {
-			if vModel.Name == tfInstance.Volume[i].Name {
-				tfInstance.Volume[i].ID = vModel.ID
+	// Read and update the volume
+	tfInstance.Volume = instanceSetVolume(instance.Instance.Volumes)
 
-				break
-			}
-		}
-	}
 	// Invoke all API request in parallel
 	// Get server details
 	serverRetry := &utils.CustomRetry{}
@@ -277,7 +269,20 @@ func instanceGetConfig(c map[string]interface{}, isVmware bool) *models.CreateIn
 
 	return config
 }
+func instanceSetVolume(volumes []models.GetInstanceResponseInstanceVolumes) []models.TFInstanceVolume {
+	volumesModel := make([]models.TFInstanceVolume, 0, len(volumes))
+	for i := range volumes {
+		volumesModel = append(volumesModel, models.TFInstanceVolume{
+			ID:          volumes[i].ID,
+			Name:        volumes[i].Name,
+			Size:        volumes[i].Size,
+			DatastoreID: volumes[i].DatastoreID.(string),
+			Root:        volumes[i].RootVolume,
+		})
+	}
 
+	return volumesModel
+}
 func instanceGetTags(t map[string]interface{}) []models.CreateInstanceBodyTag {
 	tags := make([]models.CreateInstanceBodyTag, 0, len(t))
 	for k, v := range t {
@@ -343,19 +348,22 @@ func instanceCompareTags(org, new map[string]interface{}) ([]models.CreateInstan
 
 // Function to compare previous and new(from terraform) volume data and assign proper ids based on name.
 // Volume name should be unique
-func instanceCompareVolumes(org, new []map[string]interface{}) []map[string]interface{} {
+func instanceCompareVolumes(org, new []map[string]interface{}) ([]map[string]interface{}, error) {
 	for i := range new {
 		new[i]["id"] = -1
 		for j := range org {
 			if new[i]["name"] == org[j]["name"] {
 				new[i]["id"] = org[j]["id"]
+				if new[i]["size"].(int) < org[j]["size"].(int) {
+					return nil, fmt.Errorf("storage volume %s of the instance can't be reduced", new[i]["name"])
+				}
 
 				break
 			}
 		}
 	}
 
-	return new
+	return new, nil
 }
 
 func instanceDoPowerTask(
@@ -587,7 +595,10 @@ func instanceUpdateNetworkVolumePlan(
 ) error {
 	var resizeReq models.ResizeInstanceBody
 	if d.HasChanged("volume") {
-		volumes := instanceCompareVolumes(d.GetChangedListMap("volume"))
+		volumes, err := instanceCompareVolumes(d.GetChangedListMap("volume"))
+		if err != nil {
+			return fmt.Errorf("failed to update volume for an instance, error: %v", err)
+		}
 		resizeReq = models.ResizeInstanceBody{
 			Instance: &models.ResizeInstanceBodyInstance{
 				Plan: &models.ResizeInstanceBodyInstancePlan{
