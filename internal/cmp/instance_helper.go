@@ -595,8 +595,10 @@ func instanceUpdateNetworkVolumePlan(
 ) error {
 	var resizeReq models.ResizeInstanceBody
 	if d.HasChanged("volume") {
-		volumes, err := instanceCompareVolumes(d.GetChangedListMap("volume"))
+		originalVol, newVol := d.GetChangedListMap("volume")
+		volumes, err := instanceCompareVolumes(originalVol, newVol)
 		if err != nil {
+			d.Set("volume", originalVol)
 			return fmt.Errorf("failed to update volume for an instance, error: %v", err)
 		}
 		resizeReq = models.ResizeInstanceBody{
