@@ -1,4 +1,4 @@
-// (C) Copyright 2021-2022 Hewlett Packard Enterprise Development LP
+// (C) Copyright 2021-2024 Hewlett Packard Enterprise Development LP
 
 package resources
 
@@ -31,6 +31,7 @@ const (
 	DSLBVirtualServer        = "hpegl_vmaas_load_balancer_virtual_server"
 	DSLBVirtualServerSslCert = "hpegl_vmaas_load_balancer_virtual_server_ssl_cert"
 	DSDhcpServer             = "hpegl_vmaas_dhcp_server"
+	DSInstanceStorageType    = "hpegl_vmaas_instance_disk_type"
 
 	// resource key
 	ResInstance                   = "hpegl_vmaas_instance"

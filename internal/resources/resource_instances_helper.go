@@ -143,6 +143,13 @@ func getInstanceDefaultSchema(isClone bool) *schema.Resource {
 							data source. Use the value 'auto' so that the datastore is automatically selected.`,
 							DiffSuppressFunc: utils.SkipField(),
 						},
+						"storage_type": {
+							Type:     schema.TypeInt,
+							Optional: true,
+							Description: `Storage type ID can be obtained from hpegl_vmaas_instance_disk_type
+							data source.`,
+							DiffSuppressFunc: utils.SkipField(),
+						},
 						"id": {
 							Computed:    true,
 							Type:        schema.TypeInt,

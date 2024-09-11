@@ -1,4 +1,4 @@
-// (C) Copyright 2021-2022 Hewlett Packard Enterprise Development LP
+// (C) Copyright 2021-2024 Hewlett Packard Enterprise Development LP
 
 package cmp
 
@@ -47,6 +47,7 @@ type Client struct {
 	DSLBMonitor               DataSource
 	DSPoolMemeberGroup        DataSource
 	DSDhcpServer              DataSource
+	InstanceStorageType       DataSource
 }
 
 // NewClient returns configured client
@@ -113,5 +114,6 @@ func NewClient(client *apiClient.APIClient, cfg apiClient.Configuration) *Client
 		NetworkProxy:             newNetworkProxy(&apiClient.NetworksAPIService{Client: client, Cfg: cfg}),
 		TransportZone:            newTransportZone(&apiClient.RouterAPIService{Client: client, Cfg: cfg}),
 		EdgeCluster:              newEdgeCluster(&apiClient.RouterAPIService{Client: client, Cfg: cfg}),
+		InstanceStorageType:      newInstanceStorageType(&apiClient.InstancesAPIService{Client: client, Cfg: cfg}),
 	}
 }

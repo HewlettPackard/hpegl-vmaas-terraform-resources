@@ -218,6 +218,7 @@ func instanceGetVolume(volumes []map[string]interface{}) []models.CreateInstance
 			Name:        volumes[i]["name"].(string),
 			Size:        volumes[i]["size"].(int),
 			DatastoreID: volumes[i]["datastore_id"],
+			StorageType: volumes[i]["storage_type"].(int),
 		})
 	}
 	volumesModel[0].RootVolume = true
@@ -234,6 +235,7 @@ func instanceResizeVolume(volumes []map[string]interface{}) []models.ResizeInsta
 			Name:        volumes[i]["name"].(string),
 			Size:        volumes[i]["size"].(int),
 			DatastoreID: volumes[i]["datastore_id"],
+			StorageType: volumes[i]["storage_type"].(int),
 		})
 	}
 
@@ -278,6 +280,7 @@ func instanceSetVolume(volumes []models.GetInstanceResponseInstanceVolumes) []mo
 			Size:        volumes[i].Size,
 			DatastoreID: volumes[i].DatastoreID.(string),
 			Root:        volumes[i].RootVolume,
+			StorageType: volumes[i].StorageType,
 		})
 	}
 
@@ -399,6 +402,7 @@ func instanceCloneCompareVolume(
 			ID:          -1,
 			Size:        vSchemas[i]["size"].(int),
 			DatastoreID: vSchemas[i]["datastore_id"],
+			StorageType: vSchemas[i]["storage_type"].(int),
 		})
 	}
 
@@ -418,6 +422,7 @@ func instanceCloneCompareVolume(
 				Size:        VModel.Size,
 				DatastoreID: VModel.DatastoreID,
 				Name:        VModel.Name,
+				StorageType: VModel.StorageType,
 			})
 		}
 	}

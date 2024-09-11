@@ -47,6 +47,7 @@ func (r Registration) SupportedDataSources() map[string]*schema.Resource {
 		resources.DSPoolMemeberGroup:       resources.LBPoolMemeberGroupData(),
 		resources.DSLBVirtualServerSslCert: resources.LBVirtualServerSslCertData(),
 		resources.DSDhcpServer:             resources.DhcpServerData(),
+		resources.DSInstanceStorageType:    resources.ReadInstanceStorageType(),
 	}
 }
 
