@@ -5,9 +5,10 @@ package resources
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
+	"github.com/hewlettpackard/hpegl-provider-lib/pkg/registration"
+
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/resources"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/constants"
-	"github.com/hewlettpackard/hpegl-provider-lib/pkg/registration"
 )
 
 // Assert that Registration implements the ServiceRegistration interface
@@ -48,6 +49,7 @@ func (r Registration) SupportedDataSources() map[string]*schema.Resource {
 		resources.DSLBVirtualServerSslCert: resources.LBVirtualServerSslCertData(),
 		resources.DSDhcpServer:             resources.DhcpServerData(),
 		resources.DSInstanceStorageType:    resources.ReadInstanceStorageType(),
+		resources.DSMorpheusDataSource:     resources.MorpheusDetailsBroker(),
 	}
 }
 
@@ -90,6 +92,12 @@ func (r Registration) ProviderSchemaEntry() *schema.Resource {
 				Required:    true,
 				DefaultFunc: schema.EnvDefaultFunc("HPEGL_VMAAS_API_URL", constants.ServiceURL),
 				Description: "The URL to use for the VMaaS API, can also be set with the HPEGL_VMAAS_API_URL env var",
+			},
+			constants.BROKERRURL: {
+				Type:        schema.TypeString,
+				Required:    true,
+				DefaultFunc: schema.EnvDefaultFunc("HPEGL_VMAAS_BROKER_URL", constants.BrokerURL),
+				Description: "The URL to use for the VMaaS Broker API, can also be set with the HPEGL_VMAAS_BROKER_URL env var",
 			},
 		},
 	}

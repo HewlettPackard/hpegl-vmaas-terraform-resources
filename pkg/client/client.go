@@ -6,12 +6,15 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+
+	"github.com/hewlettpackard/hpegl-provider-lib/pkg/client"
+
 	api_client "github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
+
 	cmp_client "github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/cmp"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/constants"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/utils"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-	"github.com/hewlettpackard/hpegl-provider-lib/pkg/client"
 )
 
 // keyForGLClientMap is the key in the map[string]interface{} that is passed down by hpegl used to store *Client
@@ -24,6 +27,8 @@ var _ client.Initialisation = (*InitialiseClient)(nil)
 // Client is the client struct that is used by the provider code
 type Client struct {
 	CmpClient *cmp_client.Client
+	// BrokerClient is used to get Morpheus details
+	BrokerClient *cmp_client.BrokerClient
 }
 
 // Get env configurations for VmaaS services
@@ -63,6 +68,7 @@ func (i InitialiseClient) NewClient(r *schema.ResourceData) (interface{}, error)
 		queryParam[constants.SpaceKey] = vmaasProviderSettings[constants.SPACENAME].(string)
 	}
 
+	// Create cmp client
 	cfg := api_client.Configuration{
 		Host:               vmaasProviderSettings[constants.APIURL].(string),
 		DefaultHeader:      getHeaders(),
@@ -71,6 +77,27 @@ func (i InitialiseClient) NewClient(r *schema.ResourceData) (interface{}, error)
 	apiClient := api_client.NewAPIClient(&cfg)
 	utils.SetMeta(apiClient, r)
 	client.CmpClient = cmp_client.NewClient(apiClient, cfg)
+
+	// Create broker client
+	brokerHeaders := getHeaders()
+	tenantID := r.Get(constants.TenantID).(string)
+	brokerHeaders["X-Tenant-ID"] = tenantID
+	// We don't add default query params to broker client
+	brokerCfgForAPIClient := api_client.Configuration{
+		Host:          vmaasProviderSettings[constants.BROKERRURL].(string),
+		DefaultHeader: brokerHeaders,
+	}
+	brokerApiClient := api_client.NewAPIClient(&brokerCfgForAPIClient)
+	utils.SetMetaFnAndVersion(brokerApiClient, r, apiClient.GetSCMVersion())
+
+	// brokerCfg is passed down to NewBrokerClient.  It is used mainly to set the query params
+	// for the call to get SubscriptionDetails
+	brokerCfg := api_client.Configuration{
+		Host:               vmaasProviderSettings[constants.BROKERRURL].(string),
+		DefaultHeader:      brokerHeaders,
+		DefaultQueryParams: queryParam,
+	}
+	client.BrokerClient = cmp_client.NewBrokerClient(brokerApiClient, brokerCfg)
 
 	return client, nil
 }

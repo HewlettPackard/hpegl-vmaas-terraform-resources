@@ -14,6 +14,8 @@ require (
 	github.com/tshihad/tftags v0.0.10
 )
 
+replace github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk => ../hpegl-vmaas-cmp-go-sdk
+
 require (
 	github.com/Masterminds/goutils v1.1.1 // indirect
 	github.com/Masterminds/semver/v3 v3.2.1 // indirect
