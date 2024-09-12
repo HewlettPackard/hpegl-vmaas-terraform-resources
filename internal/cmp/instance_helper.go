@@ -397,35 +397,16 @@ func instanceCloneCompareVolume(
 	newVolumes := make([]models.CreateInstanceBodyVolumes, 0, len(vSchemas))
 
 	// convert schema volume to model
-	for i := range newVolumes {
+	for _, vol := range vSchemas {
 		newVolumes = append(newVolumes, models.CreateInstanceBodyVolumes{
 			ID:          -1,
-			Size:        vSchemas[i]["size"].(int),
-			DatastoreID: vSchemas[i]["datastore_id"],
-			StorageType: vSchemas[i]["storage_type"].(int),
+			Size:        vol["size"].(int),
+			Name:        vol["name"].(string),
+			DatastoreID: vol["datastore_id"],
+			StorageType: vol["storage_type"].(int),
 		})
 	}
 
-	// check parent instance have same volume name, if so use same id
-	for _, VModel := range vModels {
-		volumeExist := false
-		for i, v := range newVolumes {
-			if VModel.Name == v.Name {
-				newVolumes[i].ID = VModel.ID
-				volumeExist = true
-			}
-		}
-		// if parent instance volume not exist in schema add it in request
-		if !volumeExist {
-			newVolumes = append(newVolumes, models.CreateInstanceBodyVolumes{
-				ID:          VModel.ID,
-				Size:        VModel.Size,
-				DatastoreID: VModel.DatastoreID,
-				Name:        VModel.Name,
-				StorageType: VModel.StorageType,
-			})
-		}
-	}
 	newVolumes[0].RootVolume = true
 
 	return newVolumes

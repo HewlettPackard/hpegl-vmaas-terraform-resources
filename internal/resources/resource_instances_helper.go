@@ -119,8 +119,7 @@ func getInstanceDefaultSchema(isClone bool) *schema.Resource {
 			},
 			"volume": {
 				Type:     schema.TypeList,
-				Optional: isClone,
-				Required: !isClone,
+				Required: true,
 				MinItems: 1,
 				Description: `A list of volumes to be created inside a provisioned instance.
 				It can have a root volume and other secondary volumes.`,
