@@ -8,3 +8,8 @@ acc:
       id           = 84
       interface_id = 4
     }
+    volume {
+      name = "root_vol"
+      datastore_id = "auto"
+      size = 6
+    }

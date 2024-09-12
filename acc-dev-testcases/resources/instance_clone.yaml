@@ -7,3 +7,8 @@ acc:
     network {
       id = 156
     }
+    volume {
+      name = "root_vol"
+      datastore_id = "auto"
+      size = 6
+    }
