@@ -119,8 +119,7 @@ func getInstanceDefaultSchema(isClone bool) *schema.Resource {
 			},
 			"volume": {
 				Type:     schema.TypeList,
-				Optional: isClone,
-				Required: !isClone,
+				Required: true,
 				MinItems: 1,
 				Description: `A list of volumes to be created inside a provisioned instance.
 				It can have a root volume and other secondary volumes.`,
@@ -141,6 +140,13 @@ func getInstanceDefaultSchema(isClone bool) *schema.Resource {
 							Required: true,
 							Description: `Datastore ID can be obtained from hpegl_vmaas_datastore
 							data source. Use the value 'auto' so that the datastore is automatically selected.`,
+							DiffSuppressFunc: utils.SkipField(),
+						},
+						"storage_type": {
+							Type:     schema.TypeInt,
+							Optional: true,
+							Description: `Storage type ID can be obtained from hpegl_vmaas_instance_disk_type
+							data source.`,
 							DiffSuppressFunc: utils.SkipField(),
 						},
 						"id": {
