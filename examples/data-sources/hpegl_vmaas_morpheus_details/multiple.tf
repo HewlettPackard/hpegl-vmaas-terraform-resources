@@ -14,7 +14,7 @@ data "hpegl_vmaas_morpheus_details" "location_1" {
 }
 
 provider "morpheus" {
-  url          = data.hpegl_vmaas_morpheus_details.location_1.morpheus_url
+  url          = data.hpegl_vmaas_morpheus_details.location_1.url
   access_token = data.hpegl_vmaas_morpheus_details.location_1.access_token
 
   alias = "morpheus_location_1"
@@ -35,7 +35,7 @@ data "hpegl_vmaas_morpheus_details" "location_2" {
 }
 
 provider "morpheus" {
-  url          = data.hpegl_vmaas_morpheus_details.location_2.morpheus_url
+  url          = data.hpegl_vmaas_morpheus_details.location_2.url
   access_token = data.hpegl_vmaas_morpheus_details.location_2.access_token
 
   alias = "morpheus_location_2"

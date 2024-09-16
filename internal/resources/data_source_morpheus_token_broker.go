@@ -21,21 +21,22 @@ func MorpheusDetailsBroker() *schema.Resource {
 				Description: "Morpheus access_token",
 				Sensitive:   true,
 			},
-			"refresh_token": {
-				Type:        schema.TypeString,
+			"access_token_expires_in": {
+				Type:        schema.TypeInt,
 				Computed:    true,
-				Description: "Morpheus refresh_token",
-				Sensitive:   true,
+				Description: "Seconds to expiry of access_token",
+				Sensitive:   false,
 			},
-			"morpheus_url": {
+			"url": {
 				Type:        schema.TypeString,
 				Computed:    true,
 				Description: "Morpheus URL",
 				Sensitive:   false,
 			},
 		},
-		ReadContext:    morpheusDetailsBrokerReadContext,
-		Description:    `The ` + DSMorpheusDataSource + ` data source can be used to get a Morpheus token and URL using the IAM API Client creds provided`,
+		ReadContext: MorpheusDetailsBrokerReadContext,
+		Description: `The ` + DSMorpheusDataSource + ` data source can be used to get a details of the Morpheus instance
+		used by VMaaS.  The details that can be retrieved are the access_token, access_token_expires_in and the URL.`,
 		SchemaVersion:  0,
 		StateUpgraders: nil,
 		Importer: &schema.ResourceImporter{
@@ -44,7 +45,7 @@ func MorpheusDetailsBroker() *schema.Resource {
 	}
 }
 
-func morpheusDetailsBrokerReadContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
+func MorpheusDetailsBrokerReadContext(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	c, err := client.GetClientFromMetaMap(meta)
 	if err != nil {
 		return diag.FromErr(err)

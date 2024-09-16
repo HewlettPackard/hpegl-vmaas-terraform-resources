@@ -4,8 +4,8 @@ package cmp
 
 import (
 	"context"
-	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
 
+	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/utils"
 )
 
@@ -28,16 +28,18 @@ func (m *morpheusBroker) Read(ctx context.Context, d *utils.Data, meta interface
 		return err
 	}
 
-	// Set access_token, refresh_token and morpheus_url
+	// Set all of the details
+	d.SetId(morpheusDetails.ID)
+
 	if err = d.Set("access_token", morpheusDetails.AccessToken); err != nil {
 		return err
 	}
 
-	if err = d.Set("refresh_token", morpheusDetails.RefreshToken); err != nil {
+	if err = d.Set("access_token_expires_in", morpheusDetails.AccessTokenExpiresIn); err != nil {
 		return err
 	}
 
-	if err = d.Set("morpheus_url", morpheusDetails.RefreshToken); err != nil {
+	if err = d.Set("url", morpheusDetails.URL); err != nil {
 		return err
 	}
 
