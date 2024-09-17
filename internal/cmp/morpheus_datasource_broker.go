@@ -35,7 +35,7 @@ func (m *morpheusBroker) Read(ctx context.Context, d *utils.Data, meta interface
 		return err
 	}
 
-	if err = d.Set("access_token_expires_in", morpheusDetails.AccessTokenExpiresIn); err != nil {
+	if err = d.Set("access_token_expires", morpheusDetails.AccessTokenExpires); err != nil {
 		return err
 	}
 
