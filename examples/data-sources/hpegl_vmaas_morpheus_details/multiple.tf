@@ -3,7 +3,8 @@
 # Location 1
 provider "hpegl" {
   vmaas {
-    location = var.location_1
+    location   = var.location_1
+    space_name = var.space_1
   }
 
   alias = "location_1"
@@ -24,7 +25,8 @@ provider "morpheus" {
 # Location 2
 provider "hpegl" {
   vmaas {
-    location = var.location_2
+    location   = var.location_2
+    space_name = var.space_2
   }
 
   alias = "location_2"

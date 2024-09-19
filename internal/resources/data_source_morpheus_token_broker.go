@@ -21,10 +21,10 @@ func MorpheusDetailsBroker() *schema.Resource {
 				Description: "Morpheus access_token",
 				Sensitive:   true,
 			},
-			"access_token_expires": {
+			"valid_till": {
 				Type:        schema.TypeInt,
 				Computed:    true,
-				Description: "Unix timestamp of when the access_token expires",
+				Description: "Unix timestamp of when the access_token expires, in seconds",
 				Sensitive:   false,
 			},
 			"url": {
@@ -36,7 +36,8 @@ func MorpheusDetailsBroker() *schema.Resource {
 		},
 		ReadContext: MorpheusDetailsBrokerReadContext,
 		Description: `The ` + DSMorpheusDataSource + ` data source can be used to get a details of the Morpheus instance
-		used by VMaaS.  The details that can be retrieved are the access_token, access_token_expires and the URL.`,
+		used by VMaaS.  The details that can be retrieved are the access_token, valid_till (the Unix timestamp of
+		access_token expiration) and the URL of the Morpheus instance.`,
 		SchemaVersion:  0,
 		StateUpgraders: nil,
 		Importer: &schema.ResourceImporter{
