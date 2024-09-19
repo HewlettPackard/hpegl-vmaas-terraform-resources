@@ -360,6 +360,9 @@ func instanceCompareVolumes(org, new []map[string]interface{}) ([]map[string]int
 				if new[i]["size"].(int) < org[j]["size"].(int) {
 					return nil, fmt.Errorf("storage volume %s of the instance can't be reduced", new[i]["name"])
 				}
+				if new[i]["storage_type"] != org[j]["storage_type"] {
+					return nil, fmt.Errorf("storage type of volume %s can't be changed", new[i]["name"])
+				}
 
 				break
 			}
