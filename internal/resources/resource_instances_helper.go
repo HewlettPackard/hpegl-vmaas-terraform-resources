@@ -203,6 +203,7 @@ func getInstanceDefaultSchema(isClone bool) *schema.Resource {
 						"template_id": {
 							Type:        schema.TypeInt,
 							Optional:    true,
+							ForceNew:    true,
 							Description: "Unique ID for the template",
 						},
 						"no_agent": {
