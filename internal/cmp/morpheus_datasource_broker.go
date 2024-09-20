@@ -4,6 +4,8 @@ package cmp
 
 import (
 	"context"
+	"time"
+
 	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/internal/utils"
 )
@@ -27,6 +29,9 @@ func (m *morpheusBroker) Read(ctx context.Context, d *utils.Data, meta interface
 		return err
 	}
 
+	// Convert the Unix timestamp to Duration in seconds
+	validSeconds := time.Until(time.Unix(morpheusDetails.ValidTill, 0)) / time.Second
+
 	// Set all of the details
 	d.SetId(morpheusDetails.ID)
 
@@ -34,7 +39,7 @@ func (m *morpheusBroker) Read(ctx context.Context, d *utils.Data, meta interface
 		return err
 	}
 
-	if err = d.Set("valid_till", morpheusDetails.ValidTill); err != nil {
+	if err = d.Set("valid_till", validSeconds); err != nil {
 		return err
 	}
 
