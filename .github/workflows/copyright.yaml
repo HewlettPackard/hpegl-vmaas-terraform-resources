@@ -1,0 +1,11 @@
+# (c) Copyright 2024 Hewlett Packard Enterprise Development LP
+name: Copyright check
+
+on:  # yamllint disable-line rule:truthy
+  pull_request:
+
+jobs:
+  copyright-check:
+    uses: hpe-actions/copyright/.github/workflows/copyright.yml@v2
+    with:
+      fix: true
