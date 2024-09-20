@@ -1,4 +1,4 @@
-//  (C) Copyright 2021 Hewlett Packard Enterprise Development LP
+//  (C) Copyright 2021-2024 Hewlett Packard Enterprise Development LP
 
 package diffvalidation
 
@@ -69,6 +69,15 @@ func (i *Instance) instanceTemplateValidate() error {
 		if strings.ToLower(i.diff.Get("instance_type_code").(string)) == "vmware" {
 			if templateID == 0 {
 				return fmt.Errorf("template_id is required for 'vmware' instance type code")
+			}
+			oldConfig, _ := i.diff.GetChange("config")
+			oldTemplateID := templateID
+			oldConfigList := oldConfig.(*schema.Set).List()
+			if len(oldConfigList) > 0 {
+				oldTemplateID = oldConfigList[0].(map[string]interface{})["template_id"].(int)
+			}
+			if oldTemplateID != templateID {
+				return fmt.Errorf("template_id of an instance can't be changed")
 			}
 		}
 	}
