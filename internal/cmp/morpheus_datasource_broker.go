@@ -33,7 +33,7 @@ func (m *morpheusBroker) Read(ctx context.Context, d *utils.Data, meta interface
 
 	// Convert the Unix timestamp to Duration in seconds expressed as a string
 	validDuration := time.Until(time.UnixMilli(morpheusDetails.ValidTill))
-	// We do the following since this we cannot get a string representation of a Duration in seconds
+	// We do the following since we cannot get a string representation of a Duration in seconds
 	validSeconds := validDuration.Round(time.Second).Seconds() // Round to the nearest second, in float64
 	validSecondsString := fmt.Sprintf("%ss", strconv.FormatFloat(validSeconds, 'f', -1, 64))
 
