@@ -4,6 +4,8 @@ package cmp
 
 import (
 	"context"
+	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
@@ -29,8 +31,11 @@ func (m *morpheusBroker) Read(ctx context.Context, d *utils.Data, meta interface
 		return err
 	}
 
-	// Convert the Unix timestamp to Duration in seconds
-	validSeconds := time.Until(time.Unix(morpheusDetails.ValidTill, 0)) / time.Second
+	// Convert the Unix timestamp to Duration in seconds expressed as a string
+	validDuration := time.Until(time.UnixMilli(morpheusDetails.ValidTill))
+	// We do the following since this we cannot get a string representation of a Duration in seconds
+	validSeconds := validDuration.Round(time.Second).Seconds() // Round to the nearest second, in float64
+	validSecondsString := fmt.Sprintf("%ss", strconv.FormatFloat(validSeconds, 'f', -1, 64))
 
 	// Set all of the details
 	d.SetId(morpheusDetails.ID)
@@ -39,7 +44,7 @@ func (m *morpheusBroker) Read(ctx context.Context, d *utils.Data, meta interface
 		return err
 	}
 
-	if err = d.Set("valid_till", validSeconds); err != nil {
+	if err = d.Set("valid_till", validSecondsString); err != nil {
 		return err
 	}
 

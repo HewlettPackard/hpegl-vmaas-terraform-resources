@@ -22,7 +22,7 @@ func MorpheusDetailsBroker() *schema.Resource {
 				Sensitive:   true,
 			},
 			"valid_till": {
-				Type:        schema.TypeInt,
+				Type:        schema.TypeString,
 				Computed:    true,
 				Description: "time until the token expires, in seconds",
 				Sensitive:   false,
