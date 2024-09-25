@@ -33,6 +33,8 @@ const (
 	DSDhcpServer             = "hpegl_vmaas_dhcp_server"
 	DSInstanceStorageType    = "hpegl_vmaas_instance_disk_type"
 
+	DSMorpheusDataSource = "hpegl_vmaas_morpheus_details"
+
 	// resource key
 	ResInstance                   = "hpegl_vmaas_instance"
 	ResInstanceClone              = "hpegl_vmaas_instance_clone"

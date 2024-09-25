@@ -7,12 +7,15 @@ const (
 	// ServiceName - the service mnemonic
 	ServiceName        = "vmaas"
 	ServiceURL         = "https://iac-vmaas.us1.greenlake-hpe.com"
+	BrokerURL          = "https://vmaas-broker.us1.greenlake-hpe.com"
 	IamGlp      string = "glp"
 	IamGlcs     string = "glcs"
+	TenantID    string = "tenant_id"
 
 	LOCATION     = "location"
 	SPACENAME    = "space_name"
 	APIURL       = "api_url"
+	BROKERRURL   = "broker_url"
 	INSECURE     = "allow_insecure"
 	SpaceKey     = "space"
 	WorkspaceKey = "workspaceID"

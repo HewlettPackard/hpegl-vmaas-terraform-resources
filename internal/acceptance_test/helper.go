@@ -16,6 +16,45 @@ import (
 )
 
 func getAPIClient() (*api_client.APIClient, api_client.Configuration) {
+	headers, queryParam, iamVersion := getHeadersAndQueryParamsAndIAMVersion()
+	cfg := api_client.Configuration{
+		Host:               os.Getenv("HPEGL_VMAAS_API_URL"),
+		DefaultHeader:      headers,
+		DefaultQueryParams: queryParam,
+	}
+	apiClient := api_client.NewAPIClient(&cfg)
+	err := apiClientSetMeta(apiClient, iamVersion)
+	if err != nil {
+		log.Printf("[WARN] Error: %s", err)
+	}
+
+	return apiClient, cfg
+}
+
+func getBrokerAPIClient() (*api_client.APIClient, api_client.Configuration) {
+	headers, queryParam, iamVersion := getHeadersAndQueryParamsAndIAMVersion()
+	// No need to set the default query params for broker API
+	cfg := api_client.Configuration{
+		Host:          os.Getenv("HPEGL_VMAAS_BROKER_URL"),
+		DefaultHeader: headers,
+	}
+	brokerAPIClient := api_client.NewAPIClient(&cfg)
+	err := apiClientSetMeta(brokerAPIClient, iamVersion)
+	if err != nil {
+		log.Printf("[WARN] Error: %s", err)
+	}
+
+	// Return the configuration with the default query params
+	cfgForReturn := api_client.Configuration{
+		Host:               os.Getenv("HPEGL_VMAAS_BROKER_URL"),
+		DefaultHeader:      headers,
+		DefaultQueryParams: queryParam,
+	}
+
+	return brokerAPIClient, cfgForReturn
+}
+
+func getHeadersAndQueryParamsAndIAMVersion() (map[string]string, map[string]string, string) {
 	var headers map[string]string
 	if utils.GetEnvBool("TF_ACC_MOCK_IAM") {
 		headers = make(map[string]string)
@@ -31,13 +70,12 @@ func getAPIClient() (*api_client.APIClient, api_client.Configuration) {
 	} else {
 		queryParam[constants.SpaceKey] = os.Getenv("HPEGL_VMAAS_SPACE_NAME")
 	}
-	cfg := api_client.Configuration{
-		Host:               os.Getenv("HPEGL_VMAAS_API_URL"),
-		DefaultHeader:      headers,
-		DefaultQueryParams: queryParam,
-	}
-	apiClient := api_client.NewAPIClient(&cfg)
-	err := apiClient.SetMeta(nil, func(ctx *context.Context, meta interface{}) {
+
+	return headers, queryParam, iamVersion
+}
+
+func apiClientSetMeta(apiClient *api_client.APIClient, iamVersion string) error {
+	return apiClient.SetMeta(nil, func(ctx *context.Context, meta interface{}) {
 		d := &utils.ResourceData{
 			Data: map[string]interface{}{
 				"iam_service_url":           os.Getenv("HPEGL_IAM_SERVICE_URL"),
@@ -68,11 +106,6 @@ func getAPIClient() (*api_client.APIClient, api_client.Configuration) {
 			*ctx = context.WithValue(*ctx, api_client.ContextAccessToken, token)
 		}
 	})
-	if err != nil {
-		log.Printf("[WARN] Error: %s", err)
-	}
-
-	return apiClient, cfg
 }
 
 func toInt(s string) int {

@@ -31,3 +31,23 @@ func SetMeta(apiClient *client.APIClient, r *schema.ResourceData) {
 		log.Printf("[WARN] Error: %s", err)
 	}
 }
+
+// SetMetaFnAndVersion sets the token-generation function and version for the Broker API client
+func SetMetaFnAndVersion(apiClient *client.APIClient, r *schema.ResourceData, version int) {
+	apiClient.SetMetaFnAndVersion(nil, version, func(ctx *context.Context, meta interface{}) {
+		// Initialise token handler
+		h, err := serviceclient.NewHandler(r)
+		if err != nil {
+			log.Printf("[WARN] Unable to fetch token for SCM client: %s", err)
+		}
+
+		// Get token retrieve func and put in c
+		trf := retrieve.NewTokenRetrieveFunc(h)
+		token, err := trf(*ctx)
+		if err != nil {
+			log.Printf("[WARN] Unable to fetch token for SCM client: %s", err)
+		} else {
+			*ctx = context.WithValue(*ctx, client.ContextAccessToken, token)
+		}
+	})
+}
