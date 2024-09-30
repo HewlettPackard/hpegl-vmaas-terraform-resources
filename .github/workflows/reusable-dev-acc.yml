@@ -18,11 +18,6 @@ on:
         required: false
         default: 'acc-dev-testcases'
         type: string
-      vmaas_api_url:
-        description: 'Enter VMaaS API URL '     
-        required: false
-        default: 'https://iac-vmaas.us1.greenlake-hpe.com'
-        type: string
       vmaas_broker_url:
         description: 'Enter VMaas Broker URL'     
         required: false
@@ -54,7 +49,6 @@ env:
   HPEGL_VMAAS_API_URL: ${{ secrets.DEV_HPEGL_VMAAS_API_URL }}
   HPEGL_VMAAS_LOCATION: ${{ secrets.DEV_HPEGL_VMAAS_LOCATION }}
   HPEGL_VMAAS_SPACE_NAME: ${{ secrets.DEV_HPEGL_VMAAS_SPACE_NAME}}
-  HPEGL_VMAAS_API_URL: ${{ inputs.vmaas_api_url }}
   HPEGL_VMAAS_BROKER_URL: ${{ inputs.vmaas_broker_url }}
   TF_ACC: ${{ secrets.TF_ACC }}
   LOG_FILE: "Terraform Log - ${{ inputs.test_description }}.txt"
