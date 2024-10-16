@@ -147,7 +147,14 @@ func getInstanceDefaultSchema(isClone bool) *schema.Resource {
 							Optional: true,
 							Description: `Storage type ID can be obtained from hpegl_vmaas_instance_disk_type
 							data source.`,
-							DiffSuppressFunc: utils.SkipField(),
+							DiffSuppressFunc: utils.SkipEmptyField(),
+						},
+						"controller": {
+							Type:     schema.TypeString,
+							Optional: true,
+							Description: `Storage controller ID can be obtained from hpegl_vmaas_instance_storage_controller
+							data source.`,
+							DiffSuppressFunc: utils.SkipEmptyField(),
 						},
 						"id": {
 							Computed:    true,
