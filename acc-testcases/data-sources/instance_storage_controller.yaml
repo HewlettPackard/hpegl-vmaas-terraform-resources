@@ -1,0 +1,6 @@
+acc:
+- config: |
+    instance_id = 23989
+    controller_type = "scsi"
+    bus_number = 0
+    interface_number = 3

@@ -48,6 +48,7 @@ type Client struct {
 	DSPoolMemeberGroup        DataSource
 	DSDhcpServer              DataSource
 	InstanceStorageType       DataSource
+	InstanceStorageController DataSource
 }
 
 // NewClient returns configured client
@@ -109,11 +110,12 @@ func NewClient(client *apiClient.APIClient, cfg apiClient.Configuration) *Client
 		DSDhcpServer: newDHCPServerDS(
 			&apiClient.DhcpServerAPIService{Client: client, Cfg: cfg},
 			&apiClient.RouterAPIService{Client: client, Cfg: cfg}),
-		DSLBVirtualServerSslCert: newLBsslVirtualServerCertDS(&apiClient.LoadBalancerAPIService{Client: client, Cfg: cfg}),
-		DSDomain:                 newDomain(&apiClient.DomainAPIService{Client: client, Cfg: cfg}),
-		NetworkProxy:             newNetworkProxy(&apiClient.NetworksAPIService{Client: client, Cfg: cfg}),
-		TransportZone:            newTransportZone(&apiClient.RouterAPIService{Client: client, Cfg: cfg}),
-		EdgeCluster:              newEdgeCluster(&apiClient.RouterAPIService{Client: client, Cfg: cfg}),
-		InstanceStorageType:      newInstanceStorageType(&apiClient.InstancesAPIService{Client: client, Cfg: cfg}),
+		DSLBVirtualServerSslCert:  newLBsslVirtualServerCertDS(&apiClient.LoadBalancerAPIService{Client: client, Cfg: cfg}),
+		DSDomain:                  newDomain(&apiClient.DomainAPIService{Client: client, Cfg: cfg}),
+		NetworkProxy:              newNetworkProxy(&apiClient.NetworksAPIService{Client: client, Cfg: cfg}),
+		TransportZone:             newTransportZone(&apiClient.RouterAPIService{Client: client, Cfg: cfg}),
+		EdgeCluster:               newEdgeCluster(&apiClient.RouterAPIService{Client: client, Cfg: cfg}),
+		InstanceStorageType:       newInstanceStorageType(&apiClient.InstancesAPIService{Client: client, Cfg: cfg}),
+		InstanceStorageController: newInstanceStorageController(&apiClient.InstancesAPIService{Client: client, Cfg: cfg}),
 	}
 }

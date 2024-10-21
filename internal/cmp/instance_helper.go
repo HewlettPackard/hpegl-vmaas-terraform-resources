@@ -214,11 +214,12 @@ func instanceGetVolume(volumes []map[string]interface{}) []models.CreateInstance
 	volumesModel := make([]models.CreateInstanceBodyVolumes, 0, len(volumes))
 	for i := range volumes {
 		volumesModel = append(volumesModel, models.CreateInstanceBodyVolumes{
-			ID:          -1,
-			Name:        volumes[i]["name"].(string),
-			Size:        volumes[i]["size"].(int),
-			DatastoreID: volumes[i]["datastore_id"],
-			StorageType: volumes[i]["storage_type"].(int),
+			ID:                   -1,
+			Name:                 volumes[i]["name"].(string),
+			Size:                 volumes[i]["size"].(int),
+			DatastoreID:          volumes[i]["datastore_id"],
+			StorageType:          volumes[i]["storage_type"].(int),
+			ControllerMountPoint: volumes[i]["controller"].(string),
 		})
 	}
 	volumesModel[0].RootVolume = true
@@ -231,11 +232,12 @@ func instanceResizeVolume(volumes []map[string]interface{}) []models.ResizeInsta
 	volumesModel := make([]models.ResizeInstanceBodyInstanceVolumes, 0, len(volumes))
 	for i := range volumes {
 		volumesModel = append(volumesModel, models.ResizeInstanceBodyInstanceVolumes{
-			ID:          utils.JSONNumber(volumes[i]["id"]),
-			Name:        volumes[i]["name"].(string),
-			Size:        volumes[i]["size"].(int),
-			DatastoreID: volumes[i]["datastore_id"],
-			StorageType: volumes[i]["storage_type"].(int),
+			ID:                   utils.JSONNumber(volumes[i]["id"]),
+			Name:                 volumes[i]["name"].(string),
+			Size:                 volumes[i]["size"].(int),
+			DatastoreID:          volumes[i]["datastore_id"],
+			StorageType:          volumes[i]["storage_type"].(int),
+			ControllerMountPoint: volumes[i]["controller"].(string),
 		})
 	}
 
@@ -281,6 +283,7 @@ func instanceSetVolume(volumes []models.GetInstanceResponseInstanceVolumes) []mo
 			DatastoreID: volumes[i].DatastoreID.(string),
 			Root:        volumes[i].RootVolume,
 			StorageType: volumes[i].StorageType,
+			Controller:  volumes[i].ControllerMountPoint,
 		})
 	}
 
@@ -402,11 +405,12 @@ func instanceCloneCompareVolume(
 	// convert schema volume to model
 	for _, vol := range vSchemas {
 		newVolumes = append(newVolumes, models.CreateInstanceBodyVolumes{
-			ID:          -1,
-			Size:        vol["size"].(int),
-			Name:        vol["name"].(string),
-			DatastoreID: vol["datastore_id"],
-			StorageType: vol["storage_type"].(int),
+			ID:                   -1,
+			Size:                 vol["size"].(int),
+			Name:                 vol["name"].(string),
+			DatastoreID:          vol["datastore_id"],
+			StorageType:          vol["storage_type"].(int),
+			ControllerMountPoint: vol["controller"].(string),
 		})
 	}
 
