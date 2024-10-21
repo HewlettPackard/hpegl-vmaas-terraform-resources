@@ -98,8 +98,6 @@ func (i *Instance) instanceVolumeDiffValidate() error {
 		return err
 	}
 
-	// TODO: validate the controller is unique in both old and new
-
 	// If create operation validation should be skipped
 	if utils.IsEmpty(oldVol) {
 		return nil
