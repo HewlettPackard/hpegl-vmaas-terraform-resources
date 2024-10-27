@@ -124,8 +124,8 @@ github.com/hashicorp/terraform-svchost v0.1.1 h1:EZZimZ1GxdqFRinZ1tpJwVxxt49xc/S
 github.com/hashicorp/terraform-svchost v0.1.1/go.mod h1:mNsjQfZyf/Jhz35v6/0LWcv26+X7JPS+buii2c9/ctc=
 github.com/hashicorp/yamux v0.1.1 h1:yrQxtgseBDrq9Y652vSRDvsKCJKOUD+GzTS4Y0Y8pvE=
 github.com/hashicorp/yamux v0.1.1/go.mod h1:CtWFDAQgb7dxtzFs4tWbplKIe2jSi3+5vKbgIO0SLnQ=
-github.com/hewlettpackard/hpegl-provider-lib v0.0.20 h1:QbZUQwr08aI2zELk/V+0OTaJe0LSVGklG99cQh4hUVA=
-github.com/hewlettpackard/hpegl-provider-lib v0.0.20/go.mod h1:Bw2DhefBjqXQI6s5vBBGiWUkFz7fx4KkbGfwmo9wv3U=
+github.com/hewlettpackard/hpegl-provider-lib v0.0.17 h1:6sh4XjWK2hg2q5V78W4AypV0IBbDy0CpGoMfzE1CK1c=
+github.com/hewlettpackard/hpegl-provider-lib v0.0.17/go.mod h1:Bw2DhefBjqXQI6s5vBBGiWUkFz7fx4KkbGfwmo9wv3U=
 github.com/huandu/xstrings v1.3.1/go.mod h1:y5/lhBue+AyNmUVz9RLU9xbLR0o4KIIExikq4ovT0aE=
 github.com/huandu/xstrings v1.3.2/go.mod h1:y5/lhBue+AyNmUVz9RLU9xbLR0o4KIIExikq4ovT0aE=
 github.com/huandu/xstrings v1.3.3 h1:/Gcsuc1x8JVbJ9/rlye4xZnVAbEkGauT8lbebqcQws4=
