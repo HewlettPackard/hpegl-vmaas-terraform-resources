@@ -29,7 +29,7 @@ func (c *cloud) Read(ctx context.Context, d *utils.Data, meta interface{}) error
 	if err := d.Error(); err != nil {
 		return err
 	}
-	cloud, err := c.cloudClient.GetAllClouds(ctx, map[string]string{
+	cloud, err := c.cloudClient.GetAllClouds(context.WithoutCancel(ctx), map[string]string{
 		nameKey: name,
 	})
 	if err != nil {

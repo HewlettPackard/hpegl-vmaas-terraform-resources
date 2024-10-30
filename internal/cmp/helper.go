@@ -4,19 +4,17 @@ package cmp
 
 import (
 	"context"
-	"log"
 	"strconv"
 	"strings"
 
 	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
-	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/auth"
 )
 
 func setMeta(meta interface{}, apiClient client.APIClientHandler) {
-	err := apiClient.SetMeta(meta, auth.SetScmClientToken)
-	if err != nil {
-		log.Printf("[ERROR] error while setting meta information for cmp-sdk, error: %v", err)
-	}
+	// err := apiClient.SetMeta(meta, auth.SetScmClientToken)
+	// if err != nil {
+	// 	log.Printf("[ERROR] error while setting meta information for cmp-sdk, error: %v", err)
+	// }
 }
 
 func ParseVersion(version string) (int, error) {

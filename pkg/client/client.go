@@ -68,37 +68,40 @@ func (i InitialiseClient) NewClient(r *schema.ResourceData) (interface{}, error)
 		queryParam[constants.SpaceKey] = vmaasProviderSettings[constants.SPACENAME].(string)
 	}
 
-	// Create cmp client
-	cfg := api_client.Configuration{
-		Host:               vmaasProviderSettings[constants.APIURL].(string),
-		DefaultHeader:      getHeaders(),
-		DefaultQueryParams: queryParam,
-	}
-	apiClient := api_client.NewAPIClient(&cfg)
-	utils.SetMeta(apiClient, r)
-	client.CmpClient = cmp_client.NewClient(apiClient, cfg)
-
 	// Create broker client
 	brokerHeaders := getHeaders()
 	tenantID := r.Get(constants.TenantID).(string)
 	brokerHeaders["X-Tenant-ID"] = tenantID
 	// We don't add default query params to broker client
 	brokerCfgForAPIClient := api_client.Configuration{
-		Host:          vmaasProviderSettings[constants.BROKERRURL].(string),
-		DefaultHeader: brokerHeaders,
-	}
-	brokerApiClient := api_client.NewAPIClient(&brokerCfgForAPIClient)
-	utils.SetMetaFnAndVersion(brokerApiClient, r, apiClient.GetSCMVersion())
-
-	// brokerCfg is passed down to NewBrokerClient.  It is used mainly to set the query params
-	// for the call to get SubscriptionDetails
-	brokerCfg := api_client.Configuration{
 		Host:               vmaasProviderSettings[constants.BROKERRURL].(string),
 		DefaultHeader:      brokerHeaders,
 		DefaultQueryParams: queryParam,
 	}
-	client.BrokerClient = cmp_client.NewBrokerClient(brokerApiClient, brokerCfg)
+	brokerApiClient := api_client.NewAPIClient(&brokerCfgForAPIClient)
+	utils.SetMetaFnAndVersion(brokerApiClient, r, 0)
+	// Create cmp client
+	cfg := api_client.Configuration{
+		// Host:               vmaasProviderSettings[constants.APIURL].(string),
+		// DefaultHeader:      getHeaders(),
+		// DefaultQueryParams: queryParam,
+	}
+	apiClient := api_client.NewAPIClient(&cfg)
+	// utils.SetMeta(apiClient, r)
+	cfg, err = utils.SetCMPVars(apiClient, brokerApiClient)
+	if err != nil {
+		return nil, fmt.Errorf("[ERROR]: unable to set cmp metadata %v", err)
+	}
+	client.CmpClient = cmp_client.NewClient(apiClient, cfg)
 
+	// brokerCfg is passed down to NewBrokerClient.  It is used mainly to set the query params
+	// for the call to get SubscriptionDetails
+	// brokerCfg := api_client.Configuration{
+	// 	Host:               vmaasProviderSettings[constants.BROKERRURL].(string),
+	// 	DefaultHeader:      brokerHeaders,
+	// 	DefaultQueryParams: queryParam,
+	// }
+	client.BrokerClient = cmp_client.NewBrokerClient(brokerApiClient, brokerCfgForAPIClient)
 	return client, nil
 }
 
