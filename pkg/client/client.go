@@ -82,25 +82,18 @@ func (i InitialiseClient) NewClient(r *schema.ResourceData) (interface{}, error)
 	utils.SetMetaFnAndVersion(brokerApiClient, r, 0)
 	// Create cmp client
 	cfg := api_client.Configuration{
-		// Host:               vmaasProviderSettings[constants.APIURL].(string),
-		// DefaultHeader:      getHeaders(),
-		// DefaultQueryParams: queryParam,
+		Host:               "",
+		DefaultHeader:      map[string]string{},
+		DefaultQueryParams: map[string]string{},
 	}
 	apiClient := api_client.NewAPIClient(&cfg)
-	// utils.SetMeta(apiClient, r)
-	cfg, err = utils.SetCMPVars(apiClient, brokerApiClient)
+	err = utils.SetCMPVars(apiClient, brokerApiClient, &cfg)
 	if err != nil {
 		return nil, fmt.Errorf("[ERROR]: unable to set cmp metadata %v", err)
 	}
 	client.CmpClient = cmp_client.NewClient(apiClient, cfg)
+	utils.SetMetaFnAndVersion(brokerApiClient, r, apiClient.GetSCMVersion())
 
-	// brokerCfg is passed down to NewBrokerClient.  It is used mainly to set the query params
-	// for the call to get SubscriptionDetails
-	// brokerCfg := api_client.Configuration{
-	// 	Host:               vmaasProviderSettings[constants.BROKERRURL].(string),
-	// 	DefaultHeader:      brokerHeaders,
-	// 	DefaultQueryParams: queryParam,
-	// }
 	client.BrokerClient = cmp_client.NewBrokerClient(brokerApiClient, brokerCfgForAPIClient)
 	return client, nil
 }

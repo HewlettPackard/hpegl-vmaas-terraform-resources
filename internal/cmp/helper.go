@@ -11,6 +11,8 @@ import (
 )
 
 func setMeta(meta interface{}, apiClient client.APIClientHandler) {
+	// Not needed when not using wrapper
+
 	// err := apiClient.SetMeta(meta, auth.SetScmClientToken)
 	// if err != nil {
 	// 	log.Printf("[ERROR] error while setting meta information for cmp-sdk, error: %v", err)
