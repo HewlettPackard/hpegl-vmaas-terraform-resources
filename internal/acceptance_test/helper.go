@@ -15,28 +15,29 @@ import (
 	"github.com/hewlettpackard/hpegl-provider-lib/pkg/token/serviceclient"
 )
 
-func getAPIClient() (*api_client.APIClient, api_client.Configuration) {
-	headers, queryParam, iamVersion := getHeadersAndQueryParamsAndIAMVersion()
-	cfg := api_client.Configuration{
-		Host:               os.Getenv("HPEGL_VMAAS_API_URL"),
-		DefaultHeader:      headers,
-		DefaultQueryParams: queryParam,
-	}
-	apiClient := api_client.NewAPIClient(&cfg)
-	err := apiClientSetMeta(apiClient, iamVersion)
-	if err != nil {
-		log.Printf("[WARN] Error: %s", err)
-	}
+// func getOldAPIClient() (*api_client.APIClient, api_client.Configuration) {
+// 	headers, queryParam, iamVersion := getHeadersAndQueryParamsAndIAMVersion()
+// 	cfg := api_client.Configuration{
+// 		Host:               os.Getenv("HPEGL_VMAAS_API_URL"),
+// 		DefaultHeader:      headers,
+// 		DefaultQueryParams: queryParam,
+// 	}
+// 	apiClient := api_client.NewAPIClient(&cfg)
+// 	err := apiClientSetMeta(apiClient, iamVersion)
+// 	if err != nil {
+// 		log.Printf("[WARN] Error: %s", err)
+// 	}
 
-	return apiClient, cfg
-}
+// 	return apiClient, cfg
+// }
 
 func getBrokerAPIClient() (*api_client.APIClient, api_client.Configuration) {
 	headers, queryParam, iamVersion := getHeadersAndQueryParamsAndIAMVersion()
-	// No need to set the default query params for broker API
+
 	cfg := api_client.Configuration{
-		Host:          os.Getenv("HPEGL_VMAAS_BROKER_URL"),
-		DefaultHeader: headers,
+		Host:               os.Getenv("HPEGL_VMAAS_BROKER_URL"),
+		DefaultHeader:      headers,
+		DefaultQueryParams: queryParam,
 	}
 	brokerAPIClient := api_client.NewAPIClient(&cfg)
 	err := apiClientSetMeta(brokerAPIClient, iamVersion)
@@ -44,14 +45,38 @@ func getBrokerAPIClient() (*api_client.APIClient, api_client.Configuration) {
 		log.Printf("[WARN] Error: %s", err)
 	}
 
-	// Return the configuration with the default query params
-	cfgForReturn := api_client.Configuration{
-		Host:               os.Getenv("HPEGL_VMAAS_BROKER_URL"),
-		DefaultHeader:      headers,
-		DefaultQueryParams: queryParam,
-	}
+	return brokerAPIClient, cfg
+}
 
-	return brokerAPIClient, cfgForReturn
+func getAPIClient() (*api_client.APIClient, api_client.Configuration) {
+	ctx := context.Background()
+	brokerClient, _ := getBrokerAPIClient()
+	cmpDetails, err := brokerClient.GetCMPDetails(ctx)
+	if err != nil {
+		log.Printf("[ERROR] Error getting cmp details: %s", err)
+	}
+	cfg := api_client.Configuration{
+		Host:               cmpDetails.URL,
+		DefaultHeader:      map[string]string{},
+		DefaultQueryParams: map[string]string{},
+	}
+	cmpAPIClient := api_client.NewAPIClient(&cfg)
+	cmpAPIClient.SetCMPMeta(nil, brokerClient, func(ctx *context.Context, meta interface{}) {
+		// Initialise token handler
+		cmpDetails, err := brokerClient.GetCMPDetails(*ctx)
+		if err != nil {
+			log.Printf("[ERROR] Unable to fetch token for CMP client: %s", err)
+		} else {
+			*ctx = context.WithValue(*ctx, api_client.ContextAccessToken, cmpDetails.AccessToken)
+		}
+	})
+	ctx = context.WithValue(ctx, api_client.ContextAccessToken, cmpDetails.AccessToken)
+	err = cmpAPIClient.SetCMPVersion(ctx)
+	if err != nil {
+		log.Printf("[ERROR] Unable to set CMP version client: %s", err)
+
+	}
+	return cmpAPIClient, cfg
 }
 
 func getHeadersAndQueryParamsAndIAMVersion() (map[string]string, map[string]string, string) {
