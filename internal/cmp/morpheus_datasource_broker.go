@@ -23,7 +23,7 @@ func newMorpheusBroker(bClient *client.BrokerAPIService) *morpheusBroker {
 
 // Read reads the morpheus details using the Broker API
 func (m *morpheusBroker) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
-	setMeta(meta, m.bClient.Client)
+	setMetaHpegl(meta, m.bClient.Client)
 
 	// Get Morpheus Tokens and URL
 	morpheusDetails, err := m.bClient.GetMorpheusDetails(ctx)
