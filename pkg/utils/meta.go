@@ -51,3 +51,30 @@ func SetMetaFnAndVersion(apiClient *client.APIClient, r *schema.ResourceData, ve
 		}
 	})
 }
+func SetCMPVars(apiClient, brokerClient *client.APIClient, cfg *client.Configuration) (err error) {
+	cmpDetails, err := brokerClient.GetCMPDetails(context.Background())
+	if err != nil {
+		log.Printf("[ERROR] Unable to fetch token for CMP client: %s", err)
+		return
+	}
+	apiClient.SetHost(cmpDetails.URL)
+	apiClient.SetMetaFnAndVersion(nil, 0, func(ctx *context.Context, meta interface{}) {
+		// Initialise token handler
+		cmpDetails, err := brokerClient.GetCMPDetails(*ctx)
+		if err != nil {
+			log.Printf("[ERROR] Unable to fetch token for CMP client: %s", err)
+		} else {
+			*ctx = context.WithValue(*ctx, client.ContextAccessToken, cmpDetails.AccessToken)
+		}
+	})
+	ctx := context.Background()
+	ctx = context.WithValue(ctx, client.ContextAccessToken, cmpDetails.AccessToken)
+	err = apiClient.SetCMPVersion(ctx)
+	if err != nil {
+		log.Printf("[ERROR] Unable to set CMP version client: %s", err)
+		return
+	}
+	cfg.Host = cmpDetails.URL
+
+	return err
+}

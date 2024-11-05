@@ -117,9 +117,9 @@ func (r *resNetwork) Create(ctx context.Context, d *utils.Data, meta interface{}
 	}
 	errCount := 0
 	cRetry := utils.CustomRetry{
-		Timeout:      time.Minute * 10,
+		Timeout:      time.Minute * 15,
 		RetryDelay:   time.Second * 10,
-		InitialDelay: time.Second * 10,
+		InitialDelay: time.Second * 20,
 		Cond: func(response interface{}, err error) (bool, error) {
 			if err != nil {
 				errCount++

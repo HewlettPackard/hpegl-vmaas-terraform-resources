@@ -13,6 +13,10 @@ import (
 )
 
 func setMeta(meta interface{}, apiClient client.APIClientHandler) {
+	// Not needed while using cmp directly
+
+}
+func setMetaHpegl(meta interface{}, apiClient client.APIClientHandler) {
 	err := apiClient.SetMeta(meta, auth.SetScmClientToken)
 	if err != nil {
 		log.Printf("[ERROR] error while setting meta information for cmp-sdk, error: %v", err)
