@@ -61,7 +61,7 @@ func getAPIClient() (*api_client.APIClient, api_client.Configuration) {
 		DefaultQueryParams: map[string]string{},
 	}
 	cmpAPIClient := api_client.NewAPIClient(&cfg)
-	cmpAPIClient.SetCMPMeta(nil, brokerClient, func(ctx *context.Context, meta interface{}) {
+	cmpAPIClient.SetMetaFnAndVersion(nil, 0, func(ctx *context.Context, meta interface{}) {
 		// Initialise token handler
 		cmpDetails, err := brokerClient.GetCMPDetails(*ctx)
 		if err != nil {
