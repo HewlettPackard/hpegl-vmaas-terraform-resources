@@ -58,16 +58,7 @@ func SetCMPVars(apiClient, brokerClient *client.APIClient, cfg *client.Configura
 		return
 	}
 	apiClient.SetHost(cmpDetails.URL)
-	ctx := context.Background()
-	ctx = context.WithValue(ctx, client.ContextAccessToken, cmpDetails.AccessToken)
-	err = apiClient.SetCMPVersion(ctx)
-	if err != nil {
-		log.Printf("[ERROR] Unable to set CMP version client: %s", err)
-		return
-	}
-	cfg.Host = cmpDetails.URL
-
-	apiClient.SetCMPMeta(nil, brokerClient, func(ctx *context.Context, meta interface{}) {
+	apiClient.SetMetaFnAndVersion(nil, 0, func(ctx *context.Context, meta interface{}) {
 		// Initialise token handler
 		cmpDetails, err := brokerClient.GetCMPDetails(*ctx)
 		if err != nil {
@@ -76,6 +67,14 @@ func SetCMPVars(apiClient, brokerClient *client.APIClient, cfg *client.Configura
 			*ctx = context.WithValue(*ctx, client.ContextAccessToken, cmpDetails.AccessToken)
 		}
 	})
+	ctx := context.Background()
+	ctx = context.WithValue(ctx, client.ContextAccessToken, cmpDetails.AccessToken)
+	err = apiClient.SetCMPVersion(ctx)
+	if err != nil {
+		log.Printf("[ERROR] Unable to set CMP version client: %s", err)
+		return
+	}
+	cfg.Host = cmpDetails.URL
 
 	return err
 }
