@@ -122,6 +122,16 @@ func (d *Data) GetID() int {
 
 	return int(id)
 }
+func (d *Data) GetID64() int64 {
+	id, err := ParseInt(d.d.Id())
+	if err != nil {
+		d.err("id", ErrInvalidType)
+
+		return NAN
+	}
+
+	return int64(id)
+}
 
 // GetIDString returns ID as string
 func (d *Data) GetIDString() string {
@@ -189,6 +199,33 @@ func (d *Data) GetInt(key string, ignore ...bool) int {
 		valString, ok := valInter.(string)
 		if ok {
 			valInt, err = strconv.Atoi(valString)
+			if err != nil {
+				d.err(key, ErrInvalidType+valString)
+
+				return NAN
+			}
+
+			return valInt
+		}
+		d.err(key, ErrInvalidType)
+
+		return NAN
+	}
+
+	return valInt
+}
+
+func (d *Data) GetInt64(key string, ignore ...bool) int64 {
+	valInter, ok := d.getOk(key, ignore)
+	if !ok {
+		return NAN
+	}
+	valInt, ok := valInter.(int64)
+	var err error
+	if !ok {
+		valString, ok := valInter.(string)
+		if ok {
+			valInt, err = ParseInt(valString)
 			if err != nil {
 				d.err(key, ErrInvalidType+valString)
 

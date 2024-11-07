@@ -24,7 +24,7 @@ func newInstanceStorageController(instanceClient *client.InstancesAPIService) *i
 func (i *instanceStorageController) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
 	setMeta(meta, i.iClient.Client)
 	log.Printf("[DEBUG] Get Instance Storage Controller")
-	instanceID := d.GetInt("instance_id")
+	instanceID := d.GetInt64("instance_id")
 	if instanceID == 0 {
 		return nil
 	}

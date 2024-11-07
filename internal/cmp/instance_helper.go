@@ -23,7 +23,7 @@ type instanceSharedClient struct {
 }
 
 func readInstance(ctx context.Context, sharedClient instanceSharedClient, d *utils.Data, meta interface{}, isClone bool) error {
-	id := d.GetID()
+	id := d.GetID64()
 
 	log.Printf("[INFO] Get instance with ID %d", id)
 	// Precheck
@@ -98,7 +98,7 @@ func readInstance(ctx context.Context, sharedClient instanceSharedClient, d *uti
 func updateInstance(ctx context.Context, sharedClient instanceSharedClient, d *utils.Data) error {
 	log.Printf("[DEBUG] Updating the instance")
 
-	id := d.GetID()
+	id := d.GetID64()
 	if d.HasChanged("name") || d.HasChanged("group_id") || d.HasChanged("tags") ||
 		d.HasChanged("labels") || d.HasChanged("environment_code") ||
 		d.HasChanged("power_schedule_id") {
@@ -168,7 +168,7 @@ func updateInstance(ctx context.Context, sharedClient instanceSharedClient, d *u
 
 // Delete instance and set ID as ""
 func deleteInstance(ctx context.Context, sharedClient instanceSharedClient, d *utils.Data, meta interface{}) error {
-	id := d.GetID()
+	id := d.GetID64()
 	log.Printf("[DEBUG] Deleting instance with ID : %d", id)
 
 	// Precheck
@@ -378,7 +378,7 @@ func instanceCompareVolumes(org, new []map[string]interface{}) ([]map[string]int
 func instanceDoPowerTask(
 	ctx context.Context,
 	sharedClient instanceSharedClient,
-	instanceID int,
+	instanceID int64,
 	newOp string) error {
 	var err error
 
@@ -422,7 +422,7 @@ func instanceCloneCompareVolume(
 func createInstanceSnapshot(
 	ctx context.Context,
 	sharedClient instanceSharedClient,
-	instanceID int,
+	instanceID int64,
 	snapshot models.SnapshotBody,
 ) error {
 	instanceModel, err := sharedClient.iClient.SnapshotAnInstance(ctx, instanceID, &snapshot)
@@ -468,7 +468,7 @@ func instanceCheckSnaphotByName(name string, snapshotResp interface{}) int {
 	return -1
 }
 
-func instanceWaitUntilCreated(ctx context.Context, sharedClient instanceSharedClient, meta interface{}, instanceID int) error {
+func instanceWaitUntilCreated(ctx context.Context, sharedClient instanceSharedClient, meta interface{}, instanceID int64) error {
 	errCount := 0
 	cRetry := utils.CustomRetry{
 		Timeout:      maxTimeout,
@@ -584,7 +584,7 @@ func instanceUpdateNetworkVolumePlan(
 	ctx context.Context,
 	sharedClient instanceSharedClient,
 	d *utils.Data,
-	instanceID int,
+	instanceID int64,
 ) error {
 	var resizeReq models.ResizeInstanceBody
 	if d.HasChanged("volume") {

@@ -70,7 +70,7 @@ func (i *instanceClone) Create(ctx context.Context, d *utils.Data, meta interfac
 	}
 
 	// Get source instance
-	sourceID := d.GetInt("source_instance_id")
+	sourceID := d.GetInt64("source_instance_id")
 	err := copyInstanceAttribsToClone(ctx, i, &req, d.GetListMap("volume"), sourceID)
 	if err != nil {
 		return err
@@ -165,7 +165,7 @@ func (i *instanceClone) Read(ctx context.Context, d *utils.Data, meta interface{
 	return readInstance(ctx, i.instanceSharedClient, d, meta, true)
 }
 
-func checkInstanceCloneHistory(ctx context.Context, i *instanceClone, meta interface{}, instanceID int) error {
+func checkInstanceCloneHistory(ctx context.Context, i *instanceClone, meta interface{}, instanceID int64) error {
 	errCount := 0
 	historyRetry := utils.CustomRetry{
 		InitialDelay: time.Second * 15,
@@ -211,7 +211,7 @@ func cloneInstance(
 	i *instanceClone,
 	meta interface{},
 	req models.CreateInstanceCloneBody,
-	sourceID int,
+	sourceID int64,
 ) error {
 	cloneRetry := &utils.CustomRetry{
 		Cond: func(response interface{}, ResponseErr error) (bool, error) {
@@ -243,7 +243,7 @@ func copyInstanceAttribsToClone(
 	i *instanceClone,
 	req *models.CreateInstanceCloneBody,
 	volumes []map[string]interface{},
-	sourceID int,
+	sourceID int64,
 ) error {
 	sourceInstance, err := i.iClient.GetASpecificInstance(ctx, sourceID)
 	if err != nil {
