@@ -89,10 +89,11 @@ func GetInstanceContainerSchema() *schema.Schema {
 						},
 					},
 				},
-				"hostname":    computedString(),
-				"max_storage": computedInt(),
-				"max_memory":  computedInt(),
-				"max_cores":   computedInt(),
+				"hostname": computedString(),
+				// Needed datatype is int64
+				// "max_storage": computedInt(),
+				// "max_memory":  computedInt(),
+				"max_cores": computedInt(),
 			},
 		},
 	}
