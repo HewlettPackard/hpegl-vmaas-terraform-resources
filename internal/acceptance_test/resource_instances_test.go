@@ -29,7 +29,7 @@ func TestAccResourceInstanceCreate(t *testing.T) {
 				Client: cl,
 				Cfg:    cfg,
 			}
-			id := toInt(attr["id"])
+			id := toInt64(attr["id"])
 
 			return iClient.GetASpecificInstance(getAccContext(), id)
 		},
@@ -50,7 +50,7 @@ func TestAccResourceInstanceCreate_templateErr(t *testing.T) {
 				Client: cl,
 				Cfg:    cfg,
 			}
-			id := toInt(attr["id"])
+			id := toInt64(attr["id"])
 
 			return iClient.GetASpecificInstance(getAccContext(), id)
 		},

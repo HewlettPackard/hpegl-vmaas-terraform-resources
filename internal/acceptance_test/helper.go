@@ -139,6 +139,12 @@ func toInt(s string) int {
 	return i
 }
 
+func toInt64(s string) int64 {
+	i, _ := strconv.ParseInt(s, 10, 64)
+
+	return i
+}
+
 func getAccContext() context.Context {
 	return context.Background()
 }
