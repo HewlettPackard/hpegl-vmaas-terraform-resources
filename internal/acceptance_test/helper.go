@@ -70,7 +70,7 @@ func getAPIClient() (*api_client.APIClient, api_client.Configuration) {
 		token := cmpAPIClient.CMPToken
 		// Token is about to expire and get new
 		if tokenExpiry <= time.Now().Unix() {
-			cmpDetails, err := brokerClient.GetCMPDetails(*ctx)
+			cmpDetails, err := brokerClient.GetCMPDetails(context.Background())
 			if err != nil {
 				log.Printf("[ERROR] Unable to fetch token for CMP client: %s", err)
 				panic("Unable to renew token")
