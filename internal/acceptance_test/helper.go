@@ -66,7 +66,7 @@ func getAPIClient() (*api_client.APIClient, api_client.Configuration) {
 	cmpAPIClient.TokenExpiry = cmpDetails.ValidTill
 	cmpAPIClient.SetMetaFnAndVersion(nil, 0, func(ctx *context.Context, meta interface{}) {
 		// Initialise token handler
-		tokenExpiry := cmpAPIClient.TokenExpiry/1000 - 15
+		tokenExpiry := cmpAPIClient.TokenExpiry / 1000
 		token := cmpAPIClient.CMPToken
 		// Token is about to expire and get new
 		if tokenExpiry < time.Now().Unix() {
