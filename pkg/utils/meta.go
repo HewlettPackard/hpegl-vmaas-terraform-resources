@@ -63,11 +63,11 @@ func SetCMPVars(apiClient, brokerClient *client.APIClient, cfg *client.Configura
 	apiClient.TokenExpiry = cmpDetails.ValidTill
 	apiClient.SetMetaFnAndVersion(nil, 0, func(ctx *context.Context, meta interface{}) {
 		// Initialise token handler
-		// Token expiry unix time in seconds and substract 15secs
-		tokenExpiry := apiClient.TokenExpiry/1000 - 15
+		// Token expiry unix time in seconds
+		tokenExpiry := apiClient.TokenExpiry / 1000
 		token := apiClient.CMPToken
 		// Token is about to expire and get new
-		if tokenExpiry < time.Now().Unix() {
+		if tokenExpiry <= time.Now().Unix() {
 			cmpDetails, err := brokerClient.GetCMPDetails(*ctx)
 			if err != nil {
 				log.Printf("[ERROR] Unable to fetch token for CMP client: %s", err)
