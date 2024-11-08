@@ -3,6 +3,7 @@ package utils
 import (
 	"context"
 	"log"
+	"time"
 
 	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -58,14 +59,27 @@ func SetCMPVars(apiClient, brokerClient *client.APIClient, cfg *client.Configura
 		return
 	}
 	apiClient.SetHost(cmpDetails.URL)
+	apiClient.CMPToken = cmpDetails.AccessToken
+	apiClient.TokenExpiry = cmpDetails.ValidTill
 	apiClient.SetMetaFnAndVersion(nil, 0, func(ctx *context.Context, meta interface{}) {
 		// Initialise token handler
-		cmpDetails, err := brokerClient.GetCMPDetails(*ctx)
-		if err != nil {
-			log.Printf("[ERROR] Unable to fetch token for CMP client: %s", err)
-		} else {
-			*ctx = context.WithValue(*ctx, client.ContextAccessToken, cmpDetails.AccessToken)
+		// Token expiry unix time in seconds
+		tokenExpiry := apiClient.TokenExpiry / 1000
+		token := apiClient.CMPToken
+		// Token is about to expire and get new
+		if tokenExpiry <= time.Now().Unix() {
+			cmpDetails, err := brokerClient.GetCMPDetails(context.Background())
+			if err != nil {
+				log.Printf("[ERROR] Unable to fetch token for CMP client: %s", err)
+				panic("Unable to renew token")
+			} else {
+				token = cmpDetails.AccessToken
+				apiClient.CMPToken = cmpDetails.AccessToken
+				apiClient.TokenExpiry = cmpDetails.ValidTill
+			}
+
 		}
+		*ctx = context.WithValue(*ctx, client.ContextAccessToken, token)
 	})
 	ctx := context.Background()
 	ctx = context.WithValue(ctx, client.ContextAccessToken, cmpDetails.AccessToken)
