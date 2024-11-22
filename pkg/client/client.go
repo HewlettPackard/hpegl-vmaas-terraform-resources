@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
@@ -82,7 +83,7 @@ func (i InitialiseClient) NewClient(r *schema.ResourceData) (interface{}, error)
 		Host:               vmaasProviderSettings[constants.BROKERRURL].(string),
 		DefaultHeader:      brokerHeaders,
 		DefaultQueryParams: queryParam,
-		HTTPClient:         &http.Client{Transport: tr},
+		HTTPClient:         &http.Client{Transport: tr, Timeout: 2 * time.Minute},
 	}
 	brokerApiClient := api_client.NewAPIClient(&brokerCfgForAPIClient)
 	utils.SetMetaFnAndVersion(brokerApiClient, r, 0)
@@ -91,7 +92,7 @@ func (i InitialiseClient) NewClient(r *schema.ResourceData) (interface{}, error)
 		Host:               "",
 		DefaultHeader:      map[string]string{},
 		DefaultQueryParams: map[string]string{},
-		HTTPClient:         &http.Client{Transport: tr},
+		HTTPClient:         &http.Client{Transport: tr, Timeout: 2 * time.Minute},
 	}
 	apiClient := api_client.NewAPIClient(&cfg)
 	err = utils.SetCMPVars(apiClient, brokerApiClient, &cfg)

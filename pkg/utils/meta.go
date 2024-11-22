@@ -2,6 +2,7 @@ package utils
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"time"
 
@@ -23,7 +24,7 @@ func SetMeta(apiClient *client.APIClient, r *schema.ResourceData) {
 		trf := retrieve.NewTokenRetrieveFunc(h)
 		token, err := trf(*ctx)
 		if err != nil {
-			log.Printf("[WARN] Unable to fetch token for SCM client: %s", err)
+			panic(fmt.Sprintf("[WARN] Unable to fetch token for SCM client: %s", err))
 		} else {
 			*ctx = context.WithValue(*ctx, client.ContextAccessToken, token)
 		}
