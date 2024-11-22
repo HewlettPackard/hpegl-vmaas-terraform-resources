@@ -76,6 +76,7 @@ func (i InitialiseClient) NewClient(r *schema.ResourceData) (interface{}, error)
 	tr := &http.Transport{
 		MaxIdleConns:        20,
 		MaxIdleConnsPerHost: 20,
+		DisableKeepAlives:   true,
 	}
 	brokerCfgForAPIClient := api_client.Configuration{
 		Host:               vmaasProviderSettings[constants.BROKERRURL].(string),

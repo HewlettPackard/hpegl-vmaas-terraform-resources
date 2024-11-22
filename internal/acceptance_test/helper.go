@@ -60,6 +60,7 @@ func getAPIClient() (*api_client.APIClient, api_client.Configuration) {
 	tr := &http.Transport{
 		MaxIdleConns:        20,
 		MaxIdleConnsPerHost: 20,
+		DisableKeepAlives:   true,
 	}
 	cfg := api_client.Configuration{
 		Host:               cmpDetails.URL,
