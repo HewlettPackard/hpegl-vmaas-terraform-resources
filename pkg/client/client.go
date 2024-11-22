@@ -4,6 +4,7 @@ package client
 
 import (
 	"fmt"
+	"net/http"
 	"os"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -72,11 +73,15 @@ func (i InitialiseClient) NewClient(r *schema.ResourceData) (interface{}, error)
 	brokerHeaders := getHeaders()
 	tenantID := r.Get(constants.TenantID).(string)
 	brokerHeaders["X-Tenant-ID"] = tenantID
-	// We don't add default query params to broker client
+	tr := &http.Transport{
+		MaxIdleConns:        20,
+		MaxIdleConnsPerHost: 20,
+	}
 	brokerCfgForAPIClient := api_client.Configuration{
 		Host:               vmaasProviderSettings[constants.BROKERRURL].(string),
 		DefaultHeader:      brokerHeaders,
 		DefaultQueryParams: queryParam,
+		HTTPClient:         &http.Client{Transport: tr},
 	}
 	brokerApiClient := api_client.NewAPIClient(&brokerCfgForAPIClient)
 	utils.SetMetaFnAndVersion(brokerApiClient, r, 0)
@@ -85,6 +90,7 @@ func (i InitialiseClient) NewClient(r *schema.ResourceData) (interface{}, error)
 		Host:               "",
 		DefaultHeader:      map[string]string{},
 		DefaultQueryParams: map[string]string{},
+		HTTPClient:         &http.Client{Transport: tr},
 	}
 	apiClient := api_client.NewAPIClient(&cfg)
 	err = utils.SetCMPVars(apiClient, brokerApiClient, &cfg)
