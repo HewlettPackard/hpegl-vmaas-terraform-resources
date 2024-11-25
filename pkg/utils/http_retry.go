@@ -1,8 +1,6 @@
 package utils
 
 import (
-	"bytes"
-	"io"
 	"math"
 	"net/http"
 	"time"
@@ -30,20 +28,20 @@ func shouldRetry(err error, resp *http.Response) bool {
 	return false
 }
 
-func drainBody(resp *http.Response) {
-	if resp.Body != nil {
-		io.Copy(io.Discard, resp.Body)
-		resp.Body.Close()
-	}
-}
+// func drainBody(resp *http.Response) {
+// 	if resp.Body != nil {
+// 		io.Copy(io.Discard, resp.Body)
+// 		resp.Body.Close()
+// 	}
+// }
 
 func (t *retryableTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	// Clone the request body
-	var bodyBytes []byte
-	if req.Body != nil {
-		bodyBytes, _ = io.ReadAll(req.Body)
-		req.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
-	}
+	// var bodyBytes []byte
+	// if req.Body != nil {
+	// 	bodyBytes, _ = io.ReadAll(req.Body)
+	// 	req.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
+	// }
 
 	// Send the request
 	resp, err := t.transport.RoundTrip(req)
@@ -55,12 +53,12 @@ func (t *retryableTransport) RoundTrip(req *http.Request) (*http.Response, error
 		time.Sleep(backoff(retries))
 
 		// We're going to retry, consume any response to reuse the connection.
-		drainBody(resp)
+		// drainBody(resp)
 
 		// Clone the request body again
-		if req.Body != nil {
-			req.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
-		}
+		// if req.Body != nil {
+		// 	req.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
+		// }
 
 		// Retry the request
 		resp, err = t.transport.RoundTrip(req)
