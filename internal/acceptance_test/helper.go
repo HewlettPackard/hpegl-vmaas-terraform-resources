@@ -6,7 +6,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"net/http"
 	"os"
 	"strconv"
 	"time"
@@ -58,16 +57,16 @@ func getAPIClient() (*api_client.APIClient, api_client.Configuration) {
 	if err != nil {
 		log.Printf("[ERROR] Error getting cmp details: %s", err)
 	}
-	tr := &http.Transport{
-		MaxIdleConns:        20,
-		MaxIdleConnsPerHost: 20,
-		DisableKeepAlives:   true,
-	}
+	// tr := &http.Transport{
+	// 	MaxIdleConns:        20,
+	// 	MaxIdleConnsPerHost: 20,
+	// 	DisableKeepAlives:   true,
+	// }
 	cfg := api_client.Configuration{
 		Host:               cmpDetails.URL,
 		DefaultHeader:      map[string]string{},
 		DefaultQueryParams: map[string]string{},
-		HTTPClient:         &http.Client{Transport: tr, Timeout: 2 * time.Minute},
+		HTTPClient:         utils.NewRetryableClient(),
 	}
 	cmpAPIClient := api_client.NewAPIClient(&cfg)
 	cmpAPIClient.CMPToken = cmpDetails.AccessToken
