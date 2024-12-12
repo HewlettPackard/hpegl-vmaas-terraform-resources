@@ -4,6 +4,7 @@ package acceptancetest
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"os"
 	"strconv"
@@ -56,10 +57,16 @@ func getAPIClient() (*api_client.APIClient, api_client.Configuration) {
 	if err != nil {
 		log.Printf("[ERROR] Error getting cmp details: %s", err)
 	}
+	// tr := &http.Transport{
+	// 	MaxIdleConns:        20,
+	// 	MaxIdleConnsPerHost: 20,
+	// 	DisableKeepAlives:   true,
+	// }
 	cfg := api_client.Configuration{
 		Host:               cmpDetails.URL,
 		DefaultHeader:      map[string]string{},
 		DefaultQueryParams: map[string]string{},
+		HTTPClient:         utils.NewRetryableClient(),
 	}
 	cmpAPIClient := api_client.NewAPIClient(&cfg)
 	cmpAPIClient.CMPToken = cmpDetails.AccessToken
@@ -141,7 +148,7 @@ func apiClientSetMeta(apiClient *api_client.APIClient, iamVersion string) error 
 		trf := retrieve.NewTokenRetrieveFunc(h)
 		token, err := trf(*ctx)
 		if err != nil {
-			log.Printf("[WARN] Unable to fetch token for SCM client: %s", err)
+			panic(fmt.Sprintf("[WARN] Unable to fetch token for SCM client: %s", err))
 		} else {
 			*ctx = context.WithValue(*ctx, api_client.ContextAccessToken, token)
 		}

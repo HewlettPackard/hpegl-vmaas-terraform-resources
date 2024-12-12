@@ -74,11 +74,16 @@ func (i InitialiseClient) NewClient(r *schema.ResourceData) (interface{}, error)
 	// Create broker client
 	brokerHeaders := getHeaders()
 	brokerHeaders["X-Tenant-ID"] = tenantID
-	// We don't add default query params to broker client
+	// tr := &http.Transport{
+	// 	MaxIdleConns:        20,
+	// 	MaxIdleConnsPerHost: 20,
+	// 	DisableKeepAlives:   true,
+	// }
 	brokerCfgForAPIClient := api_client.Configuration{
 		Host:               vmaasProviderSettings[constants.BROKERRURL].(string),
 		DefaultHeader:      brokerHeaders,
 		DefaultQueryParams: queryParam,
+		HTTPClient:         utils.NewRetryableClient(),
 	}
 	brokerApiClient := api_client.NewAPIClient(&brokerCfgForAPIClient)
 	utils.SetMetaFnAndVersion(brokerApiClient, r, 0)
@@ -87,6 +92,7 @@ func (i InitialiseClient) NewClient(r *schema.ResourceData) (interface{}, error)
 		Host:               "",
 		DefaultHeader:      map[string]string{},
 		DefaultQueryParams: map[string]string{},
+		HTTPClient:         utils.NewRetryableClient(),
 	}
 	apiClient := api_client.NewAPIClient(&cfg)
 	err = utils.SetCMPVars(apiClient, brokerApiClient, &cfg)
