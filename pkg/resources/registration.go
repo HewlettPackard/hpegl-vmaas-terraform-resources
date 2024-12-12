@@ -88,17 +88,17 @@ func (r Registration) ProviderSchemaEntry() *schema.Resource {
 				DefaultFunc: schema.EnvDefaultFunc("HPEGL_VMAAS_SPACE_NAME", ""),
 				Description: "It can also be set with the HPEGL_VMAAS_SPACE_NAME env var. When `HPEGL_IAM_VERSION` is `glcs` it refers to IAM Space name of the GL VMaaS Service i.e., Default. When `HPEGL_IAM_VERSION` is `glp` it refers to GLP Workspace ID.",
 			},
-			constants.APIURL: {
-				Type:        schema.TypeString,
-				Required:    true,
-				DefaultFunc: schema.EnvDefaultFunc("HPEGL_VMAAS_API_URL", constants.ServiceURL),
-				Description: "The URL to use for the VMaaS API, can also be set with the HPEGL_VMAAS_API_URL env var",
-			},
 			constants.BROKERRURL: {
 				Type:        schema.TypeString,
 				Required:    true,
 				DefaultFunc: schema.EnvDefaultFunc("HPEGL_VMAAS_BROKER_URL", constants.BrokerURL),
 				Description: "The URL to use for the VMaaS Broker API, can also be set with the HPEGL_VMAAS_BROKER_URL env var",
+			},
+			constants.INSECURE: {
+				Type:        schema.TypeBool,
+				Optional:    true,
+				DefaultFunc: schema.EnvDefaultFunc("INSECURE", false),
+				Description: "Not to be used in production. To perform client connection ignoring TLS, it can also be set with the INSECURE env var",
 			},
 		},
 	}

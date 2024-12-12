@@ -3,7 +3,9 @@
 package client
 
 import (
+	"crypto/tls"
 	"fmt"
+	"net/http"
 	"os"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -59,6 +61,7 @@ func (i InitialiseClient) NewClient(r *schema.ResourceData) (interface{}, error)
 	// Create VMaas Client
 	client := new(Client)
 	iamVersion := r.Get("iam_version").(string)
+	insecure := vmaasProviderSettings[constants.INSECURE].(bool)
 	queryParam := map[string]string{
 		constants.LocationKey: vmaasProviderSettings[constants.LOCATION].(string),
 	}
@@ -80,6 +83,13 @@ func (i InitialiseClient) NewClient(r *schema.ResourceData) (interface{}, error)
 		DefaultHeader:      brokerHeaders,
 		DefaultQueryParams: queryParam,
 	}
+	if insecure {
+		brokerCfgForAPIClient.HTTPClient = &http.Client{
+			Transport: &http.Transport{
+				TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+			},
+		}
+	}
 	brokerApiClient := api_client.NewAPIClient(&brokerCfgForAPIClient)
 	utils.SetMetaFnAndVersion(brokerApiClient, r, 0)
 	// Create cmp client
@@ -87,6 +97,13 @@ func (i InitialiseClient) NewClient(r *schema.ResourceData) (interface{}, error)
 		Host:               "",
 		DefaultHeader:      map[string]string{},
 		DefaultQueryParams: map[string]string{},
+	}
+	if insecure {
+		cfg.HTTPClient = &http.Client{
+			Transport: &http.Transport{
+				TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+			},
+		}
 	}
 	apiClient := api_client.NewAPIClient(&cfg)
 	err = utils.SetCMPVars(apiClient, brokerApiClient, &cfg)
