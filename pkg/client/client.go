@@ -62,15 +62,17 @@ func (i InitialiseClient) NewClient(r *schema.ResourceData) (interface{}, error)
 	queryParam := map[string]string{
 		constants.LocationKey: vmaasProviderSettings[constants.LOCATION].(string),
 	}
+	tenantID := ""
 	if iamVersion == constants.IamGlp {
-		queryParam[constants.WorkspaceKey] = vmaasProviderSettings[constants.SPACENAME].(string)
+		queryParam[constants.TenantIDKey] = vmaasProviderSettings[constants.SPACENAME].(string)
+		tenantID = vmaasProviderSettings[constants.SPACENAME].(string)
 	} else {
 		queryParam[constants.SpaceKey] = vmaasProviderSettings[constants.SPACENAME].(string)
+		tenantID = r.Get(constants.TenantID).(string)
 	}
 
 	// Create broker client
 	brokerHeaders := getHeaders()
-	tenantID := r.Get(constants.TenantID).(string)
 	brokerHeaders["X-Tenant-ID"] = tenantID
 	// We don't add default query params to broker client
 	brokerCfgForAPIClient := api_client.Configuration{

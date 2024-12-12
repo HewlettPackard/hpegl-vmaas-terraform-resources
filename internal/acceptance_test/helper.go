@@ -104,7 +104,9 @@ func getHeadersAndQueryParamsAndIAMVersion() (map[string]string, map[string]stri
 		constants.LocationKey: os.Getenv("HPEGL_VMAAS_LOCATION"),
 	}
 	if iamVersion == constants.IamGlp {
-		queryParam[constants.WorkspaceKey] = os.Getenv("HPEGL_VMAAS_SPACE_NAME")
+		queryParam[constants.TenantIDKey] = os.Getenv("HPEGL_VMAAS_SPACE_NAME")
+		headers["X-Tenant-ID"] = os.Getenv("HPEGL_VMAAS_SPACE_NAME")
+
 	} else {
 		queryParam[constants.SpaceKey] = os.Getenv("HPEGL_VMAAS_SPACE_NAME")
 	}
