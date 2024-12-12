@@ -21,10 +21,10 @@ export HPEGL_VMAAS_SPACE_NAME=<vmaas_space_name>
 ```
 
 By default the Terraform Provider will use the VMaaS production endpoint. To
-use a non-production endpoint the `HPEGL_VMAAS_API_URL` must be set. For
+use a non-production endpoint the `HPEGL_VMAAS_BROKER_URL` must be set. For
 example:
 ```bash
-export HPEGL_VMAAS_API_URL="https://iac-vmaas.intg.hpedevops.net"
+export HPEGL_VMAAS_BROKER_URL="https://vmaas-broker.intg.hpedevops.net"
 ```
 
 By Default acceptance test will run test cases from folder `acc-testcases`.
