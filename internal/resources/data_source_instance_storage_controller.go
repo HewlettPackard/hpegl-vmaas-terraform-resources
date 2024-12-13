@@ -14,15 +14,15 @@ import (
 func ReadInstanceStorageController() *schema.Resource {
 	return &schema.Resource{
 		Schema: map[string]*schema.Schema{
-			"instance_id": {
-				Type:        schema.TypeInt,
-				Required:    true,
-				Description: "Unique ID to identify an instance",
-			},
-			"controller_type": {
+			"layout_id": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "The storage controller name displayed in an instance. Supported values are `IDE`, `SCSI`",
+				Description: "The layout ID of an instance.",
+			},
+			"controller_name": {
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: "The controller name displayed in an instance storage controller section.",
 			},
 			"bus_number": {
 				Type:        schema.TypeInt,
