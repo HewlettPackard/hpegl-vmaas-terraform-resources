@@ -29,7 +29,7 @@ func LayoutData() *schema.Resource {
 		ReadContext: layoutReadContext,
 		Description: `The ` + DSLayout + ` data source can be used to discover the ID of a hpegl vmaas layout.
 		This can then be used with resources or data sources that require a ` + DSLayout + `,
-		such as the ` + ResInstance + ` resource.`,
+		such as the ` + ResInstance + ` resource or ` + DSInstanceStorageController + ` datasource.`,
 		SchemaVersion:  0,
 		StateUpgraders: nil,
 		Importer: &schema.ResourceImporter{

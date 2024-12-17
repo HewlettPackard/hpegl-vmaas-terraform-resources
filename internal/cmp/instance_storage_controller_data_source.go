@@ -4,9 +4,7 @@ package cmp
 
 import (
 	"context"
-	"fmt"
 	"log"
-	"slices"
 	"strings"
 
 	"github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
@@ -24,11 +22,8 @@ func newInstanceStorageController(instanceClient *client.InstancesAPIService) *i
 func (i *instanceStorageController) Read(ctx context.Context, d *utils.Data, meta interface{}) error {
 	setMeta(meta, i.iClient.Client)
 	log.Printf("[DEBUG] Get Instance Storage Controller")
-	instanceID := d.GetInt("instance_id")
-	if instanceID == 0 {
-		return nil
-	}
-	controllerType := d.GetString("controller_type")
+	layoutID := d.GetString("layout_id")
+	controllerName := d.GetString("controller_name")
 	busNumber := d.GetInt("bus_number")
 	unitNumber := d.GetInt("interface_number")
 
@@ -36,13 +31,8 @@ func (i *instanceStorageController) Read(ctx context.Context, d *utils.Data, met
 	if err := d.Error(); err != nil {
 		return err
 	}
-	controllerType = strings.TrimSpace(strings.ToLower(controllerType))
-	supportedControllerType := []string{"ide", "scsi"}
-	if !slices.Contains(supportedControllerType, controllerType) {
-		err := fmt.Errorf("storage controller '%s' is not supported", controllerType)
-		return err
-	}
-	controllerMount, err := i.iClient.GetStorageControllerMount(ctx, instanceID, controllerType, busNumber, unitNumber)
+	controllerName = strings.TrimSpace(strings.ToLower(controllerName))
+	controllerMount, err := i.iClient.GetStorageControllerMount(ctx, layoutID, controllerName, busNumber, unitNumber)
 	if err != nil {
 		return err
 	}

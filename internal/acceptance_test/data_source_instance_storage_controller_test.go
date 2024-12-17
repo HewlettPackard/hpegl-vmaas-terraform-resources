@@ -21,7 +21,7 @@ func TestAccDataSourceInstanceStorageController(t *testing.T) {
 				Cfg:    cfg,
 			}
 
-			return iClient.GetStorageControllerMount(getAccContext(), toInt(attr["instance_id"]), attr["controller_type"], toInt(attr["bus_number"]), toInt(attr["interface_number"]))
+			return iClient.GetStorageControllerMount(getAccContext(), attr["layout_id"], attr["controller_name"], toInt(attr["bus_number"]), toInt(attr["interface_number"]))
 		},
 	}
 
