@@ -1,6 +1,6 @@
 acc:
 - config: |
-    instance_id = 23989
-    controller_type = "scsi"
+    layout_id = 376
+    controller_name = "ide"
     bus_number = 0
-    interface_number = 3
+    interface_number = 1
