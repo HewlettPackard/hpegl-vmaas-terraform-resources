@@ -32,7 +32,7 @@ func ReadInstanceStorageController() *schema.Resource {
 			"interface_number": {
 				Type:        schema.TypeInt,
 				Required:    true,
-				Description: "The interface number to be allocated",
+				Description: "The interface number to be allocated. Enter `0` to automatically pick the next available interface number.",
 			},
 		},
 		ReadContext: readInstanceStorageControllerContext,
