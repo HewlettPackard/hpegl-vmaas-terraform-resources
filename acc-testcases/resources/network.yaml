@@ -6,8 +6,8 @@ acc:
     description  = "Network created using tf"
     group_id     = "shared"
     scope_id     = "/infra/sites/default/enforcement-points/default/transport-zones/2cc8e542-8c53-456d-b058-9fb00a5fae70"
-    cidr         = "10.200.40.1/24"
-    gateway      = "10.200.40.1"
+    cidr         = "10.200.42.1/24"
+    gateway      = "10.200.42.1"
     scan_network = false
     active       = true
     connected_gateway = "/infra/tier-1s/d3561ba7-01c9-4fa7-a7c5-bac401fd8f75"
@@ -18,5 +18,5 @@ acc:
       pool_id      = 25
     }
   validations:
-    tf.cidr = "10.200.40.1/24"
-    tf.gateway = "10.200.40.1"
+    tf.cidr = "10.200.42.1/24"
+    tf.gateway = "10.200.42.1"
