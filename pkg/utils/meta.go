@@ -92,3 +92,24 @@ func SetCMPVars(apiClient, brokerClient *client.APIClient, cfg *client.Configura
 
 	return err
 }
+
+func SetMorpheusVars(apiClient *client.APIClient, cfg *client.Configuration, url, token string) (err error) {
+	apiClient.SetHost(url)
+	apiClient.CMPToken = token
+	apiClient.TokenExpiry = 15 * 60 * 1000 // Not being used
+	apiClient.SetMetaFnAndVersion(nil, 0, func(ctx *context.Context, meta interface{}) {
+		// Initialise token handler
+
+		*ctx = context.WithValue(*ctx, client.ContextAccessToken, apiClient.CMPToken)
+	})
+	ctx := context.Background()
+	ctx = context.WithValue(ctx, client.ContextAccessToken, token)
+	err = apiClient.SetCMPVersion(ctx)
+	if err != nil {
+		log.Printf("[ERROR] Unable to set CMP version client: %s", err)
+		return
+	}
+	cfg.Host = url
+
+	return err
+}

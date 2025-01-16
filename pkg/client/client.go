@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 
@@ -106,9 +107,15 @@ func (i InitialiseClient) NewClient(r *schema.ResourceData) (interface{}, error)
 		}
 	}
 	apiClient := api_client.NewAPIClient(&cfg)
-	err = utils.SetCMPVars(apiClient, brokerApiClient, &cfg)
-	if err != nil {
-		return nil, fmt.Errorf("[ERROR]: unable to set cmp metadata %v", err)
+	morpheus_url := strings.TrimSpace(vmaasProviderSettings[constants.MORPHEUS_URL].(string))
+	morpheus_token := strings.TrimSpace(vmaasProviderSettings[constants.MORPHEUS_TOKEN].(string))
+	if morpheus_url != "" && morpheus_token != "" {
+		utils.SetMorpheusVars(apiClient, &cfg, morpheus_url, morpheus_token)
+	} else {
+		err = utils.SetCMPVars(apiClient, brokerApiClient, &cfg)
+		if err != nil {
+			return nil, fmt.Errorf("[ERROR]: unable to set cmp metadata %v", err)
+		}
 	}
 	client.CmpClient = cmp_client.NewClient(apiClient, cfg)
 	utils.SetMetaFnAndVersion(brokerApiClient, r, apiClient.GetSCMVersion())

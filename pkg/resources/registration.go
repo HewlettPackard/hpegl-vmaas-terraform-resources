@@ -94,6 +94,18 @@ func (r Registration) ProviderSchemaEntry() *schema.Resource {
 				DefaultFunc: schema.EnvDefaultFunc("HPEGL_VMAAS_BROKER_URL", constants.BrokerURL),
 				Description: "The URL to use for the VMaaS Broker API, can also be set with the HPEGL_VMAAS_BROKER_URL env var",
 			},
+			constants.MORPHEUS_URL: {
+				Type:        schema.TypeString,
+				Optional:    true,
+				DefaultFunc: schema.EnvDefaultFunc("HPEGL_MORPHEUS_URL", ""),
+				Description: "The Morpheus URL, can also be set with the HPEGL_MORPHEUS_URL env var",
+			},
+			constants.MORPHEUS_TOKEN: {
+				Type:        schema.TypeString,
+				Optional:    true,
+				DefaultFunc: schema.EnvDefaultFunc("HPEGL_MORPHEUS_TOKEN", ""),
+				Description: "The Morpheus token, can also be set with the HPEGL_MORPHEUS_TOKEN env var",
+			},
 			constants.INSECURE: {
 				Type:        schema.TypeBool,
 				Optional:    true,
