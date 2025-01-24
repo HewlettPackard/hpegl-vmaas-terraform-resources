@@ -10,6 +10,7 @@ jobs:
     with:
       test_case: TestProvider
       test_description: Check for valid terraform provider
+      vmaas_broker_url: "https://vmaas-broker.intg.hpedevops.net"
     secrets: inherit
 
   test-datasouces:
@@ -19,6 +20,7 @@ jobs:
     with:
       test_case: TestAccDataSource
       test_description: GET call usecase validations
+      vmaas_broker_url: "https://vmaas-broker.intg.hpedevops.net"
     secrets: inherit
 
   test-vmaas-instance:
@@ -28,6 +30,7 @@ jobs:
     with:
       test_case: TestVmaasInstance TestAccResourceInstance
       test_description: Instance usecase validations
+      vmaas_broker_url: "https://vmaas-broker.intg.hpedevops.net"
     secrets: inherit
 
   test-vmaas-lb:
@@ -37,6 +40,7 @@ jobs:
     with:
       test_case: TestVmaasLB TestAccResourceLB TestVmaasLoadBalancerPlan TestAccResourceLoadBalancerCreate
       test_description: Loadbalancer usecase validations
+      vmaas_broker_url: "https://vmaas-broker.intg.hpedevops.net"
     secrets: inherit
 
   test-vmaas-network:
@@ -46,6 +50,7 @@ jobs:
     with:
       test_case: TestVmaasNetworkPlan TestAccResourceNetworkCreate TestAccResourceRouter TestVmaasRouter TestAccResourceTier TestVmaasRouteBGPNeighborPlan
       test_description: NSX Network usecase validations
+      vmaas_broker_url: "https://vmaas-broker.intg.hpedevops.net"
     secrets: inherit
 
   process-logs:
