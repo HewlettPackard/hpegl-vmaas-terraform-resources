@@ -19,6 +19,11 @@ on:
           required: true
           default: 'Check Terraform Dev Testcase'
           type: string
+        vmaas_broker_url:
+          description: 'Enter VMaaS Broker URL'     
+          required: false
+          default: 'https://vmaas-broker.intg.hpedevops.net'
+          type: string
 
 jobs:
   acc-test:
@@ -26,6 +31,7 @@ jobs:
     with:
       test_case: ${{ inputs.test_case }}
       test_description: ${{ inputs.test_description }}
+      vmaas_broker_url: ${{ inputs.vmaas_broker_url }}
     secrets:
       DEV_HPEGL_IAM_SERVICE_URL: ${{ secrets.DEV_HPEGL_IAM_SERVICE_URL }}
       DEV_HPEGL_TENANT_ID: ${{ secrets.DEV_HPEGL_TENANT_ID }}
