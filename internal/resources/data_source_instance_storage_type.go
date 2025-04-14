@@ -1,4 +1,4 @@
-// (C) Copyright 2024 Hewlett Packard Enterprise Development LP
+// (C) Copyright 2024-2025 Hewlett Packard Enterprise Development LP
 
 package resources
 
@@ -28,6 +28,11 @@ func ReadInstanceStorageType() *schema.Resource {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: f(generalDDesc, "layout"),
+			},
+			"group_id": {
+				Type:        schema.TypeString,
+				Required:    true,
+				Description: f(generalDDesc, "group"),
 			},
 		},
 		ReadContext: readInstanceStorageTypeContext,
