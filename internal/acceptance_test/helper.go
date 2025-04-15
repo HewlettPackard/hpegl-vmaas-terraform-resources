@@ -7,7 +7,6 @@ import (
 	"log"
 	"os"
 	"strconv"
-	"time"
 
 	api_client "github.com/HewlettPackard/hpegl-vmaas-cmp-go-sdk/pkg/client"
 	"github.com/HewlettPackard/hpegl-vmaas-terraform-resources/pkg/constants"
@@ -66,10 +65,9 @@ func getAPIClient() (*api_client.APIClient, api_client.Configuration) {
 	cmpAPIClient.TokenExpiry = cmpDetails.ValidTill
 	cmpAPIClient.SetMetaFnAndVersion(nil, 0, func(ctx *context.Context, meta interface{}) {
 		// Initialise token handler
-		tokenExpiry := cmpAPIClient.TokenExpiry / 1000
 		token := cmpAPIClient.CMPToken
 		// Token is about to expire and get new
-		if tokenExpiry <= time.Now().Unix() {
+		if cmpAPIClient.TokenExpiry < 2 {
 			cmpDetails, err := brokerClient.GetCMPDetails(context.Background())
 			if err != nil {
 				log.Printf("[ERROR] Unable to fetch token for CMP client: %s", err)
