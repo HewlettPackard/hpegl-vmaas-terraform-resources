@@ -1,0 +1,14 @@
+vars:
+  instance_name: tf_acc_clone_%rand_int
+acc:
+- config: |
+    source_instance_id = 23965
+    name = "$(instance_name)"
+    network {
+      id = 106
+    }
+    volume {
+      name = "root_vol"
+      datastore_id = "auto"
+      size = 6
+    }

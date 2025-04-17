@@ -1,0 +1,18 @@
+vars:
+  name: "tf_loadbalancer_%rand_int"
+acc:
+- config: |
+    name = "$(name)"
+    description  = "Loadbalancer created using tf"
+    enabled      =  true
+    group_access {
+      all = true
+    }
+    config {
+      admin_state = true
+      size = "SMALL"
+      log_level = "INFO"
+      tier1_gateways  = "/infra/tier-1s/f65421ab-5d80-495b-bced-2f14a994e3e3"
+    }
+  validations:
+    json.loadBalancer.config.tier1: "/infra/tier-1s/f65421ab-5d80-495b-bced-2f14a994e3e3"

@@ -1,0 +1,172 @@
+vars:
+  http_name: tf_HTTP_PROFILE_%rand_int
+  tcp_name: tf_TCP_PROFILE_%rand_int
+  udp_name: tf_UDP_PROFILE_%rand_int
+  cookie_name: tf_COOKIE_PROFILE_%rand_int
+  generic_name: tf_GENERIC_PROFILE_%rand_int
+  source_name: tf_SOURCE-PROFILE_%rand_int
+  client_name: tf_CLIENT-PROFILE_%rand_int
+  server_name: tf_SERVER-PROFILE_%rand_int
+acc:
+- config: |
+    lb_id = 196 
+    name  =  "$(http_name)"      
+    description  = "HTTP_PROFILE creating using tf"
+    profile_type = "application-profile"
+    http_profile {
+      service_type     = "LBHttpProfile"
+      http_idle_timeout = 30
+      request_header_size = 1024
+      response_header_size = 4096
+      redirection = "https"
+      x_forwarded_for = "INSERT"
+      request_body_size = 20
+      response_timeout = 60
+      ntlm_authentication = true
+    }
+    config {
+    tags {
+        tag = "tag1"
+        scope = "scope1"
+      }
+    }
+  validations:
+    json.loadBalancerProfile.serviceType: "LBHttpProfile"
+- config: |
+    lb_id = 196 
+    name  =  "$(tcp_name)"      
+    description  = "TCP_PROFILE creating using tf"
+    profile_type = "application-profile"
+    tcp_profile {
+      service_type   = "LBFastTcpProfile"
+      fast_tcp_idle_timeout = 1800
+      connection_close_timeout = 8
+      ha_flow_mirroring = true
+    }
+    config {
+    tags {
+        tag = "tag1"
+        scope = "scope1"
+      }
+    }
+  validations:
+    json.loadBalancerProfile.serviceType: "LBFastTcpProfile"
+- config: |
+    lb_id = 196 
+    name  =  "$(udp_name)"      
+    description  = "UDP_PROFILE creating using tf"
+    profile_type = "application-profile"
+    udp_profile {
+      service_type     = "LBFastUdpProfile"
+      fast_udp_idle_timeout = 30
+      ha_flow_mirroring = true
+    }
+    config {
+    tags {
+        tag = "tag1"
+        scope = "scope1"
+      }
+    }
+  validations:
+    json.loadBalancerProfile.serviceType: "LBFastUdpProfile"
+- config: |
+    lb_id = 196 
+    name  =  "$(cookie_name)"      
+    description  = "COOKIE_PROFILE creating using tf"
+    profile_type = "persistence-profile"
+    cookie_profile {
+      service_type = "LBCookiePersistenceProfile"
+      cookie_name = "cookie1"
+      cookie_fallback = true
+      cookie_garbling = true
+      cookie_mode = "INSERT"
+      cookie_type = "LBPersistenceCookieTime"
+      cookie_path = "http://cookie.com"
+      max_idle_time = 60
+      share_persistence = true
+    }
+    config {
+    tags {
+        tag = "tag1"
+        scope = "scope1"
+      }
+    }
+  validations:
+    json.loadBalancerProfile.serviceType: "LBCookiePersistenceProfile"
+- config: |
+    lb_id = 196 
+    name  =  "$(generic_name)"      
+    description  = "GENERIC_PROFILE creating using tf"
+    profile_type = "persistence-profile"
+    generic_profile{
+      service_type     = "LBGenericPersistenceProfile"
+      share_persistence = false
+      ha_persistence_mirroring = false
+      persistence_entry_timeout = 30
+    }
+    config {
+    tags {
+        tag = "tag1"
+        scope = "scope1"
+      }
+    }
+  validations:
+    json.loadBalancerProfile.serviceType: "LBGenericPersistenceProfile"
+- config: |
+    lb_id = 196 
+    name  =  "$(source_name)"      
+    description  = "SOURCE_PROFILE creating using tf"
+    profile_type = "persistence-profile"
+    sourceip_profile {
+      service_type     = "LBSourceIpPersistenceProfile"
+      share_persistence = false
+      ha_persistence_mirroring = false
+      persistence_entry_timeout = 300
+      purge_entries_when_full = true
+    }
+    config {
+    tags {
+        tag = "tag1"
+        scope = "scope1"
+      }
+    }
+  validations:
+    json.loadBalancerProfile.serviceType: "LBSourceIpPersistenceProfile"
+- config: |
+    lb_id = 196 
+    name  =  "$(client_name)"      
+    description  = "CLIENT_PROFILE creating using tf"
+    profile_type = "ssl-profile"
+    client_profile{
+      service_type     = "LBClientSslProfile"
+      ssl_suite = "BALANCED"
+      session_cache = true
+      session_cache_entry_timeout = 300
+      prefer_server_cipher = true
+    }
+    config {
+    tags {
+        tag = "tag1"
+        scope = "scope1"
+      }
+    }
+  validations:
+    json.loadBalancerProfile.serviceType: "LBClientSslProfile"
+- config: |
+    lb_id = 196 
+    name  =  "$(server_name)"      
+    description  = "SERVER_PROFILE creating using tf"
+    profile_type = "ssl-profile"
+    server_profile{
+      service_type = "LBServerSslProfile"
+      ssl_suite = "BALANCED"
+      session_cache = true
+    }
+    config {
+    tags {
+        tag = "tag1"
+        scope = "scope1"
+      }
+    }
+  validations:
+    json.loadBalancerProfile.serviceType: "LBServerSslProfile"

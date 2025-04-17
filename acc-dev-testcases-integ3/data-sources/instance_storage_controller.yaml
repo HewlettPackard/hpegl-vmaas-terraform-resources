@@ -1,0 +1,6 @@
+acc:
+- config: |
+    layout_id = 376
+    controller_name = "ide"
+    bus_number = 0
+    interface_number = 1
