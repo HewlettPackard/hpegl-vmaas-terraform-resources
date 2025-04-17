@@ -1,0 +1,5 @@
+acc:
+- config: |
+    name = "tf"
+  validations:
+    json.groups.externalId: "/infra/domains/default/groups/tf" 

@@ -1,4 +1,4 @@
-name: IaC Tests for CI CD Gating Job
+name: IaC Tests for CI CD Gating Job - Integ3
 # This workflow runs all the acc-dev-testcases
 
 on:
@@ -10,7 +10,6 @@ jobs:
     with:
       test_case: TestProvider
       test_description: Check for valid terraform provider
-      vmaas_broker_url: "https://vmaas-broker.intg.hpedevops.net"
     secrets: inherit
 
   test-datasouces:

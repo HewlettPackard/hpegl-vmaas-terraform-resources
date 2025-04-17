@@ -28,12 +28,12 @@ jobs:
       test_case: ${{ inputs.test_case }}
       test_description: ${{ inputs.test_description }}
       test_case_folder: 'acc-testcases'
+      vmaas_broker_url: 'https://vmaas-broker.us1.greenlake-hpe.com'
     secrets:
       DEV_HPEGL_IAM_SERVICE_URL: ${{ secrets.HPEGL_IAM_SERVICE_URL }}
       DEV_HPEGL_TENANT_ID: ${{ secrets.HPEGL_TENANT_ID }}
       DEV_HPEGL_USER_SECRET: ${{ secrets.HPEGL_USER_SECRET }}
       DEV_HPEGL_USER_ID: ${{ secrets.HPEGL_USER_ID }}
-      DEV_HPEGL_VMAAS_API_URL: ${{ secrets.HPEGL_VMAAS_API_URL }}
       DEV_HPEGL_VMAAS_LOCATION: ${{ secrets.HPEGL_VMAAS_LOCATION }}
       DEV_HPEGL_VMAAS_SPACE_NAME: ${{ secrets.HPEGL_VMAAS_SPACE_NAME}}
       TF_ACC: ${{ secrets.TF_ACC }}

@@ -1,0 +1,4 @@
+acc:
+- config: |
+    name = "blr-gl3-Bs-Vol1"
+    cloud_id = 1

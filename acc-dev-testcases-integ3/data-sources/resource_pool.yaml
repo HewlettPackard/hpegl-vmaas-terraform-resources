@@ -1,0 +1,4 @@
+acc:
+- config: |
+    name = "BLR3 Integ3 G2i Resource Pool1"
+    cloud_id = 1
