@@ -19,7 +19,7 @@ acc:
       }
     config {
       resource_pool_id = 16
-      template_id = 4690
+      template_id = 1735
       folder_code = "group-v1018"
       }
     scale = 1
