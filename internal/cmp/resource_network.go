@@ -1,4 +1,4 @@
-// (C) Copyright 2021-2024 Hewlett Packard Enterprise Development LP
+// (C) Copyright 2021-2025 Hewlett Packard Enterprise Development LP
 
 package cmp
 
@@ -107,54 +107,60 @@ func (r *resNetwork) Create(ctx context.Context, d *utils.Data, meta interface{}
 	if err != nil {
 		return err
 	}
-	// Refresh NSX integration
-	serverRefreshResp, err := r.rClient.RefreshNetworkServices(ctx, createReq.NetworkServer.ID, nil)
-	if !serverRefreshResp.Success {
-		return fmt.Errorf("failed refresh NSX integration post NSX object creation")
-	}
-	if err != nil {
-		return err
-	}
-	errCount := 0
-	cRetry := utils.CustomRetry{
-		Timeout:      time.Minute * 15,
-		RetryDelay:   time.Second * 10,
-		InitialDelay: time.Second * 20,
-		Cond: func(response interface{}, err error) (bool, error) {
-			if err != nil {
-				errCount++
-				// return false as condition if same error returns 3 times.
-				if errCount == 3 {
-					return false, err
+	cmpVersion := r.rClient.Client.GetSCMVersion()
+	// from 8.0.2  onwards the network obj is fixed
+	if v, _ := ParseVersion("8.0.3"); v > cmpVersion {
+
+		// Refresh NSX integration
+		serverRefreshResp, err := r.rClient.RefreshNetworkServices(ctx, createReq.NetworkServer.ID, nil)
+		if !serverRefreshResp.Success {
+			return fmt.Errorf("failed refresh NSX integration post NSX object creation")
+		}
+		if err != nil {
+			return err
+		}
+		errCount := 0
+
+		cRetry := utils.CustomRetry{
+			Timeout:      time.Minute * 15,
+			RetryDelay:   time.Second * 10,
+			InitialDelay: time.Second * 20,
+			Cond: func(response interface{}, err error) (bool, error) {
+				if err != nil {
+					errCount++
+					// return false as condition if same error returns 3 times.
+					if errCount == 3 {
+						return false, err
+					}
+
+					return false, nil
+				}
+
+				networkResponse, ok := response.(models.GetSpecificNetworkBody)
+				if !ok {
+					errCount++
+					if errCount == 3 {
+						return false, fmt.Errorf("%s", "error while getting Network")
+					}
+
+					return false, nil
+				}
+				errCount = 0
+
+				if strings.Contains(networkResponse.Network.ExternalID, utils.PortGroupPrefix) {
+					return true, nil
 				}
 
 				return false, nil
-			}
+			},
+		}
 
-			networkResponse, ok := response.(models.GetSpecificNetworkBody)
-			if !ok {
-				errCount++
-				if errCount == 3 {
-					return false, fmt.Errorf("%s", "error while getting Network")
-				}
-
-				return false, nil
-			}
-			errCount = 0
-
-			if strings.Contains(networkResponse.Network.ExternalID, utils.PortGroupPrefix) {
-				return true, nil
-			}
-
-			return false, nil
-		},
-	}
-
-	_, err = cRetry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
-		return r.nClient.GetSpecificNetwork(ctx, createResp.Network.ID)
-	})
-	if err != nil {
-		return err
+		_, err = cRetry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
+			return r.nClient.GetSpecificNetwork(ctx, createResp.Network.ID)
+		})
+		if err != nil {
+			return err
+		}
 	}
 
 	return tftags.Set(d, createResp.Network)
