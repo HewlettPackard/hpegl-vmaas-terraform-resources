@@ -20,7 +20,7 @@ jobs:
       TF_ACC: ${{ secrets.TF_ACC }}
   
   process-logs:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     needs:
       - acc-test
     if: "always()"

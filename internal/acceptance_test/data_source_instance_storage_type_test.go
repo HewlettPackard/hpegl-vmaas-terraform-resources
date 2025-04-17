@@ -21,7 +21,7 @@ func TestAccDataSourceInstanceStorageType(t *testing.T) {
 				Cfg:    cfg,
 			}
 
-			return iClient.GetStorageVolTypeID(getAccContext(), attr["cloud_id"], attr["layout_id"])
+			return iClient.GetStorageVolTypeID(getAccContext(), attr["cloud_id"], attr["layout_id"], attr["group_id"])
 		},
 	}
 

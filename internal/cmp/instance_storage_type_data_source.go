@@ -29,17 +29,20 @@ func (i *instanceStorageType) Read(ctx context.Context, d *utils.Data, meta inte
 	name = strings.TrimSpace(name)
 	cloudID := d.GetString("cloud_id")
 	layoutID := d.GetString("layout_id")
+	groupID := d.GetString("group_id")
 
 	// Pre check
 	if err := d.Error(); err != nil {
 		return err
 	}
 
-	storageType, err := i.iClient.GetStorageVolTypeID(ctx, cloudID, layoutID)
+	storageType, err := i.iClient.GetStorageVolTypeID(ctx, cloudID, layoutID, groupID)
 	if err != nil {
 		return err
 	}
-
+	if len(storageType.Plans) == 0 {
+		return fmt.Errorf("no storage type found for cloud id %s, layout id %s, group id %s", cloudID, layoutID, groupID)
+	}
 	for _, n := range storageType.Plans[0].StorageTypes {
 		volType := strings.ToLower(n.Name)
 		volType = strings.TrimSpace(volType)
