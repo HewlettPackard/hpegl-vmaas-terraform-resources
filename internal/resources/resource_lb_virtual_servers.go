@@ -1,4 +1,4 @@
-// (C) Copyright 2022 Hewlett Packard Enterprise Development LP
+// (C) Copyright 2022-2025 Hewlett Packard Enterprise Development LP
 
 package resources
 
@@ -76,7 +76,7 @@ func LoadBalancerVirtualServers() *schema.Resource {
 			"sourceip_persistence_profile": schemas.SourceipPersProfileSchema(),
 			"ssl_server_cert": {
 				Type:     schema.TypeInt,
-				Required: true,
+				Optional: true,
 				Description: "ssl_server_cert Id, Get the `id` from " + DSLBVirtualServerSslCert +
 					" datasource to obtain the ssl_server_cert Id, " +
 					"SSLServerCert is needed only for https based load balancer",
@@ -98,7 +98,7 @@ func LoadBalancerVirtualServers() *schema.Resource {
 			},
 			"ssl_client_cert": {
 				Type:     schema.TypeInt,
-				Required: true,
+				Optional: true,
 				Description: "ssl_client_cert Id, Get the `id` from " + DSLBVirtualServerSslCert +
 					" datasource to obtain the ssl_client_cert Id, " +
 					"SSLClientCert is needed only for https based load balancer",
