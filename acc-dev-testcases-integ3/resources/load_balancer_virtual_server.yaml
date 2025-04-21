@@ -7,7 +7,7 @@ acc:
     description  = "tf_virtual-server created by tf"
     vip_address     = "11.10.52.14"
     vip_port = "8080"
-    pool = 120
+    pool = 223
 
     type = "http"
     http_application_profile {
@@ -18,16 +18,7 @@ acc:
     cookie_persistence_profile {
       persistence_profile = 619
     }
-  
-    ssl_server_cert = 3805
-    ssl_server_config {
-      ssl_server_profile = 640
-    }
 
-    ssl_client_cert = 3805
-    ssl_client_config {
-      ssl_client_profile = 631
-    }
   validations:
     json.loadBalancerInstance.vipProtocol: "http" 
     json.loadBalancerInstance.config.persistence: "COOKIE"
