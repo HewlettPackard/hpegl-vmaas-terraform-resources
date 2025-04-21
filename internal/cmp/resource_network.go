@@ -108,8 +108,8 @@ func (r *resNetwork) Create(ctx context.Context, d *utils.Data, meta interface{}
 		return err
 	}
 	cmpVersion := r.rClient.Client.GetSCMVersion()
-	// from 8.0.2  onwards the network obj is fixed
-	if v, _ := ParseVersion("8.0.3"); v > cmpVersion {
+	// from 8.0.5  onwards the network obj is fixed
+	if v, _ := ParseVersion("8.0.5"); v > cmpVersion {
 
 		// Refresh NSX integration
 		serverRefreshResp, err := r.rClient.RefreshNetworkServices(ctx, createReq.NetworkServer.ID, nil)
