@@ -1,0 +1,8 @@
+acc:
+- config: |
+    name     = "Thin"
+    cloud_id = 1
+    layout_id = 376
+    group_id = 4
+  validations:
+    tf.id: 133

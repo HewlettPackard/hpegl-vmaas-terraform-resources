@@ -1,0 +1,6 @@
+acc:
+- config: |
+    name     = "VMXNET 3"
+    cloud_id = 1
+  validations:
+    tf.id: 10

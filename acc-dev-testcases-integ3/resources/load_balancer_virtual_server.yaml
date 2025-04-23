@@ -1,0 +1,24 @@
+vars:
+  vs_name: tf_VS_%rand_int
+acc:
+- config: |
+    lb_id = 196
+    name  =  "$(vs_name)"      
+    description  = "tf_virtual-server created by tf"
+    vip_address     = "11.10.52.14"
+    vip_port = "8080"
+    pool = 223
+
+    type = "http"
+    http_application_profile {
+      application_profile = 607
+    }
+
+    persistence = "COOKIE"
+    cookie_persistence_profile {
+      persistence_profile = 619
+    }
+
+  validations:
+    json.loadBalancerInstance.vipProtocol: "http" 
+    json.loadBalancerInstance.config.persistence: "COOKIE"
