@@ -10,7 +10,7 @@ acc:
     plan_id = 216
     instance_type_code = "vmware"
     network {
-        id = 156
+        id = 249
       }
     volume {
         name = "root_vol"
@@ -19,7 +19,7 @@ acc:
       }
     config {
       resource_pool_id = 5
-      template_id = 1044
+      template_id = 566
       folder_code = "group-v1042"
       }
     scale = 1
