@@ -20,11 +20,13 @@ which can take 5–10 minutes to fully complete. Terraform includes internal log
 but it is not instantaneous. If you create multiple networks in parallel, each operation may trigger a 
 separate refresh, leading to multiple NSX/Cloud refreshes and potential API failures.
 
-> ✅ **Recommended Approach** 
-1. Create networks one at a time.
-2. After each network is created, wait for 5–10 minutes to allow the backend refresh to complete.
-3. Proceed with creating the next network only after the previous one has fully settled.
-This approach ensures stability and prevents conflicts or errors caused by overlapping refresh operations.
+> ✅ **Recommended Approach**
+>
+> 1. Create networks one at a time.
+> 2. After each network is created, wait for 5–10 minutes to allow the backend refresh to complete.
+> 3. Proceed with creating the next network only after the previous one has fully settled.
+>
+> This approach ensures stability and prevents conflicts or errors caused by overlapping refresh operations.
 
 For creating an NSX-T network, see the following examples.
 
