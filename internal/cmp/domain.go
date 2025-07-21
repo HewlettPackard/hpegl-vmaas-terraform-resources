@@ -31,7 +31,10 @@ func (n *domain) Read(ctx context.Context, d *utils.Data, meta interface{}) erro
 		return err
 	}
 	// Get all domain with filter as name
-	domains, err := n.dClient.GetAllDomains(ctx, map[string]string{nameKey: name})
+	domains, err := n.dClient.GetAllDomains(ctx, map[string]string{
+		nameKey: name,
+		maxKey:  "-1",
+	})
 	if err != nil {
 		return err
 	}

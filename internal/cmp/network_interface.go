@@ -37,6 +37,7 @@ func (c *networkInterface) Read(ctx context.Context, d *utils.Data, meta interfa
 	// Get vmware provision-type id
 	provision, err := c.pClient.GetAllProvisioningTypes(ctx, map[string]string{
 		nameKey: vmware,
+		maxKey:  "-1",
 	})
 	if err != nil {
 		return err

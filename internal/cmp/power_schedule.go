@@ -31,6 +31,7 @@ func (c *powerSchedule) Read(ctx context.Context, d *utils.Data, meta interface{
 	}
 	powerSchedule, err := c.pClient.GetAllPowerSchedules(ctx, map[string]string{
 		nameKey: name,
+		maxKey:  "-1",
 	})
 	if err != nil {
 		return err

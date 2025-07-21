@@ -106,6 +106,7 @@ func (i *instanceClone) Create(ctx context.Context, d *utils.Data, meta interfac
 	instancesResp, err := getInstanceRetry.Retry(ctx, meta, func(ctx context.Context) (interface{}, error) {
 		return i.iClient.GetAllInstances(ctx, map[string]string{
 			nameKey: req.Name,
+			maxKey:  "-1",
 		})
 	})
 	if err != nil {

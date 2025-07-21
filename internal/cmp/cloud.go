@@ -31,6 +31,7 @@ func (c *cloud) Read(ctx context.Context, d *utils.Data, meta interface{}) error
 	}
 	cloud, err := c.cloudClient.GetAllClouds(ctx, map[string]string{
 		nameKey: name,
+		maxKey:  "-1",
 	})
 	if err != nil {
 		return err
