@@ -32,7 +32,10 @@ func (n *datastore) Read(ctx context.Context, d *utils.Data, meta interface{}) e
 		return err
 	}
 	datastores, err := n.nClient.GetAllCloudDataStores(ctx, cloudID,
-		map[string]string{"name": name},
+		map[string]string{
+			"name": name,
+			maxKey: "-1",
+		},
 	)
 	if err != nil {
 		return err

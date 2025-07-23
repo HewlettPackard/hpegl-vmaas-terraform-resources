@@ -31,6 +31,7 @@ func (n *plan) Read(ctx context.Context, d *utils.Data, meta interface{}) error 
 	plans, err := n.pClient.GetAllServicePlans(ctx, map[string]string{
 		provisionTypeKey: vmware,
 		nameKey:          name,
+		maxKey:           "-1",
 	})
 	if err != nil {
 		return err

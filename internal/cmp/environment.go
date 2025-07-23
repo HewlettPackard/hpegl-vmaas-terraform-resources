@@ -31,6 +31,7 @@ func (c *environment) Read(ctx context.Context, d *utils.Data, meta interface{})
 	}
 	environment, err := c.eClient.GetAllEnvironment(ctx, map[string]string{
 		nameKey: name,
+		maxKey:  "-1",
 	})
 	if err != nil {
 		return err

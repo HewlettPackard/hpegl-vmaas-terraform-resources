@@ -34,6 +34,7 @@ func (g *layout) Read(ctx context.Context, d *utils.Data, meta interface{}) erro
 	instanceTypes, err := g.gClient.GetAllInstanceTypes(ctx, map[string]string{
 		codeKey:          instanceTypeCode,
 		provisionTypeKey: vmware,
+		maxKey:           "-1",
 	})
 	if err != nil {
 		return err
